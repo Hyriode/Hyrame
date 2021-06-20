@@ -16,12 +16,12 @@ import java.util.Collections;
 public class TestCommand extends Command {
 
     public TestCommand() {
-        super("test", "a", "/test", Arrays.asList("teste"));
+        super("test", "a", "/test", Arrays.asList("t"));
     }
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        sender.sendMessage(ChatColor.GREEN + "La commande a bien été executée");
+        sender.sendMessage(ChatColor.GREEN + "the command has been executed");
         Team team = new Team(TeamColor.BLUE, new ArrayList(Collections.singletonList((Player) sender)), 5);
         team.giveAll(new ItemStack(Material.BED));
         return true;

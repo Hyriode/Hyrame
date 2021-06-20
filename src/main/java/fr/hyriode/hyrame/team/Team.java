@@ -43,7 +43,7 @@ public class Team {
         if(!this.members.contains(member) || members.size() + 1 > maxSize) {
             this.members.add(member);
         }else {
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Erreur, le joueur " + member.getName() + "est deja dans la team ou alors la team est pleine");
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Erreur, le joueur " + member.getName() + "is aldrealdy in the team or the team is full");
         }
     }
 
@@ -51,7 +51,7 @@ public class Team {
         if(this.members.contains(member)) {
             this.members.remove(member);
         }else {
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Erreur, le joueur " + member.getName() + "n'est pas dans la team");
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error, the player " + member.getName() + "isn't in the team");
         }
     }
 
