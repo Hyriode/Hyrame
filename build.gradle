@@ -1,5 +1,3 @@
-import sun.misc.JavaLangAccess
-
 import java.nio.charset.StandardCharsets
 
 apply plugin: 'idea'
