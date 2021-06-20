@@ -1,6 +1,5 @@
 main: fr.hyriode.hyrame.Hyrame
-
-version: 1.0.0
-
+name: Hyrame
+version: 1.0.0-SNAPSHOT
 author: Calyx
 
