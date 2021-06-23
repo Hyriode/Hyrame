@@ -1,7 +1,9 @@
 package fr.hyriode.hyrame.commands;
 
+import fr.hyriode.hyrame.team.NoFireFriendTeam;
 import fr.hyriode.hyrame.team.Team;
 import fr.hyriode.hyrame.team.TeamColor;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -22,8 +24,10 @@ public class TestCommand extends Command {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         sender.sendMessage(ChatColor.GREEN + "the command has been executed");
-        Team team = new Team(TeamColor.BLUE, new ArrayList(Collections.singletonList((Player) sender)), 5);
+        Team team = new Team(TeamColor.BLUE, new ArrayList(Collections.singletonList((Player) sender)), 5, true);
         team.giveAll(new ItemStack(Material.BED));
+        team.addMember(Bukkit.getPlayer("psychonv12"));
+        NoFireFriendTeam.noFireFriend.add(team);
         return true;
     }
 }
