@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Team extends ArrayList{
+public class Team extends ArrayList {
 
     private TeamColor teamColor;
     private ArrayList<Player> members;
@@ -25,7 +25,7 @@ public class Team extends ArrayList{
                 this.friendlyFire = friendlyFire;
                 Bukkit.getConsoleSender().sendMessage("New team created : " + teamColor.toString() + ", " + members+ ", " + maxSize + ", " + friendlyFire);
                 if(!friendlyFire) {
-                    NoFireFriendTeam.noFireFriend.add(this);
+                    TeamHandler.noFireFriend.add(this);
                 }
             }else {
                 Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error, number of members can't be superior to max size");
@@ -37,7 +37,7 @@ public class Team extends ArrayList{
             this.friendlyFire = friendlyFire;
             Bukkit.getConsoleSender().sendMessage("New team created : " + teamColor.toString() + ", " + "any member" + ", " + maxSize + ", " + friendlyFire);
             if(!friendlyFire) {
-                NoFireFriendTeam.noFireFriend.add(this);
+                TeamHandler.noFireFriend.add(this);
             }
         }
     }
@@ -49,10 +49,10 @@ public class Team extends ArrayList{
     public void setFriendlyFire(Boolean friendlyFire) {
         this.friendlyFire = friendlyFire;
         if(!friendlyFire) {
-            NoFireFriendTeam.noFireFriend.add(this);
+            TeamHandler.noFireFriend.add(this);
         }else {
-            if(NoFireFriendTeam.noFireFriend.contains(this)) {
-                NoFireFriendTeam.noFireFriend.remove(this);
+            if(TeamHandler.noFireFriend.contains(this)) {
+                TeamHandler.noFireFriend.remove(this);
             }
         }
     }

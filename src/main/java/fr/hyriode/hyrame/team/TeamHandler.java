@@ -10,12 +10,15 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 
+import java.util.ArrayList;
+
 public class TeamHandler implements Listener {
+    public static ArrayList<Team> noFireFriend = new ArrayList<Team>();
     @EventHandler
-    public void OnEntityDommageByEntity(EntityDamageByEntityEvent event) {
+    public void onEntityDommageByEntity(EntityDamageByEntityEvent event) {
         if(event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
-            if(NoFireFriendTeam.noFireFriend != null) {
-                for(Team team : NoFireFriendTeam.noFireFriend) {
+            if(noFireFriend != null) {
+                for(Team team : noFireFriend) {
                     for(Player player : team.getMembers()) {
                         Bukkit.broadcastMessage(player.getDisplayName());
                         for(Player player1 : team.getMembers()) {
@@ -36,7 +39,7 @@ public class TeamHandler implements Listener {
     }
 
     @EventHandler
-    public void OnPlayerClick(PlayerInteractEvent event) {
+    public void onPlayerClick(PlayerInteractEvent event) {
         Bukkit.broadcastMessage("aaa");
         Bukkit.broadcastMessage(event.getPlayer().getInventory().getItemInHand().toString());
         Bukkit.broadcastMessage(String.valueOf(TeamSelector.teamSelector));
@@ -56,12 +59,12 @@ public class TeamHandler implements Listener {
     }
 
     @EventHandler
-    public void OnPlayerInventoryClick(InventoryClickEvent event) {
+    public void onPlayerInventoryClick(InventoryClickEvent event) {
         if(event.getClickedInventory().getName().equalsIgnoreCase("Selection des teams")) {
             for(Team team : TeamSelector.teams) {
                 team.removeMember((Player) event.getWhoClicked());
                 if(team.getTeamColor().getColoredWool(1, ChatColor.AQUA + team.getTeamColor().toString().toLowerCase()).equals(event.getCurrentItem())) {
-                    if(team.addMember((Player) event.getWhoClicked()) || ) {
+                    if(team.addMember((Player) event.getWhoClicked())) {
                         event.getWhoClicked().sendMessage(ChatColor.YELLOW + "Vous avez été intégré à la team " + team.getTeamColor().getChatColor() + team.getTeamColor());
                     }else {
                        event.getWhoClicked().sendMessage(ChatColor.DARK_RED + "Vous n'avez pas pu être ajouter car la team est pleine ou vous êtes déjà dedans");
