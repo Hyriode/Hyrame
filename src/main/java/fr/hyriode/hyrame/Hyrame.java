@@ -1,12 +1,9 @@
 package fr.hyriode.hyrame;
 
 import fr.hyriode.hyrame.commands.TestCommand;
-import fr.hyriode.hyrame.team.NoFireFriendTeam;
-import fr.hyriode.hyrame.team.TeamSelector;
+import fr.hyriode.hyrame.team.TeamHandler;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.CommandMap;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
@@ -16,8 +13,7 @@ public class Hyrame extends JavaPlugin {
     public void onEnable() {
         this.registerCommands();
 
-        Bukkit.getServer().getPluginManager().registerEvents(new NoFireFriendTeam(), this);
-        Bukkit.getServer().getPluginManager().registerEvents(new TeamSelector(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new TeamHandler(), this);
     }
 
     private void registerCommands() {

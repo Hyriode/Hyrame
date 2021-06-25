@@ -17,19 +17,29 @@ public class Team extends ArrayList{
     private boolean friendlyFire;
 
     public Team(TeamColor teamColor, ArrayList<Player> members, int maxSize, boolean friendlyFire) {
-        if(members.size() <= maxSize) {
+        if(members != null) {
+            if(members.size() <= maxSize) {
+                this.teamColor = teamColor;
+                this.members = members;
+                this.maxSize = maxSize;
+                this.friendlyFire = friendlyFire;
+                Bukkit.getConsoleSender().sendMessage("New team created : " + teamColor.toString() + ", " + members+ ", " + maxSize + ", " + friendlyFire);
+                if(!friendlyFire) {
+                    NoFireFriendTeam.noFireFriend.add(this);
+                }
+            }else {
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error, number of members can't be superior to max size");
+            }
+        }else {
             this.teamColor = teamColor;
-            this.members = members;
+            this.members = new ArrayList<Player>();
             this.maxSize = maxSize;
             this.friendlyFire = friendlyFire;
-            Bukkit.getConsoleSender().sendMessage("New team created : " + teamColor.toString() + ", " + members+ ", " + maxSize + ", " + friendlyFire);
+            Bukkit.getConsoleSender().sendMessage("New team created : " + teamColor.toString() + ", " + "any member" + ", " + maxSize + ", " + friendlyFire);
             if(!friendlyFire) {
                 NoFireFriendTeam.noFireFriend.add(this);
             }
-        }else {
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error, number of members can't be superior to max size");
         }
-
     }
 
     public Boolean getFriendlyFire() {
@@ -65,11 +75,13 @@ public class Team extends ArrayList{
     }
 
 
-    public void addMember(Player member) {
+    public boolean addMember(Player member) {
         if(!this.members.contains(member) || members.size() + 1 > maxSize) {
             this.members.add(member);
+            return true;
         }else {
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Erreur, le joueur " + member.getName() + "is aldrealdy in the team or the team is full");
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error, player " + member.getName() + " is aldrealdy in the team or the team is full");
+            return false;
         }
     }
 
