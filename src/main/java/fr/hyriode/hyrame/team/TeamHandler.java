@@ -10,39 +10,24 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 
-import java.util.ArrayList;
-
 public class TeamHandler implements Listener {
-    public static ArrayList<Team> noFireFriend = new ArrayList<Team>();
     @EventHandler
     public void onEntityDommageByEntity(EntityDamageByEntityEvent event) {
         if(event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
-            if(noFireFriend != null) {
-                for(Team team : noFireFriend) {
-                    for(Player player : team.getMembers()) {
-                        Bukkit.broadcastMessage(player.getDisplayName());
-                        for(Player player1 : team.getMembers()) {
-                            Bukkit.broadcastMessage(player1.getDisplayName());
-                            if(event.getDamager().equals(player) && event.getEntity().equals(player1) || event.getEntity().equals(player) && event.getDamager().equals(player1)) {
-                                event.setDamage(0.0F);
-                                event.setCancelled(true);
-                            }
-                        }
-                    }
-                    if(team.contains(event.getDamager()) && team.contains(event.getEntity())) {
-
+            if(TeamManager.getTeamByPlayer((Player) event.getEntity()) != null && TeamManager.getTeamByPlayer((Player) event.getDamager()) != null) {
+                if(TeamManager.getTeamByPlayer((Player) event.getEntity()).equals(TeamManager.getTeamByPlayer((Player) event.getDamager()))) {
+                    if(!TeamManager.getTeamByPlayer((Player) event.getEntity()).getFriendlyFire()) {
                         event.setCancelled(true);
+                        event.setDamage(0.00F);
                     }
                 }
             }
+
         }
     }
 
     @EventHandler
     public void onPlayerClick(PlayerInteractEvent event) {
-        Bukkit.broadcastMessage("aaa");
-        Bukkit.broadcastMessage(event.getPlayer().getInventory().getItemInHand().toString());
-        Bukkit.broadcastMessage(String.valueOf(TeamSelector.teamSelector));
         if(event.getPlayer().getInventory().getItemInHand().equals(TeamSelector.teamSelector)) {
             Inventory inventory;
             if(TeamSelector.teams.size() > 9) {

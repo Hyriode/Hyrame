@@ -18,15 +18,18 @@ public class Team extends ArrayList {
 
     public Team(TeamColor teamColor, ArrayList<Player> members, int maxSize, boolean friendlyFire) {
         if(members != null) {
+            for(Player player : members) {
+                if(TeamManager.getTeamByPlayer(player) != null) {
+                    TeamManager.getTeamByPlayer(player).remove(player);
+                }
+            }
             if(members.size() <= maxSize) {
                 this.teamColor = teamColor;
                 this.members = members;
                 this.maxSize = maxSize;
                 this.friendlyFire = friendlyFire;
                 Bukkit.getConsoleSender().sendMessage("New team created : " + teamColor.toString() + ", " + members+ ", " + maxSize + ", " + friendlyFire);
-                if(!friendlyFire) {
-                    TeamHandler.noFireFriend.add(this);
-                }
+                TeamManager.teamManager.add(this);
             }else {
                 Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error, number of members can't be superior to max size");
             }
@@ -36,9 +39,7 @@ public class Team extends ArrayList {
             this.maxSize = maxSize;
             this.friendlyFire = friendlyFire;
             Bukkit.getConsoleSender().sendMessage("New team created : " + teamColor.toString() + ", " + "any member" + ", " + maxSize + ", " + friendlyFire);
-            if(!friendlyFire) {
-                TeamHandler.noFireFriend.add(this);
-            }
+            TeamManager.teamManager.add(this);
         }
     }
 
@@ -48,13 +49,6 @@ public class Team extends ArrayList {
 
     public void setFriendlyFire(Boolean friendlyFire) {
         this.friendlyFire = friendlyFire;
-        if(!friendlyFire) {
-            TeamHandler.noFireFriend.add(this);
-        }else {
-            if(TeamHandler.noFireFriend.contains(this)) {
-                TeamHandler.noFireFriend.remove(this);
-            }
-        }
     }
 
     public TeamColor getTeamColor() {
@@ -76,8 +70,13 @@ public class Team extends ArrayList {
 
 
     public boolean addMember(Player member) {
+        Team team = TeamManager.getTeamByPlayer(member);
+        if(team != null) {
+            team.remove(member);
+        }
         if(!this.members.contains(member) || members.size() + 1 > maxSize) {
             this.members.add(member);
+            Bukkit.getConsoleSender().sendMessage("Player " + member.getName() + " was added to " + this.teamColor.toString());
             return true;
         }else {
             Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error, player " + member.getName() + " is aldrealdy in the team or the team is full");
