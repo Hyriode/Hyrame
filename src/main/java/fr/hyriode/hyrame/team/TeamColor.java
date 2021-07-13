@@ -27,18 +27,18 @@ public enum TeamColor {
     BLACK(Color.BLACK, 15, ChatColor.BLACK);
 
     private final Color color;
-    private final int ID;
+    private final int id;
     private final ChatColor chatColor;
 
-    TeamColor(Color color, int ID, ChatColor chatColor) {
+    TeamColor(Color color, int id, ChatColor chatColor) {
         this.color = color;
-        this.ID = ID;
+        this.id = id;
         this.chatColor = chatColor;
     }
 
     public static TeamColor getValueByID(int i) {
         for (TeamColor teamColor : values()) {
-            if(teamColor.ID == i) {
+            if(teamColor.id == i) {
                 return teamColor;
             }
         }
@@ -50,7 +50,7 @@ public enum TeamColor {
     }
 
     public int getID() {
-        return ID;
+        return id;
     }
 
     public ItemStack getColoredWool(int number, String name) {

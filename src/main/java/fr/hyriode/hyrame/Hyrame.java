@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame;
 
 import fr.hyriode.hyrame.commands.TestCommand;
+import fr.hyriode.hyrame.gameMethods.GameMethodsHandlers;
 import fr.hyriode.hyrame.team.TeamHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
@@ -14,6 +15,7 @@ public class Hyrame extends JavaPlugin {
         this.registerCommands();
 
         Bukkit.getServer().getPluginManager().registerEvents(new TeamHandler(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new GameMethodsHandlers(), this);
     }
 
     private void registerCommands() {
@@ -28,7 +30,7 @@ public class Hyrame extends JavaPlugin {
         }
 
         if(commandMap != null) {
-            commandMap.register("test", new TestCommand());
+            commandMap.register("test", new TestCommand(this));
         }
     }
 }

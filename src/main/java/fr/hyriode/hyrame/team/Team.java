@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.team;
 
+import fr.hyriode.hyrame.gameMethods.GamePlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -9,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Team extends ArrayList {
+public class Team {
 
     private TeamColor teamColor;
     private ArrayList<Player> members;
@@ -20,7 +21,7 @@ public class Team extends ArrayList {
         if(members != null) {
             for(Player player : members) {
                 if(TeamManager.getTeamByPlayer(player) != null) {
-                    TeamManager.getTeamByPlayer(player).remove(player);
+                    TeamManager.getTeamByPlayer(player).getMembers().remove(player);
                 }
             }
             if(members.size() <= maxSize) {
@@ -44,7 +45,7 @@ public class Team extends ArrayList {
     }
 
     public Boolean getFriendlyFire() {
-        return friendlyFire;
+        return this.friendlyFire;
     }
 
     public void setFriendlyFire(Boolean friendlyFire) {
@@ -52,16 +53,11 @@ public class Team extends ArrayList {
     }
 
     public TeamColor getTeamColor() {
-        return teamColor;
+        return this.teamColor;
     }
-
-    public void setTeamColor(TeamColor teamColor) {
-        this.teamColor = teamColor;
-    }
-
 
     public ArrayList<Player> getMembers() {
-        return members;
+        return this.members;
     }
 
     public void setMembers(ArrayList<Player> members) {
@@ -72,7 +68,7 @@ public class Team extends ArrayList {
     public boolean addMember(Player member) {
         Team team = TeamManager.getTeamByPlayer(member);
         if(team != null) {
-            team.remove(member);
+            team.getMembers().remove(member);
         }
         if(!this.members.contains(member) || members.size() + 1 > maxSize) {
             this.members.add(member);
@@ -93,23 +89,11 @@ public class Team extends ArrayList {
     }
 
     public int getMaxSize() {
-        return maxSize;
+        return this.maxSize;
     }
 
     public void setMaxSize(int maxSize) {
         this.maxSize = maxSize;
-    }
-
-    public void killAll() {
-        for(Player member : this.members) {
-            member.damage(100);
-        }
-    }
-
-    public void kickAll(String reason) {
-        for(Player member : this.members) {
-            member.kickPlayer(reason);
-        }
     }
 
     public void tpAll(Location location) {
@@ -134,5 +118,17 @@ public class Team extends ArrayList {
             member.getInventory().addItem(itemStack);
         }
     }
+
+    public Boolean isAlive() {
+        boolean isAlive = false;
+        for(Player member : this.members) {
+            if(GamePlayerManager.gamePlayerByPlayer(member) != null && GamePlayerManager.gamePlayerByPlayer(member).isAlive()) {
+                isAlive = true;
+                break;
+            }
+        }
+        return isAlive;
+    }
+
 
 }

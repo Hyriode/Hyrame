@@ -20,6 +20,6 @@ public class TeamManager{
     }
 
     public static void deleteEmptyTeams() {
-        teamManager.removeIf(team -> team == null || team.isEmpty());
+        teamManager.removeIf(team -> team == null || team.getMembers().isEmpty());
     }
 }
