@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.gameMethods;
+package fr.hyriode.hyrame.gamemethods;
 
 import fr.hyriode.hyrame.Hyrame;
 import fr.hyriode.hyrame.team.Team;
@@ -13,9 +13,9 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class GamePlayer {
 
-    private final Hyrame hyrame;
-    private final Player player;
-    private final Game game;
+    private final Hyrame hyrame = Hyrame.getPlugin(Hyrame.class);
+    private Player player;
+    private Game game;
     private Location respawnLocation;
     private Boolean canSpeakWhenDead;
     private Location deadLocation;
@@ -26,17 +26,15 @@ public class GamePlayer {
     private GamePlayer lastDamager;
 
 
-    public GamePlayer(Hyrame hyrame, Player player, Game game, Location respawnLocation) {
-        this.hyrame = hyrame;
-        this.player = player;
-        this.game = game;
-        this.canRespawn = game.canRespawn();
-        this.respawnTime = game.getBaseRespawnTime();
-        if(this.canRespawn) {
-            this.respawnLocation = respawnLocation;
+    public GamePlayer(Player player, Game game) {
+        if(GameManager.gamePlayerByPlayer(player) == null) {
+            this.player = player;
+            this.game = game;
+            this.canRespawn = this.game.canRespawn();
+            this.respawnTime = this.game.getBaseRespawnTime();
+            GameManager.gamePlayersManager.add(this);
+            this.game.gamePlayers.add(this);
         }
-        GamePlayerManager.gamePlayersManager.add(this);
-        game.gamePlayers.add(this);
     }
 
     public Player getPlayer() {
@@ -108,12 +106,12 @@ public class GamePlayer {
         this.player.setGameMode(GameMode.SPECTATOR);
         this.player.teleport(new Location(this.player.getWorld(), 0, 100, 0));
 
-        if(this.getGame().getDeathMethod().equals(DeathMethods.KEEPINVENTORY)) {
+        if(this.getGame().getDeathMethod().equals(DeathMethods.KEEP_INVENTORY)) {
             this.setDeathInventory(this.player.getInventory());
             this.player.getInventory().clear();
-        }else if(this.getGame().getDeathMethod().equals(DeathMethods.DESTROYSTUFF)) {
+        }else if(this.getGame().getDeathMethod().equals(DeathMethods.DESTROY_STUFF)) {
             this.player.getInventory().clear();
-        }else if(this.getGame().getDeathMethod().equals(DeathMethods.DROPATDEATHLOCATION)) {
+        }else if(this.getGame().getDeathMethod().equals(DeathMethods.DROP_AT_DEATH_LOCATION)) {
             for (ItemStack itemStack : this.player.getInventory().getContents()) {
                 this.player.getWorld().dropItemNaturally(this.player.getLocation(), itemStack);
                 this.player.getInventory().removeItem(itemStack);
@@ -122,7 +120,7 @@ public class GamePlayer {
                 this.player.getWorld().dropItemNaturally(this.player.getLocation(), itemStack);
                 this.player.getInventory().removeItem(itemStack);
             }
-        }else if(this.getGame().getDeathMethod().equals(DeathMethods.GIVESTUFFTOKILLER)) {
+        }else if(this.getGame().getDeathMethod().equals(DeathMethods.GIVE_STUFF_TO_KILLER)) {
             for (ItemStack itemStack : this.player.getInventory().getContents()) {
                 if(this.lastDamager.player.getInventory().getContents().length < this.lastDamager.player.getInventory().getSize()) {
                     this.lastDamager.player.getInventory().addItem(itemStack);
@@ -139,7 +137,7 @@ public class GamePlayer {
                 }
                 this.player.getInventory().removeItem(itemStack);
             }
-        }else if(this.getGame().getDeathMethod().equals(DeathMethods.DROPATKILLERLOCATION)) {
+        }else if(this.getGame().getDeathMethod().equals(DeathMethods.DROP_AT_KILLER_LOCATION)) {
             for (ItemStack itemStack : this.player.getInventory().getContents()) {
                 this.lastDamager.player.getWorld().dropItemNaturally(this.lastDamager.player.getLocation(), itemStack);
                 this.player.getInventory().removeItem(itemStack);

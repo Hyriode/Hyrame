@@ -1,29 +1,39 @@
-package fr.hyriode.hyrame.gameMethods;
+package fr.hyriode.hyrame.gamemethods;
 
-import fr.hyriode.hyrame.team.TeamManager;
-import org.bukkit.Location;
+import fr.hyriode.hyrame.team.Team;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 
 public class Game {
 
-    public ArrayList<GamePlayer> gamePlayers = new ArrayList<GamePlayer>();
-    public ArrayList<GamePlayer> deadPlayers = new ArrayList<GamePlayer>();
+    public ArrayList<Team> teams = new ArrayList<>();
+    public ArrayList<GamePlayer> gamePlayers = new ArrayList<>();
+    public ArrayList<GamePlayer> deadPlayers = new ArrayList<>();
 
     private DeathMethods deathMethod;
-    private final String gameName;
+    private String gameName;
     private boolean canPlayersSpeakDead;
     private boolean canPlayersSpectateDead;
     private boolean baseCanRespawn;
     private int baseRespawnTime;
+    public boolean isNoGameTeam;
 
-    public Game(DeathMethods deathMethod, String gameName, boolean canPlayersSpeakDead, boolean canPlayersSpectateDead, boolean baseCanRespawn, int baseRespawnTime) {
-         this.deathMethod = deathMethod;
-         this.gameName = gameName;
-         this.canPlayersSpeakDead = canPlayersSpeakDead;
-         this.canPlayersSpectateDead = canPlayersSpectateDead;
-         this.baseCanRespawn = baseCanRespawn;
-         this.baseRespawnTime = baseRespawnTime;
+
+    public Game(boolean isNoGameTeam, DeathMethods deathMethod, String gameName, boolean canPlayersSpeakDead, boolean canPlayersSpectateDead, boolean baseCanRespawn, int baseRespawnTime) {
+        if(GameManager.getGameByName(gameName) == null) {
+            this.isNoGameTeam = isNoGameTeam;
+            this.deathMethod = deathMethod;
+            this.gameName = gameName;
+            this.canPlayersSpeakDead = canPlayersSpeakDead;
+            this.canPlayersSpectateDead = canPlayersSpectateDead;
+            this.baseCanRespawn = baseCanRespawn;
+            this.baseRespawnTime = baseRespawnTime;
+            GameManager.games.add(this);
+        }else {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "The game " + gameName + "cannot be created because a game already exist");
+        }
     }
 
 
@@ -70,6 +80,8 @@ public class Game {
     public void setBaseRespawnTime(int baseRespawnTime) {
         this.baseRespawnTime = baseRespawnTime;
     }
+
+
 
     /*public void startGame(int godTime, ArrayList<Location> spawnLocations, boolean spawnInTeams, boolean setRespawnLocationToSpawnLocation) {
         if(spawnInTeams) {

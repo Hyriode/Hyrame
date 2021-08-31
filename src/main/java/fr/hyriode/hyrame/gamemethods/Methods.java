@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.gameMethods;
+package fr.hyriode.hyrame.gamemethods;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;

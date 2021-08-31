@@ -1,6 +1,8 @@
 package fr.hyriode.hyrame.team;
 
-import fr.hyriode.hyrame.gameMethods.GamePlayerManager;
+import fr.hyriode.hyrame.gamemethods.Game;
+import fr.hyriode.hyrame.gamemethods.GameManager;
+import fr.hyriode.hyrame.gamemethods.GamePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -12,31 +14,33 @@ import java.util.Random;
 
 public class Team {
 
+    private Game game;
     private TeamColor teamColor;
-    private ArrayList<Player> members;
+    private ArrayList<GamePlayer> members;
     private int maxSize;
     private boolean friendlyFire;
 
-    public Team(TeamColor teamColor, ArrayList<Player> members, int maxSize, boolean friendlyFire) {
-        if(members != null) {
+    public Team(Game game, TeamColor teamColor, ArrayList<Player> members, int maxSize, boolean friendlyFire) {
+        if(members != null && !game.isNoGameTeam) {
             for(Player player : members) {
                 if(TeamManager.getTeamByPlayer(player) != null) {
                     TeamManager.getTeamByPlayer(player).getMembers().remove(player);
                 }
             }
             if(members.size() <= maxSize) {
+                this.game = game;
                 this.teamColor = teamColor;
-                this.members = members;
+                this.members = GameManager.createGamePlayers(members, game);
                 this.maxSize = maxSize;
                 this.friendlyFire = friendlyFire;
                 Bukkit.getConsoleSender().sendMessage("New team created : " + teamColor.toString() + ", " + members+ ", " + maxSize + ", " + friendlyFire);
                 TeamManager.teamManager.add(this);
             }else {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error, number of members can't be superior to max size");
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error the team " + teamColor.toString() + "of " + game.getGameName() + " because the number of members is superior to max size or the game " + game.getGameName() + " is a noGameTeam");
             }
         }else {
             this.teamColor = teamColor;
-            this.members = new ArrayList<Player>();
+            this.members = new ArrayList<>();
             this.maxSize = maxSize;
             this.friendlyFire = friendlyFire;
             Bukkit.getConsoleSender().sendMessage("New team created : " + teamColor.toString() + ", " + "any member" + ", " + maxSize + ", " + friendlyFire);
@@ -57,22 +61,38 @@ public class Team {
     }
 
     public ArrayList<Player> getMembers() {
-        return this.members;
+        ArrayList<Player> players = new ArrayList<>();
+        for (GamePlayer gamePlayer : members) {
+            players.add(gamePlayer.getPlayer());
+        }
+        return players;
     }
 
     public void setMembers(ArrayList<Player> members) {
-        this.members = members;
+        for(Player player : members) {
+            if(TeamManager.getTeamByPlayer(player) != null) {
+                TeamManager.getTeamByPlayer(player).getMembers().remove(player);
+            }
+            if(GameManager.gamePlayerByPlayer(player) == null) {
+                this.members.add(new GamePlayer(player, game));
+            }else {
+                this.members.add(GameManager.gamePlayerByPlayer(player));
+            }
+        }
     }
-
 
     public boolean addMember(Player member) {
         Team team = TeamManager.getTeamByPlayer(member);
         if(team != null) {
             team.getMembers().remove(member);
         }
-        if(!this.members.contains(member) || members.size() + 1 > maxSize) {
-            this.members.add(member);
-            Bukkit.getConsoleSender().sendMessage("Player " + member.getName() + " was added to " + this.teamColor.toString());
+        if(!this.members.contains(member) && this.members.size() + 1 <= maxSize) {
+            if(GameManager.gamePlayerByPlayer(member) == null) {
+                this.members.add(new GamePlayer(member, game));
+            }else {
+                this.members.add(GameManager.gamePlayerByPlayer(member));
+            }
+            Bukkit.getConsoleSender().sendMessage("Player " + member.getName() + " has been added to " + this.teamColor.toString());
             return true;
         }else {
             Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Error, player " + member.getName() + " is aldrealdy in the team or the team is full");
@@ -88,6 +108,10 @@ public class Team {
         }
     }
 
+    public void clearMembers() {
+        this.members.clear();
+    }
+
     public int getMaxSize() {
         return this.maxSize;
     }
@@ -97,32 +121,21 @@ public class Team {
     }
 
     public void tpAll(Location location) {
-        for(Player member : this.members) {
-            member.teleport(location);
-        }
-    }
-
-    public void spreadAll(Location center, int rayon) {
-        for(Player member : this.members) {
-            final double x = center.getX() + new Random().nextInt(rayon*2) - rayon/2;
-            final double z = center.getZ() + new Random().nextInt(rayon*2) - rayon/2;
-            final double y =  member.getWorld().getHighestBlockAt((int)x, (int)z).getY();
-            final Location location = new Location(member.getWorld(), x, y, z);
-
-            member.teleport(location);
+        for(GamePlayer member : this.members) {
+            member.getPlayer().teleport(location);
         }
     }
 
     public void giveAll(ItemStack itemStack) {
-        for(Player member : this.members) {
-            member.getInventory().addItem(itemStack);
+        for(GamePlayer member : this.members) {
+            member.getPlayer().getInventory().addItem(itemStack);
         }
     }
 
     public Boolean isAlive() {
         boolean isAlive = false;
-        for(Player member : this.members) {
-            if(GamePlayerManager.gamePlayerByPlayer(member) != null && GamePlayerManager.gamePlayerByPlayer(member).isAlive()) {
+        for(GamePlayer member : this.members) {
+            if(member.isAlive()) {
                 isAlive = true;
                 break;
             }
@@ -130,5 +143,12 @@ public class Team {
         return isAlive;
     }
 
-
+    public Player pickRandomMember() {
+        if(members != null && !members.isEmpty()) {
+            Random random = new Random();
+            return members.get(random.nextInt(members.size())).getPlayer();
+        }else {
+            return null;
+        }
+    }
 }
