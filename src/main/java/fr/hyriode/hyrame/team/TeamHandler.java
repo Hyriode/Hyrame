@@ -12,7 +12,7 @@ import org.bukkit.inventory.Inventory;
 
 public class TeamHandler implements Listener {
     @EventHandler
-    public void onEntityDommageByEntity(EntityDamageByEntityEvent event) {
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if(event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             if(TeamManager.getTeamByPlayer((Player) event.getEntity()) != null && TeamManager.getTeamByPlayer((Player) event.getDamager()) != null) {
                 if(TeamManager.getTeamByPlayer((Player) event.getEntity()).equals(TeamManager.getTeamByPlayer((Player) event.getDamager()))) {
@@ -30,9 +30,9 @@ public class TeamHandler implements Listener {
     public void onPlayerClick(PlayerInteractEvent event) {
         if(event.getPlayer().getInventory().getItemInHand().equals(TeamSelector.teamSelector)) {
             Inventory inventory;
-            if(TeamSelector.teams.size() > 9) {
+            if (TeamSelector.teams.size() > 9) {
                 inventory = Bukkit.createInventory(event.getPlayer(), 18);
-            }else {
+            } else {
                 inventory = Bukkit.createInventory(event.getPlayer(), 9, "Selection des teams");
             }
             for(Team team : TeamSelector.teams) {
@@ -60,4 +60,5 @@ public class TeamHandler implements Listener {
             event.setCancelled(true);
         }
     }
+
 }

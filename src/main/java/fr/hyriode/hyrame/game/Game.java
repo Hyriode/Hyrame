@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.gamemethods;
+package fr.hyriode.hyrame.game;
 
 import fr.hyriode.hyrame.team.Team;
 import org.bukkit.Bukkit;
@@ -19,7 +19,6 @@ public class Game {
     private boolean baseCanRespawn;
     private int baseRespawnTime;
     public boolean isNoGameTeam;
-
 
     public Game(boolean isNoGameTeam, DeathMethods deathMethod, String gameName, boolean canPlayersSpeakDead, boolean canPlayersSpectateDead, boolean baseCanRespawn, int baseRespawnTime) {
         if(GameManager.getGameByName(gameName) == null) {

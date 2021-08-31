@@ -1,5 +1,9 @@
 import java.nio.charset.StandardCharsets
 
+plugins {
+    id "com.github.johnrengelman.shadow" version "7.0.0"
+}
+
 apply plugin: 'idea'
 apply plugin: 'java-library'
 
@@ -26,14 +30,8 @@ repositories {
     maven { url = 'https://oss.sonatype.org/content/groups/public/' }
 }
 
-jar {
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    } {
-        exclude "META-INF/.SF"
-        exclude "META-INF/.DSA"
-        exclude "META-INF/*.RSA"
-    }
+shadowJar {
+    configurations = [project.configurations.shadow]
 }
 
 dependencies {

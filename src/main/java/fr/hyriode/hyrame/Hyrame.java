@@ -1,21 +1,56 @@
 package fr.hyriode.hyrame;
 
-import fr.hyriode.hyrame.commands.CommandManager;
-import fr.hyriode.hyrame.commands.TestCommand;
-import fr.hyriode.hyrame.gamemethods.GameMethodsHandlers;
-import fr.hyriode.hyrame.team.TeamHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandMap;
-import org.bukkit.plugin.java.JavaPlugin;
+import fr.hyriode.hyrame.command.HyriCommandManager;
+import fr.hyriode.hyrame.listener.HyriListenerManager;
+import fr.hyriode.hyrame.plugin.IPluginProvider;
 
-public class Hyrame extends JavaPlugin {
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-    private CommandManager commandManager;
+public class Hyrame {
 
-    public void onEnable() {
-        this.commandManager = new CommandManager(this);
+    private final HyriListenerManager listenerManager;
+    private final HyriCommandManager commandManager;
 
-        Bukkit.getServer().getPluginManager().registerEvents(new TeamHandler(), this);
-        Bukkit.getServer().getPluginManager().registerEvents(new GameMethodsHandlers(), this);
+    private final IPluginProvider<?> pluginProvider;
+
+    private final Logger logger;
+
+    public Hyrame(IPluginProvider<?> pluginProvider) {
+        this.pluginProvider = pluginProvider;
+        this.logger = this.pluginProvider.getLogger();
+        this.commandManager = new HyriCommandManager(this);
+        this.listenerManager = new HyriListenerManager(this);
+
+        this.registerListeners();
     }
+
+    private void registerListeners() {
+        this.listenerManager.autoRegisterListener("fr.hyriode.hyrame");
+    }
+
+    public void log(Level level, String msg) {
+        this.logger.log(level, msg);
+    }
+
+    public void log(String msg) {
+        this.log(Level.INFO, msg);
+    }
+
+    public IPluginProvider<?> getPluginProvider() {
+        return this.pluginProvider;
+    }
+
+    public HyriCommandManager getCommandManager() {
+        return this.commandManager;
+    }
+
+    public HyriListenerManager getListenerManager() {
+        return this.listenerManager;
+    }
+
+    public Logger getLogger() {
+        return this.logger;
+    }
+
 }
