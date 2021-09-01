@@ -6,6 +6,7 @@ plugins {
 
 apply plugin: 'idea'
 apply plugin: 'java-library'
+apply plugin: 'maven-publish'
 
 group = 'fr.hyriode'
 version = '1.0.0-SNAPSHOT'
@@ -28,14 +29,80 @@ repositories {
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
 
     maven { url = 'https://oss.sonatype.org/content/groups/public/' }
+
+    maven {
+        name = 'HyriAPI_maven'
+        url = 'https://maven.pkg.github.com/Hyriode/HyriAPI/'
+
+        credentials {
+            username System.getenv('USERNAME')
+            password System.getenv('TOKEN')
+        }
+    }
+
+    maven {
+        name = 'HyriCommon_maven'
+        url = 'https://maven.pkg.github.com/Hyriode/HyriCommon/'
+
+        credentials {
+            username System.getenv('USERNAME')
+            password System.getenv('TOKEN')
+        }
+    }
 }
 
 shadowJar {
-    configurations = [project.configurations.shadow]
+    configurations = [project.configurations.runtimeClasspath]
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    classifier 'javadoc'
+    from javadoc
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact tasks.sourcesJar
+            artifact tasks.javadocJar
+
+            pom {
+                groupId = project.group
+                artifactId = 'hyrame'
+                version = project.version
+                name = 'Hyrame'
+                description = 'Project to create game easily'
+                url = 'https://github.com/Hyriode/Hyrame'
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            credentials {
+                username System.getenv('USERNAME')
+                password System.getenv('TOKEN')
+            }
+            name = "Hyrame_maven"
+            url = "https://maven.pkg.github.com/Hyriode/Hyrame"
+        }
+    }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+    api 'fr.hyriode:hyriapi:0.0.6-SNAPSHOT'
+    api 'fr.hyriode:hyricommon:1.0.3-SNAPSHOT'
 }
 

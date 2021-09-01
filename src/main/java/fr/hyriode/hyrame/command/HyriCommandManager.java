@@ -15,7 +15,7 @@ public class HyriCommandManager {
 
     private final CommandMap commandMap;
 
-    private final IPluginProvider<?> pluginProvider;
+    private final IPluginProvider pluginProvider;
 
     private final Hyrame hyrame;
 

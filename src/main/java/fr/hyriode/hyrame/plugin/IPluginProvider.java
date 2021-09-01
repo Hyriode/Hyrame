@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.plugin;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 /**
@@ -9,14 +10,14 @@ import java.util.logging.Logger;
  * Created by AstFaster
  * on 31/08/2021 at 16:55
  */
-public interface IPluginProvider<P extends JavaPlugin> {
+public interface IPluginProvider {
 
     /**
      * Get plugin main class
      *
      * @return - A {@link JavaPlugin}
      */
-    P getPlugin();
+    JavaPlugin getPlugin();
 
     /**
      * Get located packages of commands
@@ -31,6 +32,13 @@ public interface IPluginProvider<P extends JavaPlugin> {
      * @return - A list of {@link String}
      */
     String[] getListenersPackages();
+
+    /**
+     * Get the languages path
+     *
+      * @return - Languages path
+     */
+    String getLanguagesPath();
 
     /**
      * Get plugin logger
