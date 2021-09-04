@@ -9,7 +9,7 @@ apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 group = 'fr.hyriode'
-version = '1.0.0-SNAPSHOT'
+version = '1.0.1-SNAPSHOT'
 archivesBaseName = 'Hyrame'
 
 java {
@@ -105,4 +105,3 @@ dependencies {
     api 'fr.hyriode:hyriapi:0.0.6-SNAPSHOT'
     api 'fr.hyriode:hyricommon:1.0.3-SNAPSHOT'
 }
-

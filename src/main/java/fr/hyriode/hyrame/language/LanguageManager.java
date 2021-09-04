@@ -6,9 +6,11 @@ import fr.hyriode.hyrame.Hyrame;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.hyriapi.player.IHyriPlayer;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -43,7 +45,7 @@ public class LanguageManager {
             final InputStream inputStream = pluginProvider.getClass().getResourceAsStream(path);
 
             if (inputStream != null) {
-                final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
                 final JsonReader reader = new JsonReader(bufferedReader);
                 final Map<String, String> map = new Gson().fromJson(reader, Map.class);
 
@@ -51,6 +53,7 @@ public class LanguageManager {
 
                 for (Map.Entry<String, String> entry : map.entrySet()) {
                     final String key = entry.getKey();
+                    final String value = ChatColor.translateAlternateColorCodes('&', entry.getValue());
 
                     LanguageMessage message = this.getMessage(key);
 
@@ -60,7 +63,7 @@ public class LanguageManager {
                         this.messages.remove(message);
                     }
 
-                    message.addValue(language, entry.getValue());
+                    message.addValue(language, value);
 
                     this.messages.add(message);
                 }
