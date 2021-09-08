@@ -10,10 +10,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.Plugin;
 
 public class GamePlayer {
 
-    private final Hyrame hyrame = Hyrame.getPlugin(Hyrame.class);
+    private Plugin plugin;
     private Player player;
     private Game game;
     private Location respawnLocation;
@@ -26,8 +27,9 @@ public class GamePlayer {
     private GamePlayer lastDamager;
 
 
-    public GamePlayer(Player player, Game game) {
+    public GamePlayer(Plugin plugin, Player player, Game game) {
         if(GameManager.gamePlayerByPlayer(player) == null) {
+            this.plugin = plugin;
             this.player = player;
             this.game = game;
             this.canRespawn = this.game.canRespawn();
@@ -148,7 +150,7 @@ public class GamePlayer {
             }
         }
         if(this.canRespawn()) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(hyrame, this.respawn(), this.getRespawnTime() * 20L);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, this.respawn(), this.getRespawnTime() * 20L);
         }else {
             this.finalKill(this.getGame().canPlayersSpectateDead(), this.getGame().canPlayersSpeakDead());
         }

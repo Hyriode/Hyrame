@@ -1,36 +1,41 @@
 package fr.hyriode.hyrame.team;
 
+import fr.hyriode.hyrame.Hyrame;
 import fr.hyriode.hyrame.gamemethods.Game;
 import fr.hyriode.hyrame.gamemethods.GameManager;
 import fr.hyriode.hyrame.gamemethods.GamePlayer;
+import fr.hyriode.hyrame.plugin.IPluginProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class Team {
 
+    private Plugin plugin;
     private Game game;
     private TeamColor teamColor;
     private ArrayList<GamePlayer> members;
     private int maxSize;
     private boolean friendlyFire;
 
-    public Team(Game game, TeamColor teamColor, ArrayList<Player> members, int maxSize, boolean friendlyFire) {
-        if(members != null && !game.isNoGameTeam) {
+    public Team(Plugin plugin, Game game, TeamColor teamColor, ArrayList<Player> members, int maxSize, boolean friendlyFire) {
+        if(members != null && game.isNoTeamGame) {
             for(Player player : members) {
                 if(TeamManager.getTeamByPlayer(player) != null) {
                     TeamManager.getTeamByPlayer(player).getMembers().remove(player);
                 }
             }
             if(members.size() <= maxSize) {
+                this.plugin = plugin;
                 this.game = game;
                 this.teamColor = teamColor;
-                this.members = GameManager.createGamePlayers(members, game);
+                this.members = GameManager.createGamePlayers(plugin ,members, game);
                 this.maxSize = maxSize;
                 this.friendlyFire = friendlyFire;
                 Bukkit.getConsoleSender().sendMessage("New team created : " + teamColor.toString() + ", " + members+ ", " + maxSize + ", " + friendlyFire);
@@ -74,7 +79,7 @@ public class Team {
                 TeamManager.getTeamByPlayer(player).getMembers().remove(player);
             }
             if(GameManager.gamePlayerByPlayer(player) == null) {
-                this.members.add(new GamePlayer(player, game));
+                this.members.add(new GamePlayer(plugin, player, game));
             }else {
                 this.members.add(GameManager.gamePlayerByPlayer(player));
             }
@@ -88,7 +93,7 @@ public class Team {
         }
         if(!this.members.contains(member) && this.members.size() + 1 <= maxSize) {
             if(GameManager.gamePlayerByPlayer(member) == null) {
-                this.members.add(new GamePlayer(member, game));
+                this.members.add(new GamePlayer(plugin, member, game));
             }else {
                 this.members.add(GameManager.gamePlayerByPlayer(member));
             }

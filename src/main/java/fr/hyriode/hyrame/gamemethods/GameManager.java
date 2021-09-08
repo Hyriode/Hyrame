@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.gamemethods;
 
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 
@@ -32,10 +33,10 @@ public class GameManager {
         return playerGamePlayer;
     }
 
-    public static ArrayList<GamePlayer> createGamePlayers(ArrayList<Player> players, Game game) {
+    public static ArrayList<GamePlayer> createGamePlayers(Plugin plugin, ArrayList<Player> players, Game game) {
         ArrayList<GamePlayer> gamePlayers = new ArrayList<>();
         for(Player player : players) {
-            gamePlayers.add(new GamePlayer(player, game));
+            gamePlayers.add(new GamePlayer(plugin, player, game));
         }
         return gamePlayers;
     }

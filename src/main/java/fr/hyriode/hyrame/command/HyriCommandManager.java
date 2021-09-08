@@ -1,41 +1,61 @@
-package fr.hyriode.hyrame.commands;
+package fr.hyriode.hyrame.command;
 
 
 import com.google.common.reflect.ClassPath;
+import fr.hyriode.hyrame.Hyrame;
+import fr.hyriode.hyrame.plugin.IPluginProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
-public class CommandManager {
+public class HyriCommandManager {
 
-    private JavaPlugin plugin;
-    private CommandMap commandMap;
+    private final CommandMap commandMap;
 
-    public CommandManager(JavaPlugin plugin) {
-        this.plugin = plugin;
+    private final IPluginProvider<?> pluginProvider;
+
+    private final Hyrame hyrame;
+
+    public HyriCommandManager(Hyrame hyrame) {
+        this.hyrame = hyrame;
+        this.pluginProvider = this.hyrame.getPluginProvider();
         this.commandMap = this.getCommandMap();
-        this.autoRegister();
+
+        this.autoRegisterCommands();
     }
 
+    private void autoRegisterCommands() {
+        this.hyrame.log("Searching for commands in packages provided...");
 
-    private void autoRegister() {
+        for (String commandsPackage : this.pluginProvider.getCommandsPackages()) {
+            this.hyrame.log("Searching for commands in package '" + commandsPackage + "'...");
+
+            this.autoRegisterCommand(commandsPackage);
+        }
+    }
+
+    public void autoRegisterCommand(String commandsPackage) {
         try {
-            ClassPath classPath = ClassPath.from(this.getClass().getClassLoader());
+            final ClassPath classPath = ClassPath.from(this.getClass().getClassLoader());
 
-            for(ClassPath.ClassInfo classInfo : classPath.getTopLevelClassesRecursive("fr.hyriode.hyrame")) {
-
+            for(ClassPath.ClassInfo classInfo : classPath.getTopLevelClassesRecursive(commandsPackage)) {
                 final Class<?> clazz = Class.forName(classInfo.getName());
 
                 if(this.checkSuperClass(clazz)) {
                     if(this.hasParameterLessConstructor(clazz)) {
                         final HyriCommand command = (HyriCommand) clazz.newInstance();
-                        command.setPlugin(this.plugin);
+
+                        command.setPluginSupplier(this.pluginProvider::getPlugin);
+                        command.addArguments();
+
+                        this.hyrame.log("Registering '" + command.getName() + "' command");
 
                         this.commandMap.register(command.getName(), command);
+                    } else {
+                        this.hyrame.log(clazz.getSimpleName() + " inherit of " + HyriCommand.class.getSimpleName() + " but doesn't have a parameter less constructor!");
                     }
                 }
             }
@@ -77,6 +97,7 @@ public class CommandManager {
         }
         return null;
     }
+
 }
 
 
