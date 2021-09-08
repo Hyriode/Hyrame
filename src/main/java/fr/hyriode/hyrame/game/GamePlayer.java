@@ -9,14 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.plugin.Plugin;
 
 public class GamePlayer {
 
-<<<<<<< HEAD:src/main/java/fr/hyriode/hyrame/gamemethods/GamePlayer.java
-    private Plugin plugin;
-=======
->>>>>>> 03c9801153edce882d7bd69bfb8fd8946e043860:src/main/java/fr/hyriode/hyrame/game/GamePlayer.java
     private Player player;
     private Game game;
     private Location respawnLocation;
@@ -29,9 +24,8 @@ public class GamePlayer {
     private GamePlayer lastDamager;
 
 
-    public GamePlayer(Plugin plugin, Player player, Game game) {
+    public GamePlayer(Player player, Game game) {
         if(GameManager.gamePlayerByPlayer(player) == null) {
-            this.plugin = plugin;
             this.player = player;
             this.game = game;
             this.canRespawn = this.game.canRespawn();
@@ -152,11 +146,7 @@ public class GamePlayer {
             }
         }
         if(this.canRespawn()) {
-<<<<<<< HEAD:src/main/java/fr/hyriode/hyrame/gamemethods/GamePlayer.java
-            Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, this.respawn(), this.getRespawnTime() * 20L);
-=======
             //Bukkit.getScheduler().scheduleSyncDelayedTask(hyrame, this.respawn(), this.getRespawnTime() * 20L);
->>>>>>> 03c9801153edce882d7bd69bfb8fd8946e043860:src/main/java/fr/hyriode/hyrame/game/GamePlayer.java
         }else {
             this.finalKill(this.getGame().canPlayersSpectateDead(), this.getGame().canPlayersSpeakDead());
         }
@@ -216,4 +206,3 @@ public class GamePlayer {
         this.lastDamager = lastDamager;
     }
 }
-

@@ -36,7 +36,11 @@ public interface IPluginProvider {
     /**
      * Get the languages path
      *
+<<<<<<< HEAD
      * @return - Languages path
+=======
+      * @return - Languages path
+>>>>>>> 03c9801153edce882d7bd69bfb8fd8946e043860
      */
     String getLanguagesPath();
 

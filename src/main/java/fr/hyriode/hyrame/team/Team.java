@@ -1,16 +1,8 @@
 package fr.hyriode.hyrame.team;
 
-<<<<<<< HEAD
-import fr.hyriode.hyrame.Hyrame;
-import fr.hyriode.hyrame.gamemethods.Game;
-import fr.hyriode.hyrame.gamemethods.GameManager;
-import fr.hyriode.hyrame.gamemethods.GamePlayer;
-import fr.hyriode.hyrame.plugin.IPluginProvider;
-=======
 import fr.hyriode.hyrame.game.Game;
 import fr.hyriode.hyrame.game.GameManager;
 import fr.hyriode.hyrame.game.GamePlayer;
->>>>>>> 03c9801153edce882d7bd69bfb8fd8946e043860
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -31,7 +23,7 @@ public class Team {
     private boolean friendlyFire;
 
     public Team(Plugin plugin, Game game, TeamColor teamColor, ArrayList<Player> members, int maxSize, boolean friendlyFire) {
-        if(members != null && game.isNoTeamGame) {
+        if(members != null && game.isNoGameTeam) {
             for(Player player : members) {
                 if(TeamManager.getTeamByPlayer(player) != null) {
                     TeamManager.getTeamByPlayer(player).getMembers().remove(player);
@@ -85,7 +77,7 @@ public class Team {
                 TeamManager.getTeamByPlayer(player).getMembers().remove(player);
             }
             if(GameManager.gamePlayerByPlayer(player) == null) {
-                this.members.add(new GamePlayer(plugin, player, game));
+                this.members.add(new GamePlayer(player, game));
             }else {
                 this.members.add(GameManager.gamePlayerByPlayer(player));
             }
@@ -99,7 +91,7 @@ public class Team {
         }
         if(!this.members.contains(member) && this.members.size() + 1 <= maxSize) {
             if(GameManager.gamePlayerByPlayer(member) == null) {
-                this.members.add(new GamePlayer(plugin, member, game));
+                this.members.add(new GamePlayer(member, game));
             }else {
                 this.members.add(GameManager.gamePlayerByPlayer(member));
             }

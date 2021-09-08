@@ -36,7 +36,7 @@ public class GameManager {
     public static ArrayList<GamePlayer> createGamePlayers(Plugin plugin, ArrayList<Player> players, Game game) {
         ArrayList<GamePlayer> gamePlayers = new ArrayList<>();
         for(Player player : players) {
-            gamePlayers.add(new GamePlayer(plugin, player, game));
+            gamePlayers.add(new GamePlayer(player, game));
         }
         return gamePlayers;
     }
