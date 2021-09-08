@@ -1,6 +1,5 @@
-package fr.hyriode.hyrame.gamemethods;
+package fr.hyriode.hyrame.game;
 
-import fr.hyriode.hyrame.Hyrame;
 import fr.hyriode.hyrame.team.Team;
 import fr.hyriode.hyrame.team.TeamManager;
 import org.bukkit.Bukkit;
@@ -14,7 +13,10 @@ import org.bukkit.plugin.Plugin;
 
 public class GamePlayer {
 
+<<<<<<< HEAD:src/main/java/fr/hyriode/hyrame/gamemethods/GamePlayer.java
     private Plugin plugin;
+=======
+>>>>>>> 03c9801153edce882d7bd69bfb8fd8946e043860:src/main/java/fr/hyriode/hyrame/game/GamePlayer.java
     private Player player;
     private Game game;
     private Location respawnLocation;
@@ -150,7 +152,11 @@ public class GamePlayer {
             }
         }
         if(this.canRespawn()) {
+<<<<<<< HEAD:src/main/java/fr/hyriode/hyrame/gamemethods/GamePlayer.java
             Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, this.respawn(), this.getRespawnTime() * 20L);
+=======
+            //Bukkit.getScheduler().scheduleSyncDelayedTask(hyrame, this.respawn(), this.getRespawnTime() * 20L);
+>>>>>>> 03c9801153edce882d7bd69bfb8fd8946e043860:src/main/java/fr/hyriode/hyrame/game/GamePlayer.java
         }else {
             this.finalKill(this.getGame().canPlayersSpectateDead(), this.getGame().canPlayersSpeakDead());
         }

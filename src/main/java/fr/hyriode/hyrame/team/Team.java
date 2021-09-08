@@ -1,10 +1,16 @@
 package fr.hyriode.hyrame.team;
 
+<<<<<<< HEAD
 import fr.hyriode.hyrame.Hyrame;
 import fr.hyriode.hyrame.gamemethods.Game;
 import fr.hyriode.hyrame.gamemethods.GameManager;
 import fr.hyriode.hyrame.gamemethods.GamePlayer;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
+=======
+import fr.hyriode.hyrame.game.Game;
+import fr.hyriode.hyrame.game.GameManager;
+import fr.hyriode.hyrame.game.GamePlayer;
+>>>>>>> 03c9801153edce882d7bd69bfb8fd8946e043860
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

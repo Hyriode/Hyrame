@@ -1,6 +1,6 @@
 package fr.hyriode.hyrame.team;
 
-import fr.hyriode.hyrame.gamemethods.Game;
+import fr.hyriode.hyrame.game.Game;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 

@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.gamemethods;
+package fr.hyriode.hyrame.game;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-public class GameMethodsHandlers implements Listener {
+public class GameMethodsHandler implements Listener {
 
     @EventHandler
     public void onPlayerSpeak(AsyncPlayerChatEvent event) {
@@ -24,13 +24,16 @@ public class GameMethodsHandlers implements Listener {
     }
 
     @EventHandler
-    public void onEntitytakeDamage(EntityDamageEvent event) {
+    public void onEntityDamage(EntityDamageEvent event) {
         if(event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
+            final Player player = (Player) event.getEntity();
+
             if(GameManager.gamePlayerByPlayer(player) != null) {
                 if(player.getHealth() - event.getFinalDamage() <= 0) {
-                    GamePlayer gamePlayer = GameManager.gamePlayerByPlayer(player);
+                    final GamePlayer gamePlayer = GameManager.gamePlayerByPlayer(player);
+
                     gamePlayer.kill();
+
                     event.setCancelled(true);
                 }
             }

@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.gamemethods;
+package fr.hyriode.hyrame.game;
 
 public enum DeathMethods {
 

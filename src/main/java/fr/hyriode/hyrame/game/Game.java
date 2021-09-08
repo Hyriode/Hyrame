@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.gamemethods;
+package fr.hyriode.hyrame.game;
 
 import fr.hyriode.hyrame.team.Team;
 import org.bukkit.Bukkit;
@@ -42,8 +42,12 @@ public class Game {
     public boolean isNoTeamGame;
 
 
+<<<<<<< HEAD:src/main/java/fr/hyriode/hyrame/gamemethods/Game.java
     public Game(Plugin plugin, boolean isNoGameTeam, DeathMethods deathMethod, String gameName, boolean canPlayersSpeakDead, boolean canPlayersSpectateDead, boolean baseCanRespawn, int baseRespawnTime, int minPlayers, int maxPlayers) {
 
+=======
+    public Game(boolean isNoGameTeam, DeathMethods deathMethod, String gameName, boolean canPlayersSpeakDead, boolean canPlayersSpectateDead, boolean baseCanRespawn, int baseRespawnTime) {
+>>>>>>> 03c9801153edce882d7bd69bfb8fd8946e043860:src/main/java/fr/hyriode/hyrame/game/Game.java
         if(GameManager.getGameByName(gameName) == null) {
             this.maxPlayers = maxPlayers;
             this.minPlayers = minPlayers;

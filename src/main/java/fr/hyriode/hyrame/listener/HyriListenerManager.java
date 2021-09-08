@@ -15,7 +15,7 @@ import java.lang.reflect.Constructor;
  */
 public class HyriListenerManager {
 
-    private final IPluginProvider<?> pluginProvider;
+    private final IPluginProvider pluginProvider;
 
     private final Hyrame hyrame;
 
