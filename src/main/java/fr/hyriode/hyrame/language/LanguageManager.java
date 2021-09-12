@@ -88,8 +88,13 @@ public class LanguageManager {
 
     public String getMessageForPlayer(UUID uuid, LanguageMessage message) {
         final IHyriPlayer player = HyriAPI.get().getPlayerManager().getPlayer(uuid);
+        String value =  message.getValue(Language.valueOf(player.getSettings().getLanguage().name()));
 
-        return message.getValue(Language.valueOf(player.getSettings().getLanguage().name()));
+        if (value == null) {
+            value = message.getValue(Language.EN);
+        }
+
+        return value;
     }
 
     public String getMessageForPlayer(UUID uuid, String key) {
