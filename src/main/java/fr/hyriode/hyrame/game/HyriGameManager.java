@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.game;
 
 import fr.hyriode.hyrame.Hyrame;
+import fr.hyriode.hyrame.util.ThreadPool;
 import fr.hyriode.hyriapi.HyriAPI;
 import redis.clients.jedis.Jedis;
 
@@ -28,22 +29,24 @@ public class HyriGameManager {
             throw new IllegalStateException("A game is already registered on this server! (" + this.currentGame.getName() + ")");
         }
 
-        final Jedis jedis = HyriAPI.get().getJedisResource();
-        final String key = GAMES_KEY + game.getName();
+        ThreadPool.EXECUTOR.execute(() -> {
+            final Jedis jedis = HyriAPI.get().getJedisResource();
+            final String key = GAMES_KEY + game.getName();
 
-        if (jedis != null) {
-            //jedis.rpush(key, HyriAPI.get().getServer().getId());
-            jedis.rpush(key, "game-cx145sd");
-            jedis.close();
+            if (jedis != null) {
+                //jedis.rpush(key, HyriAPI.get().getServer().getId());
+                jedis.rpush(key, "game-cx145sd");
+                jedis.close();
 
-            this.currentGame = game;
+                this.currentGame = game;
 
-            new HyriGameHandler(this.hyrame);
+                new HyriGameHandler(this.hyrame);
 
-            this.hyrame.log("Registered '" + game.getName() + "' game.");
-        } else {
-            this.hyrame.log(Level.SEVERE, "Cannot register game! Error caused by Redis!");
-        }
+                Hyrame.log("Registered '" + game.getName() + "' game.");
+            } else {
+                Hyrame.log(Level.SEVERE, "Cannot register game! Error caused by Redis!");
+            }
+        });
     }
 
     public void unregisterGame(HyriGame<?> game) {
@@ -51,20 +54,22 @@ public class HyriGameManager {
             throw new IllegalStateException("The provided game is not registered!");
         }
 
-        final Jedis jedis = HyriAPI.get().getJedisResource();
-        final String key = GAMES_KEY + game.getName();
+        ThreadPool.EXECUTOR.execute(() -> {
+            final Jedis jedis = HyriAPI.get().getJedisResource();
+            final String key = GAMES_KEY + game.getName();
 
-        if (jedis != null) {
-            //jedis.lrem(key, 0, HyriAPI.get().getServer().getId());
-            jedis.lrem(key, 0, "game-cx145sd");
-            jedis.close();
+            if (jedis != null) {
+                //jedis.lrem(key, 0, HyriAPI.get().getServer().getId());
+                jedis.lrem(key, 0, "game-cx145sd");
+                jedis.close();
 
-            this.currentGame = null;
+                this.currentGame = null;
 
-            this.hyrame.log("Unregistered '" + game.getName() + "' game.");
-        } else {
-            this.hyrame.log(Level.SEVERE, "Cannot unregister game! Error caused by Redis!");
-        }
+                Hyrame.log("Unregistered '" + game.getName() + "' game.");
+            } else {
+                Hyrame.log(Level.SEVERE, "Cannot unregister game! Error caused by Redis!");
+            }
+        });
     }
 
     public void unregisterGame() {

@@ -1,5 +1,7 @@
 package fr.hyriode.hyrame.game;
 
+import fr.hyriode.hyrame.Hyrame;
+import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.util.ThreadPool;
 import fr.hyriode.hyriapi.HyriAPI;
 import org.bukkit.ChatColor;
@@ -27,6 +29,8 @@ public class HyriGame<P extends HyriGamePlayer> {
     protected boolean reconnectionAllowed;
     protected long maxReconnectionTime = -1;
 
+    protected final List<HyriGameTeam> teams;
+
     protected final List<P> players;
 
     private final Class<P> playerClass;
@@ -40,6 +44,16 @@ public class HyriGame<P extends HyriGamePlayer> {
         this.playerClass = playerClass;
         this.state = HyriGameState.WAITING;
         this.players = new ArrayList<>();
+        this.teams = new ArrayList<>();
+    }
+
+    protected void registerTeam(HyriGameTeam team) {
+        if (this.getTeam(team.getName()) == null) {
+            this.teams.add(team);
+
+            Hyrame.log("'" + team.getName() + "' team registered.");
+        }
+        throw new IllegalStateException("A team with the same name is already registered!");
     }
 
     public P getPlayer(UUID uuid) {
@@ -62,8 +76,7 @@ public class HyriGame<P extends HyriGamePlayer> {
                 }
             });
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            p.sendMessage(ChatColor.RED + "An error occurred during game join! Sending you back to lobby...");
-
+            p.sendMessage(ChatColor.RED + "An error occurred when joining game! Sending you back to lobby...");
             HyriAPI.get().getServerManager().sendPlayerToLobby(p.getUniqueId());
             e.printStackTrace();
         }
@@ -72,26 +85,37 @@ public class HyriGame<P extends HyriGamePlayer> {
     public void handleLogout(Player p) {
         final P player = this.getPlayer(p.getUniqueId());
 
-        final Jedis jedis = HyriAPI.get().getJedisResource();
-
-        if (jedis != null) {
-            jedis.set(LAST_GAME_KEY + p.getUniqueId().toString(), this.name);
-            jedis.close();
-        }
-
-        if (this.reconnectionAllowed && this.maxReconnectionTime > 0) {
-            if (jedis != null) {
-                // jedis.set(REJOIN_KEY + p.getUniqueId(), HyriAPI.get().getServer().getId());
-                jedis.set(REJOIN_KEY + p.getUniqueId(), "game-cx145sd");
-                jedis.expire(REJOIN_KEY + p.getUniqueId(), this.maxReconnectionTime);
-            }
-        } else {
-            this.players.remove(player);
+        ThreadPool.EXECUTOR.execute(() -> {
+            final Jedis jedis = HyriAPI.get().getJedisResource();
 
             if (jedis != null) {
-                jedis.del(CURRENT_GAME_KEY + p.getUniqueId().toString());
+                jedis.set(LAST_GAME_KEY + p.getUniqueId().toString(), this.name);
+                jedis.close();
+            }
+
+            if (this.reconnectionAllowed && this.maxReconnectionTime > 0) {
+                if (jedis != null) {
+                    // jedis.set(REJOIN_KEY + p.getUniqueId(), HyriAPI.get().getServer().getId());
+                    jedis.set(REJOIN_KEY + p.getUniqueId(), "game-cx145sd");
+                    jedis.expire(REJOIN_KEY + p.getUniqueId(), this.maxReconnectionTime);
+                }
+            } else {
+                this.players.remove(player);
+
+                if (jedis != null) {
+                    jedis.del(CURRENT_GAME_KEY + p.getUniqueId().toString());
+                }
+            }
+        });
+    }
+
+    public HyriGameTeam getTeam(String name) {
+        for (HyriGameTeam team : this.teams) {
+            if (team.getName().equalsIgnoreCase(name)) {
+                return team;
             }
         }
+        return null;
     }
 
     public String getName() {
@@ -104,6 +128,10 @@ public class HyriGame<P extends HyriGamePlayer> {
 
     public List<P> getPlayers() {
         return this.players;
+    }
+
+    public List<HyriGameTeam> getTeams() {
+        return this.teams;
     }
 
     public HyriGameState getState() {

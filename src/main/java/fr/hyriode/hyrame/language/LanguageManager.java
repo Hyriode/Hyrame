@@ -68,7 +68,7 @@ public class LanguageManager {
                     this.messages.add(message);
                 }
             } else {
-                this.hyrame.log(Level.SEVERE, "Cannot get resource from " + path + "!");
+                Hyrame.log(Level.SEVERE, "Cannot get resource from " + path + "!");
             }
         }
     }

@@ -21,11 +21,12 @@ public class Hyrame {
 
     private final IPluginProvider pluginProvider;
 
-    private final Logger logger;
+    private static Logger logger;
 
     public Hyrame(IPluginProvider pluginProvider) {
+        logger = pluginProvider.getLogger();
+
         this.pluginProvider = pluginProvider;
-        this.logger = this.pluginProvider.getLogger();
         this.commandManager = new HyriCommandManager(this);
         this.listenerManager = new HyriListenerManager(this);
         this.languageManager = new LanguageManager(this);
@@ -38,12 +39,12 @@ public class Hyrame {
         this.listenerManager.autoRegisterListener("fr.hyriode.hyrame");
     }
 
-    public void log(Level level, String msg) {
-        this.logger.log(level, msg);
+    public static void log(Level level, String msg) {
+        logger.log(level, msg);
     }
 
-    public void log(String msg) {
-        this.log(Level.INFO, msg);
+    public static void log(String msg) {
+        log(Level.INFO, msg);
     }
 
     public IPluginProvider getPluginProvider() {
@@ -70,8 +71,8 @@ public class Hyrame {
         return this.gameManager;
     }
 
-    public Logger getLogger() {
-        return this.logger;
+    public static Logger getLogger() {
+        return logger;
     }
 
 }
