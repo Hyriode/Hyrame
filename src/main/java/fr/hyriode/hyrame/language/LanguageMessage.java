@@ -1,5 +1,7 @@
 package fr.hyriode.hyrame.language;
 
+import fr.hyriode.hyriapi.player.IHyriPlayer;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +46,10 @@ public class LanguageMessage {
 
     public String getValue(Language language) {
         return this.values.get(language);
+    }
+
+    public String getForPlayer(IHyriPlayer player) {
+        return this.getValue(Language.valueOf(player.getSettings().getLanguage().name()));
     }
 
 }

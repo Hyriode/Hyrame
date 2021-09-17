@@ -4,14 +4,17 @@ import fr.hyriode.hyrame.Hyrame;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.util.ThreadPool;
 import fr.hyriode.hyriapi.HyriAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 import redis.clients.jedis.Jedis;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Project: Hyrame
@@ -24,14 +27,20 @@ public class HyriGame<P extends HyriGamePlayer> {
     private static final String LAST_GAME_KEY = "lastGame:";
     private static final String REJOIN_KEY = "rejoin:";
 
-    protected HyriGameState state;
+    protected int minPlayers;
+    protected int maxPlayers;
 
     protected boolean reconnectionAllowed;
     protected long maxReconnectionTime = -1;
 
+    protected BukkitTask startingTimer;
+    protected boolean defaultStarting = true;
+
     protected final List<HyriGameTeam> teams;
 
     protected final List<P> players;
+
+    protected HyriGameState state;
 
     private final Class<P> playerClass;
 
@@ -47,17 +56,36 @@ public class HyriGame<P extends HyriGamePlayer> {
         this.teams = new ArrayList<>();
     }
 
-    protected void registerTeam(HyriGameTeam team) {
+    public void startGame() {
+        if (this.defaultStarting) {
+            this.startingTimer.cancel();
+        }
+
+        this.state = HyriGameState.PLAYING;
+
+        this.players.forEach(player -> {
+            final Player p = player.getPlayer().getPlayer();
+
+            p.setLevel(0);
+            p.setExp(0.0F);
+        });
+    }
+
+    void postRegistration(Hyrame hyrame) {
+        if (this.defaultStarting) {
+            this.startingTimer = Bukkit.getScheduler().runTaskTimerAsynchronously(hyrame.getPlugin(), new HyriGameStartingTimer(hyrame, this), 20L, 20L);
+        }
+    }
+
+    protected HyriGameTeam registerTeam(HyriGameTeam team) {
         if (this.getTeam(team.getName()) == null) {
             this.teams.add(team);
 
             Hyrame.log("'" + team.getName() + "' team registered.");
+
+            return team;
         }
         throw new IllegalStateException("A team with the same name is already registered!");
-    }
-
-    public P getPlayer(UUID uuid) {
-        return this.players.stream().filter(player -> player.getUuid().equals(uuid)).findFirst().orElse(null);
     }
 
     public void handleLogin(Player p) {
@@ -109,6 +137,14 @@ public class HyriGame<P extends HyriGamePlayer> {
         });
     }
 
+    public P getPlayer(UUID uuid) {
+        return this.players.stream().filter(player -> player.getUuid().equals(uuid)).findFirst().orElse(null);
+    }
+
+    public List<P> getSpectators() {
+        return this.players.stream().filter(HyriGamePlayer::isSpectator).collect(Collectors.toList());
+    }
+
     public HyriGameTeam getTeam(String name) {
         for (HyriGameTeam team : this.teams) {
             if (team.getName().equalsIgnoreCase(name)) {
@@ -126,6 +162,14 @@ public class HyriGame<P extends HyriGamePlayer> {
         return this.displayName;
     }
 
+    public HyriGameState getState() {
+        return this.state;
+    }
+
+    public void setState(HyriGameState state) {
+        this.state = state;
+    }
+
     public List<P> getPlayers() {
         return this.players;
     }
@@ -134,12 +178,28 @@ public class HyriGame<P extends HyriGamePlayer> {
         return this.teams;
     }
 
-    public HyriGameState getState() {
-        return this.state;
+    public boolean isDefaultStarting() {
+        return this.defaultStarting;
     }
 
-    public void setState(HyriGameState state) {
-        this.state = state;
+    public void setDefaultStarting(boolean defaultStarting) {
+        this.defaultStarting = defaultStarting;
+    }
+
+    public int getMaxPlayers() {
+        return this.maxPlayers;
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
+    }
+
+    public int getMinPlayers() {
+        return this.minPlayers;
+    }
+
+    public void setMinPlayers(int minPlayers) {
+        this.minPlayers = minPlayers;
     }
 
     public boolean isReconnectionAllowed() {

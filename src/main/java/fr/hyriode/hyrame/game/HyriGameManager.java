@@ -43,6 +43,8 @@ public class HyriGameManager {
                 new HyriGameHandler(this.hyrame);
 
                 Hyrame.log("Registered '" + game.getName() + "' game.");
+
+                game.postRegistration(this.hyrame);
             } else {
                 Hyrame.log(Level.SEVERE, "Cannot register game! Error caused by Redis!");
             }

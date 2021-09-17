@@ -33,7 +33,11 @@ public class HyriConfiguration {
     }
 
     public Object set(String path, String key, Object value, boolean replace) {
-        final ConfigurationSection section = this.configuration.getConfigurationSection(path);
+        ConfigurationSection section = this.configuration.getConfigurationSection(path);
+
+        if (section == null) {
+            section = this.configuration.createSection(path);
+        }
 
         if (section.get(key) == null || replace) {
             section.set(key, value);
@@ -47,12 +51,52 @@ public class HyriConfiguration {
         return this.set(path, key, value, false);
     }
 
+    public boolean getBoolean(String key) {
+        return this.configuration.getBoolean(key);
+    }
+
+
+    public boolean getBoolean(String path, String key) {
+        return this.configuration.getConfigurationSection(path).getBoolean(key);
+    }
+
+    public double getDouble(String key) {
+        return this.configuration.getDouble(key);
+    }
+
+
+    public double getDouble(String path, String key) {
+        return this.configuration.getConfigurationSection(path).getDouble(key);
+    }
+
+    public int getInt(String key) {
+        return this.configuration.getInt(key);
+    }
+
+
+    public int getInt(String path, String key) {
+        return this.configuration.getConfigurationSection(path).getInt(key);
+    }
+
+    public long getLong(String key) {
+        return this.configuration.getLong(key);
+    }
+
+
+    public long getLong(String path, String key) {
+        return this.configuration.getConfigurationSection(path).getLong(key);
+    }
+
     public Object get(String key) {
         return this.configuration.get(key);
     }
 
     public Object get(String path, String key) {
         return this.configuration.getConfigurationSection(path).get(key);
+    }
+
+    public FileConfiguration getConfiguration() {
+        return this.configuration;
     }
 
 }

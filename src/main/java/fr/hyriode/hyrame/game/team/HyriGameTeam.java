@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.game.team;
 
 import fr.hyriode.hyrame.game.HyriGamePlayer;
+import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.stream.Collectors;
  * on 10/09/2021 at 10:45
  */
 public class HyriGameTeam {
+
+    private Location spawnLocation;
 
     private final List<HyriGamePlayer> players;
 
@@ -27,6 +30,14 @@ public class HyriGameTeam {
         this.color = color;
         this.teamSize = teamSize;
         this.players = new ArrayList<>();
+    }
+
+    public void teleport(Location location) {
+        this.getOnlinePlayers().forEach(player -> player.getPlayer().getPlayer().teleport(location));
+    }
+
+    public void teleportToSpawn() {
+        this.teleport(this.spawnLocation);
     }
 
     public List<HyriGamePlayer> getOnlinePlayers() {
@@ -94,6 +105,14 @@ public class HyriGameTeam {
 
     public List<HyriGamePlayer> getPlayers() {
         return this.players;
+    }
+
+    public Location getSpawnLocation() {
+        return this.spawnLocation;
+    }
+
+    public void setSpawnLocation(Location spawnLocation) {
+        this.spawnLocation = spawnLocation;
     }
 
     public enum CancelJoinReason {
