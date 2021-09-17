@@ -1,12 +1,15 @@
 package fr.hyriode.hyrame.game;
 
+import fr.hyriode.common.board.Scoreboard;
 import fr.hyriode.hyrame.Hyrame;
+import fr.hyriode.hyrame.game.scoreboard.HyriGameWaitingScoreboard;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.util.ThreadPool;
 import fr.hyriode.hyriapi.HyriAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import redis.clients.jedis.Jedis;
 
@@ -33,6 +36,8 @@ public class HyriGame<P extends HyriGamePlayer> {
     protected boolean reconnectionAllowed;
     protected long maxReconnectionTime = -1;
 
+    private final List<HyriGameWaitingScoreboard> waitingScoreboards;
+
     protected BukkitTask startingTimer;
     protected boolean defaultStarting = true;
 
@@ -47,17 +52,23 @@ public class HyriGame<P extends HyriGamePlayer> {
     protected final String displayName;
     protected final String name;
 
-    public HyriGame(String name, String displayName, Class<P> playerClass) {
+    protected final JavaPlugin plugin;
+
+    public HyriGame(JavaPlugin plugin, String name, String displayName, Class<P> playerClass) {
+        this.plugin = plugin;
         this.name = name;
         this.displayName = displayName;
         this.playerClass = playerClass;
         this.state = HyriGameState.WAITING;
         this.players = new ArrayList<>();
         this.teams = new ArrayList<>();
+        this.waitingScoreboards = new ArrayList<>();
     }
 
     public void startGame() {
         if (this.defaultStarting) {
+            this.waitingScoreboards.forEach(Scoreboard::hide);
+
             this.startingTimer.cancel();
         }
 
@@ -103,6 +114,14 @@ public class HyriGame<P extends HyriGamePlayer> {
                     jedis.close();
                 }
             });
+
+            if (this.defaultStarting) {
+                final HyriGameWaitingScoreboard scoreboard = new HyriGameWaitingScoreboard(this, this.plugin, p);
+
+                scoreboard.show();
+
+                this.waitingScoreboards.add(scoreboard);
+            }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             p.sendMessage(ChatColor.RED + "An error occurred when joining game! Sending you back to lobby...");
             HyriAPI.get().getServerManager().sendPlayerToLobby(p.getUniqueId());
@@ -184,6 +203,10 @@ public class HyriGame<P extends HyriGamePlayer> {
 
     public void setDefaultStarting(boolean defaultStarting) {
         this.defaultStarting = defaultStarting;
+    }
+
+    List<HyriGameWaitingScoreboard> getWaitingScoreboards() {
+        return this.waitingScoreboards;
     }
 
     public int getMaxPlayers() {

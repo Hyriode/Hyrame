@@ -50,6 +50,8 @@ public class HyriGameStartingTimer implements Runnable {
                 this.time = 15;
             }
 
+            this.game.getWaitingScoreboards().forEach(scoreboard -> scoreboard.setTime(this.time));
+
             if (this.time <= 0) {
                 this.game.startGame();
             } else if (this.time <= 3) {
@@ -66,6 +68,8 @@ public class HyriGameStartingTimer implements Runnable {
                 this.running = false;
                 this.time = 60;
                 this.game.setState(HyriGameState.WAITING);
+
+                this.game.getWaitingScoreboards().forEach(scoreboard -> scoreboard.setTime(-1));
 
                 this.sendTitle(this.cancelMessage.getKey(), true);
                 this.sendSound();
