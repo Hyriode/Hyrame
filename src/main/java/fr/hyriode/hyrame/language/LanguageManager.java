@@ -9,9 +9,14 @@ import fr.hyriode.hyriapi.player.IHyriPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 /**
@@ -35,7 +40,7 @@ public class LanguageManager {
     public void loadLanguages() {
         final IPluginProvider pluginProvider = this.hyrame.getPluginProvider();
 
-        this.hyrame.log("Loading languages...");
+        Hyrame.log("Loading languages...");
 
         this.messages.clear();
 
@@ -49,7 +54,7 @@ public class LanguageManager {
                 final JsonReader reader = new JsonReader(bufferedReader);
                 final Map<String, String> map = new Gson().fromJson(reader, Map.class);
 
-                this.hyrame.log("Loading " + language.getCode() + " language from " + fileName + "...");
+                Hyrame.log("Loading " + language.getCode() + " language from " + fileName + "...");
 
                 for (Map.Entry<String, String> entry : map.entrySet()) {
                     final String key = entry.getKey();
@@ -68,9 +73,13 @@ public class LanguageManager {
                     this.messages.add(message);
                 }
             } else {
-                this.hyrame.log(Level.SEVERE, "Cannot get resource from " + path + "!");
+                Hyrame.log(Level.SEVERE, "Cannot get resource from " + path + "!");
             }
         }
+    }
+
+    public void addMessage(LanguageMessage message) {
+        this.messages.add(message);
     }
 
     public LanguageMessage getMessage(String key) {
@@ -88,14 +97,17 @@ public class LanguageManager {
 
     public String getMessageForPlayer(UUID uuid, LanguageMessage message) {
         final IHyriPlayer player = HyriAPI.get().getPlayerManager().getPlayer(uuid);
+        String value =  message.getValue(Language.valueOf(player.getSettings().getLanguage().name()));
 
-        return message.getValue(Language.valueOf(player.getSettings().getLanguage().name()));
+        if (value == null) {
+            value = message.getValue(Language.EN);
+        }
+
+        return value;
     }
 
     public String getMessageForPlayer(UUID uuid, String key) {
-        final IHyriPlayer player = HyriAPI.get().getPlayerManager().getPlayer(uuid);
-
-        return this.getMessage(Language.valueOf(player.getSettings().getLanguage().name()), key);
+        return this.getMessage(key).getForPlayer(HyriAPI.get().getPlayerManager().getPlayer(uuid));
     }
 
     public String getMessageForPlayer(Player player, String key) {

@@ -9,7 +9,7 @@ apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 group = 'fr.hyriode'
-version = '1.0.1-SNAPSHOT'
+version = '1.0.2-SNAPSHOT'
 archivesBaseName = 'Hyrame'
 
 java {
@@ -101,7 +101,7 @@ publishing {
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
-    api 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
     api 'fr.hyriode:hyriapi:0.0.6-SNAPSHOT'
     api 'fr.hyriode:hyricommon:1.0.3-SNAPSHOT'
+    implementation 'redis.clients:jedis:3.7.0'
 }
