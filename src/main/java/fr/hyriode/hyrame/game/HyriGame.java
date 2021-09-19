@@ -5,10 +5,8 @@ import fr.hyriode.hyrame.Hyrame;
 import fr.hyriode.hyrame.game.scoreboard.HyriGameWaitingScoreboard;
 import fr.hyriode.hyrame.game.tab.HyriGameTabListManager;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
-import fr.hyriode.hyrame.language.Language;
 import fr.hyriode.hyrame.util.ThreadPool;
 import fr.hyriode.hyriapi.HyriAPI;
-import fr.hyriode.hyriapi.settings.IHyriPlayerSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -17,7 +15,9 @@ import org.bukkit.scheduler.BukkitTask;
 import redis.clients.jedis.Jedis;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +38,7 @@ public class HyriGame<P extends HyriGamePlayer> {
     protected long maxReconnectionTime = -1;
 
     protected boolean tabListUsed = true;
-    private final Map<Language, HyriGameTabListManager> tabListManagers;
+    protected HyriGameTabListManager tabListManager;
 
     private final List<HyriGameWaitingScoreboard> waitingScoreboards;
 
@@ -58,11 +58,8 @@ public class HyriGame<P extends HyriGamePlayer> {
 
     protected final JavaPlugin plugin;
 
-    private final Hyrame hyrame;
-
     public HyriGame(Hyrame hyrame, String name, String displayName, Class<P> playerClass) {
-        this.hyrame = hyrame;
-        this.plugin = this.hyrame.getPlugin();
+        this.plugin = hyrame.getPlugin();
         this.name = name;
         this.displayName = displayName;
         this.playerClass = playerClass;
@@ -70,17 +67,14 @@ public class HyriGame<P extends HyriGamePlayer> {
         this.players = new ArrayList<>();
         this.teams = new ArrayList<>();
         this.waitingScoreboards = new ArrayList<>();
-        this.tabListManagers = new HashMap<>();
     }
 
-    protected void registerTabListManagers() {
-        for (Language language : Language.values()) {
-            this.tabListManagers.put(language, new HyriGameTabListManager(this, language));
-        }
+    protected void registerTabListManager() {
+        this.tabListManager = new HyriGameTabListManager(this);
     }
 
     public void updateTabList() {
-        this.tabListManagers.values().forEach(HyriGameTabListManager::updateTabList);
+        this.tabListManager.updateTabList();
     }
 
     public void startGame() {
@@ -134,9 +128,7 @@ public class HyriGame<P extends HyriGamePlayer> {
             });
 
             if (this.tabListUsed) {
-                final IHyriPlayerSettings settings = HyriAPI.get().getPlayerSettingsManager().getPlayerSettings(player.getUuid());
-
-                this.tabListManagers.get(Language.valueOf(settings.getLanguage().name())).handleLogin(p);
+                this.tabListManager.handleLogin(p);
                 this.updateTabList();
             }
 
@@ -184,12 +176,24 @@ public class HyriGame<P extends HyriGamePlayer> {
             }
 
             if (this.tabListUsed) {
-                final IHyriPlayerSettings settings = HyriAPI.get().getPlayerSettingsManager().getPlayerSettings(player.getUuid());
-
-                this.tabListManagers.get(Language.valueOf(settings.getLanguage().name())).handleLogout(p);
+                this.tabListManager.handleLogout(p);
                 this.updateTabList();
             }
         });
+    }
+
+    public void handleEnd() {
+        this.state = HyriGameState.ENDED;
+
+        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+            for (HyriGamePlayer player : this.players) {
+                if (player.isOnline()) {
+                    HyriAPI.get().getServerManager().sendPlayerToLobby(player.getUuid());
+                }
+            }
+        }, 20 * 20);
+
+        Bukkit.getScheduler().runTaskLater(this.plugin, Bukkit::shutdown, 20 * 25);
     }
 
     public P getPlayer(UUID uuid) {

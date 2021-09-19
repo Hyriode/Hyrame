@@ -9,9 +9,14 @@ import fr.hyriode.hyriapi.player.IHyriPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 /**

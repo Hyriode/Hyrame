@@ -6,8 +6,10 @@ import fr.hyriode.hyrame.Hyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
+import fr.hyriode.hyrame.game.util.HyriGameItems;
 import fr.hyriode.hyrame.language.Language;
 import fr.hyriode.hyrame.language.LanguageMessage;
+import fr.hyriode.hyrame.util.References;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -44,13 +46,13 @@ public class HyriGameTeamChooseGui extends AbstractInventory {
             .addValue(Language.FR, "Tu seras dans une équipe aléatoire.")
             .addValue(Language.EN, "You will be in a random team.");
 
+    private static final LanguageMessage ALREADY_IN_RANDOM = new LanguageMessage("already.in.random")
+            .addValue(Language.FR, "Tu es déjà en aléatoire !")
+            .addValue(Language.EN, "You are already in random!");
+
     private static final LanguageMessage TITLE = new LanguageMessage("choose.team.gui.name")
             .addValue(Language.FR, "Choix de l'équipe")
             .addValue(Language.EN, "Select team");
-
-    private static final LanguageMessage EXIT_MENU = new LanguageMessage("exit.team.gui")
-            .addValue(Language.FR, "Quitter")
-            .addValue(Language.EN, "Exit");
 
     private static final LanguageMessage RANDOM_TEAM = new LanguageMessage("random.team")
             .addValue(Language.FR, "Equipe aléatoire")
@@ -60,18 +62,25 @@ public class HyriGameTeamChooseGui extends AbstractInventory {
 
     private static final List<Player> PLAYERS = new CopyOnWriteArrayList<>();
 
+    private final int slot;
+
     private final HyriGame<?> game;
 
     private final Hyrame hyrame;
 
-    public HyriGameTeamChooseGui(Hyrame hyrame, HyriGame<?> game, Player owner) {
+    public HyriGameTeamChooseGui(Hyrame hyrame, HyriGame<?> game, Player owner, int slot) {
         super(owner, TITLE.getForPlayer(owner), size(game));
         this.hyrame = hyrame;
         this.game = game;
+        this.slot = slot;
 
         this.addTeamsWools();
         this.addRandomTeamBarrier();
         this.addExitDoor();
+    }
+
+    public HyriGameTeamChooseGui(Hyrame hyrame, HyriGame<?> game, Player owner) {
+        this(hyrame, game, owner, -1);
     }
 
     private void addTeamsWools() {
@@ -87,26 +96,34 @@ public class HyriGameTeamChooseGui extends AbstractInventory {
 
     private void addRandomTeamBarrier() {
         final ItemStack barrier = new ItemBuilder(Material.BARRIER)
-                .withName(ChatColor.WHITE + RANDOM_TEAM.getForPlayer(this.owner))
+                .withName(ChatColor.GRAY + RANDOM_TEAM.getForPlayer(this.owner))
                 .build();
 
         this.addItem(barrier, event -> {
             final Player player = (Player) event.getWhoClicked();
             final HyriGamePlayer gamePlayer = this.game.getPlayer(event.getWhoClicked().getUniqueId());
 
-            gamePlayer.removeFromTeam();
+            if (gamePlayer.hasTeam()) {
+                gamePlayer.removeFromTeam();
 
-            this.game.updateTabList();
+                this.game.updateTabList();
 
-            player.sendMessage(ChatColor.DARK_AQUA + JOIN_RANDOM.getForPlayer(player));
+                if (this.slot != -1) {
+                    player.getInventory().setItem(this.slot, HyriGameItems.CHOOSE_TEAM.apply(this.hyrame, gamePlayer, this.slot));
+                }
 
-            this.refresh();
+                player.sendMessage(ChatColor.DARK_AQUA + JOIN_RANDOM.getForPlayer(player));
+
+                this.refresh();
+            } else {
+                player.sendMessage(ChatColor.RED + ALREADY_IN_RANDOM.getForPlayer(player));
+            }
         });
     }
 
     private void addExitDoor() {
         final ItemStack door = new ItemBuilder(Material.DARK_OAK_DOOR_ITEM)
-                .withName(ChatColor.RED + EXIT_MENU.getForPlayer(this.owner))
+                .withName(ChatColor.RED + References.EXIT_MESSAGE.getForPlayer(this.owner))
                 .build();
 
         this.setItem(this.size - 5, door, event -> event.getWhoClicked().closeInventory());
@@ -130,6 +147,10 @@ public class HyriGameTeamChooseGui extends AbstractInventory {
 
                 player.sendMessage(ChatColor.DARK_AQUA + JOIN.getForPlayer(player) + team.getDisplayName().getForPlayer(player) + ChatColor.DARK_AQUA + ".");
 
+                if (this.slot != -1) {
+                    player.getInventory().setItem(this.slot, HyriGameItems.CHOOSE_TEAM.apply(this.hyrame, gamePlayer, this.slot));
+                }
+
                 this.refresh();
             }
         };
@@ -137,7 +158,7 @@ public class HyriGameTeamChooseGui extends AbstractInventory {
 
     public void refresh() {
         for (Player player : PLAYERS) {
-            new HyriGameTeamChooseGui(this.hyrame, this.game, player).open();
+            new HyriGameTeamChooseGui(this.hyrame, this.game, player, this.slot).open();
         }
     }
 

@@ -5,13 +5,8 @@ import fr.hyriode.common.board.team.ScoreboardTeamHandler;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
-import fr.hyriode.hyrame.language.Language;
-import fr.hyriode.hyrame.util.ThreadPool;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Project: Hyrame
@@ -21,23 +16,22 @@ import java.util.List;
 public class HyriGameTabListManager {
 
     private static final String DEFAULT = "default";
+    private static final String DEFAULT_PREFIX = "\u00D7 ";
 
     private final ScoreboardTeamHandler teamHandler;
 
-    private final Language language;
     private final HyriGame<?> game;
 
-    public HyriGameTabListManager(HyriGame<?> game, Language language) {
+    public HyriGameTabListManager(HyriGame<?> game) {
         this.game = game;
-        this.language = language;
         this.teamHandler = new ScoreboardTeamHandler();
 
         this.addTeams();
     }
 
     private void addTeams() {
-        this.game.getTeams().forEach(team -> this.teamHandler.addTeam(new ScoreboardTeam(team.getName(), team.getName(), team.getDisplayName().getValue(this.language) + " ", team.getDisplayName().getValue(this.language) + " ", "")));
-        this.teamHandler.addTeam(new ScoreboardTeam(DEFAULT, DEFAULT, ChatColor.GRAY + "", ChatColor.GRAY + "", ""));
+        this.game.getTeams().forEach(team -> this.teamHandler.addTeam(new ScoreboardTeam(team.getName(), team.getName(), team.getColor().getColor() + "", team.getColor().getColor() + "", "")));
+        this.teamHandler.addTeam(new ScoreboardTeam(DEFAULT, DEFAULT, ChatColor.GRAY + DEFAULT_PREFIX, ChatColor.GRAY + DEFAULT_PREFIX, ""));
     }
 
     public void handleLogin(Player player) {

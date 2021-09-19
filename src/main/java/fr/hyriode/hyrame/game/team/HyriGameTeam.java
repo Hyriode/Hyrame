@@ -1,6 +1,5 @@
 package fr.hyriode.hyrame.game.team;
 
-import fr.hyriode.common.item.ItemHandler;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.language.LanguageMessage;
 import org.bukkit.Location;

@@ -18,7 +18,7 @@ public enum HyriGameTeamColor {
     PINK(ChatColor.LIGHT_PURPLE, (byte) 6),
     PURPLE(ChatColor.DARK_PURPLE, (byte) 10),
     WHITE(ChatColor.WHITE, (byte) 0),
-    GRAY(ChatColor.GRAY, (byte) 7),
+    GRAY(ChatColor.DARK_GRAY, (byte) 7),
     BLACK(ChatColor.BLACK, (byte) 15);
 
     private final ChatColor color;
