@@ -17,21 +17,18 @@ public class HyriCommandManager {
 
     private final IPluginProvider pluginProvider;
 
-    private final Hyrame hyrame;
-
     public HyriCommandManager(Hyrame hyrame) {
-        this.hyrame = hyrame;
-        this.pluginProvider = this.hyrame.getPluginProvider();
+        this.pluginProvider = hyrame.getPluginProvider();
         this.commandMap = this.getCommandMap();
 
         this.autoRegisterCommands();
     }
 
     private void autoRegisterCommands() {
-        this.hyrame.log("Searching for commands in packages provided...");
+        Hyrame.log("Searching for commands in packages provided...");
 
         for (String commandsPackage : this.pluginProvider.getCommandsPackages()) {
-            this.hyrame.log("Searching for commands in package '" + commandsPackage + "'...");
+            Hyrame.log("Searching for commands in package '" + commandsPackage + "'...");
 
             this.autoRegisterCommand(commandsPackage);
         }
@@ -39,7 +36,7 @@ public class HyriCommandManager {
 
     public void autoRegisterCommand(String commandsPackage) {
         try {
-            final ClassPath classPath = ClassPath.from(this.getClass().getClassLoader());
+            final ClassPath classPath = ClassPath.from(this.pluginProvider.getClass().getClassLoader());
 
             for(ClassPath.ClassInfo classInfo : classPath.getTopLevelClassesRecursive(commandsPackage)) {
                 final Class<?> clazz = Class.forName(classInfo.getName());
@@ -51,11 +48,11 @@ public class HyriCommandManager {
                         command.setPluginSupplier(this.pluginProvider::getPlugin);
                         command.addArguments();
 
-                        this.hyrame.log("Registering '" + command.getName() + "' command");
+                        Hyrame.log("Registering '" + command.getName() + "' command");
 
                         this.commandMap.register(command.getName(), command);
                     } else {
-                        this.hyrame.log(clazz.getSimpleName() + " inherit of " + HyriCommand.class.getSimpleName() + " but doesn't have a parameter less constructor!");
+                        Hyrame.log(clazz.getSimpleName() + " inherit of " + HyriCommand.class.getSimpleName() + " but doesn't have a parameter less constructor!");
                     }
                 }
             }

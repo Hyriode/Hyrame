@@ -76,7 +76,6 @@ public class HyriGameTeamChooseGui extends AbstractInventory {
 
         this.addTeamsWools();
         this.addRandomTeamBarrier();
-        this.addExitDoor();
     }
 
     public HyriGameTeamChooseGui(Hyrame hyrame, HyriGame<?> game, Player owner) {
@@ -99,7 +98,7 @@ public class HyriGameTeamChooseGui extends AbstractInventory {
                 .withName(ChatColor.GRAY + RANDOM_TEAM.getForPlayer(this.owner))
                 .build();
 
-        this.addItem(barrier, event -> {
+        this.setItem(this.size - 1, barrier, event -> {
             final Player player = (Player) event.getWhoClicked();
             final HyriGamePlayer gamePlayer = this.game.getPlayer(event.getWhoClicked().getUniqueId());
 
@@ -119,14 +118,6 @@ public class HyriGameTeamChooseGui extends AbstractInventory {
                 player.sendMessage(ChatColor.RED + ALREADY_IN_RANDOM.getForPlayer(player));
             }
         });
-    }
-
-    private void addExitDoor() {
-        final ItemStack door = new ItemBuilder(Material.DARK_OAK_DOOR_ITEM)
-                .withName(ChatColor.RED + References.EXIT_MESSAGE.getForPlayer(this.owner))
-                .build();
-
-        this.setItem(this.size - 5, door, event -> event.getWhoClicked().closeInventory());
     }
 
     private Consumer<InventoryClickEvent> clickEvent(HyriGameTeam team) {
@@ -175,7 +166,7 @@ public class HyriGameTeamChooseGui extends AbstractInventory {
     private static int size(HyriGame<?> game) {
         int size = 9;
 
-        while (size <= game.getTeams().size()) {
+        while (size <= game.getTeams().size() + 1) {
             size++;
         }
 
@@ -183,7 +174,7 @@ public class HyriGameTeamChooseGui extends AbstractInventory {
             size++;
         }
 
-        return size + 9;
+        return size;
     }
 
     @Override
