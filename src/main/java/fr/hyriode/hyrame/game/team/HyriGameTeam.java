@@ -1,6 +1,8 @@
 package fr.hyriode.hyrame.game.team;
 
+import fr.hyriode.common.item.ItemHandler;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
+import fr.hyriode.hyrame.language.LanguageMessage;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -21,10 +23,10 @@ public class HyriGameTeam {
 
     private final int teamSize;
     private final HyriGameTeamColor color;
-    private final String displayName;
+    private final LanguageMessage displayName;
     private final String name;
 
-    public HyriGameTeam(String name, String displayName, HyriGameTeamColor color, int teamSize) {
+    public HyriGameTeam(String name, LanguageMessage displayName, HyriGameTeamColor color, int teamSize) {
         this.name = name;
         this.displayName = displayName;
         this.color = color;
@@ -64,6 +66,10 @@ public class HyriGameTeam {
         return this.contains(player.getUuid());
     }
 
+    public boolean isFull() {
+        return this.players.size() >= this.teamSize;
+    }
+
     public CancelJoinReason addPlayer(HyriGamePlayer player) {
         if (!player.hasTeam()) {
             if (!this.contains(player)) {
@@ -91,7 +97,7 @@ public class HyriGameTeam {
         return this.name;
     }
 
-    public String getDisplayName() {
+    public LanguageMessage getDisplayName() {
         return this.displayName;
     }
 

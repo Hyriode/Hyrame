@@ -58,6 +58,13 @@ public class HyriGamePlayer {
         this.team = team;
     }
 
+    public void removeFromTeam() {
+        if (this.hasTeam()) {
+            this.team.removePlayer(this);
+            this.team = null;
+        }
+    }
+
     public boolean isInTeam(String name) {
         return this.team.getName().equals(name);
     }

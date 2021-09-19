@@ -75,7 +75,9 @@ public class HyriGameManager {
     }
 
     public void unregisterGame() {
-        this.unregisterGame(this.currentGame);
+        if (this.currentGame != null) {
+            this.unregisterGame(this.currentGame);
+        }
     }
 
     public HyriGame<?> getCurrentGame() {

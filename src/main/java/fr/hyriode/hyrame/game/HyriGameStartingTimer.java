@@ -16,7 +16,9 @@ import org.bukkit.entity.Player;
  */
 public class HyriGameStartingTimer implements Runnable {
 
-    private final LanguageMessage cancelMessage = new LanguageMessage("game.cancel");
+    private final LanguageMessage cancelMessage = new LanguageMessage("game.cancel")
+            .addValue(Language.FR, ChatColor.RED + "Annulée")
+            .addValue(Language.EN, ChatColor.RED + "Cancelled");
 
     private boolean running;
 
@@ -28,9 +30,6 @@ public class HyriGameStartingTimer implements Runnable {
     public HyriGameStartingTimer(Hyrame hyrame, HyriGame<?> game) {
         this.hyrame = hyrame;
         this.game = game;
-
-        this.cancelMessage.addValue(Language.FR, ChatColor.RED + "Annulée");
-        this.cancelMessage.addValue(Language.EN, ChatColor.RED + "Cancelled");
 
         this.hyrame.getLanguageManager().addMessage(this.cancelMessage);
     }

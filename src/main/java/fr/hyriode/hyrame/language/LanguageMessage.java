@@ -1,6 +1,8 @@
 package fr.hyriode.hyrame.language;
 
+import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.hyriapi.player.IHyriPlayer;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,12 +30,16 @@ public class LanguageMessage {
         this.key = key;
     }
 
-    public void addValue(Language language, String value) {
+    public LanguageMessage addValue(Language language, String value) {
         this.values.put(language, value);
+
+        return this;
     }
 
-    public void removeValue(Language language, String value) {
+    public LanguageMessage removeValue(Language language, String value) {
         this.values.remove(language, value);
+
+        return this;
     }
 
     public void setValues(Map<Language, String> values) {
@@ -50,6 +56,10 @@ public class LanguageMessage {
 
     public String getForPlayer(IHyriPlayer player) {
         return this.getValue(Language.valueOf(player.getSettings().getLanguage().name()));
+    }
+
+    public String getForPlayer(Player player) {
+        return this.getForPlayer(HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId()));
     }
 
 }
