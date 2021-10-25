@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * Created by AstFaster
  * on 17/09/2021 at 11:39
  */
-class HyriGameWaitingScoreboardIpConsumer implements Consumer<ScoreboardLine> {
+public class HyriGameWaitingScoreboardIpConsumer implements Consumer<ScoreboardLine> {
 
     private int count = 0;
 
