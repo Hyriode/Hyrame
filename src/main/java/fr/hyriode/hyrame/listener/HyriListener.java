@@ -12,9 +12,9 @@ import java.util.function.Supplier;
  */
 public abstract class HyriListener implements Listener {
 
-    protected Supplier<? extends JavaPlugin> pluginSupplier;
+    protected final Supplier<? extends JavaPlugin> pluginSupplier;
 
-    public void setPluginSupplier(Supplier<? extends JavaPlugin> pluginSupplier) {
+    public HyriListener(Supplier<? extends JavaPlugin> pluginSupplier) {
         this.pluginSupplier = pluginSupplier;
     }
 

@@ -9,7 +9,6 @@ import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.game.util.HyriGameItems;
 import fr.hyriode.hyrame.language.Language;
 import fr.hyriode.hyrame.language.LanguageMessage;
-import fr.hyriode.hyrame.util.References;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

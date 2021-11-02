@@ -4,6 +4,8 @@ import fr.hyriode.common.item.ItemBuilder;
 import fr.hyriode.hyrame.Hyrame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.gui.HyriGameTeamChooseGui;
+import fr.hyriode.hyrame.language.Language;
+import fr.hyriode.hyrame.language.LanguageMessage;
 import fr.hyriode.hyrame.util.References;
 import fr.hyriode.hyriapi.HyriAPI;
 import org.bukkit.ChatColor;
@@ -22,16 +24,22 @@ import java.util.function.Function;
  */
 public class HyriGameItems {
 
-    public static final TriFunction<Hyrame, HyriGamePlayer, Integer, ItemStack> CHOOSE_TEAM = (hyrame, gamePlayer, slot) -> new ItemBuilder(Material.WOOL, 1, gamePlayer.hasTeam() ? gamePlayer.getTeam().getColor().getData() : (byte) 0)
-            .withName(ChatColor.DARK_AQUA + "Les équipes")
-            .withEvent(PlayerInteractEvent.class, e -> {
-                final PlayerInteractEvent event = (PlayerInteractEvent) e.get();
+    public static final TriFunction<Hyrame, HyriGamePlayer, Integer, ItemStack> CHOOSE_TEAM = (hyrame, gamePlayer, slot) -> {
+        final LanguageMessage title = new LanguageMessage("choose.team.gui.item.title")
+                .addValue(Language.FR, ChatColor.DARK_AQUA + "Les équipes")
+                .addValue(Language.EN, ChatColor.DARK_AQUA + "Teams");
 
-                if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                    new HyriGameTeamChooseGui(hyrame, hyrame.getGameManager().getCurrentGame(), gamePlayer.getPlayer().getPlayer(), slot).open();
-                }
-            })
-            .build();
+        return new ItemBuilder(Material.WOOL, 1, gamePlayer.hasTeam() ? gamePlayer.getTeam().getColor().getData() : (byte) 0)
+                .withName(title.getForPlayer(gamePlayer.getPlayer().getPlayer()))
+                .withEvent(PlayerInteractEvent.class, e -> {
+                    final PlayerInteractEvent event = (PlayerInteractEvent) e.get();
+
+                    if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                        new HyriGameTeamChooseGui(hyrame, hyrame.getGameManager().getCurrentGame(), gamePlayer.getPlayer().getPlayer(), slot).open();
+                    }
+                })
+                .build();
+    };
 
     public static final Function<Player, ItemStack> LEAVE = player ->  new ItemBuilder(Material.DARK_OAK_DOOR_ITEM)
             .withName(ChatColor.RED + References.EXIT_MESSAGE.getForPlayer(player))

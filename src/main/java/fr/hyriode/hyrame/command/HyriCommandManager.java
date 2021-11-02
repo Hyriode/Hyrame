@@ -6,10 +6,13 @@ import fr.hyriode.hyrame.Hyrame;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.function.Supplier;
 
 public class HyriCommandManager {
 
@@ -42,21 +45,21 @@ public class HyriCommandManager {
                 final Class<?> clazz = Class.forName(classInfo.getName());
 
                 if(this.checkSuperClass(clazz)) {
-                    if(this.hasParameterLessConstructor(clazz)) {
-                        final HyriCommand command = (HyriCommand) clazz.newInstance();
+                    if(this.hasSupplierParameterConstructor(clazz)) {
+                        final Supplier<? extends JavaPlugin> pluginSupplier = this.pluginProvider::getPlugin;
+                        final HyriCommand command = (HyriCommand) clazz.getConstructor(Supplier.class).newInstance(pluginSupplier);
 
-                        command.setPluginSupplier(this.pluginProvider::getPlugin);
                         command.addArguments();
 
                         Hyrame.log("Registering '" + command.getName() + "' command");
 
                         this.commandMap.register(command.getName(), command);
                     } else {
-                        Hyrame.log(clazz.getSimpleName() + " inherit of " + HyriCommand.class.getSimpleName() + " but doesn't have a parameter less constructor!");
+                        Hyrame.log(clazz.getSimpleName() + " inherit of " + HyriCommand.class.getSimpleName() + " but doesn't have a constructor with only plugin supplier parameter!");
                     }
                 }
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }
 
@@ -74,10 +77,12 @@ public class HyriCommandManager {
         return false;
     }
 
-    private boolean hasParameterLessConstructor(Class<?> clazz) {
+    private boolean hasSupplierParameterConstructor(Class<?> clazz) {
         for(Constructor<?> constructor : clazz.getConstructors()) {
-            if(constructor.getParameterCount() == 0) {
-                return true;
+            if(constructor.getParameterCount() == 1) {
+                if (constructor.getParameterTypes()[0].equals(Supplier.class)) {
+                    return true;
+                }
             }
         }
         return false;

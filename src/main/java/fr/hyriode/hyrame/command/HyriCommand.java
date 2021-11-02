@@ -11,19 +11,21 @@ public abstract class HyriCommand extends Command {
 
     protected final Set<HyriCommandArgument> arguments;
 
-    protected Supplier<? extends JavaPlugin> pluginSupplier;
+    protected final Supplier<? extends JavaPlugin> pluginSupplier;
 
-    public HyriCommand(String name) {
+    public HyriCommand(Supplier<? extends JavaPlugin> pluginSupplier, String name) {
         super(name);
+        this.pluginSupplier = pluginSupplier;
         this.arguments = new HashSet<>();
     }
 
-    public HyriCommand(String name, String description, String usageMessage) {
-        this(name, description, usageMessage, new ArrayList<>());
+    public HyriCommand(Supplier<? extends JavaPlugin> pluginSupplier, String name, String description, String usageMessage) {
+        this(pluginSupplier, name, description, usageMessage, new ArrayList<>());
     }
 
-    public HyriCommand(String name, String description, String usageMessage, List<String> aliases) {
+    public HyriCommand(Supplier<? extends JavaPlugin> pluginSupplier, String name, String description, String usageMessage, List<String> aliases) {
         super(name, description, usageMessage, aliases);
+        this.pluginSupplier = pluginSupplier;
         this.arguments = new HashSet<>();
     }
 
@@ -43,10 +45,6 @@ public abstract class HyriCommand extends Command {
                 argument.handle(sender, Arrays.copyOfRange(args, 1, args.length));
             }
         }
-    }
-
-    public void setPluginSupplier(Supplier<? extends JavaPlugin> pluginSupplier) {
-        this.pluginSupplier = pluginSupplier;
     }
 
     protected void addArguments() {}

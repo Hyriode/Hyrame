@@ -31,12 +31,6 @@ public class Hyrame {
         this.listenerManager = new HyriListenerManager(this);
         this.languageManager = new LanguageManager(this);
         this.gameManager = new HyriGameManager(this);
-
-        this.registerListeners();
-    }
-
-    private void registerListeners() {
-        this.listenerManager.autoRegisterListener("fr.hyriode.hyrame");
     }
 
     public static void log(Level level, String msg) {

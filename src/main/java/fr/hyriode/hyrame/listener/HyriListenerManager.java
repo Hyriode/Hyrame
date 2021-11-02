@@ -2,11 +2,13 @@ package fr.hyriode.hyrame.listener;
 
 import com.google.common.reflect.ClassPath;
 import fr.hyriode.hyrame.Hyrame;
-import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.function.Supplier;
 
 /**
  * Project: Hyrame
@@ -41,20 +43,19 @@ public class HyriListenerManager {
                 final Class<?> clazz = Class.forName(classInfo.getName());
 
                 if(this.checkSuperClass(clazz)) {
-                    if(this.hasParameterLessConstructor(clazz)) {
-                        final HyriListener listener = (HyriListener) clazz.newInstance();
-
-                        listener.setPluginSupplier(this.pluginProvider::getPlugin);
+                    if(this.hasSupplierParameterConstructor(clazz)) {
+                        final Supplier<? extends JavaPlugin> pluginSupplier = this.pluginProvider::getPlugin;
+                        final HyriListener listener = (HyriListener) clazz.getConstructor(Supplier.class).newInstance(pluginSupplier);
 
                         Hyrame.log("Registering '" + clazz.getName() + "' listener");
 
                         this.pluginProvider.getPlugin().getServer().getPluginManager().registerEvents(listener, this.pluginProvider.getPlugin());
                     } else {
-                        Hyrame.log(clazz.getSimpleName() + " inherit of " + HyriCommand.class.getSimpleName() + " but doesn't have a parameter less constructor!");
+                        Hyrame.log(clazz.getSimpleName() + " inherit of " + HyriListener.class.getSimpleName() + " but doesn't have a constructor with only plugin supplier parameter!");
                     }
                 }
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }
 
@@ -72,10 +73,12 @@ public class HyriListenerManager {
         return false;
     }
 
-    private boolean hasParameterLessConstructor(Class<?> clazz) {
+    private boolean hasSupplierParameterConstructor(Class<?> clazz) {
         for(Constructor<?> constructor : clazz.getConstructors()) {
-            if(constructor.getParameterCount() == 0) {
-                return true;
+            if(constructor.getParameterCount() == 1) {
+                if (constructor.getParameterTypes()[0].equals(Supplier.class)) {
+                    return true;
+                }
             }
         }
         return false;
