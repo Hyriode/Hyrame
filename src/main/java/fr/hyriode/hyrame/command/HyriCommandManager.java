@@ -16,6 +16,8 @@ import java.util.function.Supplier;
 
 public class HyriCommandManager {
 
+    public static final String COMMAND_PREFIX = "hyricommand";
+
     private final CommandMap commandMap;
 
     private final IPluginProvider pluginProvider;
@@ -53,7 +55,7 @@ public class HyriCommandManager {
 
                         Hyrame.log("Registering '" + command.getName() + "' command");
 
-                        this.commandMap.register(command.getName(), command);
+                        this.commandMap.register(COMMAND_PREFIX, command);
                     } else {
                         Hyrame.log(clazz.getSimpleName() + " inherit of " + HyriCommand.class.getSimpleName() + " but doesn't have a constructor with only plugin supplier parameter!");
                     }

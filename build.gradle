@@ -1,7 +1,7 @@
 import java.nio.charset.StandardCharsets
 
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.github.johnrengelman.shadow" version "7.1.0"
 }
 
 apply plugin: 'idea'
@@ -9,7 +9,7 @@ apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 group = 'fr.hyriode'
-version = '1.0.5'
+version = '1.0.6'
 archivesBaseName = 'Hyrame'
 
 java {
@@ -97,7 +97,6 @@ publishing {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    api 'fr.hyriode:hyriapi:0.0.7-SNAPSHOT'
-    api 'fr.hyriode:hyricommon:1.0.5'
-    api 'redis.clients:jedis:3.7.0'
+    api 'fr.hyriode:hyriapi:0.0.9'
+    api 'fr.hyriode:hyricommon:1.0.6'
 }
