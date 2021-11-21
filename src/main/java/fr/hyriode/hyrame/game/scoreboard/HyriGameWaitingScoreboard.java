@@ -1,11 +1,11 @@
 package fr.hyriode.hyrame.game.scoreboard;
 
-import fr.hyriode.common.board.Scoreboard;
-import fr.hyriode.common.board.ScoreboardLine;
 import fr.hyriode.hyrame.game.HyriGame;
-import fr.hyriode.hyrame.language.Language;
-import fr.hyriode.hyrame.language.LanguageMessage;
-import fr.hyriode.hyrame.util.References;
+import fr.hyriode.hyrame.impl.util.References;
+import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.hyriapi.settings.HyriLanguage;
+import fr.hyriode.tools.scoreboard.Scoreboard;
+import fr.hyriode.tools.scoreboard.ScoreboardLine;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,25 +21,25 @@ import java.util.function.Consumer;
  */
 public class HyriGameWaitingScoreboard extends Scoreboard {
 
-    private static final LanguageMessage GAME = new LanguageMessage("scoreboard.game")
-            .addValue(Language.FR, "Jeu : ")
-            .addValue(Language.EN, "Game: ");
+    private static final HyriLanguageMessage GAME = new HyriLanguageMessage("scoreboard.game")
+            .addValue(HyriLanguage.FR, "Jeu : ")
+            .addValue(HyriLanguage.EN, "Game: ");
 
-    private static final LanguageMessage MAP = new LanguageMessage("scoreboard.map")
-            .addValue(Language.FR, "Carte : ")
-            .addValue(Language.EN, "Map: ");
+    private static final HyriLanguageMessage MAP = new HyriLanguageMessage("scoreboard.map")
+            .addValue(HyriLanguage.FR, "Carte : ")
+            .addValue(HyriLanguage.EN, "Map: ");
 
-    private static final LanguageMessage PLAYERS = new LanguageMessage("scoreboard.players")
-            .addValue(Language.FR, "Joueurs : ")
-            .addValue(Language.EN, "Players: ");
+    private static final HyriLanguageMessage PLAYERS = new HyriLanguageMessage("scoreboard.players")
+            .addValue(HyriLanguage.FR, "Joueurs : ")
+            .addValue(HyriLanguage.EN, "Players: ");
 
-    private static final LanguageMessage WAITING = new LanguageMessage("scoreboard.waiting")
-            .addValue(Language.FR, "En attente")
-            .addValue(Language.EN, "Waiting");
+    private static final HyriLanguageMessage WAITING = new HyriLanguageMessage("scoreboard.waiting")
+            .addValue(HyriLanguage.FR, "En attente de joueurs")
+            .addValue(HyriLanguage.EN, "Waiting for players");
 
-    private static final LanguageMessage STARTING = new LanguageMessage("scoreboard.starting")
-            .addValue(Language.FR, "Lancement dans : ")
-            .addValue(Language.EN, "Starting in:");
+    private static final HyriLanguageMessage STARTING = new HyriLanguageMessage("scoreboard.starting")
+            .addValue(HyriLanguage.FR, "Lancement dans : ")
+            .addValue(HyriLanguage.EN, "Starting in: ");
 
     private static final String DASH = ChatColor.WHITE + " ⁃ ";
 
@@ -59,10 +59,10 @@ public class HyriGameWaitingScoreboard extends Scoreboard {
         this.setLine(1, " ");
         this.setLine(2, DASH + GAME.getForPlayer(this.player) + ChatColor.AQUA + this.game.getDisplayName());
         this.setLine(3, "  ");
-        this.setLine(4,  DASH + MAP.getForPlayer(this.player) + ChatColor.AQUA + "Aucune");
+        this.setLine(4,  DASH + MAP.getForPlayer(this.player) + ChatColor.RED + "TODO with Hystia");
         this.setLine(5,  DASH + this.getPlayersLine(), this.getPlayersLineConsumer(), 10);
         this.setLine(6,  "   ");
-        this.setLine(7, this.getWaitingLine(), this.getScoreboardLineConsumer(), 10);
+        this.setLine(7, this.getWaitingLine(), this.getScoreboardLineConsumer(), 5);
         this.setLine(8,  "    ");
         this.setLine(9, ChatColor.DARK_AQUA + References.SERVER_IP, new HyriGameWaitingScoreboardIpConsumer(References.SERVER_IP), 2);
     }
@@ -76,7 +76,7 @@ public class HyriGameWaitingScoreboard extends Scoreboard {
             if (this.time == -1) {
                 scoreboardLine.setValue(this.getWaitingLine());
             } else {
-                scoreboardLine.setValue(DASH + "Lancement dans : " + ChatColor.AQUA + this.time + "s");
+                scoreboardLine.setValue(DASH + STARTING.getForPlayer(this.player) + ChatColor.AQUA + this.time + "s");
             }
         };
     }

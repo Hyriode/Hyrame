@@ -21,18 +21,37 @@ public enum HyriGameTeamColor {
     GRAY(ChatColor.DARK_GRAY, (byte) 7),
     BLACK(ChatColor.BLACK, (byte) 15);
 
+    /** The Spigot color */
     private final ChatColor color;
+
+    /** The color data, for wools, colored blocks etc */
     private final byte data;
 
+    /**
+     * Constructor of {@link HyriGameTeamColor}
+     *
+     * @param color - Spigot color
+     * @param data - Color data
+     */
     HyriGameTeamColor(ChatColor color, byte data) {
         this.color = color;
         this.data = data;
     }
 
+    /**
+     * Get the Spigot color
+     *
+     * @return - {@link ChatColor}
+     */
     public ChatColor getColor() {
         return this.color;
     }
 
+    /**
+     * Get the color data
+     *
+     * @return - Color data
+     */
     public byte getData() {
         return this.data;
     }

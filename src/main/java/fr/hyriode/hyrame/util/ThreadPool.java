@@ -13,6 +13,7 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 public class ThreadPool {
 
+    /** Useful executors: async and scheduler */
     public static final ExecutorService ASYNC_EXECUTOR = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("Hyrame Async %1$d").build());
     public static final ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(32);
 

@@ -1,0 +1,9 @@
+{
+  "command.not.enabled": "&cCette commande n'est pas activée sur le serveur !",
+  "dont.have.permissions": "&cTu n'as pas les permissions nécessaires pour effectuer cette action !",
+  "tab.website.and.forum": " Site et Forum : ",
+  "tab.store": " Boutique : ",
+  "tab.discord": " Discord : ",
+  "command.plugin.info": "Information du serveur",
+  "command.plugin.current": "Actuel"
+}

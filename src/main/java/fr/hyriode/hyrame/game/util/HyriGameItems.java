@@ -1,21 +1,7 @@
 package fr.hyriode.hyrame.game.util;
 
-import fr.hyriode.common.item.ItemBuilder;
-import fr.hyriode.hyrame.Hyrame;
-import fr.hyriode.hyrame.game.HyriGamePlayer;
-import fr.hyriode.hyrame.game.gui.HyriGameTeamChooseGui;
-import fr.hyriode.hyrame.language.Language;
-import fr.hyriode.hyrame.language.LanguageMessage;
-import fr.hyriode.hyrame.util.References;
-import fr.hyriode.hyriapi.HyriAPI;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import fr.hyriode.hyrame.IHyrame;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.function.Function;
 
 /**
  * Project: Hyrame
@@ -24,38 +10,16 @@ import java.util.function.Function;
  */
 public class HyriGameItems {
 
-    public static final TriFunction<Hyrame, HyriGamePlayer, Integer, ItemStack> CHOOSE_TEAM = (hyrame, gamePlayer, slot) -> {
-        final LanguageMessage title = new LanguageMessage("choose.team.gui.item.title")
-                .addValue(Language.FR, ChatColor.DARK_AQUA + "Les équipes")
-                .addValue(Language.EN, ChatColor.DARK_AQUA + "Teams");
+    public static final String TEAM_CHOOSER_NAME = "team_chooser";
+    public static final String LEAVE_NAME = "leave_game";
 
-        return new ItemBuilder(Material.WOOL, 1, gamePlayer.hasTeam() ? gamePlayer.getTeam().getColor().getData() : (byte) 0)
-                .withName(title.getForPlayer(gamePlayer.getPlayer().getPlayer()))
-                .withEvent(PlayerInteractEvent.class, e -> {
-                    final PlayerInteractEvent event = (PlayerInteractEvent) e.get();
-
-                    if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                        new HyriGameTeamChooseGui(hyrame, hyrame.getGameManager().getCurrentGame(), gamePlayer.getPlayer().getPlayer(), slot).open();
-                    }
-                })
-                .build();
-    };
-
-    public static final Function<Player, ItemStack> LEAVE = player ->  new ItemBuilder(Material.DARK_OAK_DOOR_ITEM)
-            .withName(ChatColor.RED + References.EXIT_MESSAGE.getForPlayer(player))
-            .withEvent(PlayerInteractEvent.class, e -> {
-                final PlayerInteractEvent event = (PlayerInteractEvent) e.get();
-
-                if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                    HyriAPI.get().getServerManager().sendPlayerToLobby(player.getUniqueId());
-                }
-            })
-            .build();
+    public static final GiveConsumer<IHyrame, Player, Integer> TEAM_CHOOSER = (hyrame, player, slot) -> hyrame.getItemManager().giveItem(player, slot, TEAM_CHOOSER_NAME);
+    public static final GiveConsumer<IHyrame, Player, Integer> LEAVE_ITEM = (hyrame, player, slot) -> hyrame.getItemManager().giveItem(player, slot, LEAVE_NAME);
 
     @FunctionalInterface
-    public interface TriFunction<T, T1, T2, R> {
+    public interface GiveConsumer<T, T1, T2> {
 
-        R apply(T t, T1 t1, T2 t2);
+        void give(T t, T1 t1, T2 t2);
 
     }
 

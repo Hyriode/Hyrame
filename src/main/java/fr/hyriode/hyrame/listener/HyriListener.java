@@ -3,19 +3,23 @@ package fr.hyriode.hyrame.listener;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.function.Supplier;
-
 /**
  * Project: Hyrame
  * Created by AstFaster
- * on 31/08/2021 at 18:15
+ * on 12/11/2021 at 17:02
  */
-public abstract class HyriListener implements Listener {
+public abstract class HyriListener<T extends JavaPlugin> implements Listener {
 
-    protected final Supplier<? extends JavaPlugin> pluginSupplier;
+    /** Listener's plugin */
+    protected final T plugin;
 
-    public HyriListener(Supplier<? extends JavaPlugin> pluginSupplier) {
-        this.pluginSupplier = pluginSupplier;
+    /**
+     * Constructor of {@link HyriListener}
+     *
+     * @param plugin - Listener's plugin
+     */
+    public HyriListener(T plugin) {
+        this.plugin = plugin;
     }
 
 }

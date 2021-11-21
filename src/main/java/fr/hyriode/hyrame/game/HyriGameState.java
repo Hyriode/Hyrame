@@ -7,19 +7,16 @@ package fr.hyriode.hyrame.game;
  */
 public enum HyriGameState {
 
-    WAITING(true),
-    READY(false),
-    PLAYING(false),
-    ENDED(false);
+    /** Game is waiting for players */
+    WAITING,
 
-    private final boolean reachable;
+    /** Game is ready to start */
+    READY,
 
-    HyriGameState(boolean reachable) {
-        this.reachable = reachable;
-    }
+    /** Game is playing */
+    PLAYING,
 
-    public boolean isReachable() {
-        return this.reachable;
-    }
+    /** Game is ended */
+    ENDED
 
 }

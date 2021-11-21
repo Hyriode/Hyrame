@@ -1,4 +1,4 @@
-import java.nio.charset.StandardCharsets
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id "com.github.johnrengelman.shadow" version "7.1.0"
@@ -9,7 +9,7 @@ apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 group = 'fr.hyriode'
-version = '1.0.6'
+version = '1.0.7'
 archivesBaseName = 'Hyrame'
 
 java {
@@ -21,6 +21,11 @@ java {
 compileJava {
     sourceCompatibility = JavaVersion.VERSION_1_8
     options.encoding = 'UTF-8'
+}
+
+configurations {
+    shade
+    implementation.extendsFrom shade
 }
 
 repositories {
@@ -35,20 +40,19 @@ repositories {
             password System.getenv('TOKEN')
         }
     }
-
-    maven {
-        name = 'HyriCommon_maven'
-        url = 'https://maven.pkg.github.com/Hyriode/HyriCommon/'
-
-        credentials {
-            username System.getenv('USERNAME')
-            password System.getenv('TOKEN')
-        }
-    }
 }
 
 shadowJar {
-    configurations = [project.configurations.runtimeClasspath]
+    configurations = [project.configurations.shade]
+    exclude 'fr/hyriode/hyrame/impl'
+    exclude 'plugin.yml'
+    classifier ''
+}
+
+task implJar(type: ShadowJar) {
+    archiveBaseName.set('Hyrame-Impl')
+    from sourceSets.main.output
+    configurations = [project.configurations.shadow]
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -61,14 +65,18 @@ task javadocJar(type: Jar) {
     from javadoc
 }
 
+tasks.withType(Javadoc) {
+    options.encoding = 'UTF-8'
+}
+
 artifacts {
     archives sourcesJar, javadocJar
 }
 
 publishing {
     publications {
-        maven(MavenPublication) {
-            from components.java
+        maven(MavenPublication) { publication ->
+            project.shadow.component(publication)
             artifact tasks.sourcesJar
             artifact tasks.javadocJar
 
@@ -97,6 +105,6 @@ publishing {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    api 'fr.hyriode:hyriapi:0.0.9'
-    api 'fr.hyriode:hyricommon:1.0.6'
+    shadow 'com.google.guava:guava:31.0.1-jre'
+    shade 'fr.hyriode:hyriapi:1.0.1'
 }

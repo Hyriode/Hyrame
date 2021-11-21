@@ -19,18 +19,33 @@ public interface IPluginProvider {
     JavaPlugin getPlugin();
 
     /**
-     * Get located packages of commands
+     * Get provider id used for items, etc.
+     * For example: hyrirtf. Items will render as hyrirtf:my_item
+     *
+     * @return - Provider's id
+     */
+    String getId();
+
+    /**
+     * Get located packages of commands to register
      *
      * @return - A list of {@link String}
      */
     String[] getCommandsPackages();
 
     /**
-     * Get located packages of listeners
+     * Get located packages of listeners to register
      *
      * @return - A list of {@link String}
      */
     String[] getListenersPackages();
+
+    /**
+     * Get located packages of items to register
+     *
+     * @return - A list of {@link String}
+     */
+    String[] getItemsPackages();
 
     /**
      * Get the languages path

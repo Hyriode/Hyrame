@@ -1,10 +1,10 @@
 package fr.hyriode.hyrame.game.tab;
 
-import fr.hyriode.common.board.team.ScoreboardTeam;
-import fr.hyriode.common.board.team.ScoreboardTeamHandler;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
+import fr.hyriode.tools.scoreboard.team.ScoreboardTeam;
+import fr.hyriode.tools.scoreboard.team.ScoreboardTeamHandler;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -30,8 +30,12 @@ public class HyriGameTabListManager {
     }
 
     private void addTeams() {
-        this.game.getTeams().forEach(team -> this.teamHandler.addTeam(new ScoreboardTeam(team.getName(), team.getName(), team.getColor().getColor() + "", team.getColor().getColor() + "", "")));
+        this.game.getTeams().forEach(this::addTeam);
         this.teamHandler.addTeam(new ScoreboardTeam(DEFAULT, DEFAULT, ChatColor.GRAY + DEFAULT_PREFIX, ChatColor.GRAY + DEFAULT_PREFIX, ""));
+    }
+
+    public void addTeam(HyriGameTeam team) {
+        this.teamHandler.addTeam(new ScoreboardTeam(team.getName(), team.getName(), team.getColor().getColor() + "", team.getColor().getColor() + "", ""));
     }
 
     public void handleLogin(Player player) {
@@ -50,7 +54,7 @@ public class HyriGameTabListManager {
         }
 
         for (HyriGameTeam team : this.game.getTeams()) {
-            for (HyriGamePlayer player : team.getOnlinePlayers()) {
+            for (HyriGamePlayer player : team.getPlayers()) {
                 final ScoreboardTeam scoreboardTeam = this.teamHandler.getTeamByName(team.getName());
 
                 if (scoreboardTeam != null) {
