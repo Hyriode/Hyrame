@@ -40,6 +40,11 @@ repositories {
             password System.getenv('TOKEN')
         }
     }
+
+    maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
 }
 
 shadowJar {
@@ -107,4 +112,5 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     shadow 'com.google.guava:guava:31.0.1-jre'
     shade 'fr.hyriode:hyriapi:1.0.1'
+    shade 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
 }

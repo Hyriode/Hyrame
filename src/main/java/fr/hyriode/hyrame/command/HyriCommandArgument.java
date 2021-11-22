@@ -78,6 +78,10 @@ public abstract class HyriCommandArgument {
         this.dynamic = dynamic;
         this.arguments = new ArrayList<>();
         this.permission = permission;
+
+        if (this.name == null || this.name.isEmpty()) {
+            throw new IllegalArgumentException("Argument name cannot be null!");
+        }
     }
 
     public abstract void handle(CommandSender sender, String label, String[] args);

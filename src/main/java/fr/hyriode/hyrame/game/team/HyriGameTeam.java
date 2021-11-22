@@ -21,17 +21,17 @@ public class HyriGameTeam {
     /** Players in team */
     private final List<HyriGamePlayer> players;
 
-    /** Team's size */
-    private final int teamSize;
-
-    /** Team's color */
-    private final HyriGameTeamColor color;
+    /** Team's name */
+    private final String name;
 
     /** Team's display name */
     private final HyriLanguageMessage displayName;
 
-    /** Team's name */
-    private final String name;
+    /** Team's color */
+    private final HyriGameTeamColor color;
+
+    /** Team's size */
+    private final int teamSize;
 
     /**
      * Constructor of {@link HyriGameTeam}
