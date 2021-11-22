@@ -32,6 +32,9 @@ public abstract class HyriCommandArgument {
     /** Permission needed to execute this argument */
     protected final HyriPermission permission;
 
+    /** Is default handle method used */
+    protected boolean defaultHandle = true;
+
     /**
      * Constructor of {@link HyriCommandArgument}
      *
@@ -140,7 +143,7 @@ public abstract class HyriCommandArgument {
 
             return false;
         } else {
-            if (this.arguments.size() > 0) {
+            if (this.arguments.size() > 0 && !this.defaultHandle) {
                 this.command.sendInvalidCommandMessage(sender, this.getFormattedUsageMessage());
 
                 return false;

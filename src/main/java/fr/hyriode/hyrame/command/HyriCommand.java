@@ -47,6 +47,9 @@ public abstract class HyriCommand<T extends JavaPlugin> extends Command {
     /** Permission needed to execute command */
     protected HyriPermission permission;
 
+    /** Is default handle method used */
+    protected boolean defaultHandle = true;
+
     /**
      * Constructor of {@link HyriCommand}
      *
@@ -207,7 +210,7 @@ public abstract class HyriCommand<T extends JavaPlugin> extends Command {
             final Player player = (Player) sender;
 
             if (!HyriAPI.get().getPlayerManager().hasPermission(player.getUniqueId(), this.permission)) {
-                player.sendMessage(DONT_HAVE_PERMISSION.getForPlayer(player));
+                player.sendMessage(ChatColor.RED + DONT_HAVE_PERMISSION.getForPlayer(player));
 
                 return true;
             }
@@ -250,7 +253,7 @@ public abstract class HyriCommand<T extends JavaPlugin> extends Command {
 
             return false;
         } else {
-            if (this.arguments.size() > 0) {
+            if (this.arguments.size() > 0 && !this.defaultHandle) {
                 this.sendInvalidCommandMessage(sender, this.getFormattedUsageMessage());
 
                 return false;
