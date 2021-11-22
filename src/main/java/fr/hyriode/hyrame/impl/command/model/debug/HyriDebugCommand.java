@@ -37,7 +37,9 @@ public class HyriDebugCommand extends HyriCommand<HyramePlugin> {
         this.addArgument(new ServerArgument(this));
         this.addArgument(new GameArgument(this));
 
-       HyriAPI.get().getRankManager().addPermission(EHyriRank.ADMINISTRATOR, Permission.DEBUG_COMMAND);
+        this.defaultHandle = false;
+
+        HyriAPI.get().getRankManager().addPermission(EHyriRank.ADMINISTRATOR, Permission.DEBUG_COMMAND);
     }
 
     @Override
