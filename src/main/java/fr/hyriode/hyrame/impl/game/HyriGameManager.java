@@ -3,7 +3,6 @@ package fr.hyriode.hyrame.impl.game;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.impl.Hyrame;
-import fr.hyriode.hyrame.util.ThreadPool;
 import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.hyriapi.server.IHyriServer;
 import redis.clients.jedis.Jedis;

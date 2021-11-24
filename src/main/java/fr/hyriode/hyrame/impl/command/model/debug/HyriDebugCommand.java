@@ -5,12 +5,15 @@ import fr.hyriode.hyrame.command.HyriCommandArgument;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.item.HyriItem;
+import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.hyriapi.rank.EHyriRank;
 import fr.hyriode.hyriapi.rank.HyriPermission;
 import fr.hyriode.hyriapi.server.IHyriServer;
+import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -73,13 +76,17 @@ public class HyriDebugCommand extends HyriCommand<HyramePlugin> {
             sender.sendMessage("== Items ==");
 
             for (Map.Entry<String, HyriItem<?>> item : plugin.getHyrame().getItemManager().getItems().entrySet()) {
-                sender.sendMessage("* " + item.getKey() + ": " + this.getFormattedDescription(item.getValue().getDescription()));
+                sender.sendMessage("* " + item.getKey() + ": " + this.getFormattedDescription(sender, item.getValue().getDescription().get()));
             }
         }
 
-        private String getFormattedDescription(List<String> description) {
+        private String getFormattedDescription(CommandSender sender, List<HyriLanguageMessage> description) {
             if (description.size() > 0) {
-                return description.stream().map(line -> " " + line).collect(Collectors.joining()).substring(1);
+                if (sender instanceof Player) {
+                    return description.stream().map(line -> " " + line.getForPlayer((Player) sender)).collect(Collectors.joining()).substring(1);
+                } else {
+                    return description.stream().map(line -> " " + line.getValue(HyriLanguage.EN)).collect(Collectors.joining()).substring(1);
+                }
             } else {
                 return "None";
             }

@@ -30,7 +30,7 @@ public class TeamChooserItem extends HyriItem<HyramePlugin> {
     private static final String SLOT_NBT_KET = TeamChooserItem.class.getSimpleName() + "Slot";
 
     public TeamChooserItem(HyramePlugin plugin) {
-        super(plugin, HyriGameItems.TEAM_CHOOSER_NAME, DISPLAY_NAME, Material.WOOL);
+        super(plugin, HyriGameItems.TEAM_CHOOSER_NAME, () -> DISPLAY_NAME, Material.WOOL);
     }
 
     @Override

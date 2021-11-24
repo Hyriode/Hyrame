@@ -2,7 +2,6 @@ package fr.hyriode.hyrame.item;
 
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -11,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Project: Hyrame
@@ -26,10 +26,10 @@ public class HyriItem<T extends JavaPlugin> {
     protected final String name;
 
     /** Item's display name */
-    protected HyriLanguageMessage displayName;
+    protected Supplier<HyriLanguageMessage> displayName;
 
     /** Item's description */
-    protected List<String> description;
+    protected Supplier<List<HyriLanguageMessage>> description;
 
     /** Item's material */
     protected Material material;
@@ -47,7 +47,7 @@ public class HyriItem<T extends JavaPlugin> {
      * @param material Item's material
      * @param data Item's data
      */
-    public HyriItem(T plugin, String name, HyriLanguageMessage displayName, List<String> description, Material material, byte data) {
+    public HyriItem(T plugin, String name, Supplier<HyriLanguageMessage> displayName, Supplier<List<HyriLanguageMessage>> description, Material material, byte data) {
         this.plugin = plugin;
         this.name = name;
         this.displayName = displayName;
@@ -65,34 +65,7 @@ public class HyriItem<T extends JavaPlugin> {
      * @param description Item's description
      * @param material Item's material
      */
-    public HyriItem(T plugin, String name, HyriLanguageMessage displayName, List<String> description, Material material) {
-        this(plugin, name, displayName, description, material, (byte) 0);
-    }
-
-    /**
-     * Constructor of {@link HyriItem}
-     *
-     * @param plugin Spigot plugin
-     * @param name Item's name
-     * @param displayName Item's display name
-     * @param description Item's description
-     * @param material Item's material
-     * @param data Item's data
-     */
-    public HyriItem(T plugin, String name, String displayName, List<String> description, Material material, byte data) {
-        this(plugin, name, new HyriLanguageMessage("").addValue(HyriLanguage.EN, displayName), description, material, data);
-    }
-
-    /**
-     * Constructor of {@link HyriItem}
-     *
-     * @param plugin Spigot plugin
-     * @param name Item's name
-     * @param displayName Item's display name
-     * @param description Item's description
-     * @param material Item's material
-     */
-    public HyriItem(T plugin, String name, String displayName, List<String> description, Material material) {
+    public HyriItem(T plugin, String name, Supplier<HyriLanguageMessage> displayName, Supplier<List<HyriLanguageMessage>> description, Material material) {
         this(plugin, name, displayName, description, material, (byte) 0);
     }
 
@@ -105,8 +78,8 @@ public class HyriItem<T extends JavaPlugin> {
      * @param material Item's material
      * @param data Item's data
      */
-    public HyriItem(T plugin, String name, HyriLanguageMessage displayName, Material material, byte data) {
-        this(plugin, name, displayName, new ArrayList<>(), material, data);
+    public HyriItem(T plugin, String name, Supplier<HyriLanguageMessage> displayName, Material material, byte data) {
+        this(plugin, name, displayName, ArrayList::new, material, data);
     }
 
     /**
@@ -117,33 +90,8 @@ public class HyriItem<T extends JavaPlugin> {
      * @param displayName Item's display name
      * @param material Item's material
      */
-    public HyriItem(T plugin, String name, HyriLanguageMessage displayName, Material material) {
-        this(plugin, name, displayName, new ArrayList<>(), material, (byte) 0);
-    }
-
-    /**
-     * Constructor of {@link HyriItem}
-     *
-     * @param plugin Spigot plugin
-     * @param name Item's name
-     * @param displayName Item's display name
-     * @param material Item's material
-     * @param data Item's data
-     */
-    public HyriItem(T plugin, String name, String displayName, Material material, byte data) {
-        this(plugin, name, new HyriLanguageMessage("").addValue(HyriLanguage.EN, displayName), material, data);
-    }
-
-    /**
-     * Constructor of {@link HyriItem}
-     *
-     * @param plugin Spigot plugin
-     * @param name Item's name
-     * @param displayName Item's display name
-     * @param material Item's material
-     */
-    public HyriItem(T plugin, String name, String displayName, Material material) {
-        this(plugin, name, new HyriLanguageMessage("").addValue(HyriLanguage.EN, displayName), material, (byte) 0);
+    public HyriItem(T plugin, String name, Supplier<HyriLanguageMessage> displayName, Material material) {
+        this(plugin, name, displayName, ArrayList::new, material, (byte) 0);
     }
 
     /**
@@ -186,7 +134,7 @@ public class HyriItem<T extends JavaPlugin> {
      *
      * @return Item's display name
      */
-    public HyriLanguageMessage getDisplayName() {
+    public Supplier<HyriLanguageMessage> getDisplayName() {
         return this.displayName;
     }
 
@@ -195,7 +143,7 @@ public class HyriItem<T extends JavaPlugin> {
      *
      * @return - A list of description lines
      */
-    public List<String> getDescription() {
+    public Supplier<List<HyriLanguageMessage>> getDescription() {
         return this.description;
     }
 

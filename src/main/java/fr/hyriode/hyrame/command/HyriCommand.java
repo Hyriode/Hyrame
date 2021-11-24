@@ -2,7 +2,6 @@ package fr.hyriode.hyrame.command;
 
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyriapi.HyriAPI;
-import fr.hyriode.hyriapi.player.IHyriPlayer;
 import fr.hyriode.hyriapi.rank.HyriPermission;
 import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.ChatColor;

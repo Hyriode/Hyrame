@@ -23,7 +23,7 @@ public class LeaveItem extends HyriItem<HyramePlugin> {
             .addValue(HyriLanguage.EN, ChatColor.RED + "Exit");
 
     public LeaveItem(HyramePlugin plugin) {
-        super(plugin, HyriGameItems.LEAVE_NAME, EXIT_MESSAGE, Material.INK_SACK, (byte) 1);
+        super(plugin, HyriGameItems.LEAVE_NAME, () -> EXIT_MESSAGE, Material.INK_SACK, (byte) 1);
     }
 
     @Override
