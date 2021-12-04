@@ -13,44 +13,46 @@ public interface IHyriGameManager {
     /**
      * Register a game on this server
      *
-     * @param game - Game to register
+     * @param game Game to register
      */
     void registerGame(HyriGame<?> game);
 
     /**
      * Unregister a game on this server
      *
-     * @param game - Game to unregister
+     * @param game Game to unregister
      */
     void unregisterGame(HyriGame<?> game);
 
     /**
      * Get current game registered on this server
      *
-     * @return - {@link HyriGame} object
+     * @return {@link HyriGame} object
      */
     HyriGame<?> getCurrentGame();
 
     /**
-     * Get current game server name
+     * Get all game servers running on the network with a given game name and type
      *
-     * @return - Server name
+     * @param name Game name. Example: bedwars, rtf, nexus, etc
+     * @param type Game type. Example: 1v1, 2v2
+     * @return A list of server name
      */
-    String getGameServerName();
+    List<String> getGames(String name, String type);
 
     /**
-     * Get all game servers running on the server with a given type
+     * Get all game servers running on the network with a given game name
      *
-     * @param name - Game name. Example: bedwars, rtf, nexus, etc
-     * @return - A list of server name
+     * @param name Game name. Example: bedwars, rtf, nexus, etc
+     * @return A list of server name
      */
     List<String> getGames(String name);
 
     /**
-     * Get all game servers running on the server
+     * Get all game servers running on the network
      *
-     * @return - A set of server name
+     * @return A list of server name
      */
-    Set<String> getGames();
+    List<String> getGames();
 
 }

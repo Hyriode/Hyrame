@@ -28,6 +28,9 @@ import java.util.stream.Collectors;
  */
 public abstract class HyriGame<P extends HyriGamePlayer> {
 
+    /** Default game type */
+    public static final HyriGameType DEFAULT_TYPE = () -> "default";
+
     /** Redis constants */
     private static final String CURRENT_GAME_KEY = "currentGame:";
     private static final String LAST_GAME_KEY = "lastGame:";
@@ -62,14 +65,17 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /** Game state */
     protected HyriGameState state;
 
-    /** Game player class */
-    private final Class<P> playerClass;
+    /** Game name */
+    protected final String name;
 
     /** Game display name */
     protected final String displayName;
 
-    /** Game name */
-    protected final String name;
+    /** Game player class */
+    private final Class<P> playerClass;
+
+    /** Game type */
+    protected final HyriGameType type;
 
     /** Hyrame object */
     protected final IHyrame hyrame;
@@ -77,12 +83,24 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /** Plugin object */
     protected final JavaPlugin plugin;
 
-    public HyriGame(IHyrame hyrame, JavaPlugin plugin, String name, String displayName, Class<P> playerClass, boolean tabListUsed) {
+    /**
+     * Constructor of {@link HyriGame}
+     *
+     * @param hyrame Hyrame instance
+     * @param plugin Game plugin instance
+     * @param name Game name (ex: bedwars)
+     * @param displayName Game display name (ex: BedWars)
+     * @param playerClass Game player class
+     * @param type Game type (for example 1v1, 2v2 etc.)
+     * @param tabListUsed Is tab list used
+     */
+    public HyriGame(IHyrame hyrame, JavaPlugin plugin, String name, String displayName, Class<P> playerClass, HyriGameType type, boolean tabListUsed) {
         this.hyrame = hyrame;
         this.plugin = plugin;
         this.name = name;
         this.displayName = displayName;
         this.playerClass = playerClass;
+        this.type = type;
         this.tabListUsed = tabListUsed;
         this.state = HyriGameState.WAITING;
         this.players = new ArrayList<>();
@@ -94,6 +112,33 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         if (this.tabListUsed) {
             this.tabListManager = new HyriGameTabListManager(this);
         }
+    }
+
+    /**
+     * Constructor of {@link HyriGame}
+     *
+     * @param hyrame Hyrame instance
+     * @param plugin Game plugin instance
+     * @param name Game name (ex: bedwars)
+     * @param displayName Game display name (ex: BedWars)
+     * @param playerClass Game player class
+     * @param tabListUsed Is tab list used
+     */
+    public HyriGame(IHyrame hyrame, JavaPlugin plugin, String name, String displayName, Class<P> playerClass, boolean tabListUsed) {
+        this(hyrame, plugin, name, displayName, playerClass, DEFAULT_TYPE, tabListUsed);
+    }
+
+    /**
+     * Constructor of {@link HyriGame}
+     *
+     * @param hyrame Hyrame instance
+     * @param plugin Game plugin instance
+     * @param name Game name (ex: bedwars)
+     * @param displayName Game display name (ex: BedWars)
+     * @param playerClass Game player class
+     */
+    public HyriGame(IHyrame hyrame, JavaPlugin plugin, String name, String displayName, Class<P> playerClass) {
+        this(hyrame, plugin, name, displayName, playerClass, true);
     }
 
     /**
@@ -310,16 +355,25 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Get game display name
      *
-     * @return - Game display name
+     * @return Game display name
      */
     public String getDisplayName() {
         return this.displayName;
     }
 
     /**
+     * Get game type (for example 1v1, 2v2 etc)
+     *
+     * @return Game type
+     */
+    public HyriGameType getType() {
+        return this.type;
+    }
+
+    /**
      * Get game state
      *
-     * @return - Game state
+     * @return Game state
      */
     public HyriGameState getState() {
         return this.state;
@@ -328,7 +382,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Set game state
      *
-     * @param state - New game state
+     * @param state New game state
      */
     public void setState(HyriGameState state) {
         this.state = state;

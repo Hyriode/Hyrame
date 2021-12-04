@@ -102,7 +102,6 @@ public abstract class HyriCommandArgument {
 
             if (!HyriAPI.get().getPlayerManager().hasPermission(player.getUniqueId(), this.permission)) {
                 player.sendMessage(HyriCommand.DONT_HAVE_PERMISSION.getForPlayer(player));
-
                 return;
             }
         }

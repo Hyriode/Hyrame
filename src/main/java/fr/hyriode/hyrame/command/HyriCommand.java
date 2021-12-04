@@ -47,39 +47,7 @@ public abstract class HyriCommand<T extends JavaPlugin> extends Command {
     protected HyriPermission permission;
 
     /** Is default handle method used */
-    protected boolean defaultHandle = true;
-
-    /**
-     * Constructor of {@link HyriCommand}
-     *
-     * @param plugin - Command's plugin
-     * @param name - Command's name
-     */
-    public HyriCommand(T plugin, String name) {
-        this(plugin, name, "", false);
-    }
-
-    /**
-     * Constructor of {@link HyriCommand}
-     *
-     * @param plugin - Command's plugin
-     * @param name - Command's name
-     * @param permission - Command's permission
-     */
-    public HyriCommand(T plugin, String name, HyriPermission permission) {
-        this(plugin, name, "", permission);
-    }
-
-    /**
-     * Constructor of {@link HyriCommand}
-     *
-     * @param plugin - Command's plugin
-     * @param name - Command's name
-     * @param onlyPlayers - Is command only for players
-     */
-    public HyriCommand(T plugin, String name, boolean onlyPlayers) {
-        this(plugin, name, "", onlyPlayers);
-    }
+    protected boolean defaultHandle;
 
     /**
      * Constructor of {@link HyriCommand}
@@ -101,7 +69,7 @@ public abstract class HyriCommand<T extends JavaPlugin> extends Command {
      * @param permission - Command's permission
      */
     public HyriCommand(T plugin, String name, String description, HyriPermission permission) {
-        this(plugin, name, description, new ArrayList<>(), permission, false);
+        this(plugin, name, description, new ArrayList<>(), permission, false, true);
     }
 
     /**
@@ -113,7 +81,7 @@ public abstract class HyriCommand<T extends JavaPlugin> extends Command {
      * @param onlyPlayers - Is command only for players
      */
     public HyriCommand(T plugin, String name, String description, boolean onlyPlayers) {
-        this(plugin, name, description, new ArrayList<>(), null, onlyPlayers);
+        this(plugin, name, description, new ArrayList<>(), null, onlyPlayers, true);
     }
 
     /**
@@ -126,7 +94,20 @@ public abstract class HyriCommand<T extends JavaPlugin> extends Command {
      * @param onlyPlayers - Is command only for players
      */
     public HyriCommand(T plugin, String name, String description, HyriPermission permission, boolean onlyPlayers) {
-        this(plugin, name, description, new ArrayList<>(), permission, onlyPlayers);
+        this(plugin, name, description, new ArrayList<>(), permission, onlyPlayers, true);
+    }
+
+    /**
+     * Constructor of {@link HyriCommand}
+     *
+     * @param plugin - Command's plugin
+     * @param name - Command's name
+     * @param description - Command's description
+     * @param permission - Command's permission
+     * @param onlyPlayers - Is command only for players
+     */
+    public HyriCommand(T plugin, String name, String description, HyriPermission permission, boolean onlyPlayers, boolean defaultHandle) {
+        this(plugin, name, description, new ArrayList<>(), permission, onlyPlayers, defaultHandle);
     }
 
     /**
@@ -151,7 +132,7 @@ public abstract class HyriCommand<T extends JavaPlugin> extends Command {
      * @param permission - Command's permission
      */
     public HyriCommand(T plugin, String name, String description, List<String> aliases, HyriPermission permission) {
-        this(plugin, name, description, aliases, permission, false);
+        this(plugin, name, description, aliases, permission, false, true);
     }
 
     /**
@@ -164,7 +145,7 @@ public abstract class HyriCommand<T extends JavaPlugin> extends Command {
      * @param onlyPlayers - Is command only for players
      */
     public HyriCommand(T plugin, String name, String description, List<String> aliases, boolean onlyPlayers) {
-        this(plugin, name, description, aliases, null, onlyPlayers);
+        this(plugin, name, description, aliases, null, onlyPlayers, true);
     }
 
     /**
@@ -177,13 +158,14 @@ public abstract class HyriCommand<T extends JavaPlugin> extends Command {
      * @param permission - Command's permission
      * @param onlyPlayers - Is command only for players
      */
-    public HyriCommand(T plugin, String name, String description, List<String> aliases, HyriPermission permission, boolean onlyPlayers) {
+    public HyriCommand(T plugin, String name, String description, List<String> aliases, HyriPermission permission, boolean onlyPlayers, boolean defaultHandle) {
         super(name, description, "", aliases);
         this.name = name;
         this.plugin = plugin;
         this.arguments = new ArrayList<>();
         this.permission = permission;
         this.onlyPlayers = onlyPlayers;
+        this.defaultHandle = defaultHandle;
     }
 
     public abstract void handle(CommandSender sender, String label, String[] args);
