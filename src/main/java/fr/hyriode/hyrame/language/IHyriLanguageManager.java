@@ -26,6 +26,11 @@ public interface IHyriLanguageManager {
     List<HyriLanguageMessage> loadLanguagesMessages(IPluginProvider pluginProvider);
 
     /**
+     * Call this method when you need to refresh all messages for a player
+     */
+    void updatePlayerLanguage(Player player);
+
+    /**
      * Add a message
      *
      * @param message - Message to add

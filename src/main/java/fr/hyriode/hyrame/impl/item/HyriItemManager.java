@@ -136,7 +136,7 @@ public class HyriItemManager implements IHyriItemManager {
         return this.items.get(this.getFullItemId(name));
     }
 
-    public ItemStack toItemStack(Player player, HyriItem<?> item) {
+    private ItemStack toItemStack(Player player, HyriItem<?> item) {
         return new ItemBuilder(item.getMaterial(), 1, item.getData())
                 .withName(item.getDisplayName().get().getForPlayer(player))
                 .withLore(this.getLore(player, item.getDescription().get()))

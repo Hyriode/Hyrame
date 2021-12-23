@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.game.tab;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
+import fr.hyriode.hyrame.impl.util.Symbols;
 import fr.hyriode.tools.scoreboard.team.ScoreboardTeam;
 import fr.hyriode.tools.scoreboard.team.ScoreboardTeamHandler;
 import org.bukkit.ChatColor;
@@ -16,7 +17,6 @@ import org.bukkit.entity.Player;
 public class HyriGameTabListManager {
 
     private static final String DEFAULT = "default";
-    private static final String DEFAULT_PREFIX = "\u00D7 ";
 
     private final ScoreboardTeamHandler teamHandler;
 
@@ -31,7 +31,7 @@ public class HyriGameTabListManager {
 
     private void addTeams() {
         this.game.getTeams().forEach(this::addTeam);
-        this.teamHandler.addTeam(new ScoreboardTeam(DEFAULT, DEFAULT, ChatColor.GRAY + DEFAULT_PREFIX, ChatColor.GRAY + DEFAULT_PREFIX, ""));
+        this.teamHandler.addTeam(new ScoreboardTeam(DEFAULT, DEFAULT, ChatColor.GRAY + Symbols.CROSS + " ", ChatColor.GRAY + Symbols.CROSS + " ", ""));
     }
 
     public void addTeam(HyriGameTeam team) {

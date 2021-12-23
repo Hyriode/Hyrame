@@ -1,6 +1,8 @@
 package fr.hyriode.hyrame.impl.command.model.bukkit;
 
 import fr.hyriode.hyrame.command.HyriCommand;
+import fr.hyriode.hyrame.command.HyriCommandContext;
+import fr.hyriode.hyrame.command.HyriCommandInfo;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyriapi.HyriAPI;
@@ -10,8 +12,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-
-import java.util.Arrays;
 
 /**
  * Project: Hyrame
@@ -24,11 +24,15 @@ public class PluginCommand extends HyriCommand<HyramePlugin> {
     private static final String CURRENT_KEY = "command.plugin.current";
 
     public PluginCommand(HyramePlugin plugin) {
-        super(plugin, "plugins", "Show all plugins", Arrays.asList("pl", "ver", "version", "about", "icanhasbukkit"));
+        super(plugin, new HyriCommandInfo("plugins")
+                .withDescription("Show all plugins running on the server")
+                .withAliases("pl", "ver", "version", "about", "icanhasbukkit")
+                .withUsage("/plugins"));
     }
 
     @Override
-    public void handle(CommandSender sender, String label, String[] args) {
+    public void handle(HyriCommandContext ctx) {
+        final CommandSender sender = ctx.getSender();
         final IHyriLanguageManager languageManager = this.plugin.getHyrame().getLanguageManager();
         final boolean player = sender instanceof Player;
         final String colon = player ? (HyriAPI.get().getPlayerManager().getPlayer(((Player) sender).getUniqueId()).getSettings().getLanguage() == HyriLanguage.FR ? " : " : ": ") : ": ";

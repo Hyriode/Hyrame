@@ -3,16 +3,15 @@ package fr.hyriode.hyrame.impl.game;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.impl.Hyrame;
+import fr.hyriode.hyrame.impl.chat.HyriDefaultChatHandler;
+import fr.hyriode.hyrame.impl.game.chat.HyriGameChatHandler;
 import fr.hyriode.hyriapi.HyriAPI;
-import fr.hyriode.hyriapi.server.IHyriServer;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import redis.clients.jedis.Jedis;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import java.util.logging.Level;
 
 /**
@@ -44,20 +43,21 @@ public class HyriGameManager implements IHyriGameManager {
 
             if (jedis != null) {
                 jedis.rpush(key, HyriAPI.get().getServer().getName());
-                jedis.close();
-
-                this.hyrame.getTabManager().disable();
-
-                this.currentGame = game;
-
-                this.gameHandler = new HyriGameHandler(this.hyrame);
-
-                Hyrame.log("Registered '" + game.getName() + "' game.");
-
-                game.postRegistration();
             } else {
                 Hyrame.log(Level.SEVERE, "Cannot register game! Error caused by Redis!");
             }
+        }, () -> {
+            this.hyrame.getTabManager().disableTabList();
+
+            this.currentGame = game;
+
+            this.gameHandler = new HyriGameHandler(this.hyrame);
+
+            this.hyrame.setChatHandler(new HyriGameChatHandler(this.hyrame));
+
+            Hyrame.log("Registered '" + game.getName() + "' game.");
+
+            game.postRegistration();
         });
     }
 
@@ -74,16 +74,17 @@ public class HyriGameManager implements IHyriGameManager {
 
             if (jedis != null) {
                 jedis.lrem(key, 0, HyriAPI.get().getServer().getName());
-                jedis.close();
-
-                this.currentGame = null;
-
-                this.hyrame.getTabManager().enable();
-
-                Hyrame.log("Unregistered '" + game.getName() + "' game.");
             } else {
                 Hyrame.log(Level.SEVERE, "Cannot unregister game! Error caused by Redis!");
             }
+        }, () -> {
+            this.currentGame = null;
+
+            this.hyrame.getTabManager().enableTabList();
+
+            this.hyrame.setChatHandler(new HyriDefaultChatHandler());
+
+            Hyrame.log("Unregistered '" + game.getName() + "' game.");
         });
     }
 

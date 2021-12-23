@@ -11,5 +11,6 @@ public class Symbols {
     public static final String SIMPLE_ARROW = "\u279E";
     public static final String LEFT_QUOTE_MARK = "\u00AB";
     public static final String RIGHT_QUOTE_MARK = "\u00BB";
+    public static final String CROSS = "\u00D7";
 
 }

@@ -76,10 +76,6 @@ public class HyriGameTeamChooserGui extends AbstractInventory {
         this.addRandomTeamBarrier();
     }
 
-    public HyriGameTeamChooserGui(IHyrame hyrame, HyriGame<?> game, Player owner) {
-        this(hyrame, game, owner, -1);
-    }
-
     private void addTeamsWools() {
         for (HyriGameTeam team : this.game.getTeams()) {
             final ItemStack wool = new ItemBuilder(Material.WOOL, 1, team.getColor().getData())
@@ -131,8 +127,6 @@ public class HyriGameTeamChooserGui extends AbstractInventory {
                 gamePlayer.removeFromTeam();
 
                 team.addPlayer(gamePlayer);
-
-                gamePlayer.setTeam(team);
 
                 this.game.updateTabList();
 

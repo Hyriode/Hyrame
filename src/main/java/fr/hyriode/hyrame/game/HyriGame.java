@@ -4,6 +4,8 @@ import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.scoreboard.HyriGameWaitingScoreboard;
 import fr.hyriode.hyrame.game.tab.HyriGameTabListManager;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
+import fr.hyriode.hyrame.impl.Hyrame;
+import fr.hyriode.hyrame.impl.util.Symbols;
 import fr.hyriode.hyrame.util.ThreadPool;
 import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.tools.scoreboard.Scoreboard;
@@ -37,49 +39,39 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
     /** Minimum of players to start */
     protected int minPlayers;
-
     /** Maximum of players */
     protected int maxPlayers;
-
     /** Is tab list used */
     protected boolean tabListUsed;
 
     /** Tab list manager object */
     protected HyriGameTabListManager tabListManager;
-
     /** All players scoreboard */
     private final List<HyriGameWaitingScoreboard> waitingScoreboards;
 
     /** Starting timer task */
     protected BukkitTask startingTimer;
-
     /** Is default starting */
     protected boolean defaultStarting = true;
 
     /** All game teams */
     protected final List<HyriGameTeam> teams;
-
     /** All game players */
     protected final List<P> players;
 
     /** Game state */
     protected HyriGameState state;
-
     /** Game name */
     protected final String name;
-
     /** Game display name */
     protected final String displayName;
-
     /** Game player class */
     private final Class<P> playerClass;
-
     /** Game type */
     protected final HyriGameType type;
 
     /** Hyrame object */
     protected final IHyrame hyrame;
-
     /** Plugin object */
     protected final JavaPlugin plugin;
 
@@ -173,6 +165,9 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         });
     }
 
+    /**
+     * Set a random team to all players who have not a team
+     */
     public void setRandomTeams() {
         final Random random = new Random();
 
@@ -205,8 +200,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Register a game team
      *
-     * @param team - Team to register
-     * @return - The registered team
+     * @param team Team to register
+     * @return The registered team
      */
     protected HyriGameTeam registerTeam(HyriGameTeam team) {
         if (this.getTeam(team.getName()) == null) {
@@ -214,7 +209,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
             this.tabListManager.addTeam(team);
 
-            this.hyrame.info("'" + team.getName() + "' team registered.");
+            Hyrame.log("'" + team.getName() + "' team registered.");
 
             return team;
         }
@@ -225,7 +220,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * Called on player login
      * Override this method to make actions on login
      *
-     * @param p - Logged player
+     * @param p Logged player
      */
     public void handleLogin(Player p) {
         try {
@@ -233,17 +228,11 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
             this.players.add(player);
 
-            ThreadPool.EXECUTOR.execute(() -> {
-                final Jedis jedis = HyriAPI.get().getRedisResource();
-                final String key = CURRENT_GAME_KEY + p.getUniqueId().toString();
-
-                if (jedis != null) {
-                    jedis.set(key, this.name);
-                    jedis.close();
-                }
-            });
+            HyriAPI.get().getRedisProcessor().process(jedis -> jedis.set(CURRENT_GAME_KEY + p.getUniqueId().toString(), this.name));
 
             if (this.tabListUsed) {
+                p.setDisplayName(ChatColor.GRAY + Symbols.CROSS + " " + p.getDisplayName());
+
                 this.tabListManager.handleLogin(p);
 
                 this.updateTabList();
@@ -264,10 +253,10 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
-     * Called on player logout
+     * Called on player logout<br>
      * Override this method to make actions on logout
      *
-     * @param p - Logged out player
+     * @param p Logged out player
      */
     public void handleLogout(Player p) {
         final P player = this.getPlayer(p.getUniqueId());
@@ -275,7 +264,6 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         HyriAPI.get().getRedisProcessor().process(jedis -> {
             jedis.set(LAST_GAME_KEY + p.getUniqueId().toString(), this.name);
             jedis.del(CURRENT_GAME_KEY + p.getUniqueId().toString());
-            jedis.close();
         });
 
         ThreadPool.EXECUTOR.execute(() -> {
@@ -294,7 +282,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
-     * To call when the game is over
+     * To call when the game is over<br>
      * Override this method to make actions on game end
      */
     public void end() {
@@ -312,8 +300,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Get a game player object by giving player {@link UUID}
      *
-     * @param uuid - Player {@link UUID}
-     * @return - Game player object
+     * @param uuid Player {@link UUID}
+     * @return Game player object
      */
     public P getPlayer(UUID uuid) {
         return this.players.stream().filter(player -> player.getUUID().equals(uuid)).findFirst().orElse(null);
@@ -322,7 +310,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Get all players in spectator mode
      *
-     * @return - A list of game player
+     * @return A list of game player
      */
     public List<P> getSpectators() {
         return this.players.stream().filter(HyriGamePlayer::isSpectator).collect(Collectors.toList());
@@ -331,8 +319,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Get a team by its name
      *
-     * @param name - Team name
-     * @return - Team
+     * @param name Team name
+     * @return {@link HyriGameTeam} instance
      */
     public HyriGameTeam getTeam(String name) {
         for (HyriGameTeam team : this.teams) {
@@ -346,7 +334,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Get game name
      *
-     * @return - Game name
+     * @return Game name
      */
     public String getName() {
         return this.name;
@@ -362,7 +350,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
-     * Get game type (for example 1v1, 2v2 etc)
+     * Get game type (for example 1v1, 2v2 etc.)
      *
      * @return Game type
      */
@@ -391,7 +379,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Get all game players
      *
-     * @return - A list of game player
+     * @return A list of game players
      */
     public List<P> getPlayers() {
         return this.players;
@@ -400,7 +388,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Get all game teams
      *
-     * @return - A list of game team
+     * @return A list of game teams
      */
     public List<HyriGameTeam> getTeams() {
         return this.teams;
@@ -409,7 +397,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Check if game is using default starting
      *
-     * @return - <code>true</code> if yes
+     * @return <code>true</code> if yes
      */
     public boolean isDefaultStarting() {
         return this.defaultStarting;
@@ -418,7 +406,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Set if game is using default starting
      *
-     * @param defaultStarting - <code>true</code> if yes
+     * @param defaultStarting <code>true</code> if yes
      */
     public void setDefaultStarting(boolean defaultStarting) {
         this.defaultStarting = defaultStarting;
@@ -427,7 +415,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Get all waiting scoreboards
      *
-     * @return - A list of scoreboard
+     * @return A list of scoreboard
      */
     List<HyriGameWaitingScoreboard> getWaitingScoreboards() {
         return this.waitingScoreboards;
@@ -436,7 +424,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Get maximum of game players
      *
-     * @return - Maximum of game players
+     * @return Maximum of game players
      */
     public int getMaxPlayers() {
         return this.maxPlayers;
@@ -445,7 +433,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Set maximum of game players
      *
-     * @param maxPlayers - New maximum of game players
+     * @param maxPlayers New maximum of game players
      */
     public void setMaxPlayers(int maxPlayers) {
         this.maxPlayers = maxPlayers;
@@ -454,7 +442,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Get minimum of game players
      *
-     * @return - Minimum of game players
+     * @return Minimum of game players
      */
     public int getMinPlayers() {
         return this.minPlayers;
@@ -463,7 +451,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Set minimum of game players
      *
-     * @param minPlayers - New minimum of game players
+     * @param minPlayers New minimum of game players
      */
     public void setMinPlayers(int minPlayers) {
         this.minPlayers = minPlayers;
@@ -472,7 +460,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Check if tab list is used
      *
-     * @return - <code>true</code>
+     * @return <code>true</code> if yes
      */
     public boolean isTabListUsed() {
         return this.tabListUsed;
@@ -481,7 +469,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Set if tab list is used
      *
-     * @param tabListUsed - <code>true</code> if yes
+     * @param tabListUsed <code>true</code> if yes
      */
     public void setTabListUsed(boolean tabListUsed) {
         this.tabListUsed = tabListUsed;

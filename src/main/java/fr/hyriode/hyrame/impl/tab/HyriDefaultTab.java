@@ -4,6 +4,7 @@ import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.impl.util.References;
 import fr.hyriode.hyrame.impl.util.Symbols;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
+import fr.hyriode.hyriapi.settings.HyriLanguage;
 import fr.hyriode.tools.tab.Tab;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -16,14 +17,17 @@ import org.bukkit.entity.Player;
 public class HyriDefaultTab extends Tab {
 
     private final Hyrame hyrame;
-    private final Player player;
+    private final HyriLanguage language;
 
-    public HyriDefaultTab(Hyrame hyrame, Player player) {
+    public HyriDefaultTab(Hyrame hyrame, HyriLanguage language) {
         this.hyrame = hyrame;
-        this.player = player;
+        this.language = language;
+    }
 
+    @Override
+    public void send(Player player) {
         this.addLines();
-        this.send(this.player);
+        super.send(player);
     }
 
     private void addLines() {
@@ -39,9 +43,9 @@ public class HyriDefaultTab extends Tab {
 
     private void addFooterLines() {
         final IHyriLanguageManager languageManager = this.hyrame.getLanguageManager();
-        final String websiteAndForum = languageManager.getMessageValueForPlayer(player, "tab.website.and.forum");
-        final String store = languageManager.getMessageValueForPlayer(player, "tab.store");
-        final String discord = languageManager.getMessageValueForPlayer(player, "tab.discord");
+        final String websiteAndForum = languageManager.getMessageValue(language, "tab.website.and.forum");
+        final String store = languageManager.getMessageValue(language, "tab.store");
+        final String discord = languageManager.getMessageValue(language, "tab.discord");
 
         this.setBlankFooterLine(0);
         this.setFooterLine(1, " " + ChatColor.GRAY + Symbols.LEFT_QUOTE_MARK +  websiteAndForum + ChatColor.DARK_AQUA + References.WEBSITE_URL + ChatColor.GRAY + " " + Symbols.RIGHT_QUOTE_MARK + " ");

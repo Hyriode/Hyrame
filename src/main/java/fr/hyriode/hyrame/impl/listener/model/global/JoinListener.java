@@ -22,41 +22,50 @@ import java.util.UUID;
  * Created by AstFaster
  * on 12/11/2021 at 16:11
  */
-public class GlobalJoinHandler extends HyriListener<HyramePlugin> {
+public class JoinListener extends HyriListener<HyramePlugin> {
 
-    public GlobalJoinHandler(HyramePlugin plugin) {
+    public JoinListener(HyramePlugin plugin) {
         super(plugin);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
-        final IHyriPlayerManager playerManager = HyriAPI.get().getPlayerManager();
-        final UUID uuid = event.getUniqueId();
 
-        IHyriPlayer player = playerManager.getPlayer(uuid);
-        if (player == null) {
-            player = playerManager.createPlayer(uuid, event.getName());
-        }
+        try {
+            final IHyriPlayerManager playerManager = HyriAPI.get().getPlayerManager();
+            final UUID uuid = event.getUniqueId();
 
-        if (player == null) {
-            event.setKickMessage("An error occurred when loading your profile!");
-            event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-        }
+            IHyriPlayer player = playerManager.getPlayer(uuid);
+            if (player == null) {
+                player = playerManager.createPlayer(uuid, event.getName());
+            }
+
+            if (player != null) {
+                return;
+            }
+        } catch (Exception ignored) {}
+
+        event.setKickMessage("An error occurred when loading your profile!");
+        event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         final IHyriPlayerManager playerManager = HyriAPI.get().getPlayerManager();
-        final IHyriPlayer hyriPlayer = playerManager.getPlayer(player.getUniqueId());
+        final IHyriPlayer account = playerManager.getPlayer(player.getUniqueId());
 
-        if (hyriPlayer.getRank().getName().equals(HyriAPI.get().getRankManager().getRank(EHyriRank.ADMINISTRATOR).getName())) {
+        if (account.getRank().getType().equals(EHyriRank.ADMINISTRATOR)) {
             player.setOp(true);
         }
 
-        hyriPlayer.setLastLoginDate(new Date(System.currentTimeMillis()));
+        playerManager.removePlayerId(account.getName());
 
-        playerManager.sendPlayer(hyriPlayer);
+        account.setName(player.getName());
+        account.setLastLoginDate(new Date(System.currentTimeMillis()));
+
+        playerManager.sendPlayer(account);
+        playerManager.setPlayerId(account.getName(), account.getUUID());
 
         event.setJoinMessage("");
     }
@@ -64,12 +73,13 @@ public class GlobalJoinHandler extends HyriListener<HyramePlugin> {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerLeave(PlayerQuitEvent event) {
         final IHyriPlayerManager playerManager = HyriAPI.get().getPlayerManager();
-        final IHyriPlayer hyriPlayer = playerManager.getPlayer(event.getPlayer().getUniqueId());
+        final IHyriPlayer account = playerManager.getPlayer(event.getPlayer().getUniqueId());
 
         event.setQuitMessage("");
 
-        hyriPlayer.setPlayTime(hyriPlayer.getPlayTime() + (System.currentTimeMillis() - hyriPlayer.getLastLoginDate().getTime()));
-        playerManager.sendPlayer(hyriPlayer);
+        account.setPlayTime(account.getPlayTime() + (System.currentTimeMillis() - account.getLastLoginDate().getTime()));
+
+        playerManager.sendPlayer(account);
     }
 
     @EventHandler

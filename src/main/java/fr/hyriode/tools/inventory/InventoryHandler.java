@@ -1,5 +1,6 @@
 package fr.hyriode.tools.inventory;
 
+import fr.hyriode.tools.Tools;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -17,12 +18,13 @@ public class InventoryHandler implements Listener {
 
     public InventoryHandler(JavaPlugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+
+        Tools.log("Inventory handler registered.");
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onClick(InventoryClickEvent event) {
-        if (event.getClickedInventory() != null && event.getInventory().getHolder() instanceof AbstractInventory) {
-            final AbstractInventory inventory = (AbstractInventory) event.getInventory().getHolder();
+        if (event.getClickedInventory() != null && event.getInventory().getHolder() instanceof final AbstractInventory inventory) {
             final int clickedSlot = event.getRawSlot();
 
             event.setCancelled(inventory.isCancelClickEvent());
@@ -37,9 +39,7 @@ public class InventoryHandler implements Listener {
 
     @EventHandler
     public void onOpen(InventoryOpenEvent event) {
-        if (event.getInventory().getHolder() != null && event.getInventory().getHolder() instanceof AbstractInventory) {
-            final AbstractInventory inventory = (AbstractInventory) event.getInventory().getHolder();
-
+        if (event.getInventory().getHolder() != null && event.getInventory().getHolder() instanceof final AbstractInventory inventory) {
             inventory.onOpen(event);
         }
     }

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.event.HyriLanguagesUpdatedEvent;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyriapi.HyriAPI;
@@ -29,7 +30,10 @@ public class HyriLanguageManager implements IHyriLanguageManager {
 
     private final Set<HyriLanguageMessage> messages;
 
-    public HyriLanguageManager() {
+    private final Hyrame hyrame;
+
+    public HyriLanguageManager(Hyrame hyrame) {
+        this.hyrame = hyrame;
         this.messages = ConcurrentHashMap.newKeySet();
     }
 
@@ -80,6 +84,14 @@ public class HyriLanguageManager implements IHyriLanguageManager {
     }
 
     @Override
+    public void updatePlayerLanguage(Player player) {
+        final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
+        final HyriLanguagesUpdatedEvent event = new HyriLanguagesUpdatedEvent(player, account.getSettings().getLanguage());
+
+        this.hyrame.getPlugin().getServer().getPluginManager().callEvent(event);
+    }
+
+    @Override
     public void addMessage(HyriLanguageMessage message) {
         this.messages.add(message);
     }
@@ -106,7 +118,12 @@ public class HyriLanguageManager implements IHyriLanguageManager {
 
     @Override
     public String getMessageValue(HyriLanguage language, String key) {
-        return this.getMessage(key).getValue(language);
+        final HyriLanguageMessage message = this.getMessage(key);
+
+        if (message != null) {
+            return message.getValue(language);
+        }
+        return null;
     }
 
     @Override

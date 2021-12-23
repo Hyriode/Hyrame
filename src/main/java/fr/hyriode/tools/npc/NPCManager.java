@@ -3,6 +3,7 @@ package fr.hyriode.tools.npc;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import fr.hyriode.tools.PacketUtil;
+import fr.hyriode.tools.Tools;
 import fr.hyriode.tools.hologram.Hologram;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
@@ -59,6 +60,8 @@ public class NPCManager {
         NPCManager.cacheSkinRedisKey = cacheSkinRedisKey;
 
         new NPCHandler(plugin);
+
+        Tools.log("NPC manager registered.");
     }
 
     /**

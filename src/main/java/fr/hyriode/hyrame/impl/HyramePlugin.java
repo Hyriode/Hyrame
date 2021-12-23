@@ -16,12 +16,10 @@ public class HyramePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Tools.setup(this, this.getLogger(), () -> HyriAPI.get().getRedisResource());
+        this.hyrame = HyrameLoader.register(() -> new Hyrame(this));
 
-        this.hyrame = new Hyrame(this);
-
-        HyrameLoader.register(this.hyrame);
         HyrameLoader.load(new HyrameProvider(this));
+        Tools.setup(this, () -> HyriAPI.get().getRedisResource());
     }
 
     @Override

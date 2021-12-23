@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl.command;
 
+import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.tools.reflection.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -38,19 +39,23 @@ public class HyriCommandBlocker {
     }
 
     private void removeCommands() {
+        Hyrame.log("Removing default Spigot and Minecraft commands...");
+
         // Minecraft
         this.addBlockedCommand(MINECRAFT_PREFIX, "tell", "me", "trigger");
 
         // Bukkit
         this.removeCommand(BUKKIT_PREFIX, "about", "version", "ver", "icanhasbukkit");
         this.removeCommand(BUKKIT_PREFIX, "save-all", "save-off", "save-on");
+        this.removeCommand(BUKKIT_PREFIX, "reload", "rl");
+        this.removeCommand(BUKKIT_PREFIX, "timings");
         this.removeCommand(BUKKIT_PREFIX, "plugins", "pl");
         this.removeCommand(BUKKIT_PREFIX, "help", "?");
         this.removeCommand(BUKKIT_PREFIX, "me");
         this.removeCommand(BUKKIT_PREFIX, "trigger");
 
         // Spigot
-        this.removeCommand(SPIGOT_PREFIX, "restart");
+        this.removeCommand(SPIGOT_PREFIX, "restart", "tps");
     }
 
     private void addBlockedCommand(String prefix, String... commands) {
@@ -65,20 +70,22 @@ public class HyriCommandBlocker {
         final SimpleCommandMap simpleCommandMap = (SimpleCommandMap) this.commandMap;
         final Map<String, Command> knownCommands = (Map<String, Command>) Reflection.invokeField(simpleCommandMap, "knownCommands");
 
-        for (String command : commands) {
-            if (command.equals("*")) {
-                for (String knownCommand : new HashSet<>(knownCommands.keySet())) {
-                    if (knownCommand.startsWith(prefix)) {
-                        knownCommands.remove(knownCommand);
+        if (knownCommands != null) {
+            for (String command : commands) {
+                if (command.equals("*")) {
+                    for (String knownCommand : new HashSet<>(knownCommands.keySet())) {
+                        if (knownCommand.startsWith(prefix)) {
+                            knownCommands.remove(knownCommand);
 
-                        if (knownCommands.containsKey(":")) {
-                            knownCommands.remove(knownCommand.split(":")[1]);
+                            if (knownCommands.containsKey(":")) {
+                                knownCommands.remove(knownCommand.split(":")[1]);
+                            }
                         }
                     }
+                } else {
+                    knownCommands.remove(command);
+                    knownCommands.remove(prefix + ":" + command);
                 }
-            } else {
-                knownCommands.remove(command);
-                knownCommands.remove(prefix + ":" + command);
             }
         }
     }

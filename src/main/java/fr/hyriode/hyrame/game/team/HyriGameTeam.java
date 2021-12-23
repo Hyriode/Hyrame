@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.game.team;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +124,13 @@ public class HyriGameTeam {
         if (!player.hasTeam()) {
             if (!this.contains(player)) {
                 if (this.players.size() < this.teamSize) {
+                    final Player p = player.getPlayer();
+
                     this.players.add(player);
+
+                    p.setDisplayName(this.color.getColor() + p.getDisplayName());
+
+                    player.setTeam(this);
 
                     return null;
                 }
@@ -144,6 +151,8 @@ public class HyriGameTeam {
         if (player.hasTeam()) {
             if (player.isInTeam(this.name)) {
                 this.players.remove(player);
+
+                player.setTeam(null);
 
                 return null;
             }

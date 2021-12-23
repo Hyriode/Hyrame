@@ -14,9 +14,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
  * Created by AstFaster
  * on 12/11/2021 at 16:11
  */
-public class TabHandler extends HyriListener<HyramePlugin> {
+public class TabListener extends HyriListener<HyramePlugin> {
 
-    public TabHandler(HyramePlugin plugin) {
+    public TabListener(HyramePlugin plugin) {
         super(plugin);
     }
 

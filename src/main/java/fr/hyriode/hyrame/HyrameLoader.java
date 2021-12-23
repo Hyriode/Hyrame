@@ -1,8 +1,11 @@
 package fr.hyriode.hyrame;
 
 import fr.hyriode.hyrame.plugin.IPluginProvider;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.ConsoleCommandSender;
 
-import java.util.logging.Level;
+import java.util.function.Supplier;
 
 /**
  * Project: Hyrame
@@ -22,7 +25,7 @@ public class HyrameLoader {
      */
     public static IHyrame load(IPluginProvider pluginProvider) {
         if (hyrame == null) {
-            throw new IllegalStateException("No implementation of " + IHyrame.NAME + " has been registered! Check your runtime and register configurations!");
+            throw new HyrameNotRegisteredException();
         }
 
         if (hyrame.isLoaded(pluginProvider)) {
@@ -37,12 +40,37 @@ public class HyrameLoader {
     /**
      * Register an implementation of Hyrame
      *
-     * @param hyrame - New {@link IHyrame} implementation
+     * @param hyrameSupplier - New {@link IHyrame} implementation
      */
-    public static void register(IHyrame hyrame) {
+    public static <T extends IHyrame> T register(Supplier<T> hyrameSupplier) {
+        final ChatColor color = ChatColor.DARK_PURPLE;
+        final ConsoleCommandSender sender = Bukkit.getConsoleSender();
+
+        sender.sendMessage(color + "  _  _                         ");
+        sender.sendMessage(color + " | || |_  _ _ _ __ _ _ __  ___ ");
+        sender.sendMessage(color + " | __ | || | '_/ _` | '  \\/ -_)");
+        sender.sendMessage(color + " |_||_|\\_, |_| \\__,_|_|_|_\\___|");
+        sender.sendMessage(color + "       |__/                    ");
+
+        final T hyrame = hyrameSupplier.get();
+
         HyrameLoader.hyrame = hyrame;
 
-        HyrameLoader.hyrame.getLogger().log(Level.INFO, "Registered '" + hyrame.getClass().getName() + "' as an implementation of " + IHyrame.NAME + ".");
+        sender.sendMessage(color + "[" + IHyrame.NAME + "] " + ChatColor.RESET + "Registered '" + hyrame.getClass().getName() + "' as an implementation of " + IHyrame.NAME + ".");
+
+        return hyrame;
+    }
+
+    private static final class HyrameNotRegisteredException extends IllegalStateException {
+
+        public HyrameNotRegisteredException() {
+            super(IHyrame.NAME + " has not been registered yet!\n" +
+                    "\n        These might be the following reasons:\n" +
+                    "          1) The " + IHyrame.NAME + " plugin is not installed or it failed while enabling\n" +
+                    "          2) Your plugin is loading before " + IHyrame.NAME + "\n" +
+                    "          3) No implementation of " + IHyrame.NAME + " exists\n");
+        }
+
     }
 
 }

@@ -1,107 +1,81 @@
 package fr.hyriode.hyrame.impl.tab;
 
+import fr.hyriode.hyrame.IHyrameConfiguration;
 import fr.hyriode.hyrame.impl.Hyrame;
-import fr.hyriode.hyrame.impl.configuration.HyrameConfiguration;
 import fr.hyriode.hyrame.util.ThreadPool;
 import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.hyriapi.player.IHyriPlayer;
-import fr.hyriode.hyriapi.rank.EHyriRank;
-import fr.hyriode.hyriapi.rank.HyriRank;
-import fr.hyriode.tools.scoreboard.team.ScoreboardTeam;
-import fr.hyriode.tools.scoreboard.team.ScoreboardTeamHandler;
+import fr.hyriode.hyriapi.settings.HyriLanguage;
 import fr.hyriode.tools.tab.Tab;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Project: Hyrame
  * Created by AstFaster
- * on 12/11/2021 at 15:50
+ * on 16/12/2021 at 18:15
  */
 public class HyriTabManager {
 
-    private final Map<Player, Tab> defaultTabs;
-
-    private final ScoreboardTeamHandler teamHandler;
+    private final Map<HyriLanguage, HyriTabHandler> handlers;
+    private final Map<HyriLanguage, Tab> tabs;
 
     private final Hyrame hyrame;
 
     public HyriTabManager(Hyrame hyrame) {
         this.hyrame = hyrame;
-        this.teamHandler = new ScoreboardTeamHandler();
-        this.defaultTabs = new HashMap<>();
+        this.handlers = new HashMap<>();
+        this.tabs = new HashMap<>();
 
-        final List<EHyriRank> ranks = Arrays.asList(EHyriRank.values());
-
-        Collections.reverse(ranks);
-
-        for (EHyriRank rankEnum : ranks) {
-            final HyriRank rank = HyriAPI.get().getRankManager().getRank(rankEnum);
-            final String name = rank.getName();
-            final String display = this.getDisplayName(rank.getDisplayName());
-            final ScoreboardTeam team = new ScoreboardTeam(name, name, display, display, "");
-
-            this.teamHandler.addTeam(team);
+        for (HyriLanguage language : HyriLanguage.values()) {
+            this.handlers.put(language, new HyriTabHandler(this.hyrame, language));
+            this.tabs.put(language, new HyriDefaultTab(this.hyrame, language));
         }
-    }
-
-    private String getDisplayName(String displayName) {
-        displayName += " ";
-
-        return displayName.substring(0, Math.min(displayName.length(), 16));
     }
 
     public void onLogin(Player player) {
         ThreadPool.EXECUTOR.execute(() -> {
-            final HyrameConfiguration configuration = this.hyrame.getConfiguration();
+            final IHyrameConfiguration configuration = this.hyrame.getConfiguration();
+            final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
 
-            if (configuration.isTabListRanks()) {
-                this.teamHandler.addReceiver(player);
-
-                final IHyriPlayer hyriPlayer = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
-                final ScoreboardTeam team = this.teamHandler.getTeamByName(hyriPlayer.getRank().getName());
-
-                this.teamHandler.addPlayerToTeam(player, team);
-
-                player.setDisplayName(hyriPlayer.getRank().getDisplayName() + " " + player.getName());
+            if (this.hyrame.getConfiguration().areRanksInTabList()) {
+                for (HyriTabHandler handler : this.handlers.values()) {
+                    handler.onLogin(player);
+                }
             }
 
-            if (configuration.isDefaultTabLines()) {
-                final Tab defaultTab = new HyriDefaultTab(this.hyrame, player);
+            final Tab tab = configuration.getTab() == null ? this.getTabForPlayer(account) : configuration.getTab();
 
-                this.defaultTabs.put(player, defaultTab);
-            }
+            tab.send(player);
         });
     }
 
     public void onLogout(Player player) {
         ThreadPool.EXECUTOR.execute(() -> {
-            this.teamHandler.removeReceiver(player);
-
-            this.defaultTabs.remove(player);
-        });
-    }
-
-    public void enable() {
-        this.hyrame.getConfiguration().setTabListRanks(true);
-
-        ThreadPool.EXECUTOR.execute(() -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                this.teamHandler.addReceiver(player);
+            for (HyriTabHandler handler : this.handlers.values()) {
+                handler.onLogout(player);
             }
         });
     }
 
-    public void disable() {
-        this.hyrame.getConfiguration().setTabListRanks(false);
+    public void enableTabList() {
+        for (HyriTabHandler handler : this.handlers.values()) {
+            handler.enable();
+        }
+    }
 
-        ThreadPool.EXECUTOR.execute(() -> {
-            for (Player player : this.defaultTabs.keySet()) {
-                this.teamHandler.removeReceiver(player);
-            }
-        });
+    public void disableTabList() {
+        for (HyriTabHandler handler : this.handlers.values()) {
+            handler.disable();
+        }
+    }
+
+    private Tab getTabForPlayer(IHyriPlayer player) {
+        final HyriLanguage language = player.getSettings().getLanguage();
+
+        return this.tabs.get(language) != null ? this.tabs.get(language) : this.tabs.get(HyriLanguage.EN);
     }
 
 }

@@ -1,5 +1,6 @@
 package fr.hyriode.tools.bossbar;
 
+import fr.hyriode.tools.Tools;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,6 +24,8 @@ public class BossBarManager {
         BossBarManager.plugin = plugin;
 
         new BossBarHandler(plugin);
+
+        Tools.log("BossBar manager registered.");
     }
 
     public static BossBar getBar(Player player) {

@@ -1,5 +1,6 @@
 package fr.hyriode.tools.signgui;
 
+import fr.hyriode.tools.Tools;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -28,6 +29,8 @@ public class SignGUIManager {
         instance = this;
 
         new SignGUIHandler(plugin);
+
+        Tools.log("SignGUI manager registered.");
     }
 
     /**

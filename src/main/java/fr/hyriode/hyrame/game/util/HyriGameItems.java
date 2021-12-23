@@ -10,8 +10,8 @@ import org.bukkit.entity.Player;
  */
 public class HyriGameItems {
 
-    public static final String TEAM_CHOOSER_NAME = "team_chooser";
-    public static final String LEAVE_NAME = "leave_game";
+    public static final String TEAM_CHOOSER_NAME = "team_chooser_item";
+    public static final String LEAVE_NAME = "leave_game_item";
 
     public static final GiveConsumer<IHyrame, Player, Integer> TEAM_CHOOSER = (hyrame, player, slot) -> hyrame.getItemManager().giveItem(player, slot, TEAM_CHOOSER_NAME);
     public static final GiveConsumer<IHyrame, Player, Integer> LEAVE_ITEM = (hyrame, player, slot) -> hyrame.getItemManager().giveItem(player, slot, LEAVE_NAME);

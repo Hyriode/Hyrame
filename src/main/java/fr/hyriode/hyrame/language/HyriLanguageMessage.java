@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.language;
 import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.hyriapi.player.IHyriPlayer;
 import fr.hyriode.hyriapi.settings.HyriLanguage;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -58,7 +59,6 @@ public class HyriLanguageMessage {
      */
     public HyriLanguageMessage addValue(HyriLanguage HyriLanguage, String value) {
         this.values.put(HyriLanguage, value);
-
         return this;
     }
 
@@ -70,7 +70,6 @@ public class HyriLanguageMessage {
      */
     public HyriLanguageMessage removeValue(HyriLanguage HyriLanguage) {
         this.values.remove(HyriLanguage);
-
         return this;
     }
 
@@ -78,9 +77,11 @@ public class HyriLanguageMessage {
      * Set the values of the message
      *
      * @param values - Values
+     * @return {@link HyriLanguageMessage}
      */
-    public void setValues(Map<HyriLanguage, String> values) {
+    public HyriLanguageMessage setValues(Map<HyriLanguage, String> values) {
         this.values = values;
+        return this;
     }
 
     /**
@@ -120,6 +121,23 @@ public class HyriLanguageMessage {
      */
     public String getForPlayer(Player player) {
         return this.getForPlayer(HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId()));
+    }
+
+    public String getForSender(CommandSender sender) {
+        if (sender instanceof Player) {
+            return this.getForPlayer((Player) sender);
+        }
+        return this.getValue(HyriLanguage.EN);
+    }
+
+    /**
+     * Create a {@link HyriLanguageMessage} from values
+     *
+     * @param values Map with all values
+     * @return The created {@link HyriLanguageMessage}
+     */
+    public static HyriLanguageMessage from(Map<HyriLanguage, String> values) {
+        return new HyriLanguageMessage("").setValues(values);
     }
 
 }

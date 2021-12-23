@@ -21,10 +21,6 @@ import java.util.function.Consumer;
  */
 public class HyriGameWaitingScoreboard extends Scoreboard {
 
-    private static final HyriLanguageMessage GAME = new HyriLanguageMessage("scoreboard.game")
-            .addValue(HyriLanguage.FR, "Jeu : ")
-            .addValue(HyriLanguage.EN, "Game: ");
-
     private static final HyriLanguageMessage MAP = new HyriLanguageMessage("scoreboard.map")
             .addValue(HyriLanguage.FR, "Carte : ")
             .addValue(HyriLanguage.EN, "Map: ");
@@ -48,7 +44,7 @@ public class HyriGameWaitingScoreboard extends Scoreboard {
     private final HyriGame<?> game;
 
     public HyriGameWaitingScoreboard(HyriGame<?> game, JavaPlugin plugin, Player player) {
-        super(plugin, player, "lobby", ChatColor.DARK_AQUA + "" + ChatColor.BOLD + "Hyriode");
+        super(plugin, player, "lobby", ChatColor.DARK_AQUA + "" + ChatColor.BOLD + game.getDisplayName());
         this.game = game;
 
         this.addLines();
@@ -56,15 +52,13 @@ public class HyriGameWaitingScoreboard extends Scoreboard {
 
     private void addLines() {
         this.setLine(0, this.getCurrentDate(), scoreboardLine -> scoreboardLine.setValue(this.getCurrentDate()), 20);
-        this.setLine(1, " ");
-        this.setLine(2, DASH + GAME.getForPlayer(this.player) + ChatColor.AQUA + this.game.getDisplayName());
-        this.setLine(3, "  ");
-        this.setLine(4,  DASH + MAP.getForPlayer(this.player) + ChatColor.RED + "TODO with Hystia");
-        this.setLine(5,  DASH + this.getPlayersLine(), this.getPlayersLineConsumer(), 10);
-        this.setLine(6,  "   ");
-        this.setLine(7, this.getWaitingLine(), this.getScoreboardLineConsumer(), 5);
-        this.setLine(8,  "    ");
-        this.setLine(9, ChatColor.DARK_AQUA + References.SERVER_IP, new HyriGameWaitingScoreboardIpConsumer(References.SERVER_IP), 2);
+        this.setLine(1, "  ");
+        this.setLine(2,  DASH + MAP.getForPlayer(this.player) + ChatColor.RED + "TODO with Hystia");
+        this.setLine(3,  DASH + this.getPlayersLine(), this.getPlayersLineConsumer(), 10);
+        this.setLine(4,  "   ");
+        this.setLine(5, this.getWaitingLine(), this.getScoreboardLineConsumer(), 5);
+        this.setLine(6,  "    ");
+        this.setLine(7, ChatColor.DARK_AQUA + References.SERVER_IP, new HyriGameWaitingScoreboardIpConsumer(References.SERVER_IP), 2);
     }
 
     private Consumer<ScoreboardLine> getPlayersLineConsumer() {
