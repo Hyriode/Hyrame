@@ -24,7 +24,9 @@ public class InventoryHandler implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onClick(InventoryClickEvent event) {
-        if (event.getClickedInventory() != null && event.getInventory().getHolder() instanceof final AbstractInventory inventory) {
+        if (event.getClickedInventory() != null && event.getInventory().getHolder() instanceof AbstractInventory) {
+            final AbstractInventory inventory = (AbstractInventory) event.getInventory().getHolder();
+
             final int clickedSlot = event.getRawSlot();
 
             event.setCancelled(inventory.isCancelClickEvent());
@@ -39,7 +41,9 @@ public class InventoryHandler implements Listener {
 
     @EventHandler
     public void onOpen(InventoryOpenEvent event) {
-        if (event.getInventory().getHolder() != null && event.getInventory().getHolder() instanceof final AbstractInventory inventory) {
+        if (event.getInventory().getHolder() != null && event.getInventory().getHolder() instanceof AbstractInventory) {
+            final AbstractInventory inventory = (AbstractInventory) event.getInventory().getHolder();
+
             inventory.onOpen(event);
         }
     }

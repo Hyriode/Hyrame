@@ -64,7 +64,7 @@ public class HyriCommandManager implements IHyriCommandManager {
                         final HyriCommand<?> command = (HyriCommand<?>) clazz.getConstructor(pluginClass).newInstance(pluginProvider.getPlugin());
                         final String name = command.getInfo().getName();
 
-                        if (name != null && !name.isEmpty() && !name.isBlank()) {
+                        if (name != null && !name.isEmpty()) {
                             this.commandMap.register(COMMANDS_PREFIX, this.createCommand(command));
 
                             Hyrame.log("Registered '" + clazz.getName() + "' command with name '" + name + "'" + formattedPluginProviderName);

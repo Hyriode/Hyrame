@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.command;
 import fr.hyriode.hyriapi.rank.HyriPermission;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -112,7 +113,7 @@ public class HyriCommandInfo {
      * @return {@link HyriCommandInfo}
      */
     public HyriCommandInfo withAliases(String... aliases) {
-        this.aliases = List.of(aliases);
+        this.aliases = Arrays.asList(aliases);
         return this;
     }
 

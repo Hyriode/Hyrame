@@ -9,17 +9,17 @@ apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 group = 'fr.hyriode'
-version = '1.0.9'
+version = '1.1.0'
 archivesBaseName = 'Hyrame'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(16)
+        languageVersion = JavaLanguageVersion.of(8)
     }
 }
 
 compileJava {
-    sourceCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_1_8
     options.encoding = 'UTF-8'
 }
 
@@ -116,7 +116,7 @@ publishing {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     shadow 'com.google.guava:guava:31.0.1-jre'
-    shade 'fr.hyriode:hyriapi:1.0.6'
+    shade 'fr.hyriode:hyriapi:1.0.7'
     shade 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
 }
 
