@@ -5,6 +5,7 @@ import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.language.HyriLanguages;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyriapi.HyriAPI;
+import fr.hyriode.hyriapi.rank.HyriPermission;
 import fr.hyriode.tools.reflection.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -89,10 +90,14 @@ public class HyriCommandManager implements IHyriCommandManager {
             @Override
             public boolean execute(CommandSender sender, String label, String[] args) {
                 if (type.getCheck().apply(sender)) {
-                    if (sender instanceof Player) {
-                        if (!HyriAPI.get().getPlayerManager().hasPermission(((Player) sender).getUniqueId(), info.getPermission())) {
-                            sender.sendMessage(ChatColor.RED + HyriLanguages.DONT_HAVE_PERMISSION.getForSender(sender));
-                            return true;
+                    final HyriPermission permission = info.getPermission();
+
+                    if (permission != null) {
+                        if (sender instanceof Player) {
+                            if (!HyriAPI.get().getPlayerManager().hasPermission(((Player) sender).getUniqueId(), info.getPermission())) {
+                                sender.sendMessage(ChatColor.RED + HyriLanguages.DONT_HAVE_PERMISSION.getForSender(sender));
+                                return true;
+                            }
                         }
                     }
 
