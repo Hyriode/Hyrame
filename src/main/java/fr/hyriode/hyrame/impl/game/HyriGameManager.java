@@ -12,6 +12,7 @@ import redis.clients.jedis.Jedis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -118,10 +119,20 @@ public class HyriGameManager implements IHyriGameManager {
     @Override
     public List<String> getGames() {
         final Jedis jedis = HyriAPI.get().getRedisResource();
-        final String key = GAMES_KEY + "*";
 
         if (jedis != null) {
-            final List<String> games = new ArrayList<>(jedis.keys(key));
+            final Set<String> keys = jedis.keys(GAMES_KEY + "*");
+            final List<String> games = new ArrayList<>();
+
+            for (String key : keys) {
+                if (key.contains(":")) {
+                    final String[] splitted = key.split(":");
+
+                    if (splitted.length == 3) {
+                        games.addAll(this.getGames(splitted[1], splitted[2]));
+                    }
+                }
+            }
 
             jedis.close();
 
