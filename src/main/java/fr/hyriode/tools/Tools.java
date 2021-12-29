@@ -2,6 +2,7 @@ package fr.hyriode.tools;
 
 import fr.hyriode.tools.bossbar.BossBarManager;
 import fr.hyriode.tools.inventory.InventoryHandler;
+import fr.hyriode.tools.item.enchant.HyriEnchant;
 import fr.hyriode.tools.npc.NPCManager;
 import fr.hyriode.tools.signgui.SignGUIManager;
 import org.bukkit.Bukkit;
@@ -35,6 +36,8 @@ public class Tools {
         new BossBarManager(plugin);
         new SignGUIManager(plugin);
         new InventoryHandler(plugin);
+
+        HyriEnchant.register();
     }
 
     public static void log(Level level, String message) {
