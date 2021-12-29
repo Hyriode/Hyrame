@@ -117,7 +117,7 @@ public class HyriLanguageManager implements IHyriLanguageManager {
     }
 
     @Override
-    public String getMessageValue(HyriLanguage language, String key) {
+    public String getValue(HyriLanguage language, String key) {
         final HyriLanguageMessage message = this.getMessage(key);
 
         if (message != null) {
@@ -127,23 +127,23 @@ public class HyriLanguageManager implements IHyriLanguageManager {
     }
 
     @Override
-    public String getMessageValueForPlayer(UUID playerUUID, HyriLanguageMessage message) {
+    public String getValue(UUID playerUUID, HyriLanguageMessage message) {
         return message.getForPlayer(HyriAPI.get().getPlayerManager().getPlayer(playerUUID));
     }
 
     @Override
-    public String getMessageValueForPlayer(UUID playerUUID, String key) {
-        return this.getMessageValueForPlayer(playerUUID, this.getMessage(key));
+    public String getValue(UUID playerUUID, String key) {
+        return this.getValue(playerUUID, this.getMessage(key));
     }
 
     @Override
-    public String getMessageValueForPlayer(IHyriPlayer player, String key) {
-        return this.getMessageValueForPlayer(player.getUUID(), key);
+    public String getValue(IHyriPlayer player, String key) {
+        return this.getValue(player.getUUID(), key);
     }
 
     @Override
-    public String getMessageValueForPlayer(Player player, String key) {
-        return this.getMessageValueForPlayer(player.getUniqueId(), key);
+    public String getValue(Player player, String key) {
+        return this.getValue(player.getUniqueId(), key);
     }
 
     @Override

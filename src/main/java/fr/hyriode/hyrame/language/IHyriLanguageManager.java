@@ -63,10 +63,10 @@ public interface IHyriLanguageManager {
      * Get the message's value in a language by giving the message key
      *
      * @param language - Value language
-     * @param key - Message key
+     * @param messageKey - Message key
      * @return - Message value
      */
-    String getMessageValue(HyriLanguage language, String key);
+    String getValue(HyriLanguage language, String messageKey);
 
     /**
      * Get the message's value for a player
@@ -75,7 +75,7 @@ public interface IHyriLanguageManager {
      * @param message - Message
      * @return - Message value
      */
-    String getMessageValueForPlayer(UUID playerUUID, HyriLanguageMessage message);
+    String getValue(UUID playerUUID, HyriLanguageMessage message);
 
     /**
      * Get the message's value for a player by giving the message key
@@ -84,7 +84,7 @@ public interface IHyriLanguageManager {
      * @param key - Message key
      * @return - Message value
      */
-    String getMessageValueForPlayer(UUID playerUUID, String key);
+    String getValue(UUID playerUUID, String key);
 
     /**
      * Get the message's value for a player by giving the message key
@@ -93,7 +93,7 @@ public interface IHyriLanguageManager {
      * @param key - Message key
      * @return - Message value
      */
-    String getMessageValueForPlayer(IHyriPlayer player, String key);
+    String getValue(IHyriPlayer player, String key);
 
     /**
      * Get the message's value for a player by giving the message key
@@ -102,7 +102,7 @@ public interface IHyriLanguageManager {
      * @param key - Message key
      * @return - Message value
      */
-    String getMessageValueForPlayer(Player player, String key);
+    String getValue(Player player, String key);
 
     /**
      * Get all loaded messages

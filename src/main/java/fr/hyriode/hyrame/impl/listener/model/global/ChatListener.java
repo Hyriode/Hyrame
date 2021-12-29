@@ -30,7 +30,7 @@ public class ChatListener extends HyriListener<HyramePlugin> {
         final String command = event.getMessage().substring(1);
 
         if (this.isBlockedCommand(command)) {
-            player.sendMessage(this.plugin.getHyrame().getLanguageManager().getMessageValueForPlayer(player, "command.not.enabled"));
+            player.sendMessage(this.plugin.getHyrame().getLanguageManager().getValue(player, "command.not.enabled"));
             event.setCancelled(true);
         }
     }

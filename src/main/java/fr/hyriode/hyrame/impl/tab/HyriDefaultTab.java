@@ -43,9 +43,9 @@ public class HyriDefaultTab extends Tab {
 
     private void addFooterLines() {
         final IHyriLanguageManager languageManager = this.hyrame.getLanguageManager();
-        final String websiteAndForum = languageManager.getMessageValue(language, "tab.website.and.forum");
-        final String store = languageManager.getMessageValue(language, "tab.store");
-        final String discord = languageManager.getMessageValue(language, "tab.discord");
+        final String websiteAndForum = languageManager.getValue(language, "tab.website.and.forum");
+        final String store = languageManager.getValue(language, "tab.store");
+        final String discord = languageManager.getValue(language, "tab.discord");
 
         this.setBlankFooterLine(0);
         this.setFooterLine(1, " " + ChatColor.GRAY + Symbols.LEFT_QUOTE_MARK +  websiteAndForum + ChatColor.DARK_AQUA + References.WEBSITE_URL + ChatColor.GRAY + " " + Symbols.RIGHT_QUOTE_MARK + " ");

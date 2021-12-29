@@ -36,8 +36,8 @@ public class PluginCommand extends HyriCommand<HyramePlugin> {
         final IHyriLanguageManager languageManager = this.plugin.getHyrame().getLanguageManager();
         final boolean player = sender instanceof Player;
         final String colon = player ? (HyriAPI.get().getPlayerManager().getPlayer(((Player) sender).getUniqueId()).getSettings().getLanguage() == HyriLanguage.FR ? " : " : ": ") : ": ";
-        final String serverInformation = player ? languageManager.getMessageValueForPlayer((Player) sender, SERVER_INFORMATION_KEY) : languageManager.getMessageValue(HyriLanguage.EN, SERVER_INFORMATION_KEY);
-        final String current = player ? languageManager.getMessageValueForPlayer((Player) sender, CURRENT_KEY) : languageManager.getMessageValue(HyriLanguage.EN, CURRENT_KEY);
+        final String serverInformation = player ? languageManager.getValue((Player) sender, SERVER_INFORMATION_KEY) : languageManager.getValue(HyriLanguage.EN, SERVER_INFORMATION_KEY);
+        final String current = player ? languageManager.getValue((Player) sender, CURRENT_KEY) : languageManager.getValue(HyriLanguage.EN, CURRENT_KEY);
         final String barLine = ChatColor.DARK_AQUA + "" + ChatColor.STRIKETHROUGH + "-------------------------------------------";
 
         sender.sendMessage(barLine);
