@@ -2,6 +2,7 @@ package fr.hyriode.tools.item;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import fr.hyriode.tools.item.enchant.HyriEnchant;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -108,6 +109,10 @@ public class ItemBuilder {
 
     public ItemBuilder withAllItemFlags() {
         return this.withItemFlags(ItemFlag.values());
+    }
+
+    public ItemBuilder withGlow() {
+        return this.withEnchant(HyriEnchant.GLOW, 1, true);
     }
 
     public ItemBuilder withEnchant(Enchantment enchant, int level, boolean show) {
