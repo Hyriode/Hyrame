@@ -1,13 +1,13 @@
 package fr.hyriode.hyrame.impl.tab;
 
 import fr.hyriode.hyrame.impl.Hyrame;
+import fr.hyriode.hyrame.scoreboard.team.ScoreboardTeam;
+import fr.hyriode.hyrame.scoreboard.team.ScoreboardTeamHandler;
 import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.hyriapi.player.IHyriPlayer;
 import fr.hyriode.hyriapi.rank.EHyriRank;
 import fr.hyriode.hyriapi.rank.HyriRank;
 import fr.hyriode.hyriapi.settings.HyriLanguage;
-import fr.hyriode.hyrame.scoreboard.team.ScoreboardTeam;
-import fr.hyriode.hyrame.scoreboard.team.ScoreboardTeamHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

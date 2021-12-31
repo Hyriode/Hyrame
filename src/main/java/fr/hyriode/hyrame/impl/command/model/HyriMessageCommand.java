@@ -3,12 +3,8 @@ package fr.hyriode.hyrame.impl.command.model;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
-import fr.hyriode.hyrame.command.HyriCommandOutput;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-
-import java.util.function.Consumer;
 
 /**
  * Project: Hyrame

@@ -4,8 +4,8 @@ import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.impl.utils.References;
 import fr.hyriode.hyrame.impl.utils.Symbols;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
 import fr.hyriode.hyrame.tab.Tab;
+import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 

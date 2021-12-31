@@ -1,8 +1,8 @@
 package fr.hyriode.hyrame.command;
 
 import fr.hyriode.hyrame.language.HyriLanguages;
-import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.hyrame.utils.PrimitiveType;
+import fr.hyriode.hyriapi.HyriAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
