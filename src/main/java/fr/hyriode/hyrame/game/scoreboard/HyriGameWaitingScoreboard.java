@@ -1,11 +1,11 @@
 package fr.hyriode.hyrame.game.scoreboard;
 
 import fr.hyriode.hyrame.game.HyriGame;
-import fr.hyriode.hyrame.impl.util.References;
+import fr.hyriode.hyrame.impl.utils.References;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyriapi.settings.HyriLanguage;
-import fr.hyriode.tools.scoreboard.Scoreboard;
-import fr.hyriode.tools.scoreboard.ScoreboardLine;
+import fr.hyriode.hyrame.scoreboard.Scoreboard;
+import fr.hyriode.hyrame.scoreboard.ScoreboardLine;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

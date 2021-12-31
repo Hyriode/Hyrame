@@ -2,9 +2,12 @@ package fr.hyriode.hyrame.impl.game;
 
 import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.impl.Hyrame;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -31,6 +34,27 @@ class HyriGameHandler implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onQuit(PlayerQuitEvent event) {
         this.gameManager.getCurrentGame().handleLogout(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onDamage(EntityDamageByEntityEvent event) {
+        if (event.getEntity() instanceof Player) {
+            final Player target = (Player) event.getEntity();
+
+            if (event.getDamager() instanceof Player) {
+                event.setCancelled(this.cancelDamages((Player) event.getDamager(), target));
+            } else if (event.getDamager() instanceof Projectile) {
+                final Projectile projectile = (Projectile) event.getDamager();
+
+                if (projectile.getShooter() instanceof Player) {
+                    event.setCancelled(this.cancelDamages((Player) projectile.getShooter(), target));
+                }
+            }
+        }
+    }
+
+    private boolean cancelDamages(Player player, Player target) {
+        return this.gameManager.getCurrentGame().areInSameTeam(player, target);
     }
 
 }

@@ -6,9 +6,8 @@ import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.impl.Hyrame;
-import fr.hyriode.hyrame.impl.util.Symbols;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyrame.util.RankUtil;
+import fr.hyriode.hyrame.utils.RankUtil;
 import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.hyriapi.player.IHyriPlayer;
 import org.bukkit.Bukkit;
@@ -45,35 +44,39 @@ public class HyriGameChatHandler implements IHyriChatHandler {
             if (game != null) {
                 final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
                 final HyriGamePlayer gamePlayer = game.getPlayer(player.getUniqueId());
-
-                String display;
-                if (gamePlayer.hasTeam()) {
-                    display = gamePlayer.getTeam().getColor().getColor() + player.getDisplayName();
-                } else {
-                    display = ChatColor.GRAY + Symbols.CROSS + " ";
-                }
+                final HyriGameTeam team = gamePlayer.getTeam();
+                final HyriLanguageMessage teamChatPrefix = this.hyrame.getLanguageManager().getMessage("team.chat.prefix");
 
                 if (game.getState() == HyriGameState.PLAYING) {
-                    final HyriGameTeam team = gamePlayer.getTeam();
-
                     if (message.startsWith("!")) {
                         for (Player target : Bukkit.getOnlinePlayers()) {
-                            final String messageStart = ChatColor.DARK_AQUA + "[Global] " + team.getColor().getColor() + "[" + team.getDisplayName().getForPlayer(target) + "] " + RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName() + ChatColor.WHITE + ": ";
+                            final String messageStart = ChatColor.DARK_AQUA + "[Global] " + team.getColor().getColor() + "[" + team.getDisplayName().getForPlayer(target) + "] " + RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName();
 
                             target.sendMessage(String.format(this.format(), messageStart, message.substring(1)));
                         }
                     } else {
                         for (Player target : team.getPlayers().stream().map(HyriGamePlayer::getPlayer).collect(Collectors.toList())) {
                             if (target.isOnline()) {
-                                final HyriLanguageMessage teamChatPrefix = this.hyrame.getLanguageManager().getMessage("team.chat.prefix");
-                                final String messageStart = ChatColor.DARK_AQUA + "[" + teamChatPrefix + "] " + RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName() + ChatColor.WHITE + ":";
+                                final String messageStart = ChatColor.DARK_AQUA + "[" + teamChatPrefix.getForPlayer(target) + "] " + RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName();
 
                                 target.sendMessage(String.format(this.format(), messageStart, message));
                             }
                         }
                     }
                 } else {
-                    Bukkit.broadcastMessage(String.format(this.format(), display + player.getDisplayName(), event.getMessage()));
+                    for (Player target : Bukkit.getOnlinePlayers()) {
+                        if (target.isOnline()) {
+                            String messageStart = "";
+
+                            if (team != null) {
+                                messageStart = team.getColor().getColor() + "[" + teamChatPrefix.getForPlayer(target) + "] ";
+                            }
+
+                            messageStart += RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName();
+
+                            target.sendMessage(String.format(this.format(), messageStart, message));
+                        }
+                    }
                 }
             }
         }

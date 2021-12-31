@@ -1,7 +1,7 @@
 package fr.hyriode.hyrame.impl;
 
 import fr.hyriode.hyrame.IHyrameConfiguration;
-import fr.hyriode.tools.tab.Tab;
+import fr.hyriode.hyrame.tab.Tab;
 
 /**
  * Project: Hyrame

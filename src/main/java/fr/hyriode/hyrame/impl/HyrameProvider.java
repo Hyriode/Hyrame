@@ -1,6 +1,6 @@
 package fr.hyriode.hyrame.impl;
 
-import fr.hyriode.hyrame.impl.util.References;
+import fr.hyriode.hyrame.impl.utils.References;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 

@@ -3,10 +3,10 @@ package fr.hyriode.hyrame.impl.item;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.item.HyriItem;
 import fr.hyriode.hyrame.item.IHyriItemManager;
+import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
-import fr.hyriode.tools.item.ItemBuilder;
-import fr.hyriode.tools.reflection.Reflection;
+import fr.hyriode.hyrame.reflection.Reflection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

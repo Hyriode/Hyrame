@@ -1,8 +1,6 @@
 package fr.hyriode.hyrame.impl;
 
 import fr.hyriode.hyrame.HyrameLoader;
-import fr.hyriode.hyriapi.HyriAPI;
-import fr.hyriode.tools.Tools;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -19,7 +17,6 @@ public class HyramePlugin extends JavaPlugin {
         this.hyrame = HyrameLoader.register(() -> new Hyrame(this));
 
         HyrameLoader.load(new HyrameProvider(this));
-        Tools.setup(this, () -> HyriAPI.get().getRedisResource());
     }
 
     @Override

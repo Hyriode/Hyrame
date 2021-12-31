@@ -2,11 +2,11 @@ package fr.hyriode.hyrame.impl.tab;
 
 import fr.hyriode.hyrame.IHyrameConfiguration;
 import fr.hyriode.hyrame.impl.Hyrame;
-import fr.hyriode.hyrame.util.ThreadPool;
+import fr.hyriode.hyrame.utils.ThreadPool;
 import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.hyriapi.player.IHyriPlayer;
 import fr.hyriode.hyriapi.settings.HyriLanguage;
-import fr.hyriode.tools.tab.Tab;
+import fr.hyriode.hyrame.tab.Tab;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

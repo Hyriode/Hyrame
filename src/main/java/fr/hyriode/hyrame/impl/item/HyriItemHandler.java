@@ -4,7 +4,7 @@ import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.item.HyriItem;
 import fr.hyriode.hyrame.listener.HyriListener;
-import fr.hyriode.tools.item.ItemNBT;
+import fr.hyriode.hyrame.item.ItemNBT;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;

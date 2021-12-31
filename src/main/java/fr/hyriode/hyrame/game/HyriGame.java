@@ -5,16 +5,15 @@ import fr.hyriode.hyrame.game.scoreboard.HyriGameWaitingScoreboard;
 import fr.hyriode.hyrame.game.tab.HyriGameTabListManager;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.impl.Hyrame;
-import fr.hyriode.hyrame.impl.util.Symbols;
-import fr.hyriode.hyrame.util.ThreadPool;
+import fr.hyriode.hyrame.impl.chat.HyriDefaultChatHandler;
+import fr.hyriode.hyrame.utils.ThreadPool;
 import fr.hyriode.hyriapi.HyriAPI;
-import fr.hyriode.tools.scoreboard.Scoreboard;
+import fr.hyriode.hyrame.scoreboard.Scoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-import redis.clients.jedis.Jedis;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -224,26 +223,26 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      */
     public void handleLogin(Player p) {
         try {
-            final P player = this.playerClass.getConstructor(Player.class).newInstance(p);
+            if (this.state == HyriGameState.WAITING) {
+                final P player = this.playerClass.getConstructor(Player.class).newInstance(p);
 
-            this.players.add(player);
+                this.players.add(player);
 
-            HyriAPI.get().getRedisProcessor().process(jedis -> jedis.set(CURRENT_GAME_KEY + p.getUniqueId().toString(), this.name));
+                HyriAPI.get().getRedisProcessor().process(jedis -> jedis.set(CURRENT_GAME_KEY + p.getUniqueId().toString(), this.name));
 
-            if (this.tabListUsed) {
-                p.setDisplayName(ChatColor.GRAY + Symbols.CROSS + " " + p.getDisplayName());
+                if (this.tabListUsed) {
+                    this.tabListManager.handleLogin(p);
 
-                this.tabListManager.handleLogin(p);
+                    this.updateTabList();
+                }
 
-                this.updateTabList();
-            }
+                if (this.defaultStarting) {
+                    final HyriGameWaitingScoreboard scoreboard = new HyriGameWaitingScoreboard(this, this.plugin, p);
 
-            if (this.defaultStarting) {
-                final HyriGameWaitingScoreboard scoreboard = new HyriGameWaitingScoreboard(this, this.plugin, p);
+                    scoreboard.show();
 
-                scoreboard.show();
-
-                this.waitingScoreboards.add(scoreboard);
+                    this.waitingScoreboards.add(scoreboard);
+                }
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             p.sendMessage(ChatColor.RED + "An error occurred while joining game! Sending you back to lobby...");
@@ -288,6 +287,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     public void end() {
         this.state = HyriGameState.ENDED;
 
+        this.hyrame.setChatHandler(new HyriDefaultChatHandler());
+
         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
             for (HyriGamePlayer player : this.players) {
                 HyriAPI.get().getServerManager().sendPlayerToLobby(player.getUUID());
@@ -329,6 +330,17 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
             }
         }
         return null;
+    }
+
+    /**
+     * Check if two given players are in the same team
+     *
+     * @param first First player
+     * @param second Second player
+     * @return The result. <code>true</code> if they are in the same team
+     */
+    public boolean areInSameTeam(Player first, Player second) {
+        return this.getPlayer(first.getUniqueId()).getTeam() == this.getPlayer(second.getUniqueId()).getTeam();
     }
 
     /**

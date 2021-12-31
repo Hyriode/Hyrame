@@ -1,8 +1,8 @@
 package fr.hyriode.hyrame.game;
 
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyriapi.settings.HyriLanguage;
-import fr.hyriode.tools.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;

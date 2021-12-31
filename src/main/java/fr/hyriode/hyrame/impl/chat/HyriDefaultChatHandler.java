@@ -1,7 +1,7 @@
 package fr.hyriode.hyrame.impl.chat;
 
 import fr.hyriode.hyrame.chat.IHyriChatHandler;
-import fr.hyriode.hyrame.util.RankUtil;
+import fr.hyriode.hyrame.utils.RankUtil;
 import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.hyriapi.player.IHyriPlayer;
 import fr.hyriode.hyriapi.rank.HyriRank;

@@ -5,10 +5,10 @@ import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.impl.game.util.TeamChooserItem;
+import fr.hyriode.hyrame.inventory.HyriInventory;
+import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyriapi.settings.HyriLanguage;
-import fr.hyriode.tools.inventory.AbstractInventory;
-import fr.hyriode.tools.item.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * Created by AstFaster
  * on 17/09/2021 at 19:48
  */
-public class HyriGameTeamChooserGui extends AbstractInventory {
+public class HyriGameTeamChooserGui extends HyriInventory {
 
     private static final HyriLanguageMessage ALREADY_IN = new HyriLanguageMessage("already.in.team")
             .addValue(HyriLanguage.FR, "Tu fais déjà partie de cette équipe !")
@@ -172,12 +172,12 @@ public class HyriGameTeamChooserGui extends AbstractInventory {
     }
 
     @Override
-    protected void onOpen(InventoryOpenEvent event) {
+    public void onOpen(InventoryOpenEvent event) {
         PLAYERS.add((Player) event.getPlayer());
     }
 
     @Override
-    protected void onClose(InventoryCloseEvent event) {
+    public void onClose(InventoryCloseEvent event) {
         PLAYERS.remove((Player) event.getPlayer());
     }
 

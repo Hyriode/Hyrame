@@ -128,8 +128,6 @@ public class HyriGameTeam {
 
                     this.players.add(player);
 
-                    p.setDisplayName(this.color.getColor() + p.getDisplayName());
-
                     player.setTeam(this);
 
                     return null;

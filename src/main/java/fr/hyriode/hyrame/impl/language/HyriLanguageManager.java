@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyrame.event.HyriLanguagesUpdatedEvent;
+import fr.hyriode.hyrame.language.HyriLanguagesUpdatedEvent;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyriapi.HyriAPI;

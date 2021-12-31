@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.impl;
 
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.IHyrameConfiguration;
+import fr.hyriode.hyrame.bossbar.BossBarManager;
 import fr.hyriode.hyrame.chat.IHyriChatHandler;
 import fr.hyriode.hyrame.command.IHyriCommandManager;
 import fr.hyriode.hyrame.game.HyriGame;
@@ -16,10 +17,13 @@ import fr.hyriode.hyrame.impl.listener.HyriListenerManager;
 import fr.hyriode.hyrame.impl.scanner.HyriScanner;
 import fr.hyriode.hyrame.impl.tab.HyriTabManager;
 import fr.hyriode.hyrame.item.IHyriItemManager;
+import fr.hyriode.hyrame.item.enchant.HyriEnchant;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.listener.IHyriListenerManager;
+import fr.hyriode.hyrame.npc.NPCManager;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.scanner.IHyriScanner;
+import fr.hyriode.hyrame.signgui.SignGUIManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -63,6 +67,12 @@ public class Hyrame implements IHyrame {
         this.pluginProviders = new ArrayList<>();
         this.commandBlocker = new HyriCommandBlocker();
         this.tabManager = new HyriTabManager(this);
+
+        HyriEnchant.register();
+
+        new BossBarManager(plugin);
+        new NPCManager(plugin, "npcs:");
+        new SignGUIManager(plugin);
     }
 
     void disable() {

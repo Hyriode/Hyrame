@@ -4,7 +4,7 @@ import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.listener.HyriListener;
 import fr.hyriode.hyrame.listener.IHyriListenerManager;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
-import fr.hyriode.tools.reflection.Reflection;
+import fr.hyriode.hyrame.reflection.Reflection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;

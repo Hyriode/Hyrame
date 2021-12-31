@@ -3,7 +3,7 @@ package fr.hyriode.hyrame.impl.listener.model.hyrame;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.impl.tab.HyriTabManager;
-import fr.hyriode.hyrame.event.HyriLanguagesUpdatedEvent;
+import fr.hyriode.hyrame.language.HyriLanguagesUpdatedEvent;
 import fr.hyriode.hyrame.listener.HyriListener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
