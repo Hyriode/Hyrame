@@ -1,5 +1,7 @@
 package fr.hyriode.hyrame.game;
 
+import fr.hyriode.hyrame.game.HyriGame;
+import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyriapi.settings.HyriLanguage;
@@ -7,6 +9,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * Project: Hyrame
@@ -23,9 +27,11 @@ public class HyriGameStartingTimer implements Runnable {
 
     private int time = 30;
 
+    private final JavaPlugin plugin;
     private final HyriGame<?> game;
 
-    public HyriGameStartingTimer(HyriGame<?> game) {
+    public HyriGameStartingTimer(JavaPlugin plugin, HyriGame<?> game) {
+        this.plugin = plugin;
         this.game = game;
     }
 
@@ -33,7 +39,7 @@ public class HyriGameStartingTimer implements Runnable {
     public void run() {
         final int players = this.game.getPlayers().size();
 
-        if (players >= this.game.getMinPlayers()) {
+        if (this.game.canStart()) {
             this.game.setState(HyriGameState.READY);
 
             if (!this.running) {
@@ -47,7 +53,12 @@ public class HyriGameStartingTimer implements Runnable {
             this.game.getWaitingScoreboards().forEach(scoreboard -> scoreboard.setTime(this.time));
 
             if (this.time <= 0) {
-                this.game.start();
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        game.start();
+                    }
+                }.runTask(this.plugin);
             } else if (this.time <= 3) {
                 this.sendTitle(ChatColor.AQUA + "" + this.time, false);
             } else if (this.time == 30 || this.time == 20 || this.time == 10){

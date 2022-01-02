@@ -1,6 +1,8 @@
 package fr.hyriode.hyrame.impl;
 
 import fr.hyriode.hyrame.HyrameLoader;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -17,6 +19,11 @@ public class HyramePlugin extends JavaPlugin {
         this.hyrame = HyrameLoader.register(() -> new Hyrame(this));
 
         HyrameLoader.load(new HyrameProvider(this));
+
+        final World world = Bukkit.getWorld("world");
+
+        world.setGameRuleValue("doDaylightCycle", "false");
+        world.setGameRuleValue("announceAdvancements", "false");
     }
 
     @Override

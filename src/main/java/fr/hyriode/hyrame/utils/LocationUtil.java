@@ -40,4 +40,24 @@ public class LocationUtil {
         return Math.round(value * p) / p;
     }
 
+    /**
+     * Get the location with the lowest height
+     *
+     * @param locations The given locations
+     * @return The result
+     */
+    public static Location getLocationWithLowestHeight(Location... locations) {
+        Location result = null;
+        for (Location location : locations) {
+            if (result == null) {
+                result = location;
+            } else {
+                if (location.getY() < result.getY()) {
+                    result = location;
+                }
+            }
+        }
+        return result;
+    }
+
 }

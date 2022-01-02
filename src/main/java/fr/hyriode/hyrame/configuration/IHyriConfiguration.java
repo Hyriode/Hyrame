@@ -10,6 +10,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 public interface IHyriConfiguration {
 
     /**
+     * Create the configuration
+     */
+    void create();
+
+    /**
      * Load the configuration
      */
     void load();

@@ -7,6 +7,7 @@ import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.utils.RankUtil;
 import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.hyriapi.player.IHyriPlayer;
@@ -42,41 +43,36 @@ public class HyriGameChatHandler implements IHyriChatHandler {
             final HyriGame<?> game = this.hyrame.getGameManager().getCurrentGame();
 
             if (game != null) {
+                final IHyriLanguageManager languageManager = this.hyrame.getLanguageManager();
                 final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
                 final HyriGamePlayer gamePlayer = game.getPlayer(player.getUniqueId());
                 final HyriGameTeam team = gamePlayer.getTeam();
-                final HyriLanguageMessage teamChatPrefix = this.hyrame.getLanguageManager().getMessage("team.chat.prefix");
+                final HyriLanguageMessage teamChatPrefix = languageManager.getMessage("team.chat.prefix");
 
                 if (game.getState() == HyriGameState.PLAYING) {
-                    if (message.startsWith("!")) {
-                        for (Player target : Bukkit.getOnlinePlayers()) {
-                            final String messageStart = ChatColor.DARK_AQUA + "[Global] " + team.getColor().getColor() + "[" + team.getDisplayName().getForPlayer(target) + "] " + RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName();
-
-                            target.sendMessage(String.format(this.format(), messageStart, message.substring(1)));
-                        }
+                    if (gamePlayer.isSpectator()) {
+                        game.sendMessageToSpectators(target -> String.format(this.format(), RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName(), message), true);
+                    } else if (gamePlayer.isDead()) {
+                        player.sendMessage(ChatColor.RED + languageManager.getValue(player, "error.chat.dead"));
+                    } else if (gamePlayer.getTeam().getTeamSize() == 1) {
+                        game.sendMessageToAll(target -> String.format(this.format(), team.getColor().getChatColor() + "[" + team.getDisplayName().getForPlayer(target) + "] " + RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName(), message));
+                    } else if (message.startsWith("!")) {
+                        game.sendMessageToAll(target -> String.format(this.format(), ChatColor.DARK_AQUA + "[Global] " + team.getColor().getChatColor() + "[" + team.getDisplayName().getForPlayer(target) + "] " + RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName(), message.substring(1)));
                     } else {
-                        for (Player target : team.getPlayers().stream().map(HyriGamePlayer::getPlayer).collect(Collectors.toList())) {
-                            if (target.isOnline()) {
-                                final String messageStart = ChatColor.DARK_AQUA + "[" + teamChatPrefix.getForPlayer(target) + "] " + RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName();
-
-                                target.sendMessage(String.format(this.format(), messageStart, message));
-                            }
-                        }
+                        team.sendMessage(target -> String.format(this.format(), ChatColor.DARK_AQUA + "[" + teamChatPrefix.getForPlayer(target) + "] " + RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName(), message));
                     }
                 } else {
-                    for (Player target : Bukkit.getOnlinePlayers()) {
-                        if (target.isOnline()) {
-                            String messageStart = "";
+                    game.sendMessageToAll(target -> {
+                        String messageStart = "";
 
-                            if (team != null) {
-                                messageStart = team.getColor().getColor() + "[" + teamChatPrefix.getForPlayer(target) + "] ";
-                            }
-
-                            messageStart += RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName();
-
-                            target.sendMessage(String.format(this.format(), messageStart, message));
+                        if (team != null) {
+                            messageStart = team.getColor().getChatColor() + "[" + team.getDisplayName().getForPlayer(target) + "] ";
                         }
-                    }
+
+                        messageStart += RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName();
+
+                        return String.format(this.format(), messageStart, message);
+                    });
                 }
             }
         }

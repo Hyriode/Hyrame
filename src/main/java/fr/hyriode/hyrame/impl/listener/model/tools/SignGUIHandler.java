@@ -57,7 +57,7 @@ public class SignGUIHandler extends HyriListener<HyramePlugin> {
             public void channelRead(ChannelHandlerContext ctx, Object packet) throws Exception {
                 if (packet instanceof PacketPlayInUpdateSign) {
                     final PacketPlayInUpdateSign updateSign = (PacketPlayInUpdateSign) packet;
-                    final Map<UUID, SignGUI> signs = SignGUIManager.getSigns();
+                    final Map<UUID, SignGUI> signs = SignGUIManager.get().getSigns();
 
                     if (signs.containsKey(player.getUniqueId())) {
                         final SignGUI sign = signs.get(player.getUniqueId());

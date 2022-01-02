@@ -54,6 +54,7 @@ public class HyriGameManager implements IHyriGameManager {
 
             this.gameHandler = new HyriGameHandler(this.hyrame);
 
+            this.hyrame.getConfiguration().setRanksInTabList(false);
             this.hyrame.setChatHandler(new HyriGameChatHandler(this.hyrame));
 
             Hyrame.log("Registered '" + game.getName() + "' game.");
@@ -71,7 +72,7 @@ public class HyriGameManager implements IHyriGameManager {
         HandlerList.unregisterAll(this.gameHandler);
 
         HyriAPI.get().getRedisProcessor().process(jedis -> {
-            final String key = GAMES_KEY + game.getName();
+            final String key = GAMES_KEY + game.getName() + ":" + game.getType().getName();
 
             if (jedis != null) {
                 jedis.lrem(key, 0, HyriAPI.get().getServer().getName());
@@ -83,6 +84,7 @@ public class HyriGameManager implements IHyriGameManager {
 
             this.hyrame.getTabManager().enableTabList();
 
+            this.hyrame.getConfiguration().setRanksInTabList(true);
             this.hyrame.setChatHandler(new HyriDefaultChatHandler());
 
             Hyrame.log("Unregistered '" + game.getName() + "' game.");

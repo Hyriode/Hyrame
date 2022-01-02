@@ -67,6 +67,17 @@ public abstract class HyriConfigurationEntry<T> {
      */
     public abstract void set(T value);
 
+    /**
+     * Set a default value for the entry
+     *
+     * @param value The new {@link T} object to set
+     */
+    public void setDefault(T value) {
+        if (this.get() == null) {
+            this.set(value);
+        }
+    }
+
     public static class StringEntry extends HyriConfigurationEntry<String> {
 
         /**

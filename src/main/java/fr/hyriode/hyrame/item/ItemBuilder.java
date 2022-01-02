@@ -133,8 +133,8 @@ public class ItemBuilder {
         return this.withItemFlags(ItemFlag.HIDE_ENCHANTS);
     }
 
-    public ItemBuilder withInfiniteDurability() {
-        this.itemStack.setDurability(Short.MAX_VALUE);
+    public ItemBuilder unbreakable() {
+        this.itemMeta.spigot().setUnbreakable(true);
 
         return this;
     }

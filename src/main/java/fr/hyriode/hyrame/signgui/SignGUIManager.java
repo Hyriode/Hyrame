@@ -18,15 +18,14 @@ public class SignGUIManager {
     private static SignGUIManager instance;
 
     /** Map of all signs */
-    private static final Map<UUID, SignGUI> SIGNS = new HashMap<>();
+    private final Map<UUID, SignGUI> signs;
 
     /**
      * Constructor of {@link SignGUIManager}
-     *
-     * @param plugin - Spigot plugin
      */
-    public SignGUIManager(JavaPlugin plugin) {
+    public SignGUIManager() {
         instance = this;
+        this.signs = new HashMap<>();
 
         Hyrame.log("Registered SignGUI manager.");
     }
@@ -38,7 +37,7 @@ public class SignGUIManager {
      * @param sign - Sign
      */
     protected void addGUI(UUID uuid, SignGUI sign) {
-        SIGNS.put(uuid, sign);
+        this.signs.put(uuid, sign);
     }
 
     /**
@@ -46,8 +45,8 @@ public class SignGUIManager {
      *
      * @return - A map of signs
      */
-    public static Map<UUID, SignGUI> getSigns() {
-        return SIGNS;
+    public Map<UUID, SignGUI> getSigns() {
+        return this.signs;
     }
 
     /**

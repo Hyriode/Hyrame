@@ -4,11 +4,13 @@ import fr.hyriode.hyrame.chat.IHyriChatHandler;
 import fr.hyriode.hyrame.utils.RankUtil;
 import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.hyriapi.player.IHyriPlayer;
+import fr.hyriode.hyriapi.rank.EHyriRank;
 import fr.hyriode.hyriapi.rank.HyriRank;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.checkerframework.checker.units.qual.C;
 
 /**
  * Project: Hyrame
@@ -29,7 +31,14 @@ public class HyriDefaultChatHandler implements IHyriChatHandler {
             final HyriRank rank = account.getRank();
 
             for (Player target : Bukkit.getOnlinePlayers()) {
-                target.sendMessage(String.format(this.format(), RankUtil.formatRankForPlayer(rank, target) + player.getDisplayName(), event.getMessage()));
+                ChatColor color;
+                if (rank.getType() == EHyriRank.PLAYER) {
+                    color = ChatColor.GRAY;
+                } else {
+                    color = ChatColor.WHITE;
+                }
+
+                target.sendMessage(String.format(this.format(), RankUtil.formatRankForPlayer(rank, target) + player.getDisplayName(), color + event.getMessage()));
             }
         }
     }

@@ -6,5 +6,10 @@
   "tab.discord": " Discord : ",
   "command.plugin.info": "Information du serveur",
   "command.plugin.current": "Actuel",
-  "team.chat.prefix": "Equipe"
+  "team.chat.prefix": "Equipe",
+
+  "message.game-join": " a rejoint",
+  "message.game-left": " a quitté",
+
+  "error.chat.dead": "Tu ne peux pas parler dans le chat quand tu es mort !"
 }

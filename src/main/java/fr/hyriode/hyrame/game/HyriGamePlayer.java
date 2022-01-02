@@ -17,26 +17,28 @@ public class HyriGamePlayer {
 
     /** Player is spectating */
     protected boolean spectator;
+    /** Player is eliminated */
+    protected boolean eliminated;
+    /** Player is dead */
+    protected boolean dead;
+    /** The timestamp of the player connection */
+    protected long connectionTime = -1;
 
     /** Player object */
     protected final Player player;
 
+    /** The running game */
+    protected final HyriGame<?> game;
+
     /**
      * Constructor of {@link Player}
      *
-     * @param player - Spigot player
+     * @param game The running game
+     * @param player Spigot player
      */
-    public HyriGamePlayer(Player player) {
+    public HyriGamePlayer(HyriGame<?> game, Player player) {
+        this.game = game;
         this.player = player;
-    }
-
-    /**
-     * Get Spigot player object
-     *
-     * @return - {@link Player} object
-     */
-    public Player getPlayer() {
-        return this.player;
     }
 
     /**
@@ -49,12 +51,103 @@ public class HyriGamePlayer {
     }
 
     /**
+     * Hide player to other players
+     */
+    public void hide() {
+        for (HyriGamePlayer player : this.game.getPlayers()) {
+            player.getPlayer().hidePlayer(this.player);
+        }
+    }
+
+    /**
+     * Show player to other players
+     */
+    public void show() {
+        for (HyriGamePlayer player : this.game.getPlayers()) {
+            player.getPlayer().showPlayer(this.player);
+        }
+    }
+
+    /**
+     * Get Spigot player object
+     *
+     * @return - {@link Player} object
+     */
+    public Player getPlayer() {
+        return this.player;
+    }
+
+    /**
      * Get player {@link UUID}
      *
-     * @return - Player {@link UUID}
+     * @return Player {@link UUID}
      */
     public UUID getUUID() {
         return this.player.getUniqueId();
+    }
+
+    /**
+     * Get the connection time of the player
+     *
+     * @return A timestamp
+     */
+    public long getConnectionTime() {
+        return this.connectionTime;
+    }
+
+    /**
+     * Set the player connection time as the current time
+     */
+    public void setConnectionTime() {
+        this.connectionTime = System.currentTimeMillis();
+    }
+
+    /**
+     * Get the player played time (in millis)
+     *
+     * @return A timestamp
+     */
+    public long getPlayedTime() {
+        if (this.connectionTime != -1) {
+            return System.currentTimeMillis() - this.connectionTime;
+        }
+        return -1;
+    }
+
+    /**
+     * Check if player is dead
+     *
+     * @return <code>true</code> if yes
+     */
+    public boolean isDead() {
+        return this.dead;
+    }
+
+    /**
+     * Set if player is dead
+     *
+     * @param dead - <code>true</code> to set as dead
+     */
+    public void setDead(boolean dead) {
+        this.dead = dead;
+    }
+
+    /**
+     * Check if player is eliminated
+     *
+     * @return <code>true</code> if yes
+     */
+    public boolean isEliminated() {
+        return this.eliminated;
+    }
+
+    /**
+     * Set if player is eliminated
+     *
+     * @param eliminated - <code>true</code> to set as eliminated
+     */
+    public void setEliminated(boolean eliminated) {
+        this.eliminated = eliminated;
     }
 
     /**

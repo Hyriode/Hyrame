@@ -72,7 +72,7 @@ public class Hyrame implements IHyrame {
 
         new BossBarManager(plugin);
         new NPCManager(plugin, "npcs:");
-        new SignGUIManager(plugin);
+        new SignGUIManager();
     }
 
     void disable() {

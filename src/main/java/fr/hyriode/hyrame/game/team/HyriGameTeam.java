@@ -2,12 +2,16 @@ package fr.hyriode.hyrame.game.team;
 
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.title.Title;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Project: Hyrame
@@ -17,22 +21,19 @@ import java.util.UUID;
 public class HyriGameTeam {
 
     /** Team spawn location */
-    private Location spawnLocation;
+    protected Location spawnLocation;
 
     /** Players in team */
-    private final List<HyriGamePlayer> players;
+    protected final List<HyriGamePlayer> players;
 
     /** Team's name */
-    private final String name;
-
+    protected final String name;
     /** Team's display name */
-    private final HyriLanguageMessage displayName;
-
+    protected final HyriLanguageMessage displayName;
     /** Team's color */
-    private final HyriGameTeamColor color;
-
+    protected final HyriGameTeamColor color;
     /** Team's size */
-    private final int teamSize;
+    protected final int teamSize;
 
     /**
      * Constructor of {@link HyriGameTeam}
@@ -67,6 +68,19 @@ public class HyriGameTeam {
     }
 
     /**
+     * Format the name of a player with his team color
+     *
+     * @param player A given player
+     * @return A formatted name
+     */
+    public String formatName(Player player) {
+        if (this.getPlayer(player.getUniqueId()) != null) {
+            return this.color.getChatColor() + player.getDisplayName();
+        }
+        return null;
+    }
+
+    /**
      * Get game player by his {@link UUID}
      *
      * @param uuid - Player {@link UUID}
@@ -81,8 +95,25 @@ public class HyriGameTeam {
      *
      * @param message - Message to send
      */
-    public void sendMessage(String message) {
-        this.players.forEach(player -> player.sendMessage(message));
+    public void sendMessage(Function<Player, String> message) {
+        this.players.forEach(target -> target.sendMessage(message.apply(target.getPlayer())));
+    }
+
+    /**
+     * Send a title to all players in the team
+     *
+     * @param title The title to show
+     * @param subtitle The subtitle to show
+     * @param fadeIn The time to appear
+     * @param stay The time to stay
+     * @param fadeOut The time to disappear
+     */
+    public void sendTitle(Function<Player, String> title, Function<Player, String> subtitle, int fadeIn, int stay, int fadeOut) {
+        for (HyriGamePlayer gamePlayer : this.players) {
+            final Player player = gamePlayer.getPlayer();
+
+            Title.sendTitle(player, title.apply(player), subtitle.apply(player), fadeIn, stay, fadeOut);
+        }
     }
 
     /**
@@ -178,6 +209,16 @@ public class HyriGameTeam {
     }
 
     /**
+     * Get the formatted team's display name for a target
+     *
+     * @param target The target
+     * @return A formatted message
+     */
+    public String getFormattedDisplayName(Player target) {
+        return this.color.getChatColor() + this.getDisplayName().getForPlayer(target);
+    }
+
+    /**
      * Get team's color
      *
      * @return - Team's color
@@ -198,16 +239,34 @@ public class HyriGameTeam {
     /**
      * Get all game players in the team
      *
-     * @return - A list of game players
+     * @return A list of game players
      */
     public List<HyriGamePlayer> getPlayers() {
         return this.players;
     }
 
     /**
+     * Get all players that are still playing
+     *
+     * @return A list of game players
+     */
+    public List<HyriGamePlayer> getPlayersPlaying() {
+        return this.players.stream().filter(player -> !player.isEliminated()).collect(Collectors.toList());
+    }
+
+    /**
+     * Check if the team has still players playing the game
+     *
+     * @return <code>true</code> if yes
+     */
+    public boolean hasPlayersPlaying() {
+        return this.getPlayersPlaying().size() > 0;
+    }
+
+    /**
      * Get team's spawn location
      *
-     * @return - A location
+     * @return A location
      */
     public Location getSpawnLocation() {
         return this.spawnLocation;
@@ -216,7 +275,7 @@ public class HyriGameTeam {
     /**
      * Set team's spawn location
      *
-     * @param spawnLocation - New spawn location
+     * @param spawnLocation New spawn location
      */
     public void setSpawnLocation(Location spawnLocation) {
         this.spawnLocation = spawnLocation;

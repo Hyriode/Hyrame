@@ -2,7 +2,7 @@ package fr.hyriode.hyrame.impl.tab;
 
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.impl.utils.References;
-import fr.hyriode.hyrame.impl.utils.Symbols;
+import fr.hyriode.hyrame.utils.Symbols;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.tab.Tab;
 import fr.hyriode.hyriapi.settings.HyriLanguage;

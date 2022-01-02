@@ -3,7 +3,7 @@ package fr.hyriode.hyrame.game.tab;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
-import fr.hyriode.hyrame.impl.utils.Symbols;
+import fr.hyriode.hyrame.utils.Symbols;
 import fr.hyriode.hyrame.scoreboard.team.ScoreboardTeam;
 import fr.hyriode.hyrame.scoreboard.team.ScoreboardTeamHandler;
 import org.bukkit.ChatColor;
@@ -35,7 +35,7 @@ public class HyriGameTabListManager {
     }
 
     public void addTeam(HyriGameTeam team) {
-        this.teamHandler.addTeam(new ScoreboardTeam(team.getName(), team.getName(), team.getColor().getColor() + "", team.getColor().getColor() + "", ""));
+        this.teamHandler.addTeam(new ScoreboardTeam(team.getName(), team.getName(), team.getColor().getChatColor() + "", team.getColor().getChatColor() + "", ""));
     }
 
     public void handleLogin(Player player) {

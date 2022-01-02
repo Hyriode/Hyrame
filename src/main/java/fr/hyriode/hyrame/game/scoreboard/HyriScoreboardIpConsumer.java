@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * Created by AstFaster
  * on 17/09/2021 at 11:39
  */
-public class HyriGameWaitingScoreboardIpConsumer implements Consumer<ScoreboardLine> {
+public class HyriScoreboardIpConsumer implements Consumer<ScoreboardLine> {
 
     private int count = 0;
 
@@ -19,7 +19,7 @@ public class HyriGameWaitingScoreboardIpConsumer implements Consumer<ScoreboardL
 
     private final String ip;
 
-    public HyriGameWaitingScoreboardIpConsumer(String ip) {
+    public HyriScoreboardIpConsumer(String ip) {
         this.ip = ip;
     }
 

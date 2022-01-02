@@ -24,7 +24,7 @@ import org.bukkit.inventory.ItemStack;
 public class TeamChooserItem extends HyriItem<HyramePlugin> {
 
     private static final HyriLanguageMessage DISPLAY_NAME = new HyriLanguageMessage("gui.choose.team.name")
-            .addValue(HyriLanguage.FR, ChatColor.DARK_AQUA + "Les équipes")
+            .addValue(HyriLanguage.FR, ChatColor.DARK_AQUA + "Equipes")
             .addValue(HyriLanguage.EN, ChatColor.DARK_AQUA + "Teams");
 
     private static final String SLOT_NBT_KET = TeamChooserItem.class.getSimpleName() + "Slot";

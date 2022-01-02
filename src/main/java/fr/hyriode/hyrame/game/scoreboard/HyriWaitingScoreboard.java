@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  * Created by AstFaster
  * on 17/09/2021 at 11:39
  */
-public class HyriGameWaitingScoreboard extends Scoreboard {
+public class HyriWaitingScoreboard extends Scoreboard {
 
     private static final HyriLanguageMessage MAP = new HyriLanguageMessage("scoreboard.map")
             .addValue(HyriLanguage.FR, "Carte : ")
@@ -43,7 +43,7 @@ public class HyriGameWaitingScoreboard extends Scoreboard {
 
     private final HyriGame<?> game;
 
-    public HyriGameWaitingScoreboard(HyriGame<?> game, JavaPlugin plugin, Player player) {
+    public HyriWaitingScoreboard(HyriGame<?> game, JavaPlugin plugin, Player player) {
         super(plugin, player, "lobby", ChatColor.DARK_AQUA + "" + ChatColor.BOLD + game.getDisplayName());
         this.game = game;
 
@@ -58,7 +58,7 @@ public class HyriGameWaitingScoreboard extends Scoreboard {
         this.setLine(4,  "   ");
         this.setLine(5, this.getWaitingLine(), this.getScoreboardLineConsumer(), 5);
         this.setLine(6,  "    ");
-        this.setLine(7, ChatColor.DARK_AQUA + References.SERVER_IP, new HyriGameWaitingScoreboardIpConsumer(References.SERVER_IP), 2);
+        this.setLine(7, ChatColor.DARK_AQUA + References.SERVER_IP, new HyriScoreboardIpConsumer(References.SERVER_IP), 2);
     }
 
     private Consumer<ScoreboardLine> getPlayersLineConsumer() {

@@ -1,16 +1,21 @@
 package fr.hyriode.hyrame.game;
 
 import fr.hyriode.hyrame.IHyrame;
-import fr.hyriode.hyrame.game.scoreboard.HyriGameWaitingScoreboard;
+import fr.hyriode.hyrame.game.scoreboard.HyriWaitingScoreboard;
 import fr.hyriode.hyrame.game.tab.HyriGameTabListManager;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.impl.chat.HyriDefaultChatHandler;
+import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.scoreboard.Scoreboard;
+import fr.hyriode.hyrame.title.Title;
+import fr.hyriode.hyrame.utils.Symbols;
 import fr.hyriode.hyrame.utils.ThreadPool;
 import fr.hyriode.hyriapi.HyriAPI;
+import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -18,8 +23,8 @@ import org.bukkit.scheduler.BukkitTask;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -28,6 +33,20 @@ import java.util.stream.Collectors;
  * on 09/09/2021 at 19:16
  */
 public abstract class HyriGame<P extends HyriGamePlayer> {
+
+    /** The victory title to show */
+    private static final HyriLanguageMessage VICTORY = new HyriLanguageMessage("")
+            .addValue(HyriLanguage.EN, "VICTORY")
+            .addValue(HyriLanguage.FR, "VICTOIRE");
+
+    private static final HyriLanguageMessage LOST = new HyriLanguageMessage("")
+            .addValue(HyriLanguage.EN, "You lost!")
+            .addValue(HyriLanguage.FR, "Tu as perdu !");
+
+    /** The prefix to show when a message is sent to spectators */
+    private static final HyriLanguageMessage SPECTATORS_CHAT_PREFIX = new HyriLanguageMessage("")
+            .addValue(HyriLanguage.EN, "[Spectators] ")
+            .addValue(HyriLanguage.FR, "[Spectateurs] ");
 
     /** Default game type */
     public static final HyriGameType DEFAULT_TYPE = () -> "default";
@@ -46,12 +65,17 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /** Tab list manager object */
     protected HyriGameTabListManager tabListManager;
     /** All players scoreboard */
-    private final List<HyriGameWaitingScoreboard> waitingScoreboards;
+    private final List<HyriWaitingScoreboard> waitingScoreboards;
 
     /** Starting timer task */
     protected BukkitTask startingTimer;
     /** Is default starting */
     protected boolean defaultStarting = true;
+
+    /** Game timer task */
+    protected BukkitTask gameTimer;
+    /** The current duration of the game */
+    protected long gameTime;
 
     /** All game teams */
     protected final List<HyriGameTeam> teams;
@@ -151,13 +175,16 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
             this.waitingScoreboards.forEach(Scoreboard::hide);
         }
 
-        this.setRandomTeams();
+        this.gameTimer = Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, () -> this.gameTime++, 20L, 20L);
+
+        this.giveRandomTeams();
 
         this.state = HyriGameState.PLAYING;
 
         this.players.forEach(player -> {
             final Player p = player.getPlayer().getPlayer();
 
+            p.getInventory().clear();
             p.setLevel(0);
             p.setFoodLevel(20);
             p.setExp(0.0F);
@@ -165,54 +192,12 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
-     * Set a random team to all players who have not a team
-     */
-    public void setRandomTeams() {
-        final Random random = new Random();
-
-        List<HyriGameTeam> teams;
-        for (P player : this.players) {
-            if (!player.hasTeam()) {
-                teams = this.teams.stream().filter(team -> !team.isFull()).collect(Collectors.toList());
-
-                final int randomResult = random.nextInt(teams.size());
-                final HyriGameTeam team = teams.get(randomResult);
-
-                team.addPlayer(player);
-
-                player.setTeam(team);
-
-                this.updateTabList();
-            }
-        }
-    }
-
-    /**
      * Game post registration. Used after calling {@link IHyriGameManager#registerGame}
      */
     public void postRegistration() {
         if (this.defaultStarting) {
-            this.startingTimer = Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, new HyriGameStartingTimer(this), 20L, 20L);
+            this.startingTimer = Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, new HyriGameStartingTimer(this.plugin, this), 20L, 20L);
         }
-    }
-
-    /**
-     * Register a game team
-     *
-     * @param team Team to register
-     * @return The registered team
-     */
-    protected HyriGameTeam registerTeam(HyriGameTeam team) {
-        if (this.getTeam(team.getName()) == null) {
-            this.teams.add(team);
-
-            this.tabListManager.addTeam(team);
-
-            Hyrame.log("'" + team.getName() + "' team registered.");
-
-            return team;
-        }
-        throw new IllegalStateException("A team with the same name is already registered!");
     }
 
     /**
@@ -224,7 +209,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     public void handleLogin(Player p) {
         try {
             if (this.state == HyriGameState.WAITING) {
-                final P player = this.playerClass.getConstructor(Player.class).newInstance(p);
+                final P player = this.playerClass.getConstructor(HyriGame.class, Player.class).newInstance(this, p);
 
                 this.players.add(player);
 
@@ -237,7 +222,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
                 }
 
                 if (this.defaultStarting) {
-                    final HyriGameWaitingScoreboard scoreboard = new HyriGameWaitingScoreboard(this, this.plugin, p);
+                    final HyriWaitingScoreboard scoreboard = new HyriWaitingScoreboard(this, this.plugin, p);
 
                     scoreboard.show();
 
@@ -281,11 +266,41 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
+     * To call when the game has a winner<br>
+     * Override this method to make actions on game win
+     */
+    public void win(HyriGameTeam winner) {
+        if (winner == null) {
+            return;
+        }
+
+        winner.sendTitle(target -> ChatColor.GOLD + Symbols.SPARKLES + " " + ChatColor.BOLD + VICTORY.getForPlayer(target) + ChatColor.RESET + ChatColor.GOLD + " " + Symbols.SPARKLES, target -> "", 0, 20 * 10, 5);
+
+        for (HyriGamePlayer player : winner.getPlayers()) {
+            final Player target = player.getPlayer();
+
+            target.setGameMode(GameMode.ADVENTURE);
+            target.setAllowFlight(true);
+            target.setFlying(true);
+        }
+
+        for (HyriGameTeam team : this.teams) {
+            if (team != winner) {
+                team.sendTitle(target -> ChatColor.DARK_RED + Symbols.SKULL + " " + LOST.getForPlayer(target), target -> "", 0, 60, 5);
+            }
+        }
+
+        this.end();
+    }
+
+    /**
      * To call when the game is over<br>
      * Override this method to make actions on game end
      */
     public void end() {
         this.state = HyriGameState.ENDED;
+
+        this.gameTimer.cancel();
 
         this.hyrame.setChatHandler(new HyriDefaultChatHandler());
 
@@ -293,9 +308,75 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
             for (HyriGamePlayer player : this.players) {
                 HyriAPI.get().getServerManager().sendPlayerToLobby(player.getUUID());
             }
-        }, 20 * 20);
+        }, 20 * 30);
 
-        Bukkit.getScheduler().runTaskLater(this.plugin, Bukkit::shutdown, 20 * 25);
+        Bukkit.getScheduler().runTaskLater(this.plugin, Bukkit::shutdown, 20 * 40);
+    }
+
+    /**
+     * Register a game team
+     *
+     * @param team Team to register
+     * @return The registered team
+     */
+    protected HyriGameTeam registerTeam(HyriGameTeam team) {
+        if (this.getTeam(team.getName()) == null) {
+            this.teams.add(team);
+
+            this.tabListManager.addTeam(team);
+
+            Hyrame.log("'" + team.getName() + "' team registered.");
+
+            return team;
+        }
+        throw new IllegalStateException("A team with the same name is already registered!");
+    }
+
+    /**
+     * Give a random team to all players who have not a team
+     */
+    public void giveRandomTeams() {
+        for (P player : this.players) {
+            if (!player.hasTeam()) {
+                final HyriGameTeam team = this.getTeamWithFewestPlayers();
+
+                if (team != null) {
+                    team.addPlayer(player);
+
+                    player.setTeam(team);
+
+                    this.updateTabList();
+                } else {
+                    HyriAPI.get().getPlayerManager().sendMessage(player.getUUID(), ChatColor.RED + "An error occurred while giving your team! Sending you back to lobby...");
+                    HyriAPI.get().getServerManager().sendPlayerToLobby(player.getUUID());
+                }
+            }
+        }
+    }
+
+    /**
+     * Send a message to all players
+     *
+     * @param message A simple function used to change the message in terms of a target
+     */
+    public void sendMessageToAll(Function<Player, String> message) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.sendMessage(message.apply(player));
+        }
+    }
+
+    /**
+     * Send a message to all spectators
+     *
+     * @param message Message to send
+     * @param withPrefix If <code>true</code>, a prefix will be added before the message
+     */
+    public void sendMessageToSpectators(Function<Player, String> message, boolean withPrefix) {
+        for (HyriGamePlayer player : this.getSpectators()) {
+            final Player target = player.getPlayer();
+
+            target.sendMessage(ChatColor.GRAY + (withPrefix ? SPECTATORS_CHAT_PREFIX.getForSender(target) : "") + message.apply(target));
+        }
     }
 
     /**
@@ -318,6 +399,15 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
+     * Get all dead players
+     *
+     * @return A list of game player
+     */
+    public List<P> getDeadPlayers() {
+        return this.players.stream().filter(HyriGamePlayer::isDead).collect(Collectors.toList());
+    }
+
+    /**
      * Get a team by its name
      *
      * @param name Team name
@@ -330,6 +420,27 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
             }
         }
         return null;
+    }
+
+    /**
+     * Get the team with the fewest players
+     *
+     * @return A {@link HyriGameTeam} or <code>null</code> if every team is full
+     */
+    public HyriGameTeam getTeamWithFewestPlayers() {
+        HyriGameTeam result = null;
+        for (HyriGameTeam team : this.teams) {
+            if (!team.isFull()) {
+                if (result == null) {
+                    result = team;
+                } else {
+                    if (team.getPlayers().size() < result.getPlayers().size()) {
+                        result = team;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -407,6 +518,15 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
+     * Get current game duration (in seconds)
+     *
+     * @return A time
+     */
+    public long getGameTime() {
+        return this.gameTime;
+    }
+
+    /**
      * Check if game is using default starting
      *
      * @return <code>true</code> if yes
@@ -429,7 +549,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      *
      * @return A list of scoreboard
      */
-    List<HyriGameWaitingScoreboard> getWaitingScoreboards() {
+    List<HyriWaitingScoreboard> getWaitingScoreboards() {
         return this.waitingScoreboards;
     }
 
@@ -467,6 +587,15 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      */
     public void setMinPlayers(int minPlayers) {
         this.minPlayers = minPlayers;
+    }
+
+    /**
+     * Check if the game can start
+     *
+     * @return <code>true</code> if yes
+     */
+    public boolean canStart() {
+        return this.players.size() >= this.minPlayers;
     }
 
     /**

@@ -39,15 +39,15 @@ public class HyriGameTeamChooserGui extends HyriInventory {
 
     private static final HyriLanguageMessage JOIN = new HyriLanguageMessage("team.join")
             .addValue(HyriLanguage.FR, "Tu viens de rejoindre l'équipe : ")
-            .addValue(HyriLanguage.EN, "You join the team: ");
+            .addValue(HyriLanguage.EN, "You joined the team: ");
 
     private static final HyriLanguageMessage JOIN_RANDOM = new HyriLanguageMessage("random.join")
             .addValue(HyriLanguage.FR, "Tu seras dans une équipe aléatoire.")
             .addValue(HyriLanguage.EN, "You will be in a random team.");
 
     private static final HyriLanguageMessage ALREADY_IN_RANDOM = new HyriLanguageMessage("already.in.random")
-            .addValue(HyriLanguage.FR, "Tu es déjà en aléatoire !")
-            .addValue(HyriLanguage.EN, "You are already in random!");
+            .addValue(HyriLanguage.FR, "Tu es déjà en équipe aléatoire !")
+            .addValue(HyriLanguage.EN, "You are already in random team!");
 
     private static final HyriLanguageMessage TITLE = new HyriLanguageMessage("choose.team.gui.name")
             .addValue(HyriLanguage.FR, "Choix de l'équipe")
@@ -79,7 +79,7 @@ public class HyriGameTeamChooserGui extends HyriInventory {
     private void addTeamsWools() {
         for (HyriGameTeam team : this.game.getTeams()) {
             final ItemStack wool = new ItemBuilder(Material.WOOL, 1, team.getColor().getData())
-                    .withName(team.getDisplayName().getForPlayer(this.owner) + ChatColor.GRAY + " [" + team.getPlayers().size() + "/" + team.getTeamSize() + "]")
+                    .withName(team.getColor().getChatColor() + team.getDisplayName().getForPlayer(this.owner) + ChatColor.GRAY + " [" + team.getPlayers().size() + "/" + team.getTeamSize() + "]")
                     .withLore(this.getWoolLore(team))
                     .build();
 
@@ -130,7 +130,7 @@ public class HyriGameTeamChooserGui extends HyriInventory {
 
                 this.game.updateTabList();
 
-                player.sendMessage(ChatColor.DARK_AQUA + JOIN.getForPlayer(player) + team.getDisplayName().getForPlayer(player) + ChatColor.DARK_AQUA + ".");
+                player.sendMessage(ChatColor.DARK_AQUA + JOIN.getForPlayer(player) + team.getColor().getChatColor() + team.getDisplayName().getForPlayer(player) + ChatColor.DARK_AQUA + ".");
 
                 if (this.slot != -1) {
                     this.hyrame.getItemManager().giveItem(this.owner, this.slot, TeamChooserItem.class);
