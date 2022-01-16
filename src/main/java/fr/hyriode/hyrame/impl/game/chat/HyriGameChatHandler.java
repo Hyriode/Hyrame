@@ -11,12 +11,9 @@ import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.utils.RankUtil;
 import fr.hyriode.hyriapi.HyriAPI;
 import fr.hyriode.hyriapi.player.IHyriPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-
-import java.util.stream.Collectors;
 
 /**
  * Project: Hyrame

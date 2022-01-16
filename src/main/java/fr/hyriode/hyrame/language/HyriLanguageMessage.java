@@ -110,7 +110,7 @@ public class HyriLanguageMessage {
      * @return - Value
      */
     public String getForPlayer(IHyriPlayer player) {
-        return this.getValue(HyriLanguage.valueOf(player.getSettings().getLanguage().name()));
+        return this.getValue(player.getSettings().getLanguage());
     }
 
     /**
@@ -123,6 +123,12 @@ public class HyriLanguageMessage {
         return this.getForPlayer(HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId()));
     }
 
+    /**
+     * Get the value of the message for a given sender
+     *
+     * @param sender A sender
+     * @return A value
+     */
     public String getForSender(CommandSender sender) {
         if (sender instanceof Player) {
             return this.getForPlayer((Player) sender);

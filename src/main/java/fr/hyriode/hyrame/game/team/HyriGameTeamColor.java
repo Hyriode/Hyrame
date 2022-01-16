@@ -10,22 +10,21 @@ import org.bukkit.DyeColor;
  */
 public enum HyriGameTeamColor {
 
-    RED(ChatColor.RED, (byte) 14, DyeColor.RED),
-    YELLOW(ChatColor.YELLOW, (byte) 4, DyeColor.YELLOW),
-    DARK_GREEN(ChatColor.DARK_GREEN, (byte) 13, DyeColor.GREEN),
-    GREEN(ChatColor.GREEN, (byte) 5, DyeColor.LIME),
-    CYAN(ChatColor.AQUA, (byte) 9, DyeColor.CYAN),
-    BLUE(ChatColor.BLUE, (byte) 11, DyeColor.BLUE),
-    PINK(ChatColor.LIGHT_PURPLE, (byte) 6, DyeColor.PINK),
-    PURPLE(ChatColor.DARK_PURPLE, (byte) 10, DyeColor.PURPLE),
-    WHITE(ChatColor.WHITE, (byte) 0, DyeColor.WHITE),
-    GRAY(ChatColor.DARK_GRAY, (byte) 7, DyeColor.GRAY),
-    BLACK(ChatColor.BLACK, (byte) 15, DyeColor.BLACK);
+    RED(ChatColor.RED, DyeColor.RED),
+    ORANGE(ChatColor.GOLD, DyeColor.ORANGE),
+    YELLOW(ChatColor.YELLOW, DyeColor.YELLOW),
+    DARK_GREEN(ChatColor.DARK_GREEN, DyeColor.GREEN),
+    GREEN(ChatColor.GREEN, DyeColor.LIME),
+    CYAN(ChatColor.AQUA, DyeColor.CYAN),
+    BLUE(ChatColor.BLUE, DyeColor.BLUE),
+    PINK(ChatColor.LIGHT_PURPLE, DyeColor.PINK),
+    PURPLE(ChatColor.DARK_PURPLE, DyeColor.PURPLE),
+    WHITE(ChatColor.WHITE, DyeColor.WHITE),
+    GRAY(ChatColor.DARK_GRAY, DyeColor.GRAY),
+    BLACK(ChatColor.BLACK, DyeColor.BLACK);
 
     /** The Spigot color */
     private final ChatColor chatColor;
-    /** The color data, for wools, colored blocks etc */
-    private final byte data;
     /** The color used for dyes */
     private final DyeColor dyeColor;
 
@@ -33,12 +32,10 @@ public enum HyriGameTeamColor {
      * Constructor of {@link HyriGameTeamColor}
      *
      * @param chatColor Spigot {@link ChatColor}
-     * @param data Color data
      * @param dyeColor The color used for dyes
      */
-    HyriGameTeamColor(ChatColor chatColor, byte data, DyeColor dyeColor) {
+    HyriGameTeamColor(ChatColor chatColor, DyeColor dyeColor) {
         this.chatColor = chatColor;
-        this.data = data;
         this.dyeColor = dyeColor;
     }
 
@@ -49,15 +46,6 @@ public enum HyriGameTeamColor {
      */
     public ChatColor getChatColor() {
         return this.chatColor;
-    }
-
-    /**
-     * Get the color data
-     *
-     * @return - Color data
-     */
-    public byte getData() {
-        return this.data;
     }
 
     /**

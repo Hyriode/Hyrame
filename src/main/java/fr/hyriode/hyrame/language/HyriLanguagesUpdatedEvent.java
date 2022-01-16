@@ -14,7 +14,7 @@ import org.bukkit.event.HandlerList;
  */
 public class HyriLanguagesUpdatedEvent extends Event {
 
-    /** Spigot constants */
+    /** Spigot constant */
     private static final HandlerList HANDLERS = new HandlerList();
 
     /** The player concerned */

@@ -121,7 +121,6 @@ public enum HyriCommandCheck {
      * @param <T> Type of the return
      * @return The parsed input
      */
-    @SuppressWarnings("unchecked")
     public <T> T get(String input) {
         return (T) this.getter.apply(input);
     }

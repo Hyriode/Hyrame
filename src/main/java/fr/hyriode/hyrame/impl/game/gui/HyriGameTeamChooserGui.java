@@ -76,9 +76,10 @@ public class HyriGameTeamChooserGui extends HyriInventory {
         this.addRandomTeamBarrier();
     }
 
+    @SuppressWarnings("deprecation")
     private void addTeamsWools() {
         for (HyriGameTeam team : this.game.getTeams()) {
-            final ItemStack wool = new ItemBuilder(Material.WOOL, 1, team.getColor().getData())
+            final ItemStack wool = new ItemBuilder(Material.WOOL, 1, team.getColor().getDyeColor().getWoolData())
                     .withName(team.getColor().getChatColor() + team.getDisplayName().getForPlayer(this.owner) + ChatColor.GRAY + " [" + team.getPlayers().size() + "/" + team.getTeamSize() + "]")
                     .withLore(this.getWoolLore(team))
                     .build();

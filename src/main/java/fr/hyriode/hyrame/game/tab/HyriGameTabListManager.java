@@ -3,9 +3,9 @@ package fr.hyriode.hyrame.game.tab;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
-import fr.hyriode.hyrame.utils.Symbols;
 import fr.hyriode.hyrame.scoreboard.team.ScoreboardTeam;
 import fr.hyriode.hyrame.scoreboard.team.ScoreboardTeamHandler;
+import fr.hyriode.hyrame.utils.Symbols;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 

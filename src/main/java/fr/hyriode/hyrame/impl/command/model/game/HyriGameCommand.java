@@ -1,13 +1,14 @@
 package fr.hyriode.hyrame.impl.command.model.game;
 
-import fr.hyriode.hyrame.command.*;
+import fr.hyriode.hyrame.command.HyriCommand;
+import fr.hyriode.hyrame.command.HyriCommandContext;
+import fr.hyriode.hyrame.command.HyriCommandInfo;
+import fr.hyriode.hyrame.command.HyriCommandType;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-
-import java.util.function.Consumer;
 
 /**
  * Project: Hyrame

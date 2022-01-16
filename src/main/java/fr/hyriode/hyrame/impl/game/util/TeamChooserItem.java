@@ -38,6 +38,7 @@ public class TeamChooserItem extends HyriItem<HyramePlugin> {
         new HyriGameTeamChooserGui(hyrame, hyrame.getGameManager().getCurrentGame(), event.getPlayer(), new ItemNBT(event.getItem()).getInt(SLOT_NBT_KET)).open();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onGive(IHyrame hyrame, Player player, int slot, ItemStack itemStack) {
         final HyriGame<?> game = hyrame.getGameManager().getCurrentGame();
@@ -45,7 +46,7 @@ public class TeamChooserItem extends HyriItem<HyramePlugin> {
         if (game != null) {
             final HyriGamePlayer gamePlayer = game.getPlayer(player.getUniqueId());
 
-            itemStack.setDurability(gamePlayer.hasTeam() ? gamePlayer.getTeam().getColor().getData() : (byte) 0);
+            itemStack.setDurability(gamePlayer.hasTeam() ? gamePlayer.getTeam().getColor().getDyeColor().getWoolData() : (byte) 0);
 
             player.getInventory().setItem(slot, new ItemNBT(itemStack).setInt(SLOT_NBT_KET, slot).build());
         } else {

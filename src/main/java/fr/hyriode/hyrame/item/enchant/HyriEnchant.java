@@ -3,12 +3,13 @@ package fr.hyriode.hyrame.item.enchant;
 import fr.hyriode.hyrame.impl.Hyrame;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
+import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.Field;
 import java.util.logging.Level;
 
-public abstract class HyriEnchant extends Enchantment {
+public abstract class HyriEnchant extends EnchantmentWrapper {
 
     public static final HyriEnchant GLOW = new GlowEnchant(6379);
 

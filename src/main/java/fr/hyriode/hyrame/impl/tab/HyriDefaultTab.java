@@ -2,9 +2,9 @@ package fr.hyriode.hyrame.impl.tab;
 
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.impl.utils.References;
-import fr.hyriode.hyrame.utils.Symbols;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.tab.Tab;
+import fr.hyriode.hyrame.utils.Symbols;
 import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -48,10 +48,14 @@ public class HyriDefaultTab extends Tab {
         final String discord = languageManager.getValue(language, "tab.discord");
 
         this.setBlankFooterLine(0);
-        this.setFooterLine(1, " " + ChatColor.GRAY + Symbols.LEFT_QUOTE_MARK +  websiteAndForum + ChatColor.DARK_AQUA + References.WEBSITE_URL + ChatColor.GRAY + " " + Symbols.RIGHT_QUOTE_MARK + " ");
-        this.setFooterLine(2, " " + ChatColor.GRAY + Symbols.LEFT_QUOTE_MARK + store + ChatColor.DARK_AQUA + References.STORE_WEBSITE_URL + ChatColor.GRAY + " " + Symbols.RIGHT_QUOTE_MARK + " ");
-        this.setFooterLine(3, " " + ChatColor.GRAY + Symbols.LEFT_QUOTE_MARK + discord + ChatColor.DARK_AQUA + References.DISCORD_URL + ChatColor.GRAY + " " + Symbols.RIGHT_QUOTE_MARK + " ");
+        this.setFooterLine(1, this.createFooterLine(websiteAndForum));
+        this.setFooterLine(2, this.createFooterLine(store));
+        this.setFooterLine(3, this.createFooterLine(discord));
         this.setBlankFooterLine(4);
+    }
+
+    private String createFooterLine(String content) {
+        return " " + ChatColor.GRAY + Symbols.QUOTE_MARK_LEFT +  content + ChatColor.DARK_AQUA + References.WEBSITE_URL + ChatColor.GRAY + " " + Symbols.QUOTE_MARK_RIGHT + " ";
     }
 
 }

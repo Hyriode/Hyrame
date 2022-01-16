@@ -2,6 +2,8 @@ package fr.hyriode.hyrame.listener;
 
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 
+import java.util.List;
+
 /**
  * Project: Hyrame
  * Created by AstFaster
@@ -28,5 +30,21 @@ public interface IHyriListenerManager {
      * @param packageName - Package to search
      */
     void registerListeners(IPluginProvider pluginProvider, String packageName);
+
+    /**
+     * Get a listener from its class
+     *
+     * @param listenerClass The class of the listener
+     * @param <T> A type
+     * @return A {@link  HyriListener}
+     */
+    <T extends HyriListener<?>> T getListener(Class<T> listenerClass);
+
+    /**
+     * Get all listeners registered by Hyrame
+     *
+     * @return A list of {@link  HyriListener}
+     */
+    List<HyriListener<?>> getListeners();
 
 }

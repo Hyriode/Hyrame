@@ -8,7 +8,6 @@ import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.impl.chat.HyriDefaultChatHandler;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.scoreboard.Scoreboard;
-import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.Symbols;
 import fr.hyriode.hyrame.utils.ThreadPool;
 import fr.hyriode.hyriapi.HyriAPI;
@@ -208,7 +207,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      */
     public void handleLogin(Player p) {
         try {
-            if (this.state == HyriGameState.WAITING) {
+            if (this.state == HyriGameState.WAITING || !this.isFull()) {
                 final P player = this.playerClass.getConstructor(HyriGame.class, Player.class).newInstance(this, p);
 
                 this.players.add(player);
@@ -451,7 +450,13 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @return The result. <code>true</code> if they are in the same team
      */
     public boolean areInSameTeam(Player first, Player second) {
-        return this.getPlayer(first.getUniqueId()).getTeam() == this.getPlayer(second.getUniqueId()).getTeam();
+        final HyriGamePlayer firstPlayer = this.getPlayer(first.getUniqueId());
+        final HyriGamePlayer secondPlayer = this.getPlayer(second.getUniqueId());
+
+        if (firstPlayer != null && secondPlayer != null) {
+            return firstPlayer.getTeam() == secondPlayer.getTeam();
+        }
+        return false;
     }
 
     /**
@@ -596,6 +601,15 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      */
     public boolean canStart() {
         return this.players.size() >= this.minPlayers;
+    }
+
+    /**
+     * Check if the game is full
+     *
+     * @return <code>true</code> if yes
+     */
+    public boolean isFull() {
+        return this.players.size() >= this.maxPlayers;
     }
 
     /**

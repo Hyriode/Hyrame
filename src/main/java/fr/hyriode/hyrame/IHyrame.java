@@ -8,6 +8,10 @@ import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.listener.IHyriListenerManager;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.scanner.IHyriScanner;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+
+import java.util.function.Supplier;
 
 /**
  * Project: Hyrame
@@ -18,6 +22,8 @@ public interface IHyrame {
 
     /** Hyrame name constant */
     String NAME = "Hyrame";
+    /** Bukkit world constant */
+    Supplier<World> WORLD = () -> Bukkit.getWorld("world");
 
     /**
      * Load a plugin who wants to use Hyrame by giving its {@link IPluginProvider}

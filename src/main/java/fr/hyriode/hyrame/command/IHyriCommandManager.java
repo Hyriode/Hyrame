@@ -2,6 +2,8 @@ package fr.hyriode.hyrame.command;
 
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 
+import java.util.List;
+
 /**
  * Project: Hyrame
  * Created by AstFaster
@@ -31,5 +33,21 @@ public interface IHyriCommandManager {
      * @param packageName - Package to search
      */
     void registerCommands(IPluginProvider pluginProvider, String packageName);
+
+    /**
+     * Get a command from its class
+     *
+     * @param commandClass The class of the command
+     * @param <T> A type
+     * @return A {@link  HyriCommand}
+     */
+    <T extends HyriCommand<?>> T getCommand(Class<T> commandClass);
+
+    /**
+     * Get all commands registered by Hyrame
+     *
+     * @return A list of {@link  HyriCommand}
+     */
+    List<HyriCommand<?>> getCommands();
 
 }

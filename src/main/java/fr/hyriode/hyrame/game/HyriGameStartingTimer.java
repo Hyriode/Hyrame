@@ -1,7 +1,5 @@
 package fr.hyriode.hyrame.game;
 
-import fr.hyriode.hyrame.game.HyriGame;
-import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyriapi.settings.HyriLanguage;

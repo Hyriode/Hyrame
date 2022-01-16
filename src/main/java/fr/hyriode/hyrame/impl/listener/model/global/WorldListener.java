@@ -4,7 +4,6 @@ import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.listener.HyriListener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 /**
@@ -22,11 +21,5 @@ public class WorldListener extends HyriListener<HyramePlugin> {
     public void onWeatherChange(WeatherChangeEvent event) {
         event.setCancelled(true);
     }
-
-    @EventHandler
-    public void onEntitySpawn(EntitySpawnEvent event) {
-        event.setCancelled(true);
-    }
-
 
 }

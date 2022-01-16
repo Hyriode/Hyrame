@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 /**
  * Project: Hyrame
- * Created by AstFaster
+ * Created by Keinz
  * on 12/11/2021 at 15:25
  */
 public class Title {

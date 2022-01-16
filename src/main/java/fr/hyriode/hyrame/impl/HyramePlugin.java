@@ -23,6 +23,7 @@ public class HyramePlugin extends JavaPlugin {
         final World world = Bukkit.getWorld("world");
 
         world.setGameRuleValue("doDaylightCycle", "false");
+        world.setGameRuleValue("doMobSpawning", "false");
         world.setGameRuleValue("announceAdvancements", "false");
     }
 

@@ -15,7 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -25,6 +25,8 @@ import java.util.logging.Level;
  */
 public class HyriCommandManager implements IHyriCommandManager {
 
+    private final Map<Class<?>, HyriCommand<?>> commands;
+
     private final CommandMap commandMap;
 
     private final Hyrame hyrame;
@@ -32,6 +34,7 @@ public class HyriCommandManager implements IHyriCommandManager {
     public HyriCommandManager(Hyrame hyrame) {
         this.hyrame = hyrame;
         this.commandMap = (CommandMap) Reflection.invokeField(Bukkit.getServer(), "commandMap");
+        this.commands = new HashMap<>();
     }
 
     @Override
@@ -68,6 +71,8 @@ public class HyriCommandManager implements IHyriCommandManager {
                         if (name != null && !name.isEmpty()) {
                             this.commandMap.register(COMMANDS_PREFIX, this.createCommand(command));
 
+                            this.commands.put(command.getClass(), command);
+
                             Hyrame.log("Registered '" + clazz.getName() + "' command with name '" + name + "'" + formattedPluginProviderName);
                         } else {
                             Hyrame.log(Level.WARNING, ChatColor.RED + "'" + clazz.getName() + "' command has an empty name! Cannot register it!");
@@ -80,6 +85,16 @@ public class HyriCommandManager implements IHyriCommandManager {
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public <T extends HyriCommand<?>> T getCommand(Class<T> commandClass) {
+        return (T) this.commands.get(commandClass);
+    }
+
+    @Override
+    public List<HyriCommand<?>> getCommands() {
+        return new ArrayList<>(this.commands.values());
     }
 
     private Command createCommand(HyriCommand<?> command) {

@@ -8,7 +8,7 @@ import fr.hyriode.hyrame.reflection.Reflection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -18,10 +18,13 @@ import java.util.logging.Level;
  */
 public class HyriListenerManager implements IHyriListenerManager {
 
+    private final Map<Class<?>, HyriListener<?>> listeners;
+
     private final Hyrame hyrame;
 
     public HyriListenerManager(Hyrame hyrame) {
         this.hyrame = hyrame;
+        this.listeners = new HashMap<>();
     }
 
     @Override
@@ -57,6 +60,8 @@ public class HyriListenerManager implements IHyriListenerManager {
 
                         plugin.getServer().getPluginManager().registerEvents(listener, plugin);
 
+                        this.listeners.put(listener.getClass(), listener);
+
                         Hyrame.log("Registered '" + clazz.getName() + "' listener" + formattedPluginProviderName);
                     } else {
                         Hyrame.log(Level.WARNING, "'" + clazz.getName() + "' listener plugin type is not the same as the provided one in plugin provider!" + formattedPluginProviderName);
@@ -66,6 +71,16 @@ public class HyriListenerManager implements IHyriListenerManager {
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public <T extends HyriListener<?>> T getListener(Class<T> listenerClass) {
+        return (T) this.listeners.get(listenerClass);
+    }
+
+    @Override
+    public List<HyriListener<?>> getListeners() {
+        return new ArrayList<>(this.listeners.values());
     }
 
 }

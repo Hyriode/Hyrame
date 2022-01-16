@@ -164,10 +164,9 @@ public class NPCManager {
         sendMetadataNPC(npc);
 
         if (hologramLines != null) {
-            final Hologram hologram = new Hologram(plugin, hologramLines);
-
-            hologram.setLocation(npc.getLocation().clone().add(0.0D, 1.8D, 0.0D));
-            hologram.generateLines();
+            final Hologram hologram = new Hologram.Builder(plugin, npc.getLocation().clone().add(0.0D, 1.8D, 0.0D))
+                    .withLinesAsString(Arrays.asList(hologramLines))
+                    .build();
 
             npc.setHologram(hologram);
         }
@@ -245,7 +244,7 @@ public class NPCManager {
 
         NPCS.remove(npc);
 
-        npc.getHologram().fullDestroy();
+        npc.getHologram().destroy();
     }
 
     /**
@@ -326,7 +325,7 @@ public class NPCManager {
      */
     public static boolean existsNPC(NPC npc) {
         for (NPC n : NPCS.keySet()) {
-            if (n.getLocation().equals(npc.getLocation()) && n.getHologram().getLines().equals(npc.getHologram().getLines()) && Arrays.equals(n.getEquipment(), npc.getEquipment())) {
+            if (n.getLocation().equals(npc.getLocation()) && n.getHologram() == npc.getHologram() && Arrays.equals(n.getEquipment(), npc.getEquipment())) {
                 return true;
             }
         }

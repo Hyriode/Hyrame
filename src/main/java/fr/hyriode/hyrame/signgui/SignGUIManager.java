@@ -1,7 +1,6 @@
 package fr.hyriode.hyrame.signgui;
 
 import fr.hyriode.hyrame.impl.Hyrame;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
