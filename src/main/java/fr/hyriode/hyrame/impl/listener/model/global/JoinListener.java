@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.impl.listener.model.global;
 
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
+import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.listener.HyriListener;
 import fr.hyriode.hyrame.utils.BroadcastUtil;
@@ -77,9 +78,13 @@ public class JoinListener extends HyriListener<HyramePlugin> {
         event.setJoinMessage("");
 
         if (game != null) {
-            final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + game.getMaxPlayers() + ")";
+            final HyriGameState state = game.getState();
 
-            BroadcastUtil.broadcast(target -> RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName() + ChatColor.GRAY + hyrame.getLanguageManager().getValue(target, "message.game-join") + playerCounter);
+            if (state == HyriGameState.WAITING || state == HyriGameState.READY) {
+                final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + game.getMaxPlayers() + ")";
+
+                BroadcastUtil.broadcast(target -> RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName() + ChatColor.GRAY + hyrame.getLanguageManager().getValue(target, "message.game-join") + playerCounter);
+            }
         }
     }
 
@@ -98,9 +103,13 @@ public class JoinListener extends HyriListener<HyramePlugin> {
         event.setQuitMessage("");
 
         if (game != null) {
-            final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + game.getMaxPlayers() + ")";
+            final HyriGameState state = game.getState();
 
-            BroadcastUtil.broadcast(target -> RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName() + ChatColor.GRAY + hyrame.getLanguageManager().getValue(target, "message.game-left") + playerCounter);
+            if (state == HyriGameState.WAITING || state == HyriGameState.READY) {
+                final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + game.getMaxPlayers() + ")";
+
+                BroadcastUtil.broadcast(target -> RankUtil.formatRankForPlayer(account.getRank(), target) + player.getDisplayName() + ChatColor.GRAY + hyrame.getLanguageManager().getValue(target, "message.game-left") + playerCounter);
+            }
         }
     }
 
