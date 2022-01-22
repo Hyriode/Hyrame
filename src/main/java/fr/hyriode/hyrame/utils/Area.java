@@ -110,7 +110,8 @@ public class Area {
      * @return <code>true</code> if the location is in the area
      */
     public boolean isInArea(Location location) {
-        return location.getX() >= Math.min(this.min.getX(), this.max.getX()) && location.getX() <= Math.max(this.min.getX(), this.max.getX()) &&
+        return location.getWorld() == this.min.getWorld() && location.getWorld() == this.max.getWorld() &&
+                location.getX() >= Math.min(this.min.getX(), this.max.getX()) && location.getX() <= Math.max(this.min.getX(), this.max.getX()) &&
                 location.getY() >= Math.min(this.min.getY(), this.max.getY()) && location.getY() <= Math.max(this.min.getY(), this.max.getY()) &&
                 location.getZ() >= Math.min(this.min.getZ(), this.max.getZ()) && location.getZ() <= Math.max(this.min.getZ(), this.max.getZ());
     }
