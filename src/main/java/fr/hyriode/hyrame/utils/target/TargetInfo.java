@@ -1,41 +1,41 @@
 package fr.hyriode.hyrame.utils.target;
 
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
 /**
  * Project: Hyrame
  * Created by AstFaster
- * on 03/01/2022 at 19:25
+ * on 19/02/2022 at 16:51
  */
 public class TargetInfo {
 
-    /** The target */
-    private final Player player;
-    /** The distance between the player and the target */
+    /** The target found */
+    private final Entity entity;
+    /** The distance between the entity and the target */
     private final double distance;
 
     /**
      * Constructor of {@link TargetInfo}
      *
-     * @param player The target found
+     * @param entity The target found
      * @param distance The distance
      */
-    public TargetInfo(Player player, double distance) {
-        this.player = player;
+    public TargetInfo(Entity entity, double distance) {
+        this.entity = entity;
         this.distance = distance;
     }
 
     /**
      * Get the target found
      *
-     * @return A {@link Player}
+     * @return An object that inherits of {@link Entity}
      */
-    public Player getPlayer() {
-        return this.player;
+    public Entity getEntity() {
+        return this.entity;
     }
 
     /**
-     * Get the distance between the target and the player
+     * Get the distance between the target and the entity
      *
      * @return A distance
      */

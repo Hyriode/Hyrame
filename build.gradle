@@ -116,6 +116,7 @@ publishing {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     shadow 'com.google.guava:guava:31.0.1-jre'
+    shadow 'xyz.xenondevs:particle:1.7'
     shade 'fr.hyriode:hyriapi:1.0.8'
     shade 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
 }

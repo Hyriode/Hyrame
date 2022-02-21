@@ -1,10 +1,13 @@
 package fr.hyriode.hyrame.utils;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+
+import java.util.List;
 
 /**
  * Project: Hyrame
@@ -78,9 +81,10 @@ public class LocationUtil {
      *
      * @param first The first {@link Location}
      * @param end The end {@link Location}
+     * @param toIgnore A list of material to ignore for blocks
      * @return <code>true</code> if there is a block
      */
-    public static boolean hasBlockBetween(Location first, Location end) {
+    public static boolean hasBlockBetween(Location first, Location end, List<Material> toIgnore) {
         Vector vector = end.toVector().subtract(first.toVector());
 
         final double j = Math.floor(vector.length());
@@ -93,7 +97,7 @@ public class LocationUtil {
 
             final Block block = first.getWorld().getBlockAt((first.toVector().add(vector.multiply(i))).toLocation(first.getWorld()));
 
-            if (block.getType().isSolid()) {
+            if (block.getType().isSolid() && !toIgnore.contains(block.getType())) {
                 return true;
             }
         }
