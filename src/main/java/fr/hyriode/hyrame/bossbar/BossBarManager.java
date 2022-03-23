@@ -1,6 +1,5 @@
 package fr.hyriode.hyrame.bossbar;
 
-import fr.hyriode.hyrame.impl.Hyrame;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,24 +13,22 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
-public class BossBarManager {
+public class HyriBossBarManager {
 
-    private static final Map<Player, BossBar> BARS = new ConcurrentHashMap<>();
+    private static final Map<Player, HyriBossBar> BARS = new ConcurrentHashMap<>();
 
     private static JavaPlugin plugin;
 
-    public BossBarManager(JavaPlugin plugin) {
-        BossBarManager.plugin = plugin;
-
-        Hyrame.log("Registered BossBar manager.");
+    public HyriBossBarManager(JavaPlugin plugin) {
+        HyriBossBarManager.plugin = plugin;
     }
 
-    public static BossBar getBar(Player player) {
+    public static HyriBossBar getBar(Player player) {
         return BARS.get(player);
     }
 
-    public static BossBar setBar(Player player, List<String> titles, int delay, int timeout, boolean updateProgressWithTimeout) {
-        final BossBar bossBar = new BossBar(plugin, player, titles, delay, timeout, updateProgressWithTimeout);
+    public static HyriBossBar setBar(Player player, List<String> titles, int delay, int timeout, boolean updateProgressWithTimeout) {
+        final HyriBossBar bossBar = new HyriBossBar(plugin, player, titles, delay, timeout, updateProgressWithTimeout);
 
         bossBar.spawn();
 
@@ -44,23 +41,23 @@ public class BossBarManager {
         return bossBar;
     }
 
-    public static BossBar setBar(Player player, List<String> titles, int timeout, boolean updateProgressWithTimeout) {
+    public static HyriBossBar setBar(Player player, List<String> titles, int timeout, boolean updateProgressWithTimeout) {
         return setBar(player, titles, 0, timeout, updateProgressWithTimeout);
     }
 
-    public static BossBar setBar(Player player, List<String> titles, int timeout) {
+    public static HyriBossBar setBar(Player player, List<String> titles, int timeout) {
         return setBar(player, titles, 0, timeout, false);
     }
 
-    public static BossBar setBar(Player player, String title, int timeout, boolean updateProgressWithTimeout) {
+    public static HyriBossBar setBar(Player player, String title, int timeout, boolean updateProgressWithTimeout) {
         return setBar(player, Collections.singletonList(title), 0, timeout, updateProgressWithTimeout);
     }
 
-    public static BossBar setBar(Player player, String title, int timeout) {
+    public static HyriBossBar setBar(Player player, String title, int timeout) {
         return setBar(player, Collections.singletonList(title), 0, timeout, false);
     }
 
-    public static BossBar setBar(Player player, String title) {
+    public static HyriBossBar setBar(Player player, String title) {
         return setBar(player, Collections.singletonList(title), 0, 0, false);
     }
 

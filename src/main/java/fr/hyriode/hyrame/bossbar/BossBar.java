@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
-public class BossBar {
+public class HyriBossBar {
 
     protected int messageCooldown;
     protected final int delay;
@@ -39,7 +39,7 @@ public class BossBar {
 
     protected final JavaPlugin plugin;
 
-    public BossBar(JavaPlugin plugin, Player player, List<String> titles, int delay, int timeout, boolean updateProgressWithTimeout) {
+    public HyriBossBar(JavaPlugin plugin, Player player, List<String> titles, int delay, int timeout, boolean updateProgressWithTimeout) {
         this.plugin = plugin;
         this.player = player;
         this.titles = titles;
@@ -121,7 +121,7 @@ public class BossBar {
                     timeoutCooldown += 0.04;
 
                     if (timeoutCooldown >= timeout) {
-                        BossBarManager.removeBar(player);
+                        HyriBossBarManager.removeBar(player);
                     }
 
                     if (updateProgressWithTimeout) {
@@ -147,7 +147,7 @@ public class BossBar {
         this.wither.setHealth(this.progress * this.wither.getMaxHealth());
 
         if (this.wither.getHealth() <= 1) {
-            BossBarManager.removeBar(this.player);
+            HyriBossBarManager.removeBar(this.player);
         } else {
             this.sendMetaData();
         }

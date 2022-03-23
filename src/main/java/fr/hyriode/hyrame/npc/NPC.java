@@ -1,7 +1,7 @@
 package fr.hyriode.hyrame.npc;
 
 import com.mojang.authlib.GameProfile;
-import fr.hyriode.hyrame.hologram.Hologram;
+import fr.hyriode.hyrame.hologram.HyriHologram;
 import fr.hyriode.hyrame.reflection.entity.EnumItemSlot;
 import fr.hyriode.hyrame.utils.PacketUtil;
 import net.minecraft.server.v1_8_R3.*;
@@ -19,16 +19,16 @@ import java.util.*;
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
-public class NPC extends EntityPlayer {
+public class HyriNPC extends EntityPlayer {
 
     /** Interaction callback */
-    protected NPCInteractCallback interactCallback;
+    protected HyriNPCInteractCallback interactCallback;
 
     /** NPC equipment */
     protected final Map<EnumItemSlot, ItemStack> equipment;
 
     /** NPC Hologram */
-    protected Hologram hologram;
+    protected HyriHologram hologram;
 
     /** Players */
     protected Set<Player> players;
@@ -46,14 +46,14 @@ public class NPC extends EntityPlayer {
     protected final JavaPlugin plugin;
 
     /**
-     * Constructor of {@link NPC}
+     * Constructor of {@link HyriNPC}
      *
      * @param plugin - Spigot plugin
      * @param location - NPCs location
      * @param world - NPCs world
      * @param gameProfile - NPCs profile
      */
-    public NPC(JavaPlugin plugin, Location location, World world, GameProfile gameProfile) {
+    public HyriNPC(JavaPlugin plugin, Location location, World world, GameProfile gameProfile) {
         super(world.getServer().getServer(), (WorldServer) world, gameProfile, new PlayerInteractManager(world));
         this.plugin = plugin;
         this.trackingPlayer = false;
@@ -79,7 +79,7 @@ public class NPC extends EntityPlayer {
      * @param location - New location
      * @return - This NPC object (useful for inline pattern)
      */
-    public NPC setLocation(Location location) {
+    public HyriNPC setLocation(Location location) {
         this.location = location;
 
         this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
@@ -106,7 +106,7 @@ public class NPC extends EntityPlayer {
      * @param trackingPlayer - New value
      * @return - This NPC object (useful for inline pattern)
      */
-    public NPC setTrackingPlayer(boolean trackingPlayer) {
+    public HyriNPC setTrackingPlayer(boolean trackingPlayer) {
         this.trackingPlayer = trackingPlayer;
 
         return this;
@@ -127,7 +127,7 @@ public class NPC extends EntityPlayer {
      * @param showingToAll - New value
      * @return - This NPC object (useful for inline pattern)
      */
-    public NPC setShowingToAll(boolean showingToAll) {
+    public HyriNPC setShowingToAll(boolean showingToAll) {
         this.showingToAll = showingToAll;
 
         return this;
@@ -148,7 +148,7 @@ public class NPC extends EntityPlayer {
      * @param players - New players
      * @return - This NPC object (useful for inline pattern)
      */
-    public NPC setPlayers(Set<Player> players) {
+    public HyriNPC setPlayers(Set<Player> players) {
         this.players = players;
 
         return this;
@@ -160,7 +160,7 @@ public class NPC extends EntityPlayer {
      * @param player - Player to add
      * @return - This NPC object (useful for inline pattern)
      */
-    public NPC addPlayer(Player player) {
+    public HyriNPC addPlayer(Player player) {
         if (!this.players.contains(player)) {
             this.players.add(player);
 
@@ -177,7 +177,7 @@ public class NPC extends EntityPlayer {
      * @param player - Player to remove
      * @return - This NPC object (useful for inline pattern)
      */
-    public NPC removePlayer(Player player) {
+    public HyriNPC removePlayer(Player player) {
         this.players.remove(player);
 
         if (this.hologram != null) {
@@ -190,9 +190,9 @@ public class NPC extends EntityPlayer {
     /**
      * Get NPCs hologram
      *
-     * @return - {@link Hologram} object
+     * @return - {@link HyriHologram} object
      */
-    public Hologram getHologram() {
+    public HyriHologram getHologram() {
         return this.hologram;
     }
 
@@ -202,7 +202,7 @@ public class NPC extends EntityPlayer {
      * @param hologram - New value
      * @return - This NPC object (useful for inline pattern)
      */
-    public NPC setHologram(Hologram hologram) {
+    public HyriNPC setHologram(HyriHologram hologram) {
         this.hologram = hologram;
 
         return this;
@@ -215,7 +215,7 @@ public class NPC extends EntityPlayer {
      * @param itemStack - Item
      * @return - This NPC object (useful for inline pattern)
      */
-    public NPC setEquipment(EnumItemSlot slot, ItemStack itemStack) {
+    public HyriNPC setEquipment(EnumItemSlot slot, ItemStack itemStack) {
         this.equipment.put(slot, itemStack);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -228,9 +228,9 @@ public class NPC extends EntityPlayer {
     /**
      * Get NPCs interaction callback
      *
-     * @return - {@link NPCInteractCallback} object
+     * @return - {@link HyriNPCInteractCallback} object
      */
-    public NPCInteractCallback getInteractCallback() {
+    public HyriNPCInteractCallback getInteractCallback() {
         return this.interactCallback;
     }
 
@@ -240,7 +240,7 @@ public class NPC extends EntityPlayer {
      * @param interactCallback - New value
      * @return - This NPC object (useful for inline pattern)
      */
-    public NPC setInteractCallback(NPCInteractCallback interactCallback) {
+    public HyriNPC setInteractCallback(HyriNPCInteractCallback interactCallback) {
         this.interactCallback = interactCallback;
 
         return this;

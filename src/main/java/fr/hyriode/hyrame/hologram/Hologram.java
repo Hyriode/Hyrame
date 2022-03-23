@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  * Created by AstFaster
  * on 08/01/2022 at 11:12
  */
-public class Hologram {
+public class HyriHologram {
 
     /** The maximum range a player can see the hologram */
     private static final double RANGE_VIEW = 32.0D;
@@ -45,14 +45,14 @@ public class Hologram {
     private final Map<Integer, Line> lines;
 
     /**
-     * Constructor of {@link  Hologram}
+     * Constructor of {@link  HyriHologram}
      *
      * @param plugin The Spigot plugin
      * @param location The hologram location
      * @param linesDistance The distance between each line
      * @param lines The lines used for the hologram
      */
-    protected Hologram(JavaPlugin plugin, Location location, double linesDistance, Map<Integer, Line> lines) {
+    protected HyriHologram(JavaPlugin plugin, Location location, double linesDistance, Map<Integer, Line> lines) {
         this.plugin = plugin;
         this.location = location;
         this.linesDistance = linesDistance;
@@ -605,9 +605,9 @@ public class Hologram {
             return this.withLine(this.lines.size(), Line.from(line));
         }
 
-        public Hologram build() {
+        public HyriHologram build() {
             if (this.plugin != null && this.lines != null) {
-                return new Hologram(this.plugin, this.location, this.linesDistance, this.lines);
+                return new HyriHologram(this.plugin, this.location, this.linesDistance, this.lines);
             }
             throw new RuntimeException("Couldn't set a null value to a hologram builder field!");
         }

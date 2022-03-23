@@ -18,7 +18,7 @@ import java.util.UUID;
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
-public class NPCProfileLoader {
+public class HyriNPCProfileLoader {
 
     /** Profiles redis key */
     private String redisKey;
@@ -33,27 +33,27 @@ public class NPCProfileLoader {
     private final UUID uuid;
 
     /**
-     * Constructor of {@link NPCProfileLoader}
+     * Constructor of {@link HyriNPCProfileLoader}
      *
      * @param uuid - Profile's uuid
      * @param name - Profile's name
      * @param skinOwner - Skin owner
      */
-    public NPCProfileLoader(UUID uuid, String name, String skinOwner) {
+    public HyriNPCProfileLoader(UUID uuid, String name, String skinOwner) {
         this.uuid = uuid;
         this.name = name;
         this.skinOwner = this.getUUID(skinOwner);
     }
 
     /**
-     * Constructor of {@link NPCProfileLoader}
+     * Constructor of {@link HyriNPCProfileLoader}
      *
      * @param uuid - Profile's uuid
      * @param name - Profile's name
      * @param skinOwner - Skin owner
      * @param redisKey - Profiles redis key
      */
-    public NPCProfileLoader(UUID uuid, String name, String skinOwner, String redisKey) {
+    public HyriNPCProfileLoader(UUID uuid, String name, String skinOwner, String redisKey) {
         this.uuid = uuid;
         this.name = name;
         this.skinOwner = this.getUUID(skinOwner);

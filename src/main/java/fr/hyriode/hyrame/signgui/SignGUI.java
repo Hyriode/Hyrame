@@ -12,20 +12,20 @@ import org.bukkit.entity.Player;
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
-public class SignGUI {
+public class HyriSignGUI {
 
     /** Sign's lines */
     private String[] lines;
 
     /** Sign's complete callback */
-    private final SignGUICompleteCallback completeCallback;
+    private final Callback completeCallback;
 
     /**
-     * Constructor of {@link SignGUI}
+     * Constructor of {@link HyriSignGUI}
      *
      * @param completeCallback - Callback
      */
-    public SignGUI(SignGUICompleteCallback completeCallback) {
+    public HyriSignGUI(Callback completeCallback) {
         this.completeCallback = completeCallback;
     }
 
@@ -35,7 +35,7 @@ public class SignGUI {
      * @param lines - Default lines
      * @return - Instance of this (useful for inline pattern)
      */
-    public SignGUI withLines(String... lines) {
+    public HyriSignGUI withLines(String... lines) {
         if (lines.length == 4) {
             this.lines = lines;
         } else {
@@ -71,7 +71,7 @@ public class SignGUI {
 
         PacketUtil.sendPacket(player, openSignEditorPacket);
 
-        SignGUIManager.get().addGUI(player.getUniqueId(), this);
+        HyriSignGUIManager.get().addGUI(player.getUniqueId(), this);
     }
 
     /**
@@ -79,8 +79,21 @@ public class SignGUI {
      *
      * @return - Sign callback
      */
-    public SignGUICompleteCallback getCompleteCallback() {
+    public Callback getCompleteCallback() {
         return this.completeCallback;
+    }
+
+    @FunctionalInterface
+    public interface Callback {
+
+        /**
+         * Fired when sign gui is closed
+         *
+         * @param player - Player
+         * @param lines - Lines provided
+         */
+        void call(Player player, String[] lines);
+
     }
 
 }

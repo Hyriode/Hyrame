@@ -5,7 +5,7 @@ package fr.hyriode.hyrame.npc;
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
-public class NPCSkin {
+public class HyriNPCSkin {
 
     /** Texture's data */
     private String textureData;
@@ -14,12 +14,12 @@ public class NPCSkin {
     private String textureSignature;
 
     /**
-     * Constructor of {@link NPCSkin}
+     * Constructor of {@link HyriNPCSkin}
      *
      * @param textureData - Texture's data
      * @param textureSignature - Texture's signature
      */
-    public NPCSkin(String textureData, String textureSignature) {
+    public HyriNPCSkin(String textureData, String textureSignature) {
         this.textureData = textureData;
         this.textureSignature = textureSignature;
     }

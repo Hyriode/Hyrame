@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
  * Created by Keinz
  * on 12/11/2021 at 15:25
  */
-public class Title {
+public class HyriTitle {
 
     /**
      * Send a title to a given player

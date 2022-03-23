@@ -20,7 +20,7 @@ import java.util.Set;
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
-public class ActionBar {
+public class HyriActionBar {
 
     /** Permanent message task */
     private final Map<Player, BukkitTask> permanentMessageTasks;
@@ -32,11 +32,11 @@ public class ActionBar {
     private String message;
 
     /**
-     * Constructor of {@link ActionBar}
+     * Constructor of {@link HyriActionBar}
      *
      * @param message - Action bar message
      */
-    public ActionBar(String message) {
+    public HyriActionBar(String message) {
         this.message = message;
         this.players = new ConcurrentSet<>();
         this.permanentMessageTasks = new HashMap<>();

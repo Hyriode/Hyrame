@@ -1,7 +1,5 @@
 package fr.hyriode.hyrame.signgui;
 
-import fr.hyriode.hyrame.impl.Hyrame;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -11,22 +9,20 @@ import java.util.UUID;
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
-public class SignGUIManager {
+public class HyriSignGUIManager {
 
     /** Instance of manager */
-    private static SignGUIManager instance;
+    private static HyriSignGUIManager instance;
 
     /** Map of all signs */
-    private final Map<UUID, SignGUI> signs;
+    private final Map<UUID, HyriSignGUI> signs;
 
     /**
-     * Constructor of {@link SignGUIManager}
+     * Constructor of {@link HyriSignGUIManager}
      */
-    public SignGUIManager() {
+    public HyriSignGUIManager() {
         instance = this;
         this.signs = new HashMap<>();
-
-        Hyrame.log("Registered SignGUI manager.");
     }
 
     /**
@@ -35,7 +31,7 @@ public class SignGUIManager {
      * @param uuid - Player uuid
      * @param sign - Sign
      */
-    protected void addGUI(UUID uuid, SignGUI sign) {
+    protected void addGUI(UUID uuid, HyriSignGUI sign) {
         this.signs.put(uuid, sign);
     }
 
@@ -44,16 +40,16 @@ public class SignGUIManager {
      *
      * @return - A map of signs
      */
-    public Map<UUID, SignGUI> getSigns() {
+    public Map<UUID, HyriSignGUI> getSigns() {
         return this.signs;
     }
 
     /**
      * Get the instance of this object
      *
-     * @return - {@link SignGUIManager} instance
+     * @return - {@link HyriSignGUIManager} instance
      */
-    public static SignGUIManager get() {
+    public static HyriSignGUIManager get() {
         return instance;
     }
 

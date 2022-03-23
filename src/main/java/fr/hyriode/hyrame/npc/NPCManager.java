@@ -2,8 +2,7 @@ package fr.hyriode.hyrame.npc;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import fr.hyriode.hyrame.hologram.Hologram;
-import fr.hyriode.hyrame.impl.Hyrame;
+import fr.hyriode.hyrame.hologram.HyriHologram;
 import fr.hyriode.hyrame.utils.PacketUtil;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
@@ -27,14 +26,14 @@ import java.util.function.Consumer;
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
-public class NPCManager {
+public class HyriNPCManager {
 
     /** Some constants */
     private static final String NPC_TEAM_NAME = "NPC";
     private static final String NPC_NAME_PREFIX = "[" + NPC_TEAM_NAME + "] ";
 
     /** All NPCs */
-    private static final Map<NPC, Hologram> NPCS = new HashMap<>();
+    private static final Map<HyriNPC, HyriHologram> NPCS = new HashMap<>();
 
     /** Skin Redis key */
     private static String cacheSkinRedisKey;
@@ -43,18 +42,14 @@ public class NPCManager {
     private static JavaPlugin plugin;
 
     /**
-     * Constructor of {@link NPCManager}
+     * Constructor of {@link HyriNPCManager}
      *
      * @param plugin Spigot plugin
      * @param cacheSkinRedisKey Skin Redis key
      */
-    public NPCManager(JavaPlugin plugin, String cacheSkinRedisKey) {
-        NPCManager.plugin = plugin;
-        NPCManager.cacheSkinRedisKey = cacheSkinRedisKey;
-
-        new NPCHandler(plugin);
-
-        Hyrame.log("Registered NPC manager.");
+    public HyriNPCManager(JavaPlugin plugin, String cacheSkinRedisKey) {
+        HyriNPCManager.plugin = plugin;
+        HyriNPCManager.cacheSkinRedisKey = cacheSkinRedisKey;
     }
 
     /**
@@ -63,9 +58,9 @@ public class NPCManager {
      * @param location - NPCs location
      * @param skin - NPCs skin
      * @param hologramLines - NPCs hologram lines
-     * @return - {@link NPC} object
+     * @return - {@link HyriNPC} object
      */
-    public static NPC createNPC(Location location, NPCSkin skin, List<String> hologramLines) {
+    public static HyriNPC createNPC(Location location, HyriNPCSkin skin, List<String> hologramLines) {
         return createNPC(location, skin, hologramLines.toArray(new String[0]));
     }
     /**
@@ -74,10 +69,10 @@ public class NPCManager {
      * @param location - NPCs location
      * @param skin - NPCs skin
      * @param hologramLines - NPCs hologram lines
-     * @return - {@link NPC} object
+     * @return - {@link HyriNPC} object
      */
 
-    public static NPC createNPC(Location location, NPCSkin skin, String[] hologramLines) {
+    public static HyriNPC createNPC(Location location, HyriNPCSkin skin, String[] hologramLines) {
         final GameProfile gameProfile = new GameProfile(UUID.randomUUID(), ChatColor.DARK_GRAY + NPC_NAME_PREFIX + UUID.randomUUID().toString().split("-")[0]);
 
         gameProfile.getProperties().put("textures", new Property("textures", skin.getTextureData(), skin.getTextureSignature()));
@@ -91,9 +86,9 @@ public class NPCManager {
      * @param location - NPCs location
      * @param skinOwner - NPCs skin owner
      * @param hologramLines - NPCs hologram lines
-     * @return - {@link NPC} object
+     * @return - {@link HyriNPC} object
      */
-    public static NPC createNPC(Location location, String skinOwner, List<String> hologramLines) {
+    public static HyriNPC createNPC(Location location, String skinOwner, List<String> hologramLines) {
         return createNPC(location, skinOwner, hologramLines.toArray(new String[0]));
     }
 
@@ -103,10 +98,10 @@ public class NPCManager {
      * @param location - NPCs location
      * @param skinOwner - NPCs skin owner
      * @param hologramLines - NPCs hologram lines
-     * @return - {@link NPC} object
+     * @return - {@link HyriNPC} object
      */
-    public static NPC createNPC(Location location, String skinOwner, String[] hologramLines) {
-        final GameProfile gameProfile = new NPCProfileLoader(UUID.randomUUID(), ChatColor.DARK_GRAY + NPC_NAME_PREFIX + UUID.randomUUID().toString().split("-")[0], skinOwner, cacheSkinRedisKey).loadProfile();
+    public static HyriNPC createNPC(Location location, String skinOwner, String[] hologramLines) {
+        final GameProfile gameProfile = new HyriNPCProfileLoader(UUID.randomUUID(), ChatColor.DARK_GRAY + NPC_NAME_PREFIX + UUID.randomUUID().toString().split("-")[0], skinOwner, cacheSkinRedisKey).loadProfile();
 
         return createNPC(location, gameProfile, hologramLines);
     }
@@ -116,9 +111,9 @@ public class NPCManager {
      *
      * @param location - NPCs location
      * @param hologramLines - NPCs hologram lines
-     * @return - {@link NPC} object
+     * @return - {@link HyriNPC} object
      */
-    public static NPC createNPC(Location location, String[] hologramLines) {
+    public static HyriNPC createNPC(Location location, String[] hologramLines) {
         return createNPC(location, new GameProfile(UUID.randomUUID(), ChatColor.DARK_GRAY + NPC_NAME_PREFIX + UUID.randomUUID().toString().split("-")[0]), hologramLines);
     }
 
@@ -126,9 +121,9 @@ public class NPCManager {
      * Create a NPC
      *
      * @param location - NPCs location
-     * @return - {@link NPC} object
+     * @return - {@link HyriNPC} object
      */
-    public static NPC createNPC(Location location) {
+    public static HyriNPC createNPC(Location location) {
         return createNPC(location, new GameProfile(UUID.randomUUID(), ChatColor.DARK_GRAY + NPC_NAME_PREFIX + UUID.randomUUID().toString().split("-")[0]), new String[]{});
     }
 
@@ -138,11 +133,11 @@ public class NPCManager {
      * @param location - NPCs location
      * @param gameProfile - NPCs profile
      * @param hologramLines - NPCs hologram lines
-     * @return - {@link NPC} object
+     * @return - {@link HyriNPC} object
      */
-    private static NPC createNPC(Location location, GameProfile gameProfile, String[] hologramLines) {
+    private static HyriNPC createNPC(Location location, GameProfile gameProfile, String[] hologramLines) {
         final World world = ((CraftWorld) location.getWorld()).getHandle();
-        final NPC npc = new NPC(plugin, location, world, gameProfile);
+        final HyriNPC npc = new HyriNPC(plugin, location, world, gameProfile);
         final Scoreboard scoreboard = Bukkit.getServer().getScoreboardManager().getMainScoreboard();
 
         Team npcTeam = null;
@@ -164,7 +159,7 @@ public class NPCManager {
         sendMetadataNPC(npc);
 
         if (hologramLines != null) {
-            final Hologram hologram = new Hologram.Builder(plugin, npc.getLocation().clone().add(0.0D, 1.8D, 0.0D))
+            final HyriHologram hologram = new HyriHologram.Builder(plugin, npc.getLocation().clone().add(0.0D, 1.8D, 0.0D))
                     .withLinesAsString(Arrays.asList(hologramLines))
                     .build();
 
@@ -184,7 +179,7 @@ public class NPCManager {
      * @param player - Player
      * @param npc - NPC to send
      */
-    public static void sendNPC(Player player, NPC npc) {
+    public static void sendNPC(Player player, HyriNPC npc) {
         final Consumer<Player> sendConsumer = p -> {
             for (Packet<?> packet : npc.getSpawnPackets()) {
                 PacketUtil.sendPacket(player, packet);
@@ -214,7 +209,7 @@ public class NPCManager {
      *
      * @param npc - NPC to send
      */
-    public static void sendNPC(NPC npc) {
+    public static void sendNPC(HyriNPC npc) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             sendNPC(player, npc);
         }
@@ -226,7 +221,7 @@ public class NPCManager {
      * @param player - Player
      * @param npc - NPC to remove
      */
-    public static void removeNPC(Player player, NPC npc) {
+    public static void removeNPC(Player player, HyriNPC npc) {
         for (Packet<?> packet : npc.getDestroyPackets()) {
             PacketUtil.sendPacket(player, packet);
         }
@@ -237,7 +232,7 @@ public class NPCManager {
      *
      * @param npc - NPC to remove
      */
-    public static void removeNPC(NPC npc) {
+    public static void removeNPC(HyriNPC npc) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             removeNPC(player, npc);
         }
@@ -253,7 +248,7 @@ public class NPCManager {
      * @param player - Player
      * @param npc - NPC
      */
-    public static void sendMetadataNPC(Player player, NPC npc) {
+    public static void sendMetadataNPC(Player player, HyriNPC npc) {
         PacketUtil.sendPacket(player, npc.getMetadataPacket());
     }
 
@@ -262,7 +257,7 @@ public class NPCManager {
      *
      * @param npc - NPC
      */
-    public static void sendMetadataNPC(NPC npc) {
+    public static void sendMetadataNPC(HyriNPC npc) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             sendMetadataNPC(player, npc);
         }
@@ -274,10 +269,10 @@ public class NPCManager {
      * @param npc - NPC
      * @param owner - Skin owner
      */
-    public static void setSkinNPC(NPC npc, String owner) {
+    public static void setSkinNPC(HyriNPC npc, String owner) {
         removeNPC(npc);
 
-        final GameProfile profile = new NPCProfileLoader(npc.getProfile().getId(), npc.getName(), owner, cacheSkinRedisKey).loadProfileFromRedis();
+        final GameProfile profile = new HyriNPCProfileLoader(npc.getProfile().getId(), npc.getName(), owner, cacheSkinRedisKey).loadProfileFromRedis();
 
         npc.getProfile().getProperties().putAll(profile.getProperties());
 
@@ -291,10 +286,10 @@ public class NPCManager {
      * Get a NPC by its name
      *
      * @param name - NPCs name
-     * @return - {@link NPC} object
+     * @return - {@link HyriNPC} object
      */
-    public static NPC getNPC(String name) {
-        for (NPC npc : NPCS.keySet()) {
+    public static HyriNPC getNPC(String name) {
+        for (HyriNPC npc : NPCS.keySet()) {
             if (npc.getName().equals(name)) {
                 return npc;
             }
@@ -309,7 +304,7 @@ public class NPCManager {
      * @return - <code>true</code> if yes
      */
     public static boolean hasNPCWithName(String name) {
-        for (NPC npc : NPCS.keySet()) {
+        for (HyriNPC npc : NPCS.keySet()) {
             if (npc.getName().equals(name)) {
                 return true;
             }
@@ -323,8 +318,8 @@ public class NPCManager {
      * @param npc - NPC
      * @return - <code>true</code> if yes
      */
-    public static boolean existsNPC(NPC npc) {
-        for (NPC n : NPCS.keySet()) {
+    public static boolean existsNPC(HyriNPC npc) {
+        for (HyriNPC n : NPCS.keySet()) {
             if (n.getLocation().equals(npc.getLocation()) && n.getHologram() == npc.getHologram() && Arrays.equals(n.getEquipment(), npc.getEquipment())) {
                 return true;
             }
@@ -332,7 +327,7 @@ public class NPCManager {
         return false;
     }
 
-    public static Map<NPC, Hologram> getNPCs() {
+    public static Map<HyriNPC, HyriHologram> getNPCs() {
         return NPCS;
     }
 
