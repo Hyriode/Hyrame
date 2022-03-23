@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.impl.listener.model.global;
+package fr.hyriode.hyrame.impl.listener.global;
 
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.listener.HyriListener;
@@ -20,19 +20,19 @@ public class TabListener extends HyriListener<HyramePlugin> {
         super(plugin);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOW)
     public void onJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
 
         this.plugin.getHyrame().getTabManager().onLogin(player);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOW)
     public void onQuit(PlayerQuitEvent event) {
         this.plugin.getHyrame().getTabManager().onLogout(event.getPlayer());
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOW)
     public void onKick(PlayerKickEvent event) {
         this.plugin.getHyrame().getTabManager().onLogout(event.getPlayer());
     }

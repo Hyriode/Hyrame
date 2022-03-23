@@ -1,5 +1,10 @@
 package fr.hyriode.hyrame.impl.command.model.debug;
 
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.rank.EHyriRank;
+import fr.hyriode.api.rank.HyriPermission;
+import fr.hyriode.api.server.IHyriServer;
+import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
@@ -8,11 +13,6 @@ import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.item.HyriItem;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
-import fr.hyriode.hyriapi.HyriAPI;
-import fr.hyriode.hyriapi.rank.EHyriRank;
-import fr.hyriode.hyriapi.rank.HyriPermission;
-import fr.hyriode.hyriapi.server.IHyriServer;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

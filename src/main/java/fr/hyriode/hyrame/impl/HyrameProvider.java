@@ -1,6 +1,5 @@
 package fr.hyriode.hyrame.impl;
 
-import fr.hyriode.hyrame.impl.utils.References;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -10,6 +9,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  * on 12/11/2021 at 16:11
  */
 public class HyrameProvider implements IPluginProvider {
+
+    private static final String PACKAGE = "fr.hyriode.hyrame";
 
     private final HyramePlugin plugin;
 
@@ -29,17 +30,17 @@ public class HyrameProvider implements IPluginProvider {
 
     @Override
     public String[] getCommandsPackages() {
-        return new String[]{References.MAIN_PACKAGE_PATH};
+        return new String[]{PACKAGE};
     }
 
     @Override
     public String[] getListenersPackages() {
-        return new String[]{References.MAIN_PACKAGE_PATH};
+        return new String[]{PACKAGE};
     }
 
     @Override
     public String[] getItemsPackages() {
-        return new String[]{References.MAIN_PACKAGE_PATH};
+        return new String[]{PACKAGE};
     }
 
     @Override

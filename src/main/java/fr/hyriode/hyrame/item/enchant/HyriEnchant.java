@@ -1,17 +1,14 @@
 package fr.hyriode.hyrame.item.enchant;
 
-import fr.hyriode.hyrame.impl.Hyrame;
+import fr.hyriode.hyrame.reflection.Reflection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.Field;
-import java.util.logging.Level;
-
 public abstract class HyriEnchant extends EnchantmentWrapper {
 
-    public static final HyriEnchant GLOW = new GlowEnchant(6379);
+    public static final HyriEnchant GLOW = new GlowEnchant();
 
     public HyriEnchant(int id) {
         super(id);
@@ -44,23 +41,13 @@ public abstract class HyriEnchant extends EnchantmentWrapper {
 
     @Override
     public boolean canEnchantItem(ItemStack itemStack) {
-        return false;
+        return true;
     }
 
     public static void register() {
-        try {
-            Field f = Enchantment.class.getDeclaredField("acceptingNew");
-            f.setAccessible(true);
-            f.set(null, true);
+        Reflection.setStaticField("acceptingNew", Enchantment.class, true);
 
-            Enchantment.registerEnchantment(GLOW);
-
-            f.setAccessible(false);
-
-            Hyrame.log("Registered Glow enchantment");
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            Hyrame.log(Level.SEVERE, "Cannot register Glow enchantment");
-            Hyrame.log(Level.SEVERE, e.getMessage());
-        }
+        Enchantment.registerEnchantment(GLOW);
     }
+
 }

@@ -1,5 +1,8 @@
-package fr.hyriode.hyrame.impl.listener.model.global;
+package fr.hyriode.hyrame.impl.listener.global;
 
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.player.IHyriPlayerManager;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGameState;
@@ -7,9 +10,6 @@ import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.listener.HyriListener;
 import fr.hyriode.hyrame.utils.BroadcastUtil;
 import fr.hyriode.hyrame.utils.RankUtil;
-import fr.hyriode.hyriapi.HyriAPI;
-import fr.hyriode.hyriapi.player.IHyriPlayer;
-import fr.hyriode.hyriapi.player.IHyriPlayerManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

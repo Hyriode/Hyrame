@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  * Created by AstFaster
  * on 08/01/2022 at 11:12
  */
-public class HyriHologram {
+public class Hologram {
 
     /** The maximum range a player can see the hologram */
     private static final double RANGE_VIEW = 32.0D;
@@ -45,14 +45,14 @@ public class HyriHologram {
     private final Map<Integer, Line> lines;
 
     /**
-     * Constructor of {@link  HyriHologram}
+     * Constructor of {@link  Hologram}
      *
      * @param plugin The Spigot plugin
      * @param location The hologram location
      * @param linesDistance The distance between each line
      * @param lines The lines used for the hologram
      */
-    protected HyriHologram(JavaPlugin plugin, Location location, double linesDistance, Map<Integer, Line> lines) {
+    protected Hologram(JavaPlugin plugin, Location location, double linesDistance, Map<Integer, Line> lines) {
         this.plugin = plugin;
         this.location = location;
         this.linesDistance = linesDistance;
@@ -427,6 +427,9 @@ public class HyriHologram {
      */
     public static class Line {
 
+        /** The position of the line in the hologram */
+        private int position;
+
         /** The value of the line. The function is applied each time a player need the value. */
         private Function<Player, String> value;
         /** The line update */
@@ -478,6 +481,14 @@ public class HyriHologram {
                 this.update.getTask().cancel();
                 this.update = null;
             }
+        }
+
+        public int getPosition() {
+            return this.position;
+        }
+
+        void setPosition(int position) {
+            this.position = position;
         }
 
         static Line from(String value) {
@@ -605,9 +616,13 @@ public class HyriHologram {
             return this.withLine(this.lines.size(), Line.from(line));
         }
 
-        public HyriHologram build() {
+        public Hologram build() {
             if (this.plugin != null && this.lines != null) {
-                return new HyriHologram(this.plugin, this.location, this.linesDistance, this.lines);
+                for (Map.Entry<Integer, Line> entry : this.lines.entrySet()) {
+                    entry.getValue().setPosition(entry.getKey());
+                }
+
+                return new Hologram(this.plugin, this.location, this.linesDistance, this.lines);
             }
             throw new RuntimeException("Couldn't set a null value to a hologram builder field!");
         }

@@ -1,11 +1,13 @@
 package fr.hyriode.hyrame.language;
 
+import fr.hyriode.api.settings.HyriLanguage;
+
 /**
  * Project: Hyrame
  * Created by AstFaster
  * on 22/12/2021 at 21:53
  */
-public class HyriLanguages {
+public class HyriCommonMessages {
 
     /** Player was not found */
     public static final HyriLanguageMessage PLAYER_NOT_FOUND = new HyriLanguageMessage("player.not.found")
@@ -31,5 +33,13 @@ public class HyriLanguages {
     public static final HyriLanguageMessage DONT_HAVE_PERMISSION = new HyriLanguageMessage("dont.have.permission")
             .addValue(HyriLanguage.EN, "You don't have the permission to execute this command!")
             .addValue(HyriLanguage.FR, "Vous n'avez pas la permission d'éxécuter cette commande!");
+
+    public static final HyriLanguageMessage SECOND = new HyriLanguageMessage("")
+            .addValue(HyriLanguage.EN, "second")
+            .addValue(HyriLanguage.FR, "seconde");
+
+    public static final HyriLanguageMessage SECONDS = new HyriLanguageMessage("")
+            .addValue(HyriLanguage.EN, "seconds")
+            .addValue(HyriLanguage.FR, "secondes");
 
 }

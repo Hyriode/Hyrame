@@ -1,12 +1,12 @@
 package fr.hyriode.hyrame.impl.tab;
 
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.IHyrameConfiguration;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.tab.Tab;
-import fr.hyriode.hyrame.utils.ThreadPool;
-import fr.hyriode.hyriapi.HyriAPI;
-import fr.hyriode.hyriapi.player.IHyriPlayer;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
+import fr.hyriode.hyrame.utils.ThreadUtil;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -36,7 +36,7 @@ public class HyriTabManager {
     }
 
     public void onLogin(Player player) {
-        ThreadPool.EXECUTOR.execute(() -> {
+        ThreadUtil.EXECUTOR.execute(() -> {
             final IHyrameConfiguration configuration = this.hyrame.getConfiguration();
             final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
 
@@ -53,7 +53,7 @@ public class HyriTabManager {
     }
 
     public void onLogout(Player player) {
-        ThreadPool.EXECUTOR.execute(() -> {
+        ThreadUtil.EXECUTOR.execute(() -> {
             for (HyriTabHandler handler : this.handlers.values()) {
                 handler.onLogout(player);
             }

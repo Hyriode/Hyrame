@@ -1,8 +1,8 @@
 package fr.hyriode.hyrame.utils;
 
+import fr.hyriode.api.rank.EHyriRank;
+import fr.hyriode.api.rank.HyriRank;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyriapi.rank.EHyriRank;
-import fr.hyriode.hyriapi.rank.HyriRank;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 

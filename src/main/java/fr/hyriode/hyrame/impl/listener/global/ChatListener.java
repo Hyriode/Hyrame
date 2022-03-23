@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.impl.listener.model.global;
+package fr.hyriode.hyrame.impl.listener.global;
 
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.listener.HyriListener;

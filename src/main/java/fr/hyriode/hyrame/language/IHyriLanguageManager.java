@@ -1,13 +1,14 @@
 package fr.hyriode.hyrame.language;
 
+import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
-import fr.hyriode.hyriapi.player.IHyriPlayer;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 /**
  * Project: Hyrame
@@ -15,6 +16,43 @@ import java.util.UUID;
  * on 12/11/2021 at 18:27
  */
 public interface IHyriLanguageManager {
+
+    /**
+     * A static provider class for {@link IHyriLanguageManager}.<br>
+     * Some methods in this class might throw exceptions if they are used at the wrong time.
+     */
+    class Provider {
+
+        /** The static instance of {@link IHyriLanguageManager} */
+        private static IHyriLanguageManager instance;
+
+        /**
+         * Register an instance of {@link IHyriLanguageManager}.<br>
+         * This method can only be used if no other instance have been registered.
+         *
+         * @param instanceSupplier The {@link Supplier} of the instance to set
+         */
+        public static void registerInstance(Supplier<IHyriLanguageManager> instanceSupplier) {
+            if (instance == null) {
+                instance = instanceSupplier.get();
+            }
+            throw new IllegalStateException("Language manager static instance is already registered!");
+        }
+
+        /**
+         * Get the {@link IHyriLanguageManager} instance.<br>
+         * It might throw an {@link IllegalStateException}
+         *
+         * @return The instance of {@link IHyriLanguageManager}
+         */
+        public static IHyriLanguageManager get() {
+            if (instance != null) {
+                return instance;
+            }
+            throw new IllegalStateException("No language manager static instance has been registered");
+        }
+
+    }
 
     /**
      * Load all languages messages in languages package provided by an {@link IPluginProvider}

@@ -10,16 +10,29 @@ import org.bukkit.entity.Player;
  */
 public class HyriGameItems {
 
-    public static final String TEAM_CHOOSER_NAME = "team_chooser_item";
-    public static final String LEAVE_NAME = "leave_game_item";
+    public static final String TEAM_SELECTOR_NAME = "team_selector";
+    public static final String LEAVE_NAME = "leave_game";
+    public static final String SPECTATOR_SETTINGS_NAME = "spectator_settings";
+    public static final String SPECTATOR_TELEPORTER_NAME = "spectator_teleporter";
+    public static final String RESTART_GAME_NAME = "restart_game";
 
-    public static final GiveConsumer<IHyrame, Player, Integer> TEAM_CHOOSER = (hyrame, player, slot) -> hyrame.getItemManager().giveItem(player, slot, TEAM_CHOOSER_NAME);
-    public static final GiveConsumer<IHyrame, Player, Integer> LEAVE_ITEM = (hyrame, player, slot) -> hyrame.getItemManager().giveItem(player, slot, LEAVE_NAME);
+    public static final GiveAction TEAM_SELECTOR = new GiveAction(TEAM_SELECTOR_NAME);
+    public static final GiveAction LEAVE = new GiveAction(LEAVE_NAME);
+    public static final GiveAction SPECTATOR_SETTINGS = new GiveAction(SPECTATOR_SETTINGS_NAME);
+    public static final GiveAction SPECTATOR_TELEPORTER = new GiveAction(SPECTATOR_TELEPORTER_NAME);
+    public static final GiveAction RESTART_GAME = new GiveAction(RESTART_GAME_NAME);
 
-    @FunctionalInterface
-    public interface GiveConsumer<T, T1, T2> {
+    public static class GiveAction {
 
-        void give(T t, T1 t1, T2 t2);
+        private final String itemName;
+
+        public GiveAction(String itemName) {
+            this.itemName = itemName;
+        }
+
+        public void give(IHyrame hyrame, Player player, int slot) {
+            hyrame.getItemManager().giveItem(player, slot, this.itemName);
+        }
 
     }
 

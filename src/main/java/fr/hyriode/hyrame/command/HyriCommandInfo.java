@@ -1,6 +1,6 @@
 package fr.hyriode.hyrame.command;
 
-import fr.hyriode.hyriapi.rank.HyriPermission;
+import fr.hyriode.api.rank.HyriPermission;
 
 import java.util.ArrayList;
 import java.util.Arrays;

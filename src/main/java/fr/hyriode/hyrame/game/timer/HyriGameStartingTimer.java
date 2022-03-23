@@ -1,8 +1,11 @@
-package fr.hyriode.hyrame.game;
+package fr.hyriode.hyrame.game.timer;
 
+import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.hyrame.game.HyriGame;
+import fr.hyriode.hyrame.game.HyriGamePlayer;
+import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;

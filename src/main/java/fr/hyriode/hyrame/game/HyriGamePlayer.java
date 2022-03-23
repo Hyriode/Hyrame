@@ -1,6 +1,12 @@
 package fr.hyriode.hyrame.game;
 
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
+import fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
+import fr.hyriode.hyrame.utils.PacketUtil;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -16,11 +22,9 @@ public class HyriGamePlayer {
     protected HyriGameTeam team;
 
     /** Player is spectating */
-    protected boolean spectator;
-    /** Player is eliminated */
-    protected boolean eliminated;
+    private boolean spectator;
     /** Player is dead */
-    protected boolean dead;
+    private boolean dead;
     /** The timestamp of the player connection */
     protected long connectionTime = -1;
 
@@ -54,8 +58,25 @@ public class HyriGamePlayer {
      * Hide player to other players
      */
     public void hide() {
-        for (HyriGamePlayer player : this.game.getPlayers()) {
-            player.getPlayer().hidePlayer(this.player);
+       this.hide(true);
+    }
+
+    /**
+     * Hide player to other players
+     *
+     * @param removeFromTabList If <code>true</code> the player will not be removed from the tab list
+     */
+    public void hide(boolean removeFromTabList) {
+        for (HyriGamePlayer gamePlayer : this.game.getPlayers()) {
+            if (gamePlayer != this) {
+                final Player player = gamePlayer.getPlayer();
+
+                player.hidePlayer(this.player);
+
+                if (!removeFromTabList) {
+                    PacketUtil.sendPacket(player, new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, ((CraftPlayer) this.player).getHandle()));
+                }
+            }
         }
     }
 
@@ -63,8 +84,8 @@ public class HyriGamePlayer {
      * Show player to other players
      */
     public void show() {
-        for (HyriGamePlayer player : this.game.getPlayers()) {
-            player.getPlayer().showPlayer(this.player);
+        for (HyriGamePlayer gamePlayer : this.game.getPlayers()) {
+            gamePlayer.getPlayer().showPlayer(this.player);
         }
     }
 
@@ -126,34 +147,32 @@ public class HyriGamePlayer {
     /**
      * Set if player is dead
      *
-     * @param dead - <code>true</code> to set as dead
+     * @param killer The player that killed him
+     */
+    public void setDead(HyriGamePlayer killer) {
+        this.dead = true;
+
+        HyriAPI.get().getEventBus().publish(new HyriGameDeathEvent(this.game, this, killer));
+    }
+
+
+    /**
+     * Set if player is dead
+     *
+     * @param dead <code>true</code> to set as dead
      */
     public void setDead(boolean dead) {
-        this.dead = dead;
-    }
-
-    /**
-     * Check if player is eliminated
-     *
-     * @return <code>true</code> if yes
-     */
-    public boolean isEliminated() {
-        return this.eliminated;
-    }
-
-    /**
-     * Set if player is eliminated
-     *
-     * @param eliminated - <code>true</code> to set as eliminated
-     */
-    public void setEliminated(boolean eliminated) {
-        this.eliminated = eliminated;
+        if (dead) {
+            this.setDead(null);
+        } else {
+            this.dead = false;
+        }
     }
 
     /**
      * Check if player is in spectator
      *
-     * @return - <code>true</code> if player is spectating
+     * @return <code>true</code> if player is spectating
      */
     public boolean isSpectator() {
         return this.spectator;
@@ -162,10 +181,12 @@ public class HyriGamePlayer {
     /**
      * Change player spectator mode
      *
-     * @param spectator - <code>true</code> to toggle
+     * @param spectator <code>true</code> to toggle
      */
     public void setSpectator(boolean spectator) {
         this.spectator = spectator;
+
+        HyriAPI.get().getEventBus().publish(new HyriGameSpectatorEvent(this.game, this));
     }
 
     /**

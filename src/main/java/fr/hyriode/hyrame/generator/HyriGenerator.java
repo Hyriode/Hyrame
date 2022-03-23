@@ -11,8 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_8_R3.scheduler.CraftScheduler;
-import org.bukkit.craftbukkit.v1_8_R3.scheduler.CraftTask;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -139,13 +137,7 @@ public class HyriGenerator {
                 }
             }
 
-            if (this.tier.isSplitting()) {
-                if (!this.splitItem()) {
-                    this.dropItem();
-                }
-            } else {
-                this.dropItem();
-            }
+            this.dropItem();
         }
 
         this.checkForUpgrade();
@@ -166,8 +158,8 @@ public class HyriGenerator {
             for (Entity entity : players) {
                 final Player player = (Player) entity;
 
-                player.getInventory().addItem(this.getWithNBT());
-                player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 0.6F, 1.3F);
+                player.getInventory().addItem(this.item.clone());
+                player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 0.4F, 1.3F);
             }
             return true;
         }
@@ -281,6 +273,8 @@ public class HyriGenerator {
 
         @EventHandler
         public void onPickup(PlayerPickupItemEvent event) {
+            final ItemStack itemStack = event.getItem().getItemStack();
+
             if (ignoredPlayers.contains(event.getPlayer())) {
                 event.setCancelled(true);
                 return;
@@ -290,6 +284,12 @@ public class HyriGenerator {
                 if (splitItem()) {
                     event.setCancelled(true);
                     event.getItem().remove();
+                }
+            } else {
+                final ItemNBT nbt = new ItemNBT(itemStack);
+
+                if (nbt.hasTag(ITEMS_TAG)) {
+                    nbt.removeTag(ITEMS_TAG);
                 }
             }
         }

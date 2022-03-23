@@ -1,7 +1,7 @@
 package fr.hyriode.hyrame.game.scoreboard;
 
-import fr.hyriode.hyrame.impl.utils.References;
-import fr.hyriode.hyrame.scoreboard.ScoreboardLine;
+import fr.hyriode.hyrame.utils.References;
+import fr.hyriode.hyrame.scoreboard.HyriScoreboardLine;
 import org.bukkit.ChatColor;
 
 import java.util.function.Consumer;
@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * Created by AstFaster
  * on 17/09/2021 at 11:39
  */
-public class HyriScoreboardIpConsumer implements Consumer<ScoreboardLine> {
+public class HyriScoreboardIpConsumer implements Consumer<HyriScoreboardLine> {
 
     private int count = 0;
 
@@ -24,7 +24,7 @@ public class HyriScoreboardIpConsumer implements Consumer<ScoreboardLine> {
     }
 
     @Override
-    public void accept(ScoreboardLine scoreboardLine) {
+    public void accept(HyriScoreboardLine scoreboardLine) {
         if (this.count >= 20) {
             if (this.charIndex > this.ip.length()) {
                 this.count = 0;

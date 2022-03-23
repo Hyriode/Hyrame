@@ -78,7 +78,7 @@ public class HyriCommandOutput {
     public <T> HyriCommandOutputObjects<T> getObjects(Class<T> clazz) {
         for (HyriCommandOutputObjects<?> objects : this.objectsList) {
             if (clazz.isAssignableFrom(objects.getClazz())) {
-                return (HyriCommandOutputObjects<T>) objects;
+                return (HyriCommandOutputObjects) objects;
             }
         }
         return null;

@@ -1,13 +1,13 @@
 package fr.hyriode.hyrame.impl.tab;
 
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.rank.EHyriRank;
+import fr.hyriode.api.rank.HyriRank;
+import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.impl.Hyrame;
-import fr.hyriode.hyrame.scoreboard.team.ScoreboardTeam;
-import fr.hyriode.hyrame.scoreboard.team.ScoreboardTeamHandler;
-import fr.hyriode.hyriapi.HyriAPI;
-import fr.hyriode.hyriapi.player.IHyriPlayer;
-import fr.hyriode.hyriapi.rank.EHyriRank;
-import fr.hyriode.hyriapi.rank.HyriRank;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
+import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam;
+import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeamHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
  */
 public class HyriTabHandler {
 
-    private final ScoreboardTeamHandler teamHandler;
+    private final HyriScoreboardTeamHandler teamHandler;
 
     private final HyriLanguage language;
     private final Hyrame hyrame;
@@ -27,11 +27,11 @@ public class HyriTabHandler {
     public HyriTabHandler(Hyrame hyrame, HyriLanguage language) {
         this.hyrame = hyrame;
         this.language = language;
-        this.teamHandler = new ScoreboardTeamHandler();
+        this.teamHandler = new HyriScoreboardTeamHandler();
 
         for (EHyriRank rankEnum : EHyriRank.values()) {
             final HyriRank rank = HyriAPI.get().getRankManager().getRank(rankEnum);
-            final ScoreboardTeam team = new ScoreboardTeam(rank.getName(), this.getAlphabetLetter(rankEnum.getId()), "", "", "");
+            final HyriScoreboardTeam team = new HyriScoreboardTeam(rank.getName(), this.getAlphabetLetter(rankEnum.getId()), "", "", "");
 
             if (rank.getType().equals(EHyriRank.PLAYER)) {
                 final String display = ChatColor.GRAY + "";
@@ -57,7 +57,7 @@ public class HyriTabHandler {
 
             final IHyriPlayer hyriPlayer = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
             final HyriRank rank = hyriPlayer.getRank();
-            final ScoreboardTeam team = this.teamHandler.getTeamByName(rank.getName());
+            final HyriScoreboardTeam team = this.teamHandler.getTeamByName(rank.getName());
 
             this.teamHandler.addPlayerToTeam(player, team);
         }

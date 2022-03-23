@@ -1,12 +1,12 @@
 package fr.hyriode.hyrame.impl.game.util;
 
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.util.HyriGameItems;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.item.HyriItem;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyriapi.HyriAPI;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.player.PlayerInteractEvent;

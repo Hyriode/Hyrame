@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
  * on 12/11/2021 at 15:25
  */
 @FunctionalInterface
-public interface HyriNPCInteractCallback {
+public interface NPCInteractCallback {
 
     /**
      * Called when a player interact with a NPC

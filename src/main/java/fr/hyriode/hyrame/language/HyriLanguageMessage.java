@@ -1,13 +1,14 @@
 package fr.hyriode.hyrame.language;
 
-import fr.hyriode.hyriapi.HyriAPI;
-import fr.hyriode.hyriapi.player.IHyriPlayer;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.settings.HyriLanguage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Project: Hyrame
@@ -134,6 +135,15 @@ public class HyriLanguageMessage {
             return this.getForPlayer((Player) sender);
         }
         return this.getValue(HyriLanguage.EN);
+    }
+
+    /**
+     * Transform the language message to a function
+     *
+     * @return A {@link Function}
+     */
+    public Function<Player, String> toFunction() {
+        return this::getForPlayer;
     }
 
     /**

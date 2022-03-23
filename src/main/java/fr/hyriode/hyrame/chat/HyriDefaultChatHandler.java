@@ -1,11 +1,10 @@
-package fr.hyriode.hyrame.impl.chat;
+package fr.hyriode.hyrame.chat;
 
-import fr.hyriode.hyrame.chat.IHyriChatHandler;
-import fr.hyriode.hyrame.utils.RankUtil;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.rank.EHyriRank;
 import fr.hyriode.api.rank.HyriRank;
+import fr.hyriode.hyrame.utils.RankUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

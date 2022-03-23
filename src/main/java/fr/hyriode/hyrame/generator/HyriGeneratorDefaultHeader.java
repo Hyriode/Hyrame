@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.generator;
 
+import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorCreatedEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorDropEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorRemovedEvent;
@@ -7,7 +8,6 @@ import fr.hyriode.hyrame.generator.event.HyriGeneratorUpgradedEvent;
 import fr.hyriode.hyrame.hologram.Hologram;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.utils.Symbols;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

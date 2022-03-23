@@ -1,7 +1,7 @@
 package fr.hyriode.hyrame.command;
 
-import fr.hyriode.hyrame.language.HyriLanguages;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
+import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.hyrame.language.HyriCommonMessages;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -97,9 +97,9 @@ public abstract class HyriCommand<T extends JavaPlugin> {
 
         String message = ChatColor.RED + "";
         if (sender instanceof Player) {
-            message += HyriLanguages.INVALID_COMMAND.getForPlayer((Player) sender);
+            message += HyriCommonMessages.INVALID_COMMAND.getForPlayer((Player) sender);
         } else {
-            message += HyriLanguages.INVALID_COMMAND.getValue(HyriLanguage.EN);
+            message += HyriCommonMessages.INVALID_COMMAND.getValue(HyriLanguage.EN);
         }
 
         ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, message + ChatColor.RESET + usage));
@@ -108,7 +108,7 @@ public abstract class HyriCommand<T extends JavaPlugin> {
     /**
      * Get the information of the command
      *
-     * @return
+     * @return A {@link HyriCommandInfo} object
      */
     public HyriCommandInfo getInfo() {
         return this.info;

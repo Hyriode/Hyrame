@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.game;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Project: Hyrame
@@ -12,9 +13,9 @@ public interface IHyriGameManager {
     /**
      * Register a game on this server
      *
-     * @param game Game to register
+     * @param game Game to register but as a {@link Supplier} to create the instance after registering
      */
-    void registerGame(HyriGame<?> game);
+    void registerGame(Supplier<HyriGame<?>> game);
 
     /**
      * Unregister a game on this server
@@ -53,5 +54,20 @@ public interface IHyriGameManager {
      * @return A list of server name
      */
     List<String> getGames();
+
+    /**
+     * Get the {@link HyriGameInfo} linked to a game
+     *
+     * @param name The name of the game
+     * @return The {@link HyriGameInfo}
+     */
+    HyriGameInfo getGameInfo(String name);
+
+    /**
+     * Get a list of {@link HyriGameInfo}
+     *
+     * @return A {@link List}
+     */
+    List<HyriGameInfo> getGamesInfo();
 
 }

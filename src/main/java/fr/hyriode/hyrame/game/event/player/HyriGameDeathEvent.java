@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.game.event;
+package fr.hyriode.hyrame.game.event.player;
 
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
@@ -8,29 +8,30 @@ import fr.hyriode.hyrame.game.HyriGamePlayer;
  * Created by AstFaster
  * on 07/03/2022 at 20:25
  */
-public class HyriGameDeathEvent extends HyriGameEvent {
+public class HyriGameDeathEvent extends HyriGamePlayerEvent {
 
-    /** The player that is dead */
-    private final HyriGamePlayer gamePlayer;
+    /** The killer. It might be <code>null</code> if the player was not killed by a player*/
+    private final HyriGamePlayer killer;
 
     /**
      * Constructor of {@link HyriGameDeathEvent}
-     *
-     * @param game The {@link HyriGame} instance
+     *  @param game The {@link HyriGame} instance
      * @param gamePlayer The concerned {@link HyriGamePlayer}
+     * @param killer The player that killed the player
      */
-    public HyriGameDeathEvent(HyriGame<?> game, HyriGamePlayer gamePlayer) {
-        super(game);
-        this.gamePlayer = gamePlayer;
+    public HyriGameDeathEvent(HyriGame<?> game, HyriGamePlayer gamePlayer, HyriGamePlayer killer) {
+        super(game, gamePlayer);
+        this.killer = killer;
     }
 
     /**
-     * Get the {@link HyriGamePlayer} that is now dead
+     * Get the player that killed the player
      *
-     * @return A {@link HyriGamePlayer}
+     * @return A {@link HyriGamePlayer} or <code>null</code> if the player was not killed by a player
      */
-    public HyriGamePlayer getGamePlayer() {
-        return this.gamePlayer;
+    public HyriGamePlayer getKiller() {
+        return this.killer;
     }
 
 }
+

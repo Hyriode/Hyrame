@@ -9,6 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
@@ -21,45 +22,64 @@ public class HyriScoreboard {
     /** Scoreboard's lines */
     protected final Map<Integer, HyriScoreboardLine> lines;
 
+    /** Check if the scoreboard is currently updating */
+    private boolean updating;
+
     /** Is showing */
     protected boolean show;
-
     /** Scoreboard's display name */
     protected String displayName;
-
     /** Scoreboard's name */
     protected String name;
-
     /** Scoreboard's player */
     protected final Player player;
-
     /** Spigot plugin */
     protected final JavaPlugin plugin;
 
     /**
      * Constructor of {@link HyriScoreboard}
      *
-     * @param plugin - Spigot plugin
-     * @param player - Player
-     * @param name - Scoreboard's name
-     * @param displayName - Scoreboard's display name
+     * @param plugin Spigot plugin
+     * @param player Player
+     * @param name Scoreboard's name
+     * @param displayName Scoreboard's display name
      */
     public HyriScoreboard(JavaPlugin plugin, Player player, String name, String displayName) {
         this.plugin = plugin;
         this.player = player;
         this.name = name;
         this.displayName = displayName;
-        this.lines = new HashMap<>();
+        this.lines = new ConcurrentHashMap<>();
         this.show = false;
+    }
+
+    /**
+     * Add a blank line on the scoreboard
+     *
+     * @param line The number of the line
+     */
+    public void addBlankLine(int line) {
+        String result = "";
+        for (Map.Entry<Integer, HyriScoreboardLine> entry : this.lines.entrySet()) {
+            if (entry.getKey() == line) {
+                continue;
+            }
+            final HyriScoreboardLine sbLine = entry.getValue();
+
+            if (sbLine.getValue().equals(result)) {
+                result += " ";
+            }
+        }
+        this.setLine(line, result);
     }
 
     /**
      * Set a line of the scoreboard
      *
-     * @param line - Line's number
-     * @param value - Line's value
-     * @param scoreboardLineConsumer - Consumer to call on update
-     * @param ticks - Ticks before updating
+     * @param line Line's number
+     * @param value Line's value
+     * @param scoreboardLineConsumer Consumer to call on update
+     * @param ticks Ticks before updating
      */
     public void setLine(int line, String value, Consumer<HyriScoreboardLine> scoreboardLineConsumer, int ticks) {
         final HyriScoreboardLine oldLine = this.lines.get(line);
@@ -169,13 +189,19 @@ public class HyriScoreboard {
      * Update scoreboard's lines
      */
     public void updateLines() {
-        final String oldName = this.getOldName();
+        if (!this.updating) {
+            this.updating = true;
 
-        this.create();
-        this.sendLines();
-        this.display();
+            final String oldName = this.getOldName();
 
-        PacketUtil.sendPacket(this.player, this.getObjectivePacket(1, oldName));
+            this.create();
+            this.sendLines();
+            this.display();
+
+            PacketUtil.sendPacket(this.player, this.getObjectivePacket(1, oldName));
+
+            this.updating = false;
+        }
     }
 
     /**

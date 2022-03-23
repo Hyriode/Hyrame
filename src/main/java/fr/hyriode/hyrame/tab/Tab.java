@@ -1,6 +1,6 @@
 package fr.hyriode.hyrame.tab;
 
-import fr.hyriode.hyrame.title.HyriTitle;
+import fr.hyriode.hyrame.title.Title;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import java.util.*;
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
-public class HyriTab {
+public class Tab {
 
     /** Lines on the top */
     protected Map<Integer, String> headerLines;
@@ -19,9 +19,9 @@ public class HyriTab {
     protected Map<Integer, String> footerLines;
 
     /**
-     * Constructor of {@link HyriTab}
+     * Constructor of {@link Tab}
      */
-    public HyriTab() {
+    public Tab() {
         this.headerLines = new HashMap<>();
         this.footerLines = new HashMap<>();
     }
@@ -35,7 +35,7 @@ public class HyriTab {
         final String header = this.getFormattedLines(new ArrayList<>(this.getSortedMap(this.headerLines).values()));
         final String footer = this.getFormattedLines(new ArrayList<>(this.getSortedMap(this.footerLines).values()));
 
-        HyriTitle.setTabTitle(player, header, footer);
+        Title.setTabTitle(player, header, footer);
     }
 
     /**

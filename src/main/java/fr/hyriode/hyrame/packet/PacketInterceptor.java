@@ -1,14 +1,8 @@
-package fr.hyriode.hyrame.impl.listener.global;
+package fr.hyriode.hyrame.packet;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToMessageDecoder;
-import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.units.qual.C;
-
-import java.util.List;
 
 /**
  * Project: Hyrame
@@ -31,22 +25,13 @@ public class PacketInterceptor {
 
     private void inject() {
         this.channel = ((CraftPlayer) this.player).getHandle().playerConnection.networkManager.channel;
-        this.channel.pipeline().addAfter("decoder", CHANNEL_NAME, new MessageToMessageDecoder<Packet<?>>() {
-            @Override
-            protected void decode(ChannelHandlerContext channelHandlerContext, Packet<?> packet, List<Object> list) {
-                readPacket(packet);
-            }
-        });
+        this.channel.pipeline().addBefore("packet_handler", CHANNEL_NAME, new PacketChannelHandler());
     }
 
     public void uninject() {
         if (this.channel.pipeline().get(CHANNEL_NAME) != null) {
             this.channel.pipeline().remove(CHANNEL_NAME);
         }
-    }
-
-    private void readPacket(Packet<?> packet) {
-        System.out.println(packet.getClass());
     }
 
 }

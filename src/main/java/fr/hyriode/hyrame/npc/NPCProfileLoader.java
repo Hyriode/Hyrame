@@ -6,7 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import fr.hyriode.hyriapi.HyriAPI;
+import fr.hyriode.api.HyriAPI;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.Bukkit;
 import redis.clients.jedis.Jedis;
@@ -18,7 +18,7 @@ import java.util.UUID;
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
-public class HyriNPCProfileLoader {
+public class NPCProfileLoader {
 
     /** Profiles redis key */
     private String redisKey;
@@ -33,27 +33,27 @@ public class HyriNPCProfileLoader {
     private final UUID uuid;
 
     /**
-     * Constructor of {@link HyriNPCProfileLoader}
+     * Constructor of {@link NPCProfileLoader}
      *
      * @param uuid - Profile's uuid
      * @param name - Profile's name
      * @param skinOwner - Skin owner
      */
-    public HyriNPCProfileLoader(UUID uuid, String name, String skinOwner) {
+    public NPCProfileLoader(UUID uuid, String name, String skinOwner) {
         this.uuid = uuid;
         this.name = name;
         this.skinOwner = this.getUUID(skinOwner);
     }
 
     /**
-     * Constructor of {@link HyriNPCProfileLoader}
+     * Constructor of {@link NPCProfileLoader}
      *
      * @param uuid - Profile's uuid
      * @param name - Profile's name
      * @param skinOwner - Skin owner
      * @param redisKey - Profiles redis key
      */
-    public HyriNPCProfileLoader(UUID uuid, String name, String skinOwner, String redisKey) {
+    public NPCProfileLoader(UUID uuid, String name, String skinOwner, String redisKey) {
         this.uuid = uuid;
         this.name = name;
         this.skinOwner = this.getUUID(skinOwner);

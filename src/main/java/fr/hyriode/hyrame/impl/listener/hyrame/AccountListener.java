@@ -1,26 +1,30 @@
-package fr.hyriode.hyrame.impl.listener.model.hyrame;
+package fr.hyriode.hyrame.impl.listener.hyrame;
 
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.impl.tab.HyriTabManager;
-import fr.hyriode.hyrame.language.HyriLanguagesUpdatedEvent;
-import fr.hyriode.hyrame.listener.HyriListener;
+import fr.hyriode.hyrame.language.HyriLanguageUpdatedEvent;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 
 /**
  * Project: Hyrame
  * Created by AstFaster
  * on 16/12/2021 at 19:45
  */
-public class AccountListener extends HyriListener<HyramePlugin> {
+public class AccountListener {
+
+    private final HyramePlugin plugin;
 
     public AccountListener(HyramePlugin plugin) {
-        super(plugin);
+        this.plugin = plugin;
+
+        HyriAPI.get().getEventBus().register(this);
     }
 
-    @EventHandler
-    public void onLanguagesUpdated(HyriLanguagesUpdatedEvent event) {
+    @HyriEventHandler
+    public void onLanguagesUpdated(HyriLanguageUpdatedEvent event) {
         final Player player = event.getPlayer();
         final Hyrame hyrame = this.plugin.getHyrame();
         final HyriTabManager tabManager = hyrame.getTabManager();

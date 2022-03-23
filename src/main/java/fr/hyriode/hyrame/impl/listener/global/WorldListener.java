@@ -1,10 +1,13 @@
-package fr.hyriode.hyrame.impl.listener.model.global;
+package fr.hyriode.hyrame.impl.listener.global;
 
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.listener.HyriListener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 
 /**
  * Project: Hyrame
@@ -17,8 +20,23 @@ public class WorldListener extends HyriListener<HyramePlugin> {
         super(plugin);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void onWeatherChange(WeatherChangeEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onBlockBurn(BlockBurnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onCreatureSpawn(CreatureSpawnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onStructureGrow(StructureGrowEvent event) {
         event.setCancelled(true);
     }
 

@@ -8,15 +8,33 @@ package fr.hyriode.hyrame.game;
 public enum HyriGameState {
 
     /** Game is waiting for players */
-    WAITING,
-
+    WAITING(true),
     /** Game is ready to start */
-    READY,
-
+    READY(true),
     /** Game is playing */
-    PLAYING,
-
+    PLAYING(false),
     /** Game is ended */
-    ENDED
+    ENDED(false);
+
+    /** The boolean that represents the accessibility of the server */
+    private final boolean accessible;
+
+    /**
+     * Constructor of {@link HyriGameState}
+     *
+     * @param accessible Access value
+     */
+    HyriGameState(boolean accessible) {
+        this.accessible = accessible;
+    }
+
+    /**
+     * Check if the server is accessible
+     *
+     * @return <code>true</code> if yes
+     */
+    public boolean isAccessible() {
+        return this.accessible;
+    }
 
 }

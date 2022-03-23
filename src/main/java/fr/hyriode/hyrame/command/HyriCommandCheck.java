@@ -1,8 +1,8 @@
 package fr.hyriode.hyrame.command;
 
-import fr.hyriode.hyrame.language.HyriLanguages;
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.hyrame.language.HyriCommonMessages;
 import fr.hyriode.hyrame.utils.PrimitiveType;
-import fr.hyriode.hyriapi.HyriAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -26,7 +26,7 @@ public enum HyriCommandCheck {
         if (HyriAPI.get().getPlayerManager().getPlayerId(arg) != null) {
             return true;
         } else {
-            ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, ChatColor.RED + HyriLanguages.PLAYER_NOT_FOUND.getForSender(sender) + arg + "."));
+            ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getForSender(sender) + arg + "."));
             return false;
         }
     }, input -> HyriAPI.get().getPlayerManager().getPlayer(input)),
@@ -37,7 +37,7 @@ public enum HyriCommandCheck {
         if (Bukkit.getPlayer(arg) != null) {
             return true;
         } else {
-            ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, ChatColor.RED + HyriLanguages.PLAYER_NOT_FOUND.getForSender(sender) + arg + "."));
+            ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getForSender(sender) + arg + "."));
             return false;
         }
     }, Bukkit::getPlayer),
@@ -88,7 +88,7 @@ public enum HyriCommandCheck {
             if (type.isValid(arg)) {
                 return true;
             } else {
-                sender.sendMessage(ChatColor.RED + (type == PrimitiveType.BOOLEAN ? HyriLanguages.INVALID_ARGUMENT : HyriLanguages.INVALID_NUMBER).getForSender(sender) + arg + ".");
+                sender.sendMessage(ChatColor.RED + (type == PrimitiveType.BOOLEAN ? HyriCommonMessages.INVALID_ARGUMENT : HyriCommonMessages.INVALID_NUMBER).getForSender(sender) + arg + ".");
                 return false;
             }
         }, type::parse);

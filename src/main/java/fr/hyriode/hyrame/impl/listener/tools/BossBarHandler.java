@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.impl.listener.model.tools;
+package fr.hyriode.hyrame.impl.listener.tools;
 
 import fr.hyriode.hyrame.bossbar.BossBar;
 import fr.hyriode.hyrame.bossbar.BossBarManager;

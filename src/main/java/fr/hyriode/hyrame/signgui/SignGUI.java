@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
-public class HyriSignGUI {
+public class SignGUI {
 
     /** Sign's lines */
     private String[] lines;
@@ -21,11 +21,11 @@ public class HyriSignGUI {
     private final Callback completeCallback;
 
     /**
-     * Constructor of {@link HyriSignGUI}
+     * Constructor of {@link SignGUI}
      *
      * @param completeCallback - Callback
      */
-    public HyriSignGUI(Callback completeCallback) {
+    public SignGUI(Callback completeCallback) {
         this.completeCallback = completeCallback;
     }
 
@@ -35,7 +35,7 @@ public class HyriSignGUI {
      * @param lines - Default lines
      * @return - Instance of this (useful for inline pattern)
      */
-    public HyriSignGUI withLines(String... lines) {
+    public SignGUI withLines(String... lines) {
         if (lines.length == 4) {
             this.lines = lines;
         } else {
@@ -71,7 +71,7 @@ public class HyriSignGUI {
 
         PacketUtil.sendPacket(player, openSignEditorPacket);
 
-        HyriSignGUIManager.get().addGUI(player.getUniqueId(), this);
+        SignGUIManager.get().addGUI(player.getUniqueId(), this);
     }
 
     /**

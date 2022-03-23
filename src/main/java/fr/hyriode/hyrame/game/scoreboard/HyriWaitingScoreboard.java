@@ -1,17 +1,19 @@
 package fr.hyriode.hyrame.game.scoreboard;
 
+import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.game.HyriGame;
-import fr.hyriode.hyrame.impl.utils.References;
+import fr.hyriode.hyrame.utils.References;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyrame.scoreboard.Scoreboard;
-import fr.hyriode.hyrame.scoreboard.ScoreboardLine;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
+import fr.hyriode.hyrame.scoreboard.HyriScoreboard;
+import fr.hyriode.hyrame.scoreboard.HyriScoreboardLine;
+import fr.hyriode.hyrame.utils.TimeUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.function.Consumer;
 
 /**
@@ -19,7 +21,7 @@ import java.util.function.Consumer;
  * Created by AstFaster
  * on 17/09/2021 at 11:39
  */
-public class HyriWaitingScoreboard extends Scoreboard {
+public class HyriWaitingScoreboard extends HyriScoreboard {
 
     private static final HyriLanguageMessage MAP = new HyriLanguageMessage("scoreboard.map")
             .addValue(HyriLanguage.FR, "Carte : ")
@@ -44,35 +46,35 @@ public class HyriWaitingScoreboard extends Scoreboard {
     private final HyriGame<?> game;
 
     public HyriWaitingScoreboard(HyriGame<?> game, JavaPlugin plugin, Player player) {
-        super(plugin, player, "lobby", ChatColor.DARK_AQUA + "" + ChatColor.BOLD + game.getDisplayName());
+        super(plugin, player, "waiting", ChatColor.DARK_AQUA + "" + ChatColor.BOLD + game.getDisplayName());
         this.game = game;
 
         this.addLines();
-    }
 
-    private void addLines() {
-        this.setLine(0, this.getCurrentDate(), scoreboardLine -> scoreboardLine.setValue(this.getCurrentDate()), 20);
-        this.setLine(1, "  ");
-        this.setLine(2,  DASH + MAP.getForPlayer(this.player) + ChatColor.RED + "TODO with Hystia");
-        this.setLine(3,  DASH + this.getPlayersLine(), this.getPlayersLineConsumer(), 10);
-        this.setLine(4,  "   ");
-        this.setLine(5, this.getWaitingLine(), this.getScoreboardLineConsumer(), 5);
-        this.setLine(6,  "    ");
+        this.setLine(0, ChatColor.GRAY + TimeUtil.getCurrentFormattedDate(), line -> line.setValue(ChatColor.GRAY + TimeUtil.getCurrentFormattedDate()), 20);
+        this.addBlankLine(1);
+        this.setLine(2,  DASH + MAP.getForPlayer(this.player) + ChatColor.RED + "Unknown");
+        this.addBlankLine(4);
+        this.addBlankLine(6);
         this.setLine(7, ChatColor.DARK_AQUA + References.SERVER_IP, new HyriScoreboardIpConsumer(References.SERVER_IP), 2);
     }
 
-    private Consumer<ScoreboardLine> getPlayersLineConsumer() {
-        return scoreboardLine -> scoreboardLine.setValue(this.getPlayersLine());
+    private void addLines() {
+        this.setLine(3, this.getPlayersLine());
+        this.setLine(5, this.getStartingLine());
     }
 
-    private Consumer<ScoreboardLine> getScoreboardLineConsumer() {
-        return scoreboardLine -> {
-            if (this.time == -1) {
-                scoreboardLine.setValue(this.getWaitingLine());
-            } else {
-                scoreboardLine.setValue(DASH + STARTING.getForPlayer(this.player) + ChatColor.AQUA + this.time + "s");
-            }
-        };
+    public void update() {
+        this.addLines();
+        this.updateLines();
+    }
+
+    private String getStartingLine() {
+        if (this.time == -1) {
+           return this.getWaitingLine();
+        } else {
+            return DASH + STARTING.getForPlayer(this.player) + ChatColor.AQUA + this.time + "s";
+        }
     }
 
     private String getWaitingLine() {
@@ -81,10 +83,6 @@ public class HyriWaitingScoreboard extends Scoreboard {
 
     private String getPlayersLine() {
         return DASH + PLAYERS.getForPlayer(this.player) + ChatColor.AQUA + this.game.getPlayers().size() + "/" + this.game.getMaxPlayers();
-    }
-
-    private String getCurrentDate() {
-        return ChatColor.GRAY + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date());
     }
 
     public void setTime(int time) {

@@ -8,15 +8,15 @@ import fr.hyriode.hyrame.game.team.HyriGameTeam;
  * Created by AstFaster
  * on 08/03/2022 at 18:20
  */
-public class HyriGameTeamRegisteredEvent extends HyriGameTeamEvent {
+public class HyriGameTeamUnregisteredEvent extends HyriGameTeamEvent {
 
     /**
-     * Constructor of {@link HyriGameTeamRegisteredEvent}
+     * Constructor of {@link HyriGameTeamUnregisteredEvent}
      *
      * @param game The {@link HyriGame} instance
      * @param team The {@link HyriGameTeam} that fired the event
      */
-    public HyriGameTeamRegisteredEvent(HyriGame<?> game, HyriGameTeam team) {
+    public HyriGameTeamUnregisteredEvent(HyriGame<?> game, HyriGameTeam team) {
         super(game, team);
     }
 

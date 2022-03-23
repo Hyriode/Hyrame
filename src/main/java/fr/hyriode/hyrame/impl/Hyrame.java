@@ -3,11 +3,11 @@ package fr.hyriode.hyrame.impl;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.IHyrameConfiguration;
 import fr.hyriode.hyrame.bossbar.BossBarManager;
+import fr.hyriode.hyrame.chat.HyriDefaultChatHandler;
 import fr.hyriode.hyrame.chat.IHyriChatHandler;
 import fr.hyriode.hyrame.command.IHyriCommandManager;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.IHyriGameManager;
-import fr.hyriode.hyrame.impl.chat.HyriDefaultChatHandler;
 import fr.hyriode.hyrame.impl.command.HyriCommandBlocker;
 import fr.hyriode.hyrame.impl.command.HyriCommandManager;
 import fr.hyriode.hyrame.impl.game.HyriGameManager;
@@ -15,6 +15,7 @@ import fr.hyriode.hyrame.impl.item.HyriItemManager;
 import fr.hyriode.hyrame.impl.language.HyriLanguageManager;
 import fr.hyriode.hyrame.impl.listener.HyriListenerManager;
 import fr.hyriode.hyrame.impl.scanner.HyriScanner;
+import fr.hyriode.hyrame.impl.scoreboard.HyriScoreboardManager;
 import fr.hyriode.hyrame.impl.tab.HyriTabManager;
 import fr.hyriode.hyrame.item.IHyriItemManager;
 import fr.hyriode.hyrame.item.enchant.HyriEnchant;
@@ -23,6 +24,7 @@ import fr.hyriode.hyrame.listener.IHyriListenerManager;
 import fr.hyriode.hyrame.npc.NPCManager;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.scanner.IHyriScanner;
+import fr.hyriode.hyrame.scoreboard.IHyriScoreboardManager;
 import fr.hyriode.hyrame.signgui.SignGUIManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -49,6 +51,7 @@ public class Hyrame implements IHyrame {
     private final IHyriListenerManager listenerManager;
     private final IHyriCommandManager commandManager;
     private final IHyriItemManager itemManager;
+    private final IHyriScoreboardManager scoreboardManager;
     private final IHyriGameManager gameManager;
     private IHyriChatHandler chatHandler;
 
@@ -62,6 +65,7 @@ public class Hyrame implements IHyrame {
         this.listenerManager = new HyriListenerManager(this);
         this.commandManager = new HyriCommandManager(this);
         this.itemManager = new HyriItemManager(this);
+        this.scoreboardManager = new HyriScoreboardManager();
         this.gameManager = new HyriGameManager(this);
         this.chatHandler = new HyriDefaultChatHandler();
         this.pluginProviders = new ArrayList<>();
@@ -158,6 +162,11 @@ public class Hyrame implements IHyrame {
     @Override
     public IHyriItemManager getItemManager() {
         return this.itemManager;
+    }
+
+    @Override
+    public IHyriScoreboardManager getScoreboardManager() {
+        return this.scoreboardManager;
     }
 
     @Override

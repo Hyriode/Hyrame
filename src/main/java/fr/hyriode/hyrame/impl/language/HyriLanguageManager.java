@@ -2,14 +2,14 @@ package fr.hyriode.hyrame.impl.language;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyrame.language.HyriLanguagesUpdatedEvent;
+import fr.hyriode.hyrame.language.HyriLanguageUpdatedEvent;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
-import fr.hyriode.hyriapi.HyriAPI;
-import fr.hyriode.hyriapi.player.IHyriPlayer;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -86,9 +86,9 @@ public class HyriLanguageManager implements IHyriLanguageManager {
     @Override
     public void updatePlayerLanguage(Player player) {
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
-        final HyriLanguagesUpdatedEvent event = new HyriLanguagesUpdatedEvent(player, account.getSettings().getLanguage());
+        final HyriLanguageUpdatedEvent event = new HyriLanguageUpdatedEvent(player, account.getSettings().getLanguage());
 
-        this.hyrame.getPlugin().getServer().getPluginManager().callEvent(event);
+        HyriAPI.get().getEventBus().publishAsync(event);
     }
 
     @Override

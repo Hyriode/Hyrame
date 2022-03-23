@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl.game.gui;
 
+import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
@@ -8,7 +9,6 @@ import fr.hyriode.hyrame.impl.game.util.TeamChooserItem;
 import fr.hyriode.hyrame.inventory.HyriInventory;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -67,7 +67,7 @@ public class HyriGameTeamChooserGui extends HyriInventory {
     private final IHyrame hyrame;
 
     public HyriGameTeamChooserGui(IHyrame hyrame, HyriGame<?> game, Player owner, int slot) {
-        super(owner, TITLE.getForPlayer(owner), size(game));
+        super(owner, TITLE.getForPlayer(owner), dynamicSize(game.getTeams().size()));
         this.hyrame = hyrame;
         this.game = game;
         this.slot = slot;
@@ -156,20 +156,6 @@ public class HyriGameTeamChooserGui extends HyriInventory {
         }
 
         return lore;
-    }
-
-    private static int size(HyriGame<?> game) {
-        int size = 9;
-
-        while (size <= game.getTeams().size() + 1) {
-            size++;
-        }
-
-        while (size % 9 != 0) {
-            size++;
-        }
-
-        return size;
     }
 
     @Override

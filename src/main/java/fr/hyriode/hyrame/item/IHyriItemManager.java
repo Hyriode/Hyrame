@@ -53,14 +53,6 @@ public interface IHyriItemManager {
      * Give an item to a player
      *
      * @param player Player
-     * @param itemClass Item's class
-     */
-    void giveItem(Player player, Class<? extends HyriItem<?>> itemClass);
-
-    /**
-     * Give an item to a player
-     *
-     * @param player Player
      * @param slot Item's slot
      * @param name Item's name
      */
@@ -70,9 +62,17 @@ public interface IHyriItemManager {
      * Give an item to a player
      *
      * @param player Player
+     * @param itemClass Item's class
+     */
+    boolean giveItem(Player player, Class<? extends HyriItem<?>> itemClass);
+
+    /**
+     * Give an item to a player
+     *
+     * @param player Player
      * @param name Item's name
      */
-    void giveItem(Player player, String name);
+    boolean giveItem(Player player, String name);
 
     /**
      * Get an item by its class

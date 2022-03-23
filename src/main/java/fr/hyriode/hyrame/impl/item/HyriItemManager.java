@@ -7,6 +7,7 @@ import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.reflection.Reflection;
+import fr.hyriode.hyrame.utils.ItemUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -91,24 +92,15 @@ public class HyriItemManager implements IHyriItemManager {
         final HyriItem<?> item = this.getItem(itemClass);
 
         if (item != null) {
-            final ItemStack itemStack = this.toItemStack(player, item);
-
-            player.getInventory().setItem(slot, itemStack);
-
-            item.onGive(this.hyrame, player, slot, itemStack);
+            this.giveItem(player, slot, item.getName());
         }
-    }
-
-    @Override
-    public void giveItem(Player player, Class<? extends HyriItem<?>> itemClass) {
-        this.giveItem(player, player.getInventory().firstEmpty(), itemClass);
     }
 
     @Override
     public void giveItem(Player player, int slot, String name) {
         if (this.isItemExisting(name)) {
             final HyriItem<?> item = this.items.get(this.getFullItemId(name));
-            final ItemStack itemStack = this.toItemStack(player, item);
+            final ItemStack itemStack = item.onPreGive(this.hyrame, player, slot, this.toItemStack(player, item));
 
             player.getInventory().setItem(slot, itemStack);
 
@@ -117,8 +109,24 @@ public class HyriItemManager implements IHyriItemManager {
     }
 
     @Override
-    public void giveItem(Player player, String name) {
-        this.giveItem(player, player.getInventory().firstEmpty(), name);
+    public boolean giveItem(Player player, Class<? extends HyriItem<?>> itemClass) {
+        final HyriItem<?> item = this.getItem(itemClass);
+
+        if (item != null) {
+            return this.giveItem(player, item.getName());
+        }
+        return false;
+    }
+
+    @Override
+    public boolean giveItem(Player player, String name) {
+        if (this.isItemExisting(name)) {
+            final HyriItem<?> item = this.items.get(this.getFullItemId(name));
+            final ItemStack itemStack = item.onPreGive(this.hyrame, player, -1, this.toItemStack(player, item));
+
+            return ItemUtil.addItemInPlayerInventory(itemStack, player, 1);
+        }
+        return false;
     }
 
     @Override

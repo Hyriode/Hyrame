@@ -16,7 +16,7 @@ public abstract class HyriListener<T extends JavaPlugin> implements Listener {
     /**
      * Constructor of {@link HyriListener}
      *
-     * @param plugin - Listener's plugin
+     * @param plugin Listener's plugin
      */
     public HyriListener(T plugin) {
         this.plugin = plugin;

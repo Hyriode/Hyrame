@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.0"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 apply plugin: 'idea'
@@ -9,10 +9,13 @@ apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 group = 'fr.hyriode'
-version = '1.1.6'
+version = '1.1.7'
 archivesBaseName = 'Hyrame'
 
 java {
+    withSourcesJar()
+    withJavadocJar()
+
     toolchain {
         languageVersion = JavaLanguageVersion.of(8)
     }
@@ -65,22 +68,8 @@ task implJar(type: ShadowJar) {
     configurations = [project.configurations.shadow]
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar) {
-    classifier 'javadoc'
-    from javadoc
-}
-
 tasks.withType(Javadoc) {
     options.encoding = 'UTF-8'
-}
-
-artifacts {
-    archives sourcesJar, javadocJar
 }
 
 publishing {
@@ -115,9 +104,7 @@ publishing {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    shadow 'com.google.guava:guava:31.0.1-jre'
-    shadow 'xyz.xenondevs:particle:1.7'
-    shade 'fr.hyriode:hyriapi:1.0.8'
+    shade 'fr.hyriode:hyriapi:1.0.9'
     shade 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
 }
 

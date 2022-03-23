@@ -1,7 +1,12 @@
 package fr.hyriode.hyrame.game.team;
 
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
+import fr.hyriode.hyrame.game.event.team.HyriGamePlayerJoinTeamEvent;
+import fr.hyriode.hyrame.game.event.team.HyriGamePlayerLeaveTeamEvent;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam;
 import fr.hyriode.hyrame.title.Title;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -31,23 +36,63 @@ public class HyriGameTeam {
     protected final HyriLanguageMessage displayName;
     /** Team's color */
     protected final HyriGameTeamColor color;
+    /** Can members of the team attack theme */
+    protected boolean friendlyFire;
+    /*** The name tag visibility of the team */
+    protected HyriScoreboardTeam.NameTagVisibility nameTagVisibility;
     /** Team's size */
     protected final int teamSize;
+
+    /** The game that handles the team */
+    protected final HyriGame<?> game;
 
     /**
      * Constructor of {@link HyriGameTeam}
      *
-     * @param name - Team's name
-     * @param displayName - Team's display name
-     * @param color - Team's color
-     * @param teamSize - Team's size
+     * @param game The game that handles the team
+     * @param name Team's name
+     * @param displayName Team's display name
+     * @param color Team's color
+     * @param friendlyFire boolean that defines if member of the team can attack them
+     * @param nameTagVisibility Team's name tag visibility
+     * @param teamSize Team's size
      */
-    public HyriGameTeam(String name, HyriLanguageMessage displayName, HyriGameTeamColor color, int teamSize) {
+    public HyriGameTeam(HyriGame<?> game, String name, HyriLanguageMessage displayName, HyriGameTeamColor color, boolean friendlyFire, HyriScoreboardTeam.NameTagVisibility nameTagVisibility, int teamSize) {
+        this.game = game;
         this.name = name;
         this.displayName = displayName;
         this.color = color;
+        this.friendlyFire = friendlyFire;
+        this.nameTagVisibility = nameTagVisibility;
         this.teamSize = teamSize;
         this.players = new ArrayList<>();
+    }
+
+    /**
+     * Constructor of {@link HyriGameTeam}
+     *
+     * @param game The game that handles the team
+     * @param name Team's name
+     * @param displayName Team's display name
+     * @param color Team's color
+     * @param nameTagVisibility Team's name tag visibility
+     * @param teamSize Team's size
+     */
+    public HyriGameTeam(HyriGame<?> game, String name, HyriLanguageMessage displayName, HyriGameTeamColor color, HyriScoreboardTeam.NameTagVisibility nameTagVisibility, int teamSize) {
+        this(game, name, displayName, color, false, nameTagVisibility, teamSize);
+    }
+
+    /**
+     * Constructor of {@link HyriGameTeam}
+     *
+     * @param game The game that handles the team
+     * @param name Team's name
+     * @param displayName Team's display name
+     * @param color Team's color
+     * @param teamSize Team's size
+     */
+    public HyriGameTeam(HyriGame<?> game, String name, HyriLanguageMessage displayName, HyriGameTeamColor color, int teamSize) {
+        this(game, name, displayName, color, HyriScoreboardTeam.NameTagVisibility.ALWAYS, teamSize);
     }
 
     /**
@@ -92,10 +137,19 @@ public class HyriGameTeam {
     /**
      * Send a message to all team players
      *
-     * @param message - Message to send
+     * @param message Message to send
      */
     public void sendMessage(Function<Player, String> message) {
         this.players.forEach(target -> target.sendMessage(message.apply(target.getPlayer())));
+    }
+
+    /**
+     * Send a message to all team players
+     *
+     * @param message Message to send
+     */
+    public void sendMessage(HyriLanguageMessage message) {
+        this.sendMessage(message::getForPlayer);
     }
 
     /**
@@ -154,11 +208,11 @@ public class HyriGameTeam {
         if (!player.hasTeam()) {
             if (!this.contains(player)) {
                 if (this.players.size() < this.teamSize) {
-                    final Player p = player.getPlayer();
-
                     this.players.add(player);
 
                     player.setTeam(this);
+
+                    HyriAPI.get().getEventBus().publishAsync(new HyriGamePlayerJoinTeamEvent(this.game, this, player));
 
                     return null;
                 }
@@ -181,6 +235,8 @@ public class HyriGameTeam {
                 this.players.remove(player);
 
                 player.setTeam(null);
+
+                HyriAPI.get().getEventBus().publishAsync(new HyriGamePlayerLeaveTeamEvent(this.game, this, player));
 
                 return null;
             }
@@ -227,6 +283,37 @@ public class HyriGameTeam {
     }
 
     /**
+     * Check if friendly fire is enabled for this team
+     *
+     * @return <code>true</code> if yes
+     */
+    public boolean isFriendlyFire() {
+        return this.friendlyFire;
+    }
+
+    /**
+     * Set if the team is in friendly fire mode
+     *
+     * @param friendlyFire New friendly fire mode
+     */
+    public void setFriendlyFire(boolean friendlyFire) {
+        this.friendlyFire = friendlyFire;
+    }
+
+    /**
+     * Get the name tag visibility of the team
+     *
+     * @return A {@link fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam.NameTagVisibility}
+     */
+    public HyriScoreboardTeam.NameTagVisibility getNameTagVisibility() {
+        return this.nameTagVisibility;
+    }
+
+    public void setNameTagVisibility(HyriScoreboardTeam.NameTagVisibility nameTagVisibility) {
+        this.nameTagVisibility = nameTagVisibility;
+    }
+
+    /**
      * Get team's size
      *
      * @return - Team's size
@@ -250,7 +337,7 @@ public class HyriGameTeam {
      * @return A list of game players
      */
     public List<HyriGamePlayer> getPlayersPlaying() {
-        return this.players.stream().filter(player -> !player.isEliminated()).collect(Collectors.toList());
+        return this.players.stream().filter(player -> !player.isSpectator()).collect(Collectors.toList());
     }
 
     /**

@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
-public class HyriAnvilGUI {
+public class AnvilGUI {
 
     /** The {@link Plugin} used */
     private final Plugin plugin;
@@ -60,11 +60,11 @@ public class HyriAnvilGUI {
     /** The listener holder class */
     private final Handler listener = new Handler();
 
-    public HyriAnvilGUI(Plugin plugin, Player player,
-                        ItemStack inputLeft, ItemStack inputRight, boolean preventClose,
-                        Consumer<Player> closeConsumer, Consumer<Player> inputLeftClickConsumer,
-                        Consumer<Player> inputRightClickConsumer,
-                        BiFunction<Player, String, Response> completeFunction) {
+    public AnvilGUI(Plugin plugin, Player player,
+                    ItemStack inputLeft, ItemStack inputRight, boolean preventClose,
+                    Consumer<Player> closeConsumer, Consumer<Player> inputLeftClickConsumer,
+                    Consumer<Player> inputRightClickConsumer,
+                    BiFunction<Player, String, Response> completeFunction) {
         this.plugin = plugin;
         this.player = player;
         this.inputLeft = inputLeft;
@@ -76,11 +76,11 @@ public class HyriAnvilGUI {
         this.completeFunction = completeFunction;
     }
 
-    public HyriAnvilGUI(Plugin plugin, Player player, String itemText,
-                        ItemStack inputRight, boolean preventClose,
-                        Consumer<Player> closeConsumer, Consumer<Player> inputLeftClickConsumer,
-                        Consumer<Player> inputRightClickConsumer,
-                        BiFunction<Player, String, Response> completeFunction) {
+    public AnvilGUI(Plugin plugin, Player player, String itemText,
+                    ItemStack inputRight, boolean preventClose,
+                    Consumer<Player> closeConsumer, Consumer<Player> inputLeftClickConsumer,
+                    Consumer<Player> inputRightClickConsumer,
+                    BiFunction<Player, String, Response> completeFunction) {
         this(plugin, player, defaultInput(itemText), inputRight, preventClose, closeConsumer, inputLeftClickConsumer, inputRightClickConsumer, completeFunction);
     }
 
@@ -252,7 +252,7 @@ public class HyriAnvilGUI {
             if (open && event.getInventory().equals(inventory)) {
                 close(false);
                 if (preventClose) {
-                    Bukkit.getScheduler().runTask(plugin, HyriAnvilGUI.this::open);
+                    Bukkit.getScheduler().runTask(plugin, AnvilGUI.this::open);
                 }
             }
         }

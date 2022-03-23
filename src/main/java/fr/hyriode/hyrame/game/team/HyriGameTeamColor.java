@@ -20,8 +20,8 @@ public enum HyriGameTeamColor {
     PINK(ChatColor.LIGHT_PURPLE, DyeColor.PINK),
     PURPLE(ChatColor.DARK_PURPLE, DyeColor.PURPLE),
     WHITE(ChatColor.WHITE, DyeColor.WHITE),
-    GRAY(ChatColor.DARK_GRAY, DyeColor.GRAY),
-    BLACK(ChatColor.BLACK, DyeColor.BLACK);
+    GRAY(ChatColor.GRAY, DyeColor.GRAY),
+    BLACK(ChatColor.DARK_GRAY, DyeColor.BLACK);
 
     /** The Spigot color */
     private final ChatColor chatColor;

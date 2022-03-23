@@ -19,8 +19,10 @@ public class TargetProvider {
     private Player player;
     /** The maximum of range to look for targets */
     private double maxRange;
-    /** The aiming tolerance. It's a percentage that will "increase" the size of the target hit box */
-    private double aimingTolerance = 1.0D;
+    /** The aiming tolerance. It's a percentage that will "increase" the size of the target hit box in the x-axis */
+    private double aimingXTolerance = 1.0D;
+    /** The aiming tolerance. It's a percentage that will "increase" the size of the target hit box in the y-axis */
+    private double aimingYTolerance = 1.0D;
     /** If <code>true</code>, blocks will not be taken in account */
     private boolean throughBlocks = false;
     /** A list of {@link Entity} to ignore */
@@ -62,13 +64,36 @@ public class TargetProvider {
     }
 
     /**
+     * Set the aiming tolerance (x-axis) to look for targets
+     *
+     * @param aimingXTolerance A percentage (ex: 1.20 will be 20%)
+     * @return This {@link TargetProvider} instance
+     */
+    public TargetProvider withAimingXTolerance(double aimingXTolerance) {
+        this.aimingXTolerance = aimingXTolerance;
+        return this;
+    }
+
+    /**
+     * Set the aiming tolerance (y-axis) to look for targets
+     *
+     * @param aimingYTolerance A percentage (ex: 1.20 will be 20%)
+     * @return This {@link TargetProvider} instance
+     */
+    public TargetProvider withAimingYTolerance(double aimingYTolerance) {
+        this.aimingYTolerance = aimingYTolerance;
+        return this;
+    }
+
+    /**
      * Set the aiming tolerance to look for targets
      *
      * @param aimingTolerance A percentage (ex: 1.20 will be 20%)
      * @return This {@link TargetProvider} instance
      */
     public TargetProvider withAimingTolerance(double aimingTolerance) {
-        this.aimingTolerance = aimingTolerance;
+        this.aimingXTolerance = aimingTolerance;
+        this.aimingYTolerance = aimingTolerance;
         return this;
     }
 
@@ -134,7 +159,7 @@ public class TargetProvider {
      * @return A {@link TargetInfo} object
      */
     public TargetInfo get(Condition condition) {
-        final TargetInfo info = TargetUtil.getTarget(this.player, this.maxRange, this.aimingTolerance, this.throughBlocks, this.ignoredEntities, this.ignoredBlocks);
+        final TargetInfo info = TargetUtil.getTarget(this.player, this.maxRange, this.aimingXTolerance, this.aimingYTolerance, this.throughBlocks, this.ignoredEntities, this.ignoredBlocks);
 
         if (info != null && condition.validate(info.getEntity())) {
             return info;

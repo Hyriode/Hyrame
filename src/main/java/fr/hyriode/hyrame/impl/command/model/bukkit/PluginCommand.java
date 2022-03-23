@@ -1,12 +1,12 @@
 package fr.hyriode.hyrame.impl.command.model.bukkit;
 
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
-import fr.hyriode.hyriapi.HyriAPI;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

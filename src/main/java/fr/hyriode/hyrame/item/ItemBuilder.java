@@ -57,13 +57,11 @@ public class ItemBuilder {
 
     public ItemBuilder withName(String name) {
         this.itemMeta.setDisplayName(name);
-
         return this;
     }
 
     public ItemBuilder withLore(List<String> lore) {
         this.itemMeta.setLore(lore);
-
         return this;
     }
 
@@ -78,7 +76,6 @@ public class ItemBuilder {
         skullMeta.setOwner(player.getName());
 
         this.itemStack.setItemMeta(skullMeta);
-
         return this;
     }
 
@@ -103,7 +100,6 @@ public class ItemBuilder {
 
     public ItemBuilder withItemFlags(ItemFlag... itemFlags) {
         this.itemMeta.addItemFlags(itemFlags);
-
         return this;
     }
 
@@ -117,7 +113,6 @@ public class ItemBuilder {
 
     public ItemBuilder withEnchant(Enchantment enchant, int level, boolean show) {
         this.itemMeta.addEnchant(enchant, level, show);
-
         return this;
     }
 
@@ -135,7 +130,6 @@ public class ItemBuilder {
 
     public ItemBuilder unbreakable() {
         this.itemMeta.spigot().setUnbreakable(true);
-
         return this;
     }
 
@@ -145,7 +139,6 @@ public class ItemBuilder {
         leatherArmorMeta.setColor(color);
 
         this.itemStack.setItemMeta(leatherArmorMeta);
-
         return this;
     }
 
@@ -155,13 +148,11 @@ public class ItemBuilder {
 
     public ItemNBT nbt() {
         this.itemStack.setItemMeta(this.itemMeta);
-
         return new ItemNBT(this.itemStack);
     }
 
     public ItemStack build() {
         this.itemStack.setItemMeta(this.itemMeta);
-
         return this.itemStack;
     }
 

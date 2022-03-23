@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl.game.util;
 
+import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
@@ -9,7 +10,6 @@ import fr.hyriode.hyrame.impl.game.gui.HyriGameTeamChooserGui;
 import fr.hyriode.hyrame.item.HyriItem;
 import fr.hyriode.hyrame.item.ItemNBT;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyriapi.settings.HyriLanguage;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -30,7 +30,7 @@ public class TeamChooserItem extends HyriItem<HyramePlugin> {
     private static final String SLOT_NBT_KET = TeamChooserItem.class.getSimpleName() + "Slot";
 
     public TeamChooserItem(HyramePlugin plugin) {
-        super(plugin, HyriGameItems.TEAM_CHOOSER_NAME, () -> DISPLAY_NAME, Material.WOOL);
+        super(plugin, HyriGameItems.TEAM_SELECTOR_NAME, () -> DISPLAY_NAME, Material.WOOL);
     }
 
     @Override

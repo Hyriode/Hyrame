@@ -1,18 +1,12 @@
 package fr.hyriode.hyrame.utils.target;
 
 import fr.hyriode.hyrame.utils.LocationUtil;
-import fr.hyriode.hyrame.utils.Vector3D;
-import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,24 +23,25 @@ public class TargetUtil {
      *
      * @param player The concerned player
      * @param maxRange The maximum of range to check for a target
-     * @param aimingTolerance The tolerance of aiming from the player (it's a percentage, so 1.20 will be 20% for example)
+     * @param aimingXTolerance The tolerance of aiming (x-axis) from the player (it's a percentage, so 1.20 will be 20% for example)
+     * @param aimingYTolerance The tolerance of aiming (y-axis) from the player (it's a percentage, so 1.20 will be 20% for example)
      * @param throughBlocks If <code>true</code> blocks will not be taken in account
      * @param toIgnore A list of target to ignore
      * @param ignoredBlocks A list of material to ignore
      * @return A {@link TargetInfo} object
      */
-    public static TargetInfo getTarget(Player player, double maxRange, double aimingTolerance, boolean throughBlocks, List<Entity> toIgnore, List<Material> ignoredBlocks) {
+    public static TargetInfo getTarget(Player player, double maxRange, double aimingXTolerance, double aimingYTolerance, boolean throughBlocks, List<Entity> toIgnore, List<Material> ignoredBlocks) {
         final Location eyes = player.getEyeLocation();
-        final Vector3D playerDir = new Vector3D(eyes.getDirection());
-        final Vector3D playerStart = new Vector3D(eyes);
-        final Vector3D playerEnd = playerStart.add(playerDir.multiply(100));
+        final Vector playerDir = eyes.getDirection();
+        final Vector playerStart = eyes.toVector();
+        final Vector playerEnd = playerStart.clone().add(playerDir.clone().multiply(100));
 
         Entity target = null;
         for(Entity entity : player.getWorld().getEntities()) {
             final Location location = entity.getLocation();
-            final Vector3D targetPos = new Vector3D(location);
-            final Vector3D minimum = targetPos.add(-0.3 * aimingTolerance, 0 * aimingTolerance, -0.3 * aimingTolerance);
-            final Vector3D maximum = targetPos.add(0.3 * aimingTolerance, 1.80 * aimingTolerance, 0.3 * aimingTolerance);
+            final Vector targetPos = location.toVector();
+            final Vector minimum = targetPos.clone().add(new Vector(-0.3 * aimingXTolerance, 0 * aimingYTolerance, -0.3 * aimingXTolerance));
+            final Vector maximum = targetPos.clone().add(new Vector(0.3 * aimingXTolerance, 1.80 * aimingYTolerance, 0.3 * aimingXTolerance));
 
             if (entity == player || location.distance(eyes) > maxRange || !hasIntersection(playerStart, playerEnd, minimum, maximum) || toIgnore.contains(entity)) {
                 continue;
@@ -76,30 +71,30 @@ public class TargetUtil {
         return null;
     }
 
-    private static boolean hasIntersection(Vector3D p1, Vector3D p2, Vector3D min, Vector3D max) {
+    private static boolean hasIntersection(Vector p1, Vector p2, Vector min, Vector max) {
         final double epsilon = 0.0001f;
-        final Vector3D d = p2.subtract(p1).multiply(0.5);
-        final Vector3D e = max.subtract(min).multiply(0.5);
-        final Vector3D c = p1.add(d).subtract(min.add(max).multiply(0.5));
-        final Vector3D ad = d.abs();
+        final Vector d = p2.clone().subtract(p1).multiply(0.5);
+        final Vector e = max.clone().subtract(min).multiply(0.5);
+        final Vector c = p1.clone().add(d).subtract(min.clone().add(max).multiply(0.5));
+        final Vector ad = new Vector(Math.abs(d.getX()), Math.abs(d.getY()), Math.abs(d.getZ()));
 
-        if (Math.abs(c.x) > e.x + ad.x) {
+        if (Math.abs(c.getX()) > e.getX() + ad.getX()) {
             return false;
         }
-        if (Math.abs(c.y) > e.y + ad.y) {
+        if (Math.abs(c.getY()) > e.getY() + ad.getY()) {
             return false;
         }
-        if (Math.abs(c.z) > e.z + ad.z) {
+        if (Math.abs(c.getZ()) > e.getZ() + ad.getZ()) {
             return false;
         }
 
-        if (Math.abs(d.y * c.z - d.z * c.y) > e.y * ad.z + e.z * ad.y + epsilon) {
+        if (Math.abs(d.getY() * c.getZ() - d.getZ() * c.getY()) > e.getY() * ad.getZ() + e.getZ() * ad.getY() + epsilon) {
             return false;
         }
-        if (Math.abs(d.z * c.x - d.x * c.z) > e.z * ad.x + e.x * ad.z + epsilon) {
+        if (Math.abs(d.getZ() * c.getX() - d.getX() * c.getZ()) > e.getZ() * ad.getX() + e.getX() * ad.getZ() + epsilon) {
             return false;
         }
-        return !(Math.abs(d.x * c.y - d.y * c.x) > e.x * ad.y + e.y * ad.x + epsilon);
+        return !(Math.abs(d.getX() * c.getY() - d.getY() * c.getX()) > e.getX() * ad.getY() + e.getY() * ad.getX() + epsilon);
     }
 
 }

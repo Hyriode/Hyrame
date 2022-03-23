@@ -1,10 +1,10 @@
 package fr.hyriode.hyrame.language;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.event.HyriEvent;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.settings.HyriLanguage;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
@@ -12,10 +12,7 @@ import org.bukkit.event.HandlerList;
  * Created by AstFaster
  * on 16/12/2021 at 19:39
  */
-public class HyriLanguagesUpdatedEvent extends Event {
-
-    /** Spigot constant */
-    private static final HandlerList HANDLERS = new HandlerList();
+public class HyriLanguageUpdatedEvent extends HyriEvent {
 
     /** The player concerned */
     private final Player player;
@@ -25,12 +22,12 @@ public class HyriLanguagesUpdatedEvent extends Event {
     private final HyriLanguage language;
 
     /**
-     * Constructor of {@link HyriLanguagesUpdatedEvent}
+     * Constructor of {@link HyriLanguageUpdatedEvent}
      *
      * @param player The player
      * @param language The new language
      */
-    public HyriLanguagesUpdatedEvent(Player player, HyriLanguage language) {
+    public HyriLanguageUpdatedEvent(Player player, HyriLanguage language) {
         this.player = player;
         this.playerAccount = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
         this.language = language;
@@ -61,15 +58,6 @@ public class HyriLanguagesUpdatedEvent extends Event {
      */
     public HyriLanguage getLanguage() {
         return this.language;
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
-    }
-
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
     }
 
 }

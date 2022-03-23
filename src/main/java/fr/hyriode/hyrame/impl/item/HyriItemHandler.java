@@ -8,6 +8,7 @@ import fr.hyriode.hyrame.listener.HyriListener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -27,24 +28,41 @@ public class HyriItemHandler extends HyriListener<HyramePlugin> {
         final ItemStack itemStack = event.getItem();
 
         if (itemStack != null) {
-            final ItemNBT nbt = new ItemNBT(itemStack);
+            final HyriItem<?> item = this.checkItem(itemStack);
 
-            if (nbt.hasTag(HyriItemManager.ITEM_NBT_KEY)) {
+            if (item != null) {
                 final IHyrame hyrame = this.plugin.getHyrame();
-                final HyriItemManager itemManager = (HyriItemManager) hyrame.getItemManager();
-                final HyriItem<?> item = itemManager.getItem(nbt.getString(HyriItemManager.ITEM_NBT_KEY));
+                final Action action = event.getAction();
 
-                if (item != null) {
-                    final Action action = event.getAction();
-
-                    if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-                        item.onLeftClick(hyrame, event);
-                    } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-                        item.onRightClick(hyrame, event);
-                    }
+                if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
+                    item.onLeftClick(hyrame, event);
+                } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+                    item.onRightClick(hyrame, event);
                 }
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onInventoryClick(InventoryClickEvent event) {
+        final ItemStack itemStack = event.getCurrentItem();
+
+        if (itemStack != null) {
+            final HyriItem<?> item = this.checkItem(itemStack);
+
+            if (item != null) {
+                item.onInventoryClick(this.plugin.getHyrame(), event);
+            }
+        }
+    }
+
+    private HyriItem<?> checkItem(ItemStack itemStack) {
+        final ItemNBT nbt = new ItemNBT(itemStack);
+
+        if (nbt.hasTag(HyriItemManager.ITEM_NBT_KEY)) {
+            return this.plugin.getHyrame().getItemManager().getItem(nbt.getString(HyriItemManager.ITEM_NBT_KEY));
+        }
+        return null;
     }
 
 }

@@ -3,8 +3,8 @@ package fr.hyriode.hyrame.game.tab;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
-import fr.hyriode.hyrame.scoreboard.team.ScoreboardTeam;
-import fr.hyriode.hyrame.scoreboard.team.ScoreboardTeamHandler;
+import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam;
+import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeamHandler;
 import fr.hyriode.hyrame.utils.Symbols;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -18,24 +18,29 @@ public class HyriGameTabListManager {
 
     private static final String DEFAULT = "default";
 
-    private final ScoreboardTeamHandler teamHandler;
+    private final HyriScoreboardTeamHandler teamHandler;
 
     private final HyriGame<?> game;
 
     public HyriGameTabListManager(HyriGame<?> game) {
         this.game = game;
-        this.teamHandler = new ScoreboardTeamHandler();
+        this.teamHandler = new HyriScoreboardTeamHandler();
 
         this.addTeams();
     }
 
     private void addTeams() {
         this.game.getTeams().forEach(this::addTeam);
-        this.teamHandler.addTeam(new ScoreboardTeam(DEFAULT, DEFAULT, ChatColor.GRAY + Symbols.CROSS + " ", ChatColor.GRAY + Symbols.CROSS + " ", ""));
+
+        this.teamHandler.addTeam(new HyriScoreboardTeam(DEFAULT, DEFAULT, ChatColor.GRAY + Symbols.CROSS + " ", ChatColor.GRAY + Symbols.CROSS + " ", ""));
     }
 
     public void addTeam(HyriGameTeam team) {
-        this.teamHandler.addTeam(new ScoreboardTeam(team.getName(), team.getName(), team.getColor().getChatColor() + "", team.getColor().getChatColor() + "", ""));
+        this.teamHandler.addTeam(new HyriScoreboardTeam(team.getName(), team.getName(), team.getColor().getChatColor() + "", team.getColor().getChatColor() + "",  "", team.getNameTagVisibility()));
+    }
+
+    public void removeTeam(HyriGameTeam team) {
+        this.teamHandler.removeTeam(team.getName());
     }
 
     public void handleLogin(Player player) {
@@ -55,7 +60,7 @@ public class HyriGameTabListManager {
 
         for (HyriGameTeam team : this.game.getTeams()) {
             for (HyriGamePlayer player : team.getPlayers()) {
-                final ScoreboardTeam scoreboardTeam = this.teamHandler.getTeamByName(team.getName());
+                final HyriScoreboardTeam scoreboardTeam = this.teamHandler.getTeamByName(team.getName());
 
                 if (scoreboardTeam != null) {
                     this.teamHandler.addPlayerToTeam(player.getPlayer(), scoreboardTeam);

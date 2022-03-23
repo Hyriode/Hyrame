@@ -1,9 +1,6 @@
 package fr.hyriode.hyrame.reflection;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,9 +46,39 @@ public class Reflection {
         try {
             final Field field = getField(fieldObject.getClass(), fieldName);
 
-            field.setAccessible(true);
-            field.set(fieldObject, value);
+            if (field != null) {
+                field.set(fieldObject, value);
+            }
         } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setStaticField(String fieldName, Class<?> clazz, Object value) {
+        try {
+            final Field field = getField(clazz, fieldName);
+
+            if (field != null) {
+                field.set(clazz, value);
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setStaticFinalField(String fieldName, Class<?> clazz, Object value) {
+        try {
+            final Field field = getField(clazz, fieldName);
+
+            if (field != null) {
+                final Field modifiersField = Field.class.getDeclaredField("modifiers");
+
+                modifiersField.setAccessible(true);
+                modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+                field.set(null, value);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

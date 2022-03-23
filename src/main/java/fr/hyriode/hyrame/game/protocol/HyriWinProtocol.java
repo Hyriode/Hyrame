@@ -2,31 +2,41 @@ package fr.hyriode.hyrame.game.protocol;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
+import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.IHyrame;
+import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
-import fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent;
+import fr.hyriode.hyrame.game.event.HyriGameWinEvent;
+import fr.hyriode.hyrame.game.team.HyriGameTeam;
+import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.utils.PlayerUtil;
+import fr.hyriode.hyrame.utils.Symbols;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-
-import java.util.function.Consumer;
 
 /**
  * Project: Hyrame
  * Created by AstFaster
  * on 23/02/2022 at 20:23
  */
-public class HyriSpectatorProtocol extends HyriGameProtocol implements Listener {
+public class HyriWinProtocol extends HyriGameProtocol implements Listener {
 
-    private final JavaPlugin plugin;
+    /** The victory title to show */
+    private static final HyriLanguageMessage VICTORY = new HyriLanguageMessage("")
+            .addValue(HyriLanguage.EN, "VICTORY")
+            .addValue(HyriLanguage.FR, "VICTOIRE");
 
-    public HyriSpectatorProtocol(IHyrame hyrame, JavaPlugin plugin) {
-        super(hyrame, "spectator");
-        this.plugin = plugin;
+    /** The game over to show */
+    private static final HyriLanguageMessage GAME_OVER = new HyriLanguageMessage("")
+            .addValue(HyriLanguage.EN, "GAME OVER");
+
+    private final HyriGame<?> game;
+
+    public HyriWinProtocol(IHyrame hyrame, HyriGame<?> game) {
+        super(hyrame, "win");
+        this.game = game;
     }
 
     @Override
@@ -40,20 +50,30 @@ public class HyriSpectatorProtocol extends HyriGameProtocol implements Listener 
     }
 
     @HyriEventHandler
-    public void onSpectator(HyriGameSpectatorEvent event) {
-        final HyriGamePlayer gamePlayer = event.getGamePlayer();
-        final Player player = gamePlayer.getPlayer();
+    public void onWin(HyriGameWinEvent event) {
+        final HyriGameTeam winner = event.getWinner();
 
-        player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
-        player.setGameMode(GameMode.ADVENTURE);
-        player.setAllowFlight(true);
-        player.setFlying(true);
+        for (HyriGamePlayer player : this.game.getPlayers()) {
+            final Player target = player.getPlayer();
 
-        PlayerUtil.resetPlayer(player, true);
+            if (!player.isSpectator()) {
+                PlayerUtil.resetPlayer(target, true);
 
-        gamePlayer.hide();
+                player.setSpectator(true);
+            }
 
-        // TODO Give spec items
+            PlayerUtil.resetPotionEffects(target);
+        }
+
+        this.game.getPlayers().forEach(HyriGamePlayer::show);
+
+        for (HyriGameTeam team : this.game.getTeams()) {
+            if (team != winner) {
+                team.sendTitle(target -> ChatColor.DARK_RED + GAME_OVER.getForPlayer(target), target -> "", 0, 60, 5);
+            }
+        }
+
+        winner.sendTitle(target -> ChatColor.GOLD + Symbols.SPARKLES + " " + ChatColor.BOLD + VICTORY.getForPlayer(target) + ChatColor.RESET + ChatColor.GOLD + " " + Symbols.SPARKLES, target -> "", 0, 20 * 10, 5);
     }
 
 

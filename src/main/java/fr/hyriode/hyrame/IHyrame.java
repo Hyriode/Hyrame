@@ -8,6 +8,7 @@ import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.listener.IHyriListenerManager;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.scanner.IHyriScanner;
+import fr.hyriode.hyrame.scoreboard.IHyriScoreboardManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
@@ -81,6 +82,13 @@ public interface IHyrame {
      * @return {@link IHyriItemManager} instance
      */
     IHyriItemManager getItemManager();
+
+    /**
+     * Get Hyrame {@link IHyriScoreboardManager} instance
+     *
+     * @return {@link IHyriScoreboardManager} instance
+     */
+    IHyriScoreboardManager getScoreboardManager();
 
     /**
      * Get Hyrame {@link IHyriGameManager} instance

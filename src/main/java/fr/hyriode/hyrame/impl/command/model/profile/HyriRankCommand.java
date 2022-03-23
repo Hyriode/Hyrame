@@ -1,14 +1,15 @@
 package fr.hyriode.hyrame.impl.command.model.profile;
 
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.player.IHyriPlayerManager;
+import fr.hyriode.api.rank.EHyriRank;
+import fr.hyriode.api.rank.HyriRank;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
 import fr.hyriode.hyrame.command.HyriCommandType;
 import fr.hyriode.hyrame.impl.HyramePlugin;
-import fr.hyriode.hyriapi.HyriAPI;
-import fr.hyriode.hyriapi.player.IHyriPlayer;
-import fr.hyriode.hyriapi.player.IHyriPlayerManager;
-import fr.hyriode.hyriapi.rank.HyriRank;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -45,6 +46,15 @@ public class HyriRankCommand extends HyriCommand<HyramePlugin> {
                 player.sendMessage(ChatColor.GREEN + "Your rank has been updated.");
             } else {
                 player.sendMessage(ChatColor.RED + "Invalid rank!");
+
+                final String newLine = "\n";
+                final StringBuilder builder = new StringBuilder("Available ranks: ").append(newLine);
+
+                for (EHyriRank r : EHyriRank.values()) {
+                    builder.append("- ").append(r.getName()).append(newLine);
+                }
+
+                player.sendMessage(ChatColor.RED + builder.toString());
             }
         });
     }

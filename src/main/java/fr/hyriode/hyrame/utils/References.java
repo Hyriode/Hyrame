@@ -1,10 +1,11 @@
-package fr.hyriode.hyrame.impl.utils;
+package fr.hyriode.hyrame.utils;
 
 /**
  * Project: Hyrame
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
+@Deprecated
 public class References {
 
     public static final String SERVER_NAME = "Hyriode";
