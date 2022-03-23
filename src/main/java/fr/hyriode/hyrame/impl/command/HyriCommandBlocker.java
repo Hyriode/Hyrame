@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl.command;
 
+import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.reflection.Reflection;
 import org.bukkit.Bukkit;
@@ -39,7 +40,7 @@ public class HyriCommandBlocker {
     }
 
     private void removeCommands() {
-        Hyrame.log("Removing default Spigot and Minecraft commands...");
+        HyrameLogger.log("Removing default Spigot and Minecraft commands...");
 
         // Minecraft
         this.addBlockedCommand(MINECRAFT_PREFIX, "tell", "me", "trigger");

@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl.item;
 
+import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.item.HyriItem;
 import fr.hyriode.hyrame.item.IHyriItemManager;
@@ -54,7 +55,7 @@ public class HyriItemManager implements IHyriItemManager {
         final String formattedPluginProviderName = Hyrame.formatPluginProviderName(pluginProvider);
         final Set<Class<?>> classes = this.hyrame.getScanner().scan(pluginProvider.getClass().getClassLoader(), packageName);
 
-        Hyrame.log("Searching for items in '" + packageName + "' package" + formattedPluginProviderName);
+        HyrameLogger.log("Searching for items in '" + packageName + "' package" + formattedPluginProviderName);
 
         for (Class<?> clazz : classes) {
             if (Reflection.inheritOf(clazz, HyriItem.class)) {
@@ -77,9 +78,9 @@ public class HyriItemManager implements IHyriItemManager {
 
                     this.items.put(itemId, item);
 
-                    Hyrame.log("Registered '" + itemId + "' item" + formattedPluginProviderName);
+                    HyrameLogger.log("Registered '" + itemId + "' item" + formattedPluginProviderName);
                 } else {
-                    Hyrame.log(Level.WARNING, "'" + itemClass.getName() + "' item plugin type is not the same as the provided one in plugin provider!" + formattedPluginProviderName);
+                    HyrameLogger.log(Level.WARNING, "'" + itemClass.getName() + "' item plugin type is not the same as the provided one in plugin provider!" + formattedPluginProviderName);
                 }
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

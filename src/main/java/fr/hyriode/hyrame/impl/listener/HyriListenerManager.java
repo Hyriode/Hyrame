@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl.listener;
 
+import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.listener.HyriListener;
 import fr.hyriode.hyrame.listener.IHyriListenerManager;
@@ -45,7 +46,7 @@ public class HyriListenerManager implements IHyriListenerManager {
     public void registerListeners(IPluginProvider pluginProvider, String packageName) {
         final String formattedPluginProviderName = Hyrame.formatPluginProviderName(pluginProvider);
 
-        Hyrame.log("Searching for listeners in '" + packageName + "' package" + formattedPluginProviderName);
+        HyrameLogger.log("Searching for listeners in '" + packageName + "' package" + formattedPluginProviderName);
 
         final Set<Class<?>> classes = this.hyrame.getScanner().scan(pluginProvider.getClass().getClassLoader(), packageName);
 
@@ -62,9 +63,9 @@ public class HyriListenerManager implements IHyriListenerManager {
 
                         this.listeners.put(listener.getClass(), listener);
 
-                        Hyrame.log("Registered '" + clazz.getName() + "' listener" + formattedPluginProviderName);
+                        HyrameLogger.log("Registered '" + clazz.getName() + "' listener" + formattedPluginProviderName);
                     } else {
-                        Hyrame.log(Level.WARNING, "'" + clazz.getName() + "' listener plugin type is not the same as the provided one in plugin provider!" + formattedPluginProviderName);
+                        HyrameLogger.log(Level.WARNING, "'" + clazz.getName() + "' listener plugin type is not the same as the provided one in plugin provider!" + formattedPluginProviderName);
                     }
                 }
             }

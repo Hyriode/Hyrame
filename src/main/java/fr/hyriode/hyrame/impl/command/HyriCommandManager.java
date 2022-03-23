@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.impl.command;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.rank.HyriPermission;
+import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.command.*;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
@@ -55,7 +56,7 @@ public class HyriCommandManager implements IHyriCommandManager {
     public void registerCommands(IPluginProvider pluginProvider, String packageName) {
         final String formattedPluginProviderName = Hyrame.formatPluginProviderName(pluginProvider);
 
-        Hyrame.log("Searching for commands in '" + packageName + "' package" + formattedPluginProviderName);
+        HyrameLogger.log("Searching for commands in '" + packageName + "' package" + formattedPluginProviderName);
 
         final Set<Class<?>> classes = this.hyrame.getScanner().scan(pluginProvider.getClass().getClassLoader(), packageName);
 
@@ -73,12 +74,12 @@ public class HyriCommandManager implements IHyriCommandManager {
 
                             this.commands.put(command.getClass(), command);
 
-                            Hyrame.log("Registered '" + clazz.getName() + "' command with name '" + name + "'" + formattedPluginProviderName);
+                            HyrameLogger.log("Registered '" + clazz.getName() + "' command with name '" + name + "'" + formattedPluginProviderName);
                         } else {
-                            Hyrame.log(Level.WARNING, ChatColor.RED + "'" + clazz.getName() + "' command has an empty name! Cannot register it!");
+                            HyrameLogger.log(Level.WARNING, ChatColor.RED + "'" + clazz.getName() + "' command has an empty name! Cannot register it!");
                         }
                     } else {
-                        Hyrame.log(Level.WARNING, ChatColor.RED + "'" + clazz.getName() + "' command plugin type is not the same as the provided one in plugin provider!" + formattedPluginProviderName);
+                        HyrameLogger.log(Level.WARNING, ChatColor.RED + "'" + clazz.getName() + "' command plugin type is not the same as the provided one in plugin provider!" + formattedPluginProviderName);
                     }
                 }
             }

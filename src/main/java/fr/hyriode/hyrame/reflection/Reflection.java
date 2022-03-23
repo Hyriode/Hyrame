@@ -66,19 +66,16 @@ public class Reflection {
         }
     }
 
-    public static void setStaticFinalField(String fieldName, Class<?> clazz, Object value) {
+    public static void setFinalStaticField(String fieldName, Class<?> clazz, Object newValue) {
         try {
             final Field field = getField(clazz, fieldName);
+            final Field modifiersField = getField(Field.class, "modifiers");
 
-            if (field != null) {
-                final Field modifiersField = Field.class.getDeclaredField("modifiers");
-
-                modifiersField.setAccessible(true);
+            if (field != null && modifiersField != null) {
                 modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-                field.set(null, value);
+                field.set(null, newValue);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }

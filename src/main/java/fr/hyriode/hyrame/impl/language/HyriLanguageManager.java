@@ -5,6 +5,7 @@ import com.google.gson.stream.JsonReader;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.language.HyriLanguageUpdatedEvent;
@@ -42,7 +43,7 @@ public class HyriLanguageManager implements IHyriLanguageManager {
         final List<HyriLanguageMessage> messages = new ArrayList<>();
         final String formattedPluginProviderName = Hyrame.formatPluginProviderName(pluginProvider);
 
-        Hyrame.log("Loading languages from " + pluginProvider.getLanguagesPath() + " folder ..." + formattedPluginProviderName);
+        HyrameLogger.log("Loading languages from " + pluginProvider.getLanguagesPath() + " folder ..." + formattedPluginProviderName);
 
         for (HyriLanguage language : HyriLanguage.values()) {
             final String fileName = language.getCode() + ".json";
@@ -54,7 +55,7 @@ public class HyriLanguageManager implements IHyriLanguageManager {
                 final JsonReader reader = new JsonReader(bufferedReader);
                 final Map<String, String> map = new Gson().fromJson(reader, Map.class);
 
-                Hyrame.log("Loading " + language.getCode() + " language from " + fileName + "..." + formattedPluginProviderName);
+                HyrameLogger.log("Loading " + language.getCode() + " language from " + fileName + "..." + formattedPluginProviderName);
 
                 for (Map.Entry<String, String> entry : map.entrySet()) {
                     final String key = entry.getKey();
@@ -76,7 +77,7 @@ public class HyriLanguageManager implements IHyriLanguageManager {
                     messages.add(message);
                 }
             } else {
-                Hyrame.log(Level.INFO, "Cannot get resource from " + fileName + "!" + formattedPluginProviderName);
+                HyrameLogger.log(Level.INFO, "Cannot get resource from " + fileName + "!" + formattedPluginProviderName);
             }
         }
 
@@ -138,7 +139,7 @@ public class HyriLanguageManager implements IHyriLanguageManager {
 
     @Override
     public String getValue(IHyriPlayer player, String key) {
-        return this.getValue(player.getUUID(), key);
+        return this.getValue(player.getUniqueId(), key);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl;
 
+import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.IHyrameConfiguration;
 import fr.hyriode.hyrame.bossbar.BossBarManager;
@@ -28,12 +29,10 @@ import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.scanner.IHyriScanner;
 import fr.hyriode.hyrame.scoreboard.IHyriScoreboardManager;
 import fr.hyriode.hyrame.signgui.SignGUIManager;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Project: Hyrame
@@ -84,7 +83,7 @@ public class Hyrame implements IHyrame {
     }
 
     void disable() {
-        log("Stopping " + NAME + "... Bye!");
+        HyrameLogger.log("Stopping " + NAME + "... Bye!");
 
         final HyriGame<?> game = this.gameManager.getCurrentGame();
 
@@ -106,24 +105,6 @@ public class Hyrame implements IHyrame {
     @Override
     public boolean isLoaded(IPluginProvider pluginProvider) {
         return this.pluginProviders.contains(pluginProvider);
-    }
-
-    public static void log(Level level, String message) {
-        String prefix = ChatColor.DARK_PURPLE + "[" + NAME + "] ";
-
-        if (level == Level.SEVERE) {
-            prefix += ChatColor.RED;
-        } else if (level == Level.WARNING) {
-            prefix += ChatColor.YELLOW;
-        } else {
-            prefix += ChatColor.RESET;
-        }
-
-        Bukkit.getConsoleSender().sendMessage(prefix + message);
-    }
-
-    public static void log(String msg) {
-        log(Level.INFO, msg);
     }
 
     public static String formatPluginProviderName(IPluginProvider pluginProvider) {

@@ -16,7 +16,7 @@ public class ItemNBT {
 
     public ItemNBT(ItemStack itemStack) {
         this.nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-        this.nbtTagCompound = this.nmsItemStack.hasTag() ? nmsItemStack.getTag() : new NBTTagCompound();
+        this.nbtTagCompound = this.nmsItemStack.hasTag() ? this.nmsItemStack.getTag() : new NBTTagCompound();
     }
 
     public String getString(String tag) {

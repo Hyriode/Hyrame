@@ -1,8 +1,8 @@
 package fr.hyriode.hyrame.game.scoreboard;
 
+import fr.hyriode.api.HyriConstants;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.scoreboard.HyriScoreboard;
-import fr.hyriode.hyrame.utils.References;
 import fr.hyriode.hyrame.utils.TimeUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -37,7 +37,7 @@ public class HyriGameScoreboard<G extends HyriGame<?>> extends HyriScoreboard {
      * Add the hostname line at the bottom of the scoreboard
      */
     protected void addHostnameLine() {
-        this.setLine(this.lines.size(), ChatColor.DARK_AQUA + References.SERVER_IP, new HyriScoreboardIpConsumer(References.SERVER_IP), 2);
+        this.setLine(this.lines.size(), ChatColor.DARK_AQUA + HyriConstants.SERVER_IP, new HyriScoreboardIpConsumer(HyriConstants.SERVER_IP), 2);
     }
 
     /**

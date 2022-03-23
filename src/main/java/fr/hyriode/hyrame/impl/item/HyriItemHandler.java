@@ -5,6 +5,8 @@ import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.item.HyriItem;
 import fr.hyriode.hyrame.item.ItemNBT;
 import fr.hyriode.hyrame.listener.HyriListener;
+import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -47,7 +49,7 @@ public class HyriItemHandler extends HyriListener<HyramePlugin> {
     public void onInventoryClick(InventoryClickEvent event) {
         final ItemStack itemStack = event.getCurrentItem();
 
-        if (itemStack != null) {
+        if (itemStack != null && itemStack.getType() != Material.AIR) {
             final HyriItem<?> item = this.checkItem(itemStack);
 
             if (item != null) {

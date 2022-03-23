@@ -1,6 +1,6 @@
 package fr.hyriode.hyrame.game.scoreboard;
 
-import fr.hyriode.hyrame.utils.References;
+import fr.hyriode.api.HyriConstants;
 import fr.hyriode.hyrame.scoreboard.HyriScoreboardLine;
 import org.bukkit.ChatColor;
 
@@ -35,7 +35,7 @@ public class HyriScoreboardIpConsumer implements Consumer<HyriScoreboardLine> {
             if (this.charIndex == 0) {
                 scoreboardLine.setValue(ChatColor.AQUA + this.ip.substring(0, 1) + ChatColor.DARK_AQUA + this.ip.substring(1));
             } else if (this.charIndex == this.ip.length()) {
-                scoreboardLine.setValue(ChatColor.DARK_AQUA + References.SERVER_IP);
+                scoreboardLine.setValue(ChatColor.DARK_AQUA + HyriConstants.SERVER_IP);
             } else {
                 final String start = this.ip.substring(0, this.charIndex);
                 final String character = this.ip.substring(this.charIndex, this.charIndex + 1);

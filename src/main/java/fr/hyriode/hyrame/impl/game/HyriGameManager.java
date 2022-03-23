@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.impl.game;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.chat.HyriDefaultChatHandler;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGameInfo;
@@ -58,9 +59,11 @@ public class HyriGameManager implements IHyriGameManager {
             if (this.currentGame != null) {
                 final String key = GAMES_KEY + this.currentGame.getName() + ":" + this.currentGame.getType().getName();
 
-                jedis.rpush(key, HyriAPI.get().getServer().getName());
+                jedis.sadd(key, HyriAPI.get().getServer().getName());
+
+                HyrameLogger.log("Registered '" + this.currentGame.getName() + "' game.");
             }
-        }, () -> Hyrame.log("Registered '" + this.currentGame.getName() + "' game."));
+        });
     }
 
     @Override
@@ -74,12 +77,8 @@ public class HyriGameManager implements IHyriGameManager {
         HyriAPI.get().getRedisProcessor().process(jedis -> {
             final String key = GAMES_KEY + game.getName() + ":" + game.getType().getName();
 
-            if (jedis != null) {
-                jedis.lrem(key, 0, HyriAPI.get().getServer().getName());
-            } else {
-                Hyrame.log(Level.SEVERE, "Cannot unregister game! Error caused by Redis!");
-            }
-        }, () -> {
+            jedis.srem(key, HyriAPI.get().getServer().getName());
+
             this.currentGame = null;
 
             game.getProtocolManager().disable();
@@ -91,7 +90,7 @@ public class HyriGameManager implements IHyriGameManager {
 
             HyriAPI.get().getEventBus().publishAsync(new HyriGameUnregisteredEvent(game));
 
-            Hyrame.log("Unregistered '" + game.getName() + "' game.");
+            HyrameLogger.log("Unregistered '" + game.getName() + "' game.");
         });
     }
 
@@ -102,19 +101,7 @@ public class HyriGameManager implements IHyriGameManager {
 
     @Override
     public List<String> getGames(String name, String type) {
-        final Jedis jedis = HyriAPI.get().getRedisResource();
-        final String key = GAMES_KEY + name + ":" + type;
-
-        if (jedis != null) {
-            final List<String> games = jedis.lrange(key, 0, -1);
-
-            jedis.close();
-
-            return games;
-        } else {
-            Hyrame.log(Level.SEVERE, "Cannot get games! Error caused by Redis!");
-        }
-        return null;
+        return HyriAPI.get().getRedisProcessor().get(jedis -> new ArrayList<>(jedis.smembers(GAMES_KEY + name + ":" + type)));
     }
 
     @Override
@@ -124,29 +111,21 @@ public class HyriGameManager implements IHyriGameManager {
 
     @Override
     public List<String> getGames() {
-        final Jedis jedis = HyriAPI.get().getRedisResource();
-
-        if (jedis != null) {
+        return HyriAPI.get().getRedisProcessor().get(jedis -> {
             final Set<String> keys = jedis.keys(GAMES_KEY + "*");
             final List<String> games = new ArrayList<>();
 
             for (String key : keys) {
                 if (key.contains(":")) {
-                    final String[] splited = key.split(":");
+                    final String[] splitted = key.split(":");
 
-                    if (splited.length == 3) {
-                        games.addAll(this.getGames(splited[1], splited[2]));
+                    if (splitted.length == 3) {
+                        games.addAll(this.getGames(splitted[1], splitted[2]));
                     }
                 }
             }
-
-            jedis.close();
-
             return games;
-        } else {
-            Hyrame.log(Level.SEVERE, "Cannot get games! Error caused by Redis!");
-        }
-        return null;
+        });
     }
 
     @Override

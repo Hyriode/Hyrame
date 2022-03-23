@@ -33,28 +33,6 @@ public class JoinListener extends HyriListener<HyramePlugin> {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPreLogin(AsyncPlayerPreLoginEvent event) {
-        try {
-            final IHyriPlayerManager playerManager = HyriAPI.get().getPlayerManager();
-            final UUID uuid = event.getUniqueId();
-
-            IHyriPlayer player = playerManager.getPlayer(uuid);
-            if (player == null) {
-                player = playerManager.createPlayer(uuid, event.getName());
-            }
-
-            if (player != null) {
-                return;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        event.setKickMessage("An error occurred when loading your profile!");
-        event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         final IHyriPlayer account =  HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());

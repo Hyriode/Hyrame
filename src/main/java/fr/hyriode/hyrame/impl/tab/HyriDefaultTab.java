@@ -1,8 +1,8 @@
 package fr.hyriode.hyrame.impl.tab;
 
+import fr.hyriode.api.HyriConstants;
 import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.impl.Hyrame;
-import fr.hyriode.hyrame.utils.References;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.tab.Tab;
 import fr.hyriode.hyrame.utils.Symbols;
@@ -37,7 +37,7 @@ public class HyriDefaultTab extends Tab {
 
     private void addHeaderLines() {
         this.setBlankHeaderLine(0);
-        this.setHeaderLine(1, ChatColor.DARK_AQUA + "" + ChatColor.BOLD + References.SERVER_NAME + ChatColor.AQUA + ChatColor.ITALIC + ".fr");
+        this.setHeaderLine(1, ChatColor.DARK_AQUA + "" + ChatColor.BOLD + HyriConstants.SERVER_NAME + ChatColor.AQUA + ChatColor.ITALIC + ".fr");
         this.setBlankHeaderLine(2);
     }
 
@@ -48,9 +48,9 @@ public class HyriDefaultTab extends Tab {
         final String discord = languageManager.getValue(language, "tab.discord");
 
         this.setBlankFooterLine(0);
-        this.setFooterLine(1, this.createFooterLine(websiteAndForum, References.WEBSITE_URL));
-        this.setFooterLine(2, this.createFooterLine(store, References.STORE_WEBSITE_URL));
-        this.setFooterLine(3, this.createFooterLine(discord, References.DISCORD_URL));
+        this.setFooterLine(1, this.createFooterLine(websiteAndForum, HyriConstants.WEBSITE_URL));
+        this.setFooterLine(2, this.createFooterLine(store, HyriConstants.STORE_WEBSITE_URL));
+        this.setFooterLine(3, this.createFooterLine(discord, HyriConstants.DISCORD_URL));
         this.setBlankFooterLine(4);
     }
 

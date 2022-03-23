@@ -1,20 +1,14 @@
 package fr.hyriode.hyrame.game.scoreboard;
 
+import fr.hyriode.api.HyriConstants;
 import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.game.HyriGame;
-import fr.hyriode.hyrame.utils.References;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.scoreboard.HyriScoreboard;
-import fr.hyriode.hyrame.scoreboard.HyriScoreboardLine;
 import fr.hyriode.hyrame.utils.TimeUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.function.Consumer;
 
 /**
  * Project: Hyrame
@@ -56,7 +50,7 @@ public class HyriWaitingScoreboard extends HyriScoreboard {
         this.setLine(2,  DASH + MAP.getForPlayer(this.player) + ChatColor.RED + "Unknown");
         this.addBlankLine(4);
         this.addBlankLine(6);
-        this.setLine(7, ChatColor.DARK_AQUA + References.SERVER_IP, new HyriScoreboardIpConsumer(References.SERVER_IP), 2);
+        this.setLine(7, ChatColor.DARK_AQUA + HyriConstants.SERVER_IP, new HyriScoreboardIpConsumer(HyriConstants.SERVER_IP), 2);
     }
 
     private void addLines() {
