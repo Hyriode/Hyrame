@@ -3,6 +3,7 @@ package fr.hyriode.hyrame;
 import fr.hyriode.hyrame.chat.IHyriChatHandler;
 import fr.hyriode.hyrame.command.IHyriCommandManager;
 import fr.hyriode.hyrame.game.IHyriGameManager;
+import fr.hyriode.hyrame.inventory.IHyriInventoryManager;
 import fr.hyriode.hyrame.item.IHyriItemManager;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.listener.IHyriListenerManager;
@@ -89,6 +90,13 @@ public interface IHyrame {
      * @return {@link IHyriScoreboardManager} instance
      */
     IHyriScoreboardManager getScoreboardManager();
+
+    /**
+     * Get Hyrame {@link IHyriInventoryManager} instance
+     *
+     * @return The {@link IHyriInventoryManager} instance
+     */
+    IHyriInventoryManager getInventoryManager();
 
     /**
      * Get Hyrame {@link IHyriGameManager} instance

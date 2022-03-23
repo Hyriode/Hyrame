@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.scoreboard;
 
+import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.reflection.Reflection;
 import fr.hyriode.hyrame.utils.PacketUtil;
 import net.minecraft.server.v1_8_R3.*;
@@ -142,6 +143,8 @@ public class HyriScoreboard {
             }
 
             this.show = true;
+
+            HyriAPI.get().getEventBus().publish(new HyriScoreboardEvent(this, this.player, HyriScoreboardEvent.Action.SHOW));
         }
     }
 
@@ -161,6 +164,8 @@ public class HyriScoreboard {
             this.destroy();
 
             this.show = false;
+
+            HyriAPI.get().getEventBus().publish(new HyriScoreboardEvent(this, this.player, HyriScoreboardEvent.Action.HIDE));
         }
     }
 

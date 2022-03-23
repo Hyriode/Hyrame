@@ -14,14 +14,6 @@ import java.util.UUID;
 public interface IHyriScoreboardManager {
 
     /**
-     * Show a provided scoreboard to a player
-     *
-     * @param player The concerned player
-     * @param scoreboard The scoreboard to show
-     */
-    void showScoreboardToPlayer(Player player, HyriScoreboard scoreboard);
-
-    /**
      * Remove the current scoreboard of a player
      *
      * @param player The player to remove his scoreboard
@@ -61,13 +53,20 @@ public interface IHyriScoreboardManager {
     Map<UUID, HyriScoreboard> getPlayersScoreboards();
 
     /**
-     * Get all scoreboards that have the same class. But also with the {@link UUID} of the players that owned them
+     * Get all scoreboards that have the same class. But also with the {@link UUID} of the players that own them
      *
-     * @param scoreboardClass The {@link Class} of the scoreboard to look for
-     * @return A list of {@link HyriScoreboard}
+     * @param scoreboardClass The {@link Class} of the scoreboards to look for
+     * @return A map of {@link HyriScoreboard} and {@link UUID}
      */
     <T extends HyriScoreboard> Map<T, UUID> getScoreboardsMap(Class<T> scoreboardClass);
 
+
+    /**
+     * Get all scoreboards that have the same class
+     *
+     * @param scoreboardClass The {@link Class} of the scoreboards to look for
+     * @return A list of {@link HyriScoreboard}
+     */
     <T extends HyriScoreboard> List<T> getScoreboards(Class<T> scoreboardClass);
 
 }

@@ -1,9 +1,13 @@
 package fr.hyriode.hyrame.impl.scoreboard;
 
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.hyrame.scoreboard.HyriScoreboard;
+import fr.hyriode.hyrame.scoreboard.HyriScoreboardEvent;
 import fr.hyriode.hyrame.scoreboard.IHyriScoreboardManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,18 +23,26 @@ public class HyriScoreboardManager implements IHyriScoreboardManager {
 
     public HyriScoreboardManager() {
         this.playersScoreboards = new ConcurrentHashMap<>();
+
+        HyriAPI.get().getEventBus().register(this);
     }
 
-    @Override
-    public void showScoreboardToPlayer(Player player, HyriScoreboard scoreboard) {
-        scoreboard.show();
+    @HyriEventHandler
+    public void onScoreboardEvent(HyriScoreboardEvent event) {
+        final Player player = event.getPlayer();
+        final HyriScoreboard scoreboard = event.getScoreboard();
+        final HyriScoreboardEvent.Action action = event.getAction();
 
-        this.playersScoreboards.put(player.getUniqueId(), scoreboard);
+        if (action == HyriScoreboardEvent.Action.SHOW) {
+            this.playersScoreboards.put(player.getUniqueId(), scoreboard);
+        } else if (action == HyriScoreboardEvent.Action.HIDE) {
+            this.playersScoreboards.remove(player.getUniqueId());
+        }
     }
 
     @Override
     public boolean removeScoreboardFromPlayer(Player player) {
-        final HyriScoreboard scoreboard = this.playersScoreboards.remove(player.getUniqueId());
+        final HyriScoreboard scoreboard = this.playersScoreboards.get(player.getUniqueId());
 
         if (scoreboard != null) {
             scoreboard.hide();

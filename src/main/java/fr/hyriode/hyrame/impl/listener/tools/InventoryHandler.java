@@ -1,8 +1,11 @@
 package fr.hyriode.hyrame.impl.listener.tools;
 
+import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.inventory.HyriInventory;
+import fr.hyriode.hyrame.inventory.HyriInventoryEvent;
 import fr.hyriode.hyrame.listener.HyriListener;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -43,6 +46,8 @@ public class InventoryHandler extends HyriListener<HyramePlugin> {
             final HyriInventory inventory = (HyriInventory) event.getInventory().getHolder();
 
             inventory.onOpen(event);
+
+            HyriAPI.get().getEventBus().publish(new HyriInventoryEvent(inventory, (Player) event.getPlayer(), HyriInventoryEvent.Action.OPEN));
         }
     }
 
@@ -52,6 +57,8 @@ public class InventoryHandler extends HyriListener<HyramePlugin> {
             final HyriInventory inventory = (HyriInventory) event.getInventory().getHolder();
 
             inventory.onClose(event);
+
+            HyriAPI.get().getEventBus().publish(new HyriInventoryEvent(inventory, (Player) event.getPlayer(), HyriInventoryEvent.Action.CLOSE));
         }
     }
 

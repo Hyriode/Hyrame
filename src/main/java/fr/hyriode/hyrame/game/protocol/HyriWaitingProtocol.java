@@ -79,7 +79,7 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
 
         HyriGameItems.LEAVE.give(this.hyrame, player, 8);
 
-        this.hyrame.getScoreboardManager().showScoreboardToPlayer(player, new HyriWaitingScoreboard(game, this.plugin, player));
+        new HyriWaitingScoreboard(game, this.plugin, player).show();
 
         this.updateScoreboards();
     }
