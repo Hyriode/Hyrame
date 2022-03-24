@@ -54,8 +54,8 @@ public class HyriDefaultTab extends Tab {
         this.setBlankFooterLine(4);
     }
 
-    private String createFooterLine(String content, String value) {
-        return " " + ChatColor.GRAY + Symbols.QUOTE_MARK_LEFT +  content + ChatColor.DARK_AQUA + value + ChatColor.GRAY + " " + Symbols.QUOTE_MARK_RIGHT + " ";
+    private String createFooterLine(String content, String url) {
+        return " " + ChatColor.GRAY + Symbols.QUOTE_MARK_LEFT +  content + ChatColor.DARK_AQUA + url + ChatColor.GRAY + " " + Symbols.QUOTE_MARK_RIGHT + " ";
     }
 
 }

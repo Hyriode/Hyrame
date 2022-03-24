@@ -88,8 +88,10 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /** Game state */
     private HyriGameState state;
 
-    /** Game info */
-    protected final HyriGameInfo info;
+    /** Game name */
+    protected final String name;
+    /** Game display name */
+    protected final String displayName;
     /** Game type */
     protected final HyriGameType type;
 
@@ -103,14 +105,16 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      *
      * @param hyrame Hyrame instance
      * @param plugin Game plugin instance
-     * @param info Game info
+     * @param name Game name
+     * @param displayName Game display name
      * @param playerClass Game player class
      * @param type Game type (for example 1v1, 2v2 etc.)
      */
-    public HyriGame(IHyrame hyrame, JavaPlugin plugin, HyriGameInfo info, Class<P> playerClass, HyriGameType type) {
+    public HyriGame(IHyrame hyrame, JavaPlugin plugin, String name, String displayName, Class<P> playerClass, HyriGameType type) {
         this.hyrame = hyrame;
         this.plugin = plugin;
-        this.info = info;
+        this.name = name;
+        this.displayName = displayName;
         this.playerClass = playerClass;
         this.type = type;
         this.setState(HyriGameState.WAITING);
@@ -127,11 +131,12 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      *
      * @param hyrame Hyrame instance
      * @param plugin Game plugin instance
-     * @param info Game info
+     * @param name Game name
+     * @param displayName Game display name
      * @param playerClass Game player class
      */
-    public HyriGame(IHyrame hyrame, JavaPlugin plugin, HyriGameInfo info, Class<P> playerClass) {
-        this(hyrame, plugin, info, playerClass, DEFAULT_TYPE);
+    public HyriGame(IHyrame hyrame, JavaPlugin plugin, String name, String displayName, Class<P> playerClass) {
+        this(hyrame, plugin, name, displayName, playerClass, DEFAULT_TYPE);
     }
 
     /**
@@ -542,7 +547,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @return Game name
      */
     public String getName() {
-        return this.info.getName();
+        return this.name;
     }
 
     /**
@@ -551,7 +556,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @return Game display name
      */
     public String getDisplayName() {
-        return this.info.getDisplayName();
+        return this.displayName;
     }
 
     /**
@@ -561,15 +566,6 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      */
     public HyriGameType getType() {
         return this.type;
-    }
-
-    /**
-     * Get the information linked to the game
-     *
-     * @return The {@link HyriGameInfo} instance
-     */
-    public HyriGameInfo getInfo() {
-        return this.info;
     }
 
     /**

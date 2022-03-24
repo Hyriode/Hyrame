@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.game.scoreboard;
 
 import fr.hyriode.api.HyriConstants;
 import fr.hyriode.hyrame.game.HyriGame;
+import fr.hyriode.hyrame.placeholder.PlaceholderAPI;
 import fr.hyriode.hyrame.scoreboard.HyriScoreboard;
 import fr.hyriode.hyrame.utils.TimeUtil;
 import org.bukkit.ChatColor;
@@ -29,7 +30,7 @@ public class HyriGameScoreboard<G extends HyriGame<?>> extends HyriScoreboard {
      * @param name Scoreboard's name
      */
     public HyriGameScoreboard(JavaPlugin plugin, G game, Player player, String name) {
-        super(plugin, player, name, ChatColor.DARK_AQUA + "     " + ChatColor.BOLD + game.getDisplayName() + "     ");
+        super(plugin, player, name, PlaceholderAPI.setPlaceholders(null, ChatColor.DARK_AQUA + "     " + ChatColor.BOLD + "%game_display_name%" + "     "));
         this.game = game;
     }
 
@@ -47,7 +48,7 @@ public class HyriGameScoreboard<G extends HyriGame<?>> extends HyriScoreboard {
      * @param line The number of the line
      */
     protected void addCurrentDateLine(int line) {
-        final Supplier<String> date = () -> ChatColor.GRAY + TimeUtil.getCurrentFormattedDate();
+        final Supplier<String> date = () -> PlaceholderAPI.setPlaceholders(null, ChatColor.GRAY + "%date%");
 
         this.setLine(line, date.get(), sbLine -> sbLine.setValue(date.get()), 20);
     }

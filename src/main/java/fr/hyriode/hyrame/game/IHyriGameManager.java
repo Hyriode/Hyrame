@@ -55,19 +55,4 @@ public interface IHyriGameManager {
      */
     List<String> getGames();
 
-    /**
-     * Get the {@link HyriGameInfo} linked to a game
-     *
-     * @param name The name of the game
-     * @return The {@link HyriGameInfo}
-     */
-    HyriGameInfo getGameInfo(String name);
-
-    /**
-     * Get a list of {@link HyriGameInfo}
-     *
-     * @return A {@link List}
-     */
-    List<HyriGameInfo> getGamesInfo();
-
 }

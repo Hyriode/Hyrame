@@ -4,6 +4,7 @@ import fr.hyriode.api.HyriConstants;
 import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.placeholder.PlaceholderAPI;
 import fr.hyriode.hyrame.scoreboard.HyriScoreboard;
 import fr.hyriode.hyrame.utils.TimeUtil;
 import org.bukkit.ChatColor;
@@ -76,7 +77,7 @@ public class HyriWaitingScoreboard extends HyriScoreboard {
     }
 
     private String getPlayersLine() {
-        return DASH + PLAYERS.getForPlayer(this.player) + ChatColor.AQUA + this.game.getPlayers().size() + "/" + this.game.getMaxPlayers();
+        return PlaceholderAPI.setPlaceholders(null, DASH + PLAYERS.getForPlayer(this.player) + ChatColor.AQUA + "%game_players%/%game_max_players%");
     }
 
     public void setTime(int time) {

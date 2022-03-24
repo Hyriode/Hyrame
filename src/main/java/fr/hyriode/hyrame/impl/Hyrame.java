@@ -16,6 +16,8 @@ import fr.hyriode.hyrame.impl.inventory.HyriInventoryManager;
 import fr.hyriode.hyrame.impl.item.HyriItemManager;
 import fr.hyriode.hyrame.impl.language.HyriLanguageManager;
 import fr.hyriode.hyrame.impl.listener.HyriListenerManager;
+import fr.hyriode.hyrame.impl.placeholder.PlaceholderImpl;
+import fr.hyriode.hyrame.impl.placeholder.handler.PlaceholderRegistry;
 import fr.hyriode.hyrame.impl.scanner.HyriScanner;
 import fr.hyriode.hyrame.impl.scoreboard.HyriScoreboardManager;
 import fr.hyriode.hyrame.impl.tab.HyriTabManager;
@@ -25,6 +27,7 @@ import fr.hyriode.hyrame.item.enchant.HyriEnchant;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.listener.IHyriListenerManager;
 import fr.hyriode.hyrame.npc.NPCManager;
+import fr.hyriode.hyrame.placeholder.PlaceholderAPI;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.scanner.IHyriScanner;
 import fr.hyriode.hyrame.scoreboard.IHyriScoreboardManager;
@@ -75,6 +78,8 @@ public class Hyrame implements IHyrame {
         this.commandBlocker = new HyriCommandBlocker();
         this.tabManager = new HyriTabManager(this);
 
+        PlaceholderAPI.registerInstance(new PlaceholderImpl());
+        PlaceholderRegistry.registerPlaceholders(this);
         HyriEnchant.register();
 
         new BossBarManager(plugin);

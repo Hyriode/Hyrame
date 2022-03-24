@@ -4,7 +4,6 @@ import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.chat.HyriDefaultChatHandler;
 import fr.hyriode.hyrame.game.HyriGame;
-import fr.hyriode.hyrame.game.HyriGameInfo;
 import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.game.event.HyriGameRegisteredEvent;
 import fr.hyriode.hyrame.game.event.HyriGameUnregisteredEvent;
@@ -12,13 +11,11 @@ import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.impl.game.chat.HyriGameChatHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import redis.clients.jedis.Jedis;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.logging.Level;
 
 /**
  * Project: Hyrame
@@ -79,14 +76,14 @@ public class HyriGameManager implements IHyriGameManager {
 
             jedis.srem(key, HyriAPI.get().getServer().getName());
 
-            this.currentGame = null;
-
             game.getProtocolManager().disable();
 
             this.hyrame.getTabManager().enableTabList();
 
             this.hyrame.getConfiguration().setRanksInTabList(true);
             this.hyrame.setChatHandler(new HyriDefaultChatHandler());
+
+            this.currentGame = null;
 
             HyriAPI.get().getEventBus().publishAsync(new HyriGameUnregisteredEvent(game));
 
@@ -126,16 +123,6 @@ public class HyriGameManager implements IHyriGameManager {
             }
             return games;
         });
-    }
-
-    @Override
-    public HyriGameInfo getGameInfo(String name) {
-        return null;
-    }
-
-    @Override
-    public List<HyriGameInfo> getGamesInfo() {
-        return null;
     }
 
 }

@@ -26,10 +26,18 @@ public class HyriLanguageMessage {
     /**
      * Constructor of {@link HyriLanguageMessage}
      *
-     * @param key - Message's key
+     * @param key Message's key
      */
     public HyriLanguageMessage(String key) {
         this.key = key;
+        this.values = new HashMap<>();
+    }
+
+    /**
+     * Constructor of {@link HyriLanguageMessage}
+     *
+     */
+    public HyriLanguageMessage() {
         this.values = new HashMap<>();
     }
 
@@ -154,6 +162,16 @@ public class HyriLanguageMessage {
      */
     public static HyriLanguageMessage from(Map<HyriLanguage, String> values) {
         return new HyriLanguageMessage("").setValues(values);
+    }
+
+    /**
+     * Get a {@link HyriLanguageMessage} from its key
+     *
+     * @param key the key of the message
+     * @return A {@link HyriLanguageMessage}
+     */
+    public static HyriLanguageMessage get(String key) {
+        return IHyriLanguageManager.Provider.get().getMessage(key);
     }
 
 }

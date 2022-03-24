@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 /**
@@ -57,7 +58,7 @@ public enum HyriCommandCheck {
     /** Sequence used to detect if its present in a command */
     private final String sequence;
     /** Validation step */
-    private final BiFunction<HyriCommandContext, String, Boolean> validation;
+    private final BiPredicate<HyriCommandContext, String> validation;
     /** Getting step */
     private final Function<String, Object> getter;
 
@@ -68,7 +69,7 @@ public enum HyriCommandCheck {
      * @param validation Check validation step
      * @param getter Check getting step
      */
-    HyriCommandCheck(String sequence, BiFunction<HyriCommandContext, String, Boolean> validation, Function<String, Object> getter) {
+    HyriCommandCheck(String sequence, BiPredicate<HyriCommandContext, String> validation, Function<String, Object> getter) {
         this.sequence = sequence;
         this.validation = validation;
         this.getter = getter;
@@ -111,7 +112,7 @@ public enum HyriCommandCheck {
      * @return <code>true</code> if its valid
      */
     public boolean validate(HyriCommandContext ctx, String arg) {
-        return this.validation.apply(ctx, arg);
+        return this.validation.test(ctx, arg);
     }
 
     /**
@@ -121,6 +122,7 @@ public enum HyriCommandCheck {
      * @param <T> Type of the return
      * @return The parsed input
      */
+    @SuppressWarnings("unchecked")
     public <T> T get(String input) {
         return (T) this.getter.apply(input);
     }
