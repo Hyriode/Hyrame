@@ -16,9 +16,11 @@ public class HyriCommandInfo {
     /** Command's name */
     private String name;
     /** Command's description */
-    private String description;
+    private String description = "";
     /** Command's usage */
     private String usage;
+    /** The boolean that means whether the invalid command message will be sent or not */
+    private boolean invalidMessage;
     /** Command's aliases */
     private List<String> aliases = new ArrayList<>();
     /** Permission needed to execute the command */
@@ -79,11 +81,23 @@ public class HyriCommandInfo {
      * Set the usage of the command
      *
      * @param usage Command's usage
+     * @param invalidMessage Invalid message will be sent or not
+     * @return {@link HyriCommandInfo}
+     */
+    public HyriCommandInfo withUsage(String usage, boolean invalidMessage) {
+        this.usage = usage;
+        this.invalidMessage = invalidMessage;
+        return this;
+    }
+
+    /**
+     * Set the usage of the command
+     *
+     * @param usage Command's usage
      * @return {@link HyriCommandInfo}
      */
     public HyriCommandInfo withUsage(String usage) {
-        this.usage = usage;
-        return this;
+        return this.withUsage(usage, true);
     }
 
     /**
@@ -93,6 +107,15 @@ public class HyriCommandInfo {
      */
     public String getUsage() {
         return this.usage;
+    }
+
+    /**
+     * Check if invalid message needs to be sent or not
+     *
+     * @return <code>true</code> if the message needs to be sent
+     */
+    public boolean isInvalidMessage() {
+        return this.invalidMessage;
     }
 
     /**

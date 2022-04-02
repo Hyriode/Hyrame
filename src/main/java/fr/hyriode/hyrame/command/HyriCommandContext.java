@@ -18,6 +18,8 @@ public class HyriCommandContext {
     /** The result of the execution */
     private HyriCommandResult result;
 
+    private int argumentPosition;
+
     /**
      * Constructor of {@link HyriCommandContext}
      *
@@ -74,6 +76,14 @@ public class HyriCommandContext {
      */
     public void setResult(HyriCommandResult result) {
         this.result = result;
+    }
+
+    int getArgumentPosition() {
+        return this.argumentPosition;
+    }
+
+    void setArgumentPosition(int argumentPosition) {
+        this.argumentPosition = argumentPosition;
     }
 
 }

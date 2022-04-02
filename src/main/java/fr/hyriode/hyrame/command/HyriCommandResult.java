@@ -24,6 +24,15 @@ public class HyriCommandResult {
     }
 
     /**
+     * Constructor of {@link HyriCommandResult}
+     *
+     * @param type Result's type
+     */
+    public HyriCommandResult(Type type) {
+        this(type, "");
+    }
+
+    /**
      * Get result's type
      *
      * @return {@link Type}

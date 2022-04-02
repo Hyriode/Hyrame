@@ -160,9 +160,6 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
             player.spigot().setCollidesWithEntities(false);
 
             if (!gamePlayer.isSpectator()) {
-                PlayerUtil.resetPlayer(player, true);
-                PlayerUtil.addSpectatorAbilities(player);
-
                 gamePlayer.hide(false);
 
                 if (lastHitters != null) {
@@ -174,6 +171,9 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
                 } else {
                     gamePlayer.setDead(true);
                 }
+
+                PlayerUtil.resetPlayer(player, true);
+                PlayerUtil.addSpectatorAbilities(player);
 
                 // TODO Death messages
 

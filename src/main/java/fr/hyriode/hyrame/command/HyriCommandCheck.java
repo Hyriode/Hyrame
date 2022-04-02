@@ -1,14 +1,15 @@
 package fr.hyriode.hyrame.command;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
+import fr.hyriode.hyrame.utils.PlayerUtil;
 import fr.hyriode.hyrame.utils.PrimitiveType;
-import org.bukkit.Bukkit;
+import fr.hyriode.hyrame.utils.TriPredicate;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 /**
@@ -19,29 +20,23 @@ import java.util.function.Function;
 public enum HyriCommandCheck {
 
     /** Handle all input, it can be a word, a number, a state etc */
-    INPUT("%input%", (ctx, arg) -> true, input -> input),
+    INPUT("%input%", arg -> arg),
+    /**  */
+    SENTENCE("%sentence%", (ctx, output, arg) -> {
+        final String[] args = ctx.getArgs();
+        final StringBuilder builder = new StringBuilder();
+
+        for (int i = ctx.getArgumentPosition(); i < ctx.getArgs().length; i++) {
+            builder.append(args[i]).append(i + 1 != args.length ? " " : "");
+        }
+
+        output.add(String.class, builder.toString());
+        return false;
+    }),
     /** Handle a player name as an input, but it will check from players accounts */
-    PLAYER("%player%", (ctx, arg) -> {
-        final CommandSender sender = ctx.getSender();
-
-        if (HyriAPI.get().getPlayerManager().getPlayerId(arg) != null) {
-            return true;
-        } else {
-            ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getForSender(sender) + arg + "."));
-            return false;
-        }
-    }, input -> HyriAPI.get().getPlayerManager().getPlayer(input)),
+    PLAYER("%player%", IHyriPlayer.class, arg -> HyriAPI.get().getPlayerManager().getPlayer(arg), (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getForSender(ctx.getSender()) + arg + "."),
     /** Handle a player name as an input, but it will check from players on current server */
-    PLAYER_ON_SERVER("%player_server%", (ctx, arg) -> {
-        final CommandSender sender = ctx.getSender();
-
-        if (Bukkit.getPlayer(arg) != null) {
-            return true;
-        } else {
-            ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getForSender(sender) + arg + "."));
-            return false;
-        }
-    }, Bukkit::getPlayer),
+    PLAYER_ON_SERVER("%player_server%", Player.class, PlayerUtil::getPlayer, (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getForSender(ctx.getSender()) + arg + "."),
     /** Handle a short number */
     SHORT("%short%", PrimitiveType.SHORT),
     /** Handle an integer number */
@@ -57,22 +52,78 @@ public enum HyriCommandCheck {
 
     /** Sequence used to detect if its present in a command */
     private final String sequence;
-    /** Validation step */
-    private final BiPredicate<HyriCommandContext, String> validation;
-    /** Getting step */
-    private final Function<String, Object> getter;
+    /** The action to run when the check is detected. The action returns a boolean which means if the arguments checking process needs to continue or not. */
+    private final TriPredicate<HyriCommandContext, HyriCommandOutput, String> action;
+
+    /** Constant values list to increase performances */
+    public static final HyriCommandCheck[] VALUES = HyriCommandCheck.values();
 
     /**
      * Constructor of {@link HyriCommandCheck}
      *
-     * @param sequence Check sequence
-     * @param validation Check validation step
-     * @param getter Check getting step
+     * @param sequence The sequence of the check
+     * @param action The action linked to the check
      */
-    HyriCommandCheck(String sequence, BiPredicate<HyriCommandContext, String> validation, Function<String, Object> getter) {
+    HyriCommandCheck(String sequence, TriPredicate<HyriCommandContext, HyriCommandOutput, String> action) {
         this.sequence = sequence;
-        this.validation = validation;
-        this.getter = getter;
+        this.action = action;
+    }
+
+    /**
+     * Alternative constructor of {@link HyriCommandCheck}
+     *
+     * @param sequence The sequence of the check
+     * @param clazz The class of the object to add in the output
+     * @param getter Getter used to get the object to add in the output
+     * @param error The error function to apply when the object is null
+     */
+    HyriCommandCheck(String sequence, Class<?> clazz, Function<String, ?> getter, BiFunction<HyriCommandContext, String, String> error) {
+        this(sequence, (ctx, output, arg) -> {
+            final Object object = getter.apply(arg);
+
+            if (object != null) {
+                output.add(clazz, object);
+                return true;
+            }
+
+            if (error != null) {
+                ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, error.apply(ctx, arg)));
+            }
+            return false;
+        });
+    }
+
+    /**
+     * Alternative constructor of {@link HyriCommandCheck}
+     *
+     * @param sequence The sequence of the check
+     * @param getter Getter used to get the object to add in the output
+     * @param error The error function to apply when the object is null
+     */
+    HyriCommandCheck(String sequence, Function<String, ?> getter, BiFunction<HyriCommandContext, String, String> error) {
+        this(sequence, (ctx, output, arg) -> {
+            final Object object = getter.apply(arg);
+
+            if (object != null) {
+                output.add(object.getClass(), object);
+                return true;
+            }
+
+            if (error != null) {
+                ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, error.apply(ctx, arg)));
+            }
+            return false;
+        });
+    }
+
+    /**
+     * Alternative constructor of {@link HyriCommandCheck}
+     *
+     * @param sequence The sequence of the check
+     * @param getter Getter used to get the object to add in the output
+     */
+    HyriCommandCheck(String sequence, Function<String, ?> getter) {
+        this(sequence, getter, null);
     }
 
     /**
@@ -83,16 +134,19 @@ public enum HyriCommandCheck {
      * @param type Primitive type of the check
      */
     HyriCommandCheck(String sequence, PrimitiveType<?> type) {
-        this(sequence, (ctx, arg) -> {
-            final CommandSender sender = ctx.getSender();
+        this(sequence, arg -> type.isValid(arg) ? type.parse(arg) : null, (ctx, arg) -> ChatColor.RED + (type == PrimitiveType.BOOLEAN ? HyriCommonMessages.INVALID_ARGUMENT : HyriCommonMessages.INVALID_NUMBER).getForSender(ctx.getSender()) + arg + ".");
+    }
 
-            if (type.isValid(arg)) {
-                return true;
-            } else {
-                sender.sendMessage(ChatColor.RED + (type == PrimitiveType.BOOLEAN ? HyriCommonMessages.INVALID_ARGUMENT : HyriCommonMessages.INVALID_NUMBER).getForSender(sender) + arg + ".");
-                return false;
-            }
-        }, type::parse);
+    /**
+     * Run check action
+     *
+     * @param ctx Command context
+     * @param output Command output
+     * @param arg Argument to validate
+     * @return <code>true</code> if it's valid
+     */
+    public boolean runAction(HyriCommandContext ctx, HyriCommandOutput output, String arg) {
+        return this.action.test(ctx, output, arg);
     }
 
     /**
@@ -102,29 +156,6 @@ public enum HyriCommandCheck {
      */
     public String getSequence() {
         return this.sequence;
-    }
-
-    /**
-     * Execute validation step
-     *
-     * @param ctx Command context
-     * @param arg Argument to validate
-     * @return <code>true</code> if its valid
-     */
-    public boolean validate(HyriCommandContext ctx, String arg) {
-        return this.validation.test(ctx, arg);
-    }
-
-    /**
-     * Execute getting step
-     *
-     * @param input Input to parse
-     * @param <T> Type of the return
-     * @return The parsed input
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T get(String input) {
-        return (T) this.getter.apply(input);
     }
 
     @Override
@@ -139,7 +170,7 @@ public enum HyriCommandCheck {
      * @return {@link HyriCommandCheck} or <code>null</code>
      */
     public static HyriCommandCheck fromSequence(String sequence) {
-        for (HyriCommandCheck check : values()) {
+        for (HyriCommandCheck check : VALUES) {
             if (check.toString().equalsIgnoreCase(sequence)) {
                 return check;
             }

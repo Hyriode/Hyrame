@@ -1,7 +1,9 @@
 package fr.hyriode.hyrame.command;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Project: Hyrame
@@ -10,139 +12,54 @@ import java.util.List;
  */
 public class HyriCommandOutput {
 
-    /** All the output objects */
-    private final List<HyriCommandOutputObjects<?>> objectsList;
+    /** The map of objects stored in the output */
+    private final Map<Class<?>, List<Object>> objectsMap = new HashMap<>();
 
     /**
-     * Constructor of {@link HyriCommandOutput}
-     */
-    public HyriCommandOutput() {
-        this.objectsList = new ArrayList<>();
-    }
-
-    /**
-     * Add an object to the output
+     * Add a given object in the output
      *
-     * @param clazz Object's class
-     * @param value The object
-     * @param <T> A simple type
+     * @param clazz The {@link Class} of the object to add
+     * @param object The object to add
      */
-    public <T> void add(Class<T> clazz, T value) {
-        HyriCommandOutputObjects<T> object = this.getObjects(clazz);
+    void add(Class<?> clazz, Object object) {
+        List<Object> objects = this.objectsMap.get(clazz);
 
-        if (object == null) {
-            object = new HyriCommandOutputObjects<>(clazz);
-
-            this.objectsList.add(object);
+        if (objects == null) {
+            objects = new ArrayList<>();
         }
 
-        object.add(value);
+        objects.add(object);
+
+        this.objectsMap.put(clazz, objects);
     }
 
     /**
-     * Get a value of a class
+     * Get an object stored in the output by giving its {@link Class} and index
      *
-     * @param index An index
-     * @param clazz Class of the object
-     * @param <T> A simple type
-     * @return The value
+     * @param index This index represents the position of the object to get in the list of objects with the same class
+     * @param clazz The class of the object to get
+     * @param <T> The type of the object to return cast
+     * @return An object of the type of the class provided
      */
     public <T> T get(int index, Class<T> clazz) {
-        final HyriCommandOutputObjects<T> object = this.getObjects(clazz);
+        final List<Object> objects = this.objectsMap.get(clazz);
 
-        if (object != null) {
-            return this.getObjects(clazz).get(index);
+        if (objects == null) {
+            return null;
         }
-        throw new IllegalArgumentException("Couldn't find output objects with the provided class (" + clazz + ")!");
+
+        return clazz.cast(objects.get(index));
     }
 
     /**
-     * Get a value of a class
+     * Get an object stored in the output by giving its {@link Class} and index
      *
-     * @param clazz Class of the object
-     * @param <T> A simple type
-     * @return The value
+     * @param clazz The class of the object to get
+     * @param <T> The type of the object to return cast
+     * @return An object of the type of the class provided
      */
     public <T> T get(Class<T> clazz) {
         return this.get(0, clazz);
-    }
-
-    /**
-     * Get all output objects from a class
-     *
-     * @param clazz Class of the objects
-     * @param <T> A simple type
-     * @return {@link HyriCommandOutputObjects}
-     */
-    @SuppressWarnings("unchecked")
-    public <T> HyriCommandOutputObjects<T> getObjects(Class<T> clazz) {
-        for (HyriCommandOutputObjects<?> objects : this.objectsList) {
-            if (clazz.isAssignableFrom(objects.getClazz())) {
-                return (HyriCommandOutputObjects) objects;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This class is representing an output objects
-     *
-     * @param <T> The type of the objects
-     */
-    public static class HyriCommandOutputObjects<T> {
-
-        /** Objects class */
-        private final Class<T> clazz;
-        /** All the values */
-        private final List<T> values;
-
-        /**
-         * Constructor of {@link HyriCommandOutputObjects}
-         *
-         * @param clazz Objects class
-         */
-        public HyriCommandOutputObjects(Class<T> clazz) {
-            this.clazz = clazz;
-            this.values = new ArrayList<>();
-        }
-
-        /**
-         * Add an object
-         *
-         * @param value Object to add
-         */
-        public void add(T value) {
-            this.values.add(value);
-        }
-
-        /**
-         * Get an object
-         *
-         * @param index Index of the object in the values
-         * @return The object at the provided index
-         */
-        public T get(int index) {
-            return this.values.get(index);
-        }
-
-        /**
-         * Get objects class
-         *
-         * @return A {@link Class}
-         */
-        public Class<T> getClazz() {
-            return this.clazz;
-        }
-
-        /**
-         * Get all values
-         *
-         * @return A list of values
-         */
-        public List<T> getValues() {
-            return this.values;
-        }
-
     }
 
 }

@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Locale;
 import java.util.function.Consumer;
 
 /**
@@ -49,37 +50,46 @@ public abstract class HyriCommand<T extends JavaPlugin> {
      */
     protected void handleArgument(HyriCommandContext ctx, String expected, String usage, Consumer<HyriCommandOutput> callback) {
         if (ctx.getResult() == null || ctx.getResult().getType() == HyriCommandResult.Type.ERROR) {
-            final String[] expectedArgs = expected.split(" ");
+            final String[] expectedArgs = expected.toLowerCase(Locale.ROOT).split(" ");
             final String[] args = ctx.getArgs();
 
-            if (args.length == expectedArgs.length) {
-                final HyriCommandOutput output = new HyriCommandOutput();
+            if (args.length == 0 && expectedArgs.length > 0) {
+                this.invalidCommandMessage(ctx, usage);
+                return;
+            }
 
-                for (int i = 0; i < args.length; i++) {
-                    final String expectedArg = expectedArgs[i];
-                    final String arg = args[i];
+            final HyriCommandOutput output = new HyriCommandOutput();
 
-                    if (!arg.equalsIgnoreCase(expectedArg)) {
-                        final HyriCommandCheck check = HyriCommandCheck.fromSequence(expectedArg);
+            ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.SUCCESS));
 
-                        if (check == null) {
-                            this.invalidCommandMessage(ctx, usage);
-                            return;
-                        } else {
-                            if (check.validate(ctx, arg)) {
-                                output.add(check.get(arg).getClass(), check.get(arg));
-                            } else {
-                                return;
-                            }
-                        }
+            for (int i = 0; i < args.length; i++) {
+                final String arg = args[i];
+                final String expectedArg = expectedArgs[i];
+
+                ctx.setArgumentPosition(i);
+
+                if (!arg.equalsIgnoreCase(expectedArg)) {
+                    final HyriCommandCheck check = HyriCommandCheck.fromSequence(expectedArg);
+
+                    if (check == null) {
+                        this.invalidCommandMessage(ctx, arg);
+                        return;
+                    }
+
+                    final boolean continueProcess = check.runAction(ctx, output, arg);
+                    final HyriCommandResult result = ctx.getResult();
+
+                    if (result.getType() == HyriCommandResult.Type.ERROR) {
+                        return;
+                    }
+
+                    if (!continueProcess) {
+                        break;
                     }
                 }
-
-                callback.accept(output);
-                ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.SUCCESS, ""));
-            } else {
-                this.invalidCommandMessage(ctx, usage);
             }
+
+            callback.accept(output);
         }
     }
 
@@ -96,10 +106,13 @@ public abstract class HyriCommand<T extends JavaPlugin> {
         final CommandSender sender = ctx.getSender();
 
         String message = ChatColor.RED + "";
-        if (sender instanceof Player) {
-            message += HyriCommonMessages.INVALID_COMMAND.getForPlayer((Player) sender);
-        } else {
-            message += HyriCommonMessages.INVALID_COMMAND.getValue(HyriLanguage.EN);
+
+        if (this.info.isInvalidMessage()) {
+            if (sender instanceof Player) {
+                message += HyriCommonMessages.INVALID_COMMAND.getForPlayer((Player) sender);
+            } else {
+                message += HyriCommonMessages.INVALID_COMMAND.getValue(HyriLanguage.EN);
+            }
         }
 
         ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, message + ChatColor.RESET + usage));
