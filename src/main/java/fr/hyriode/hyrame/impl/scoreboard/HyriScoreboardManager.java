@@ -7,7 +7,6 @@ import fr.hyriode.hyrame.scoreboard.HyriScoreboardEvent;
 import fr.hyriode.hyrame.scoreboard.IHyriScoreboardManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

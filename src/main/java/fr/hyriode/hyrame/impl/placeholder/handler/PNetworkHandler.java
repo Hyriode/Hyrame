@@ -4,7 +4,6 @@ import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.HyriConstants;
 import fr.hyriode.api.network.IHyriMaintenance;
 import fr.hyriode.api.network.IHyriNetwork;
-import fr.hyriode.hyrame.placeholder.PlaceholderHandler;
 import fr.hyriode.hyrame.placeholder.PlaceholderPrefixHandler;
 import org.bukkit.entity.Player;
 

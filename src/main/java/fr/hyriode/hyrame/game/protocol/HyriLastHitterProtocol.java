@@ -2,13 +2,17 @@ package fr.hyriode.hyrame.game.protocol;
 
 import com.google.common.collect.Sets;
 import fr.hyriode.hyrame.IHyrame;
+import fr.hyriode.hyrame.game.HyriGamePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -92,7 +96,7 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
         final Set<LastHitter> lastHitters = this.lastHitters.get(player);
 
         if (lastHitters != null) {
-            return lastHitters.stream().filter(h -> h.getPlayer().equals(hitter)).findFirst().orElse(null);
+            return lastHitters.stream().filter(h -> h.asPlayer().equals(hitter)).findFirst().orElse(null);
         }
         return null;
     }
@@ -122,7 +126,7 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
         this.removeTime = removeTime;
     }
 
-    public static class LastHitter {
+    public class LastHitter {
 
         private final Player player;
         private int hits;
@@ -132,8 +136,12 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
             this.hits = 1;
         }
 
-        public Player getPlayer() {
+        public Player asPlayer() {
             return this.player;
+        }
+
+        public HyriGamePlayer asGamePlayer() {
+            return hyrame.getGameManager().getCurrentGame().getPlayer(this.player.getUniqueId());
         }
 
         public Integer getHits() {

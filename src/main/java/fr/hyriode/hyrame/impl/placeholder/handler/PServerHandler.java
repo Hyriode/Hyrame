@@ -2,7 +2,6 @@ package fr.hyriode.hyrame.impl.placeholder.handler;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.server.IHyriServer;
-import fr.hyriode.hyrame.placeholder.PlaceholderHandler;
 import fr.hyriode.hyrame.placeholder.PlaceholderPrefixHandler;
 import org.bukkit.entity.Player;
 

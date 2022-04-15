@@ -117,7 +117,7 @@ public class HyriGameTeam {
      * @param player A given player
      * @return A formatted name
      */
-    public String formatName(Player player) {
+    public String formatPlayerName(Player player) {
         if (this.getPlayer(player.getUniqueId()) != null) {
             return this.color.getChatColor() + player.getDisplayName();
         }
@@ -270,7 +270,7 @@ public class HyriGameTeam {
      * @return A formatted message
      */
     public String getFormattedDisplayName(Player target) {
-        return this.color.getChatColor() + this.getDisplayName().getForPlayer(target);
+        return this.color.getChatColor() + this.displayName.getForPlayer(target);
     }
 
     /**

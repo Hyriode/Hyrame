@@ -1,7 +1,5 @@
 package fr.hyriode.hyrame.impl.placeholder;
 
-import fr.hyriode.hyrame.IHyrame;
-import fr.hyriode.hyrame.impl.placeholder.handler.PlaceholderRegistry;
 import fr.hyriode.hyrame.placeholder.PlaceholderAPI;
 import fr.hyriode.hyrame.placeholder.PlaceholderHandler;
 import org.bukkit.OfflinePlayer;

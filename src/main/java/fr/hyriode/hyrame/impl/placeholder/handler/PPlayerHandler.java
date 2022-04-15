@@ -45,8 +45,6 @@ public class PPlayerHandler extends PlaceholderPrefixHandler {
                 return account.getCurrentProxy();
             case "hyris":
                 return String.valueOf(account.getHyris().getAmount());
-            case "hyode":
-                return String.valueOf(account.getHyode().getAmount());
             case "uuid":
                 return playerId.toString();
             case "prefix":

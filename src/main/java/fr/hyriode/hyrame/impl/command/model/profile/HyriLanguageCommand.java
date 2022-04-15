@@ -3,7 +3,6 @@ package fr.hyriode.hyrame.impl.command.model.profile;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.player.IHyriPlayerManager;
-import fr.hyriode.api.rank.EHyriRank;
 import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;

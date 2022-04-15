@@ -4,7 +4,6 @@ import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.rank.EHyriRank;
 import fr.hyriode.api.rank.HyriRank;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -27,14 +26,11 @@ public class RankUtil {
      * @return The displayed rank prefix
      */
     public static String formatRankForPlayer(HyriRank rank, Player target, boolean separator) {
-        final HyriLanguageMessage rankDisplayNames = HyriLanguageMessage.from(rank.getDisplayNames());
-        final String value = rankDisplayNames.getForPlayer(target);
-
         if (rank.getType() == EHyriRank.PLAYER) {
             return ChatColor.GRAY + "";
         }
 
-        return value + (separator ? ChatColor.WHITE + "・" + value.substring(0, 2) : "");
+        return rank.getPrefix() + (separator ? ChatColor.WHITE + "・" + rank.getPrefix().substring(0, 2) : "");
     }
 
     /**
