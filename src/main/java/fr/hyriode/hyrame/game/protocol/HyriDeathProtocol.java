@@ -4,6 +4,7 @@ import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
+import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent.Reason;
 import fr.hyriode.hyrame.game.util.HyriDeathMessages;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
@@ -25,6 +26,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -185,10 +187,18 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
             this.playDeathSound(bestLastHitter);
         }
 
-        gamePlayer.setDead(reason, lastHitters);
+        final HyriGameDeathEvent event = gamePlayer.setDead(reason, lastHitters);
 
         if (this.options.isDeathMessages()) {
-            this.getGame().sendMessageToAll(target -> HyriDeathMessages.createDeathMessage(gamePlayer, target, reason, lastHitters));
+            this.getGame().sendMessageToAll(target -> {
+                final StringBuilder builder = new StringBuilder(HyriDeathMessages.createDeathMessage(gamePlayer, target, reason, lastHitters)).append(" ");
+
+                for (HyriLanguageMessage message : event.getMessagesToAdd()) {
+                    builder.append(message.getForPlayer(target)).append(" ");
+                }
+
+                return builder.toString();
+            });
         }
 
         if (this.continueDeath.test(gamePlayer)) {

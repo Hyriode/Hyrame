@@ -3,7 +3,9 @@ package fr.hyriode.hyrame.game.event.player;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.protocol.HyriLastHitterProtocol;
+import fr.hyriode.hyrame.language.HyriLanguageMessage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +19,8 @@ public class HyriGameDeathEvent extends HyriGamePlayerEvent {
     private final Reason reason;
     /** The list of  killers. It might be <code>null</code> if the player was not killed by a player*/
     private final List<HyriLastHitterProtocol.LastHitter> killers;
+    /** A list of messages to add after the death message */
+    private final List<HyriLanguageMessage> messagesToAdd;
 
     /**
      * Constructor of {@link HyriGameDeathEvent}
@@ -29,6 +33,7 @@ public class HyriGameDeathEvent extends HyriGamePlayerEvent {
         super(game, gamePlayer);
         this.reason = reason;
         this.killers = killers;
+        this.messagesToAdd = new ArrayList<>();
     }
 
     /**
@@ -59,6 +64,24 @@ public class HyriGameDeathEvent extends HyriGamePlayerEvent {
             return this.killers.get(0);
         }
        return null;
+    }
+
+    /**
+     * Add a message to add after the death message
+     *
+     * @param message The message to add
+     */
+    public void addMessage(HyriLanguageMessage message) {
+        this.messagesToAdd.add(message);
+    }
+
+    /**
+     * Get the list of messages to add
+     *
+     * @return A list of {@link HyriLanguageMessage}
+     */
+    public List<HyriLanguageMessage> getMessagesToAdd() {
+        return this.messagesToAdd;
     }
 
     /**

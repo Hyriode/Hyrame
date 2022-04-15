@@ -162,11 +162,16 @@ public class HyriGamePlayer {
      * Set if player is dead
      *
      * @param killers The list of players that killed the player
+     * @return The death event fired
      */
-    public void setDead(HyriGameDeathEvent.Reason reason, List<HyriLastHitterProtocol.LastHitter> killers) {
+    public HyriGameDeathEvent setDead(HyriGameDeathEvent.Reason reason, List<HyriLastHitterProtocol.LastHitter> killers) {
         this.dead = true;
 
-        HyriAPI.get().getEventBus().publish(new HyriGameDeathEvent(this.game, this, reason, killers));
+        final HyriGameDeathEvent event = new HyriGameDeathEvent(this.game, this, reason, killers);
+
+        HyriAPI.get().getEventBus().publish(event);
+
+        return event;
     }
 
     /**
