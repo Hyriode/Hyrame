@@ -27,6 +27,7 @@ public abstract class HyriGameProtocol implements Listener {
     /**
      * Constructor of {@link HyriGameProtocol}
      *
+     * @param hyrame The {@link IHyrame} instance
      * @param name A name
      */
     public HyriGameProtocol(IHyrame hyrame, String name) {

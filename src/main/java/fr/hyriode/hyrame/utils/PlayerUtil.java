@@ -56,6 +56,7 @@ public class PlayerUtil {
         player.setHealth(20.0D);
         player.setLevel(0);
         player.setExp(0.0F);
+        player.setFireTicks(0);
 
         resetPotionEffects(player);
         removeArrowsFromBody(player);
