@@ -11,16 +11,16 @@ import fr.hyriode.hyrame.impl.HyramePlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class HyriSpecialCommand extends HyriCommand<HyramePlugin> {
+public class ForceMsgCommand extends HyriCommand<HyramePlugin> {
 
     public enum Permission implements HyriPermission {
         USE
     }
 
-    public HyriSpecialCommand(HyramePlugin plugin) {
-        super(plugin, new HyriCommandInfo("special")
-                .withDescription("Special commands for staff")
-                .withUsage("/special <action>")
+    public ForceMsgCommand(HyramePlugin plugin) {
+        super(plugin, new HyriCommandInfo("forcemsg")
+                .withDescription("Force a message to a chat")
+                .withUsage("/forcemsg <chat> <message>")
                 .withType(HyriCommandType.PLAYER));
 
         Permission.USE.add(EHyriRank.STAFF);
@@ -30,7 +30,7 @@ public class HyriSpecialCommand extends HyriCommand<HyramePlugin> {
     public void handle(HyriCommandContext ctx) {
         final Player player = (Player) ctx.getSender();
 
-        this.handleArgument(ctx, "chat %input% %sentence%", output -> {
+        this.handleArgument(ctx, "%input% %sentence%", output -> {
             final String chat = output.get(0, String.class);
 
             if (HyriAPI.get().getChatChannelManager().getHandler(chat) == null) {

@@ -8,7 +8,6 @@ import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Project: Hyrame
@@ -28,6 +27,7 @@ public abstract class HyriGameProtocol implements Listener {
     /**
      * Constructor of {@link HyriGameProtocol}
      *
+     * @param hyrame The {@link IHyrame} instance
      * @param name A name
      */
     public HyriGameProtocol(IHyrame hyrame, String name) {

@@ -3,12 +3,14 @@ package fr.hyriode.hyrame.game;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent;
+import fr.hyriode.hyrame.game.protocol.HyriLastHitterProtocol;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.utils.PacketUtil;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -43,6 +45,18 @@ public class HyriGamePlayer {
     public HyriGamePlayer(HyriGame<?> game, Player player) {
         this.game = game;
         this.player = player;
+    }
+
+    /**
+     * Format the name of the player with his team color
+     *
+     * @return A formatted player name
+     */
+    public String formatNameWithTeam() {
+        if (this.team != null) {
+            return this.team.formatPlayerName(this.player);
+        }
+        return this.player.getName();
     }
 
     /**
@@ -147,26 +161,24 @@ public class HyriGamePlayer {
     /**
      * Set if player is dead
      *
-     * @param killer The player that killed him
+     * @param killers The list of players that killed the player
+     * @return The death event fired
      */
-    public void setDead(HyriGamePlayer killer) {
+    public HyriGameDeathEvent setDead(HyriGameDeathEvent.Reason reason, List<HyriLastHitterProtocol.LastHitter> killers) {
         this.dead = true;
 
-        HyriAPI.get().getEventBus().publish(new HyriGameDeathEvent(this.game, this, killer));
+        final HyriGameDeathEvent event = new HyriGameDeathEvent(this.game, this, reason, killers);
+
+        HyriAPI.get().getEventBus().publish(event);
+
+        return event;
     }
 
-
     /**
-     * Set if player is dead
-     *
-     * @param dead <code>true</code> to set as dead
+     * Set the player no longer dead
      */
-    public void setDead(boolean dead) {
-        if (dead) {
-            this.setDead(null);
-        } else {
-            this.dead = false;
-        }
+    public void setNotDead() {
+        this.dead = false;
     }
 
     /**

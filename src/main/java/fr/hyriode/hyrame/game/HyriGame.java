@@ -59,7 +59,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     protected int maxPlayers;
 
     /** Tab list manager object */
-    protected final HyriGameTabListManager tabListManager;
+    protected HyriGameTabListManager tabListManager;
 
     /** The manager of all {@link fr.hyriode.hyrame.game.protocol.HyriGameProtocol} */
     protected final HyriGameProtocolManager protocolManager;
@@ -70,6 +70,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     protected BukkitTask startingTimerTask;
     /** Is default starting */
     protected boolean defaultStarting = true;
+    /** Is tab list used */
+    protected boolean usingTabList = true;
 
     /** Game timer task */
     protected BukkitTask timerTask;
@@ -121,7 +123,10 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         this.protocolManager = new HyriGameProtocolManager(this.plugin, this);
         this.minPlayers = 4;
         this.maxPlayers = this.minPlayers;
-        this.tabListManager = new HyriGameTabListManager(this);
+
+        if (this.usingTabList) {
+            this.tabListManager = new HyriGameTabListManager(this);
+        }
     }
 
     /**
@@ -188,7 +193,9 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
                     HyriAPI.get().getRedisProcessor().process(jedis -> jedis.set(CURRENT_GAME_KEY + p.getUniqueId().toString(), this.getName()));
 
-                    this.tabListManager.handleLogin(p);
+                    if (this.usingTabList) {
+                        this.tabListManager.handleLogin(p);
+                    }
                 }
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
@@ -218,7 +225,9 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
             player.getTeam().removePlayer(player);
         }
 
-        this.tabListManager.handleLogout(p);
+        if (this.usingTabList) {
+            this.tabListManager.handleLogout(p);
+        }
     }
 
     /**
@@ -265,7 +274,9 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         if (this.getTeam(team.getName()) == null) {
             this.teams.add(team);
 
-            this.tabListManager.addTeam(team);
+            if (this.usingTabList) {
+                this.tabListManager.addTeam(team);
+            }
 
             HyriAPI.get().getEventBus().publish(new HyriGameTeamRegisteredEvent(this, team));
 
@@ -283,7 +294,9 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         if (this.getTeam(team.getName()) != null) {
             this.teams.remove(team);
 
-            this.tabListManager.removeTeam(team);
+            if (this.usingTabList) {
+                this.tabListManager.removeTeam(team);
+            }
 
             HyriAPI.get().getEventBus().publish(new HyriGameTeamUnregisteredEvent(this, team));
             return;
@@ -319,7 +332,9 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * Update tab list if its used
      */
     public void updateTabList() {
-        this.tabListManager.updateTabList();
+        if (this.usingTabList) {
+            this.tabListManager.updateTabList();
+        }
     }
 
     /**

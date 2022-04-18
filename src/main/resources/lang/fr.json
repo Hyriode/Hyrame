@@ -11,5 +11,19 @@
   "message.game-join": " a rejoint",
   "message.game-left": " a quitté",
 
-  "error.chat.dead": "Tu ne peux pas parler dans le chat quand tu es mort !"
+  "error.chat.dead": "Tu ne peux pas parler dans le chat quand tu es mort !",
+
+  "message.death.player": "%player% &7a été tué par %killer%&7.",
+  "message.death.players": "%player% &7a été tué par %killer% &7et %second_killer%&7.",
+  "message.death.void": "%player% &7est tombé dans le vide.",
+  "message.death.player-and-void": "%player% &7a été tué par %killer% &7et le vide.",
+  "message.death.fall": "%player% &7s'est écrasé sur le sol.",
+  "message.death.player-and-fall": "%player% &7a été tué par %killer% &et le sol.",
+  "message.death.explosion": "%player% &7est mort d'une explosion.",
+  "message.death.player-and-explosion": "%player% &7est mort d'une explosion et par %killer%&7.",
+  "message.death.lava": "%player% &7est mort par la lave.",
+  "message.death.player-and-lava": "%player% &7est mort par la lave et %killer%&7.",
+  "message.death.fire": "%player% &7est mort brûlé par du feu.",
+  "message.death.player-and-fire": "%player% a été tué par %killer% &et du feu.",
+  "message.death.unknown": "%player% &7est mort."
 }

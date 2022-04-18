@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 public class HyriTabHandler {
 
     private final HyriScoreboardTeamHandler teamHandler;
+
     private final Hyrame hyrame;
 
     public HyriTabHandler(Hyrame hyrame) {

@@ -5,7 +5,6 @@ import fr.hyriode.api.event.HyriEvent;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.settings.HyriLanguage;
 import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
 
 /**
  * Project: Hyrame

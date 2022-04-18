@@ -17,12 +17,12 @@ public class HyriCommonMessages {
     /** Player was not found */
     public static final HyriLanguageMessage PLAYER_NOT_FOUND = new HyriLanguageMessage("player.not.found")
             .addValue(HyriLanguage.EN, "Couldn't find a player called: ")
-            .addValue(HyriLanguage.FR, "Impossible de trouver un joueur appelé: ");
+            .addValue(HyriLanguage.FR, "Impossible de trouver un joueur appelé : ");
 
     /** The command is invalid */
     public static final HyriLanguageMessage INVALID_COMMAND = new HyriLanguageMessage("invalid.command")
             .addValue(HyriLanguage.EN, "Invalid command: ")
-            .addValue(HyriLanguage.FR, "Commande invalide: ");
+            .addValue(HyriLanguage.FR, "Commande invalide : ");
 
     /** The number is invalid */
     public static final HyriLanguageMessage INVALID_NUMBER = new HyriLanguageMessage("invalid.number")

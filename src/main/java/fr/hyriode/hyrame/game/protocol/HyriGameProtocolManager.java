@@ -1,6 +1,5 @@
 package fr.hyriode.hyrame.game.protocol;
 
-import com.google.gson.Gson;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.event.protocol.HyriGameProtocolDisabledEvent;

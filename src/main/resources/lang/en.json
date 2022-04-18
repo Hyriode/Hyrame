@@ -11,5 +11,21 @@
   "message.game-join": " joined",
   "message.game-left": " left",
 
-  "error.chat.dead": "You can't speak in the chat when you are dead!"
+  "error.chat.dead": "You can't speak in the chat when you are dead!",
+
+  "message.death.player": "%player% &7was killed by %killer%&7.",
+  "message.death.players": "%player% &7was killed by %killer% &7and %second_killer%&7.",
+  "message.death.void": "%player% &7fell into the void.",
+  "message.death.player-and-void": "%player% &7was killed by %killer% &7and the void.",
+  "message.death.fall": "%player% &7hit the ground too hard.",
+  "message.death.player-and-fall": "%player% &7was killed by %killer% &7and the ground.",
+  "message.death.explosion": "%player% &7died from explosion.",
+  "message.death.player-and-explosion": "%player% &7died from explosion and %killer%&7.",
+  "message.death.lava": "%player% &7died from lava.",
+  "message.death.player-and-lava": "%player% &7died from lava and %killer%&7.",
+  "message.death.fire": "%player% &7burned in the fire.",
+  "message.death.player-and-fire": "%player% was killed by %killer% &7and the fire.",
+  "message.death.lightning": "%player% &7was struck by lightning.",
+  "message.death.player-and-lightning": "%player% &7was struck by lightning and %killer%.",
+  "message.death.unknown": "%player% &7died."
 }

@@ -4,6 +4,9 @@ import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
+import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
+import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent.Reason;
+import fr.hyriode.hyrame.game.util.HyriDeathMessages;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
@@ -22,8 +25,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -41,9 +44,6 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
     private static final HyriLanguageMessage RESPAWN = new HyriLanguageMessage("")
             .addValue(HyriLanguage.EN, "Respawn in")
             .addValue(HyriLanguage.FR, "Réapparition dans");
-
-    /** A list of players used to cancel double deaths */
-    private final List<Player> deadPlayers = new ArrayList<>();
 
     /** The options of the protocol */
     private Options options;
@@ -80,7 +80,7 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
             this.screen.callback = p -> {
                 final HyriGamePlayer gPlayer = this.getGamePlayer(p);
 
-                gPlayer.setDead(false);
+                gPlayer.setNotDead();
                 gPlayer.show();
 
                 p.setAllowFlight(false);
@@ -116,11 +116,34 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
             final Player player = (Player) event.getEntity();
+            final EntityDamageEvent.DamageCause cause = event.getCause();
 
             if (player.getHealth() - event.getFinalDamage() <= 0.0D) {
                 event.setCancelled(true);
-                this.runDeath(player);
+                this.runDeath(this.getReasonFromCause(cause), player);
             }
+        }
+    }
+
+    private Reason getReasonFromCause(EntityDamageEvent.DamageCause cause) {
+        switch (cause) {
+            case FALL:
+                return Reason.FALL;
+            case VOID:
+                return Reason.VOID;
+            case BLOCK_EXPLOSION:
+                return Reason.BLOCK_EXPLOSION;
+            case ENTITY_EXPLOSION:
+                return Reason.ENTITY_EXPLOSION;
+            case LAVA:
+                return Reason.LAVA;
+            case FIRE:
+            case FIRE_TICK:
+                return Reason.FIRE;
+            case LIGHTNING:
+                return Reason.LIGHTNING;
+            default:
+                return Reason.PLAYERS;
         }
     }
 
@@ -132,7 +155,7 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
             final Location to = event.getTo();
 
             if (to.getY() <= yOptions.getMinimumY()) {
-                this.runDeath(event.getPlayer());
+                this.runDeath(Reason.VOID, event.getPlayer());
             }
         }
     }
@@ -141,65 +164,74 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
      * Run the death protocol on a player.<br>
      * Warning: You can call this method only if you need, else it will be done automatically
      *
+     * @param reason The reason to run the death
      * @param player The {@link Player} used to run the protocol
      */
-    public void runDeath(Player player) {
-        if (!this.deadPlayers.contains(player)) {
-            this.deadPlayers.add(player);
+    public void runDeath(Reason reason, Player player) {
+        final HyriGamePlayer gamePlayer = this.getGamePlayer(player);
 
-            final HyriLastHitterProtocol lastHitterProtocol = this.getProtocolManager().getProtocol(HyriLastHitterProtocol.class);
-            final List<HyriLastHitterProtocol.LastHitter> lastHitters = lastHitterProtocol.getLastHitters(player);
-            final HyriGamePlayer gamePlayer = this.getGamePlayer(player);
+        if (gamePlayer == null || gamePlayer.isSpectator() || gamePlayer.isDead()) {
+            return;
+        }
 
-            player.spigot().setCollidesWithEntities(false);
+        final HyriLastHitterProtocol lastHitterProtocol = this.getProtocolManager().getProtocol(HyriLastHitterProtocol.class);
+        final List<HyriLastHitterProtocol.LastHitter> lastHitters = lastHitterProtocol.getLastHitters(player);
 
-            if (!gamePlayer.isSpectator()) {
-                gamePlayer.hide(false);
+        player.spigot().setCollidesWithEntities(false);
 
-                if (lastHitters != null) {
-                    final Player bestLastHitter = lastHitters.get(0).getPlayer();
+        gamePlayer.hide(false);
 
-                    this.playDeathSound(bestLastHitter);
+        if (lastHitters != null) {
+            final Player bestLastHitter = lastHitters.get(0).asPlayer();
 
-                    gamePlayer.setDead(this.getGamePlayer(bestLastHitter));
-                } else {
-                    gamePlayer.setDead(true);
+            this.playDeathSound(bestLastHitter);
+        }
+
+        final HyriGameDeathEvent event = gamePlayer.setDead(reason, lastHitters);
+
+        if (this.options.isDeathMessages()) {
+            this.getGame().sendMessageToAll(target -> {
+                final StringBuilder builder = new StringBuilder(HyriDeathMessages.createDeathMessage(gamePlayer, target, reason, lastHitters)).append(" ");
+
+                for (HyriLanguageMessage message : event.getMessagesToAdd()) {
+                    builder.append(message.getForPlayer(target)).append(" ");
                 }
 
-                PlayerUtil.resetPlayer(player, true);
-                PlayerUtil.addSpectatorAbilities(player);
+                return builder.toString();
+            });
+        }
 
-                // TODO Death messages
+        if (this.continueDeath.test(gamePlayer)) {
+            PlayerUtil.resetPlayer(player, true);
+            PlayerUtil.addSpectatorAbilities(player);
 
-                if (this.continueDeath.test(gamePlayer)) {
-                    if (this.getGame().getState() != HyriGameState.ENDED) {
-                        if (this.screen != null && this.screenHandler != null) {
-                            try {
-                                this.screenHandler.getConstructor().newInstance().start(this.plugin, this.screen, player);
-                            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                } else {
-                    if (this.getGame().getState() != HyriGameState.ENDED) {
-                        player.setAllowFlight(false);
-                        player.setFlying(false);
-
-                        player.spigot().setCollidesWithEntities(true);
-
-                        PlayerUtil.resetPotionEffects(player);
-
-                        gamePlayer.show();
-                        gamePlayer.setSpectator(true);
+            if (this.getGame().getState() != HyriGameState.ENDED) {
+                if (this.screen != null && this.screenHandler != null) {
+                    try {
+                        this.screenHandler.getConstructor().newInstance().start(this.plugin, this.screen, player);
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                        e.printStackTrace();
                     }
                 }
             }
+        } else {
+            PlayerUtil.resetPlayer(player, true);
+            PlayerUtil.addSpectatorAbilities(player);
 
-            lastHitterProtocol.removeLastHitters(player);
+            if (this.getGame().getState() != HyriGameState.ENDED) {
+                player.setAllowFlight(false);
+                player.setFlying(false);
 
-            this.deadPlayers.remove(player);
+                player.spigot().setCollidesWithEntities(true);
+
+                PlayerUtil.resetPotionEffects(player);
+
+                gamePlayer.show();
+                gamePlayer.setSpectator(true);
+            }
         }
+
+        lastHitterProtocol.removeLastHitters(player);
     }
 
     /**
@@ -222,14 +254,6 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
     public HyriDeathProtocol withOptions(Options options) {
         this.options = options;
         return this;
-    }
-
-    public enum Reason {
-        VOID,
-        PLAYER,
-        KNOCKBACK,
-        DISCONNECT,
-        OTHER
     }
 
     /**

@@ -40,7 +40,7 @@ public class HyriTabManager {
             final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
 
             if (this.hyrame.getConfiguration().areRanksInTabList()) {
-                handler.onLogin(player);
+                this.handler.onLogin(player);
             }
 
             final Tab tab = configuration.getTab() == null ? this.getTabForPlayer(account) : configuration.getTab();
@@ -51,16 +51,16 @@ public class HyriTabManager {
 
     public void onLogout(Player player) {
         ThreadUtil.EXECUTOR.execute(() -> {
-            handler.onLogout(player);
+            this.handler.onLogout(player);
         });
     }
 
     public void enableTabList() {
-        handler.enable();
+        this.handler.enable();
     }
 
     public void disableTabList() {
-        handler.disable();
+        this.handler.disable();
     }
 
     private Tab getTabForPlayer(IHyriPlayer player) {

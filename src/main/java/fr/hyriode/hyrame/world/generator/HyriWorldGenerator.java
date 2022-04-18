@@ -1,7 +1,6 @@
 package fr.hyriode.hyrame.world.generator;
 
 import fr.hyriode.hyrame.HyrameLogger;
-import fr.hyriode.hyrame.reflection.Reflection;
 import fr.hyriode.hyrame.world.HyriWorldSettings;
 import net.minecraft.server.v1_8_R3.BiomeBase;
 import org.bukkit.Bukkit;
@@ -11,7 +10,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**

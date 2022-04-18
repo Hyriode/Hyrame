@@ -1,7 +1,6 @@
 package fr.hyriode.hyrame.scoreboard;
 
 import fr.hyriode.api.event.HyriEvent;
-import fr.hyriode.hyrame.inventory.HyriInventory;
 import org.bukkit.entity.Player;
 
 /**

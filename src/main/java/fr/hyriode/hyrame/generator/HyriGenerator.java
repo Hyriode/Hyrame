@@ -274,23 +274,25 @@ public class HyriGenerator {
         @EventHandler
         public void onPickup(PlayerPickupItemEvent event) {
             final ItemStack itemStack = event.getItem().getItemStack();
+            final Player player = event.getPlayer();
 
-            if (ignoredPlayers.contains(event.getPlayer())) {
+            if (ignoredPlayers.contains(player)) {
                 event.setCancelled(true);
                 return;
             }
 
-            if (tier.isSplitting()) {
-                if (splitItem()) {
-                    event.setCancelled(true);
-                    event.getItem().remove();
-                }
-            } else {
-                final ItemNBT nbt = new ItemNBT(itemStack);
+            final ItemNBT nbt = new ItemNBT(itemStack);
 
-                if (nbt.hasTag(ITEMS_TAG)) {
-                    nbt.removeTag(ITEMS_TAG);
+            if (nbt.hasTag(ITEMS_TAG)) {
+                if (tier.isSplitting()) {
+                    if (splitItem()) {
+                        event.setCancelled(true);
+                        event.getItem().remove();
+                        return;
+                    }
                 }
+
+                nbt.removeTag(ITEMS_TAG);
             }
         }
 

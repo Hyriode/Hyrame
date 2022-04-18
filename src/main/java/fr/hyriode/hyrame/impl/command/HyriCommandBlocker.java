@@ -1,7 +1,6 @@
 package fr.hyriode.hyrame.impl.command;
 
 import fr.hyriode.hyrame.HyrameLogger;
-import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.reflection.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;

@@ -5,16 +5,18 @@ import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.impl.Hyrame;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.InventoryHolder;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -44,7 +46,13 @@ class HyriGameHandler implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onInteract(PlayerInteractEvent event) {
-        this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING || game.getPlayer(event.getPlayer()).isSpectator());
+        this.runActionOnGame(game -> {
+            final Block block = event.getClickedBlock();
+
+            if (block != null && block.getState() instanceof InventoryHolder && event.getAction() != Action.LEFT_CLICK_BLOCK) {
+                event.setCancelled(true);
+            }
+        }, game -> game.getState() != HyriGameState.PLAYING || game.getPlayer(event.getPlayer()).isSpectator());
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -69,11 +77,6 @@ class HyriGameHandler implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onDrop(PlayerDropItemEvent event) {
         this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING || game.getPlayer(event.getPlayer()).isSpectator());
-    }
-
-    @EventHandler(priority = EventPriority.LOW)
-    public void onBlockPlace(BlockPlaceEvent event) {
-        this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING);
     }
 
     @EventHandler(priority = EventPriority.LOW)
