@@ -9,6 +9,11 @@ import fr.hyriode.api.settings.HyriLanguage;
  */
 public class HyriCommonMessages {
 
+    /** Sentence is empty */
+    public static final HyriLanguageMessage EMPTY_SENTENCE = new HyriLanguageMessage("sentence.empty")
+            .addValue(HyriLanguage.EN, "The sentence is empty !")
+            .addValue(HyriLanguage.FR, "La phrase est vide !");
+
     /** Player was not found */
     public static final HyriLanguageMessage PLAYER_NOT_FOUND = new HyriLanguageMessage("player.not.found")
             .addValue(HyriLanguage.EN, "Couldn't find a player called: ")

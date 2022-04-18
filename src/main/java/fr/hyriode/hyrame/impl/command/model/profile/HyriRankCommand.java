@@ -36,9 +36,10 @@ public class HyriRankCommand extends HyriCommand<HyramePlugin> {
             final HyriRank rank = HyriAPI.get().getRankManager().getRank(output.get(String.class));
 
             if (rank != null) {
-                account.setRank(rank);
+                final String displayName = (rank.getType() != EHyriRank.PLAYER ? rank.getPrefix() + ChatColor.WHITE + "・" + rank.getPrefix().substring(0, 2) : "") + player.getName();
 
-                playerManager.sendPlayer(account);
+                player.setDisplayName(displayName);
+                account.setRank(rank).setNameWithRank(displayName).update();
 
                 plugin.getHyrame().getTabManager().onLogout(player);
                 plugin.getHyrame().getTabManager().onLogin(player);
@@ -47,11 +48,10 @@ public class HyriRankCommand extends HyriCommand<HyramePlugin> {
             } else {
                 player.sendMessage(ChatColor.RED + "Invalid rank!");
 
-                final String newLine = "\n";
-                final StringBuilder builder = new StringBuilder("Available ranks: ").append(newLine);
+                final StringBuilder builder = new StringBuilder("Available ranks: ").append("\n");
 
                 for (EHyriRank r : EHyriRank.values()) {
-                    builder.append("- ").append(r.getName()).append(newLine);
+                    builder.append("- ").append(r.getName()).append("\n");
                 }
 
                 player.sendMessage(ChatColor.RED + builder.toString());

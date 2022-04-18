@@ -16,7 +16,6 @@ public interface IHyriChatHandler {
      */
     default void onChat(AsyncPlayerChatEvent event) {
         event.setCancelled(this.isCancelled());
-        event.setFormat(this.format());
     }
 
     /**

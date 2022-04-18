@@ -36,6 +36,8 @@ public class PNetworkHandler extends PlaceholderPrefixHandler {
                 }
             case "ip":
                 return HyriConstants.SERVER_IP;
+            case "name":
+                return HyriConstants.SERVER_NAME;
         }
         return null;
     }

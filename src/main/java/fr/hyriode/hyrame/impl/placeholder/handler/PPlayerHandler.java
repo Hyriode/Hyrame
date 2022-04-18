@@ -3,7 +3,6 @@ package fr.hyriode.hyrame.impl.placeholder.handler;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.placeholder.PlaceholderPrefixHandler;
-import fr.hyriode.hyrame.utils.RankUtil;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -48,9 +47,9 @@ public class PPlayerHandler extends PlaceholderPrefixHandler {
             case "uuid":
                 return playerId.toString();
             case "prefix":
-                return RankUtil.formatRankForPlayer(account.getRank(), player, false);
+                return account.getRank().getPrefix();
             case "full_prefix":
-                return RankUtil.formatPlayerName(playerId, player);
+                return player.getDisplayName();
         }
         return null;
     }

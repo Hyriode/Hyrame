@@ -76,7 +76,7 @@ public class HyriListenerManager implements IHyriListenerManager {
 
     @Override
     public <T extends HyriListener<?>> T getListener(Class<T> listenerClass) {
-        return (T) this.listeners.get(listenerClass);
+        return listenerClass.cast(this.listeners.get(listenerClass));
     }
 
     @Override
