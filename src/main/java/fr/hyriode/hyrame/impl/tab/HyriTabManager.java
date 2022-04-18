@@ -19,18 +19,17 @@ import java.util.Map;
  */
 public class HyriTabManager {
 
-    private final Map<HyriLanguage, HyriTabHandler> handlers;
+    private final HyriTabHandler handler;
     private final Map<HyriLanguage, Tab> tabs;
 
     private final Hyrame hyrame;
 
     public HyriTabManager(Hyrame hyrame) {
         this.hyrame = hyrame;
-        this.handlers = new HashMap<>();
+        this.handler = new HyriTabHandler(this.hyrame);
         this.tabs = new HashMap<>();
 
         for (HyriLanguage language : HyriLanguage.values()) {
-            this.handlers.put(language, new HyriTabHandler(this.hyrame, language));
             this.tabs.put(language, new HyriDefaultTab(this.hyrame, language));
         }
     }
@@ -41,9 +40,7 @@ public class HyriTabManager {
             final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
 
             if (this.hyrame.getConfiguration().areRanksInTabList()) {
-                for (HyriTabHandler handler : this.handlers.values()) {
-                    handler.onLogin(player);
-                }
+                handler.onLogin(player);
             }
 
             final Tab tab = configuration.getTab() == null ? this.getTabForPlayer(account) : configuration.getTab();
@@ -54,22 +51,16 @@ public class HyriTabManager {
 
     public void onLogout(Player player) {
         ThreadUtil.EXECUTOR.execute(() -> {
-            for (HyriTabHandler handler : this.handlers.values()) {
-                handler.onLogout(player);
-            }
+            handler.onLogout(player);
         });
     }
 
     public void enableTabList() {
-        for (HyriTabHandler handler : this.handlers.values()) {
-            handler.enable();
-        }
+        handler.enable();
     }
 
     public void disableTabList() {
-        for (HyriTabHandler handler : this.handlers.values()) {
-            handler.disable();
-        }
+        handler.disable();
     }
 
     private Tab getTabForPlayer(IHyriPlayer player) {

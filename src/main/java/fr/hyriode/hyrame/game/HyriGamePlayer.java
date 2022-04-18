@@ -186,7 +186,9 @@ public class HyriGamePlayer {
     public void setSpectator(boolean spectator) {
         this.spectator = spectator;
 
-        HyriAPI.get().getEventBus().publish(new HyriGameSpectatorEvent(this.game, this));
+        if (this.spectator) {
+            HyriAPI.get().getEventBus().publish(new HyriGameSpectatorEvent(this.game, this));
+        }
     }
 
     /**

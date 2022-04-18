@@ -4,7 +4,6 @@ import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.rank.EHyriRank;
 import fr.hyriode.api.rank.HyriRank;
-import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam;
 import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeamHandler;
@@ -20,13 +19,10 @@ import org.bukkit.entity.Player;
 public class HyriTabHandler {
 
     private final HyriScoreboardTeamHandler teamHandler;
-
-    private final HyriLanguage language;
     private final Hyrame hyrame;
 
-    public HyriTabHandler(Hyrame hyrame, HyriLanguage language) {
+    public HyriTabHandler(Hyrame hyrame) {
         this.hyrame = hyrame;
-        this.language = language;
         this.teamHandler = new HyriScoreboardTeamHandler();
 
         for (EHyriRank rankEnum : EHyriRank.values()) {
@@ -39,7 +35,7 @@ public class HyriTabHandler {
                 team.setDisplay(display);
                 team.setPrefix(display);
             } else {
-                final String formattedDisplay = this.getFormattedDisplayName(this.getDisplayName(rank));
+                final String formattedDisplay = this.getFormattedDisplayName(rank.getPrefix());
 
                 team.setDisplay(formattedDisplay);
                 team.setPrefix(formattedDisplay);
@@ -51,9 +47,7 @@ public class HyriTabHandler {
 
     public void onLogin(Player player) {
         if (this.hyrame.getConfiguration().areRanksInTabList()) {
-            if (this.hasSameLanguage(player)) {
-                this.teamHandler.addReceiver(player);
-            }
+            this.teamHandler.addReceiver(player);
 
             final IHyriPlayer hyriPlayer = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
             final HyriRank rank = hyriPlayer.getRank();
@@ -64,16 +58,12 @@ public class HyriTabHandler {
     }
 
     public void onLogout(Player player) {
-        if (this.hasSameLanguage(player)) {
-            this.teamHandler.removeReceiver(player);
-        }
+        this.teamHandler.removeReceiver(player);
     }
 
     public void enable() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (this.hasSameLanguage(player)) {
-                this.teamHandler.addReceiver(player);
-            }
+            this.teamHandler.addReceiver(player);
         }
     }
 
@@ -83,16 +73,8 @@ public class HyriTabHandler {
         }
     }
 
-    private boolean hasSameLanguage(Player player) {
-        return HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId()).getSettings().getLanguage() == this.language;
-    }
-
     private String getAlphabetLetter(int id) {
         return String.valueOf("abcdefghijklmnopqrstuvwxyz".toCharArray()[id % 24]);
-    }
-
-    private String getDisplayName(HyriRank rank) {
-        return rank.getDisplayNames().get(this.language) != null ? rank.getDisplayNames().get(this.language) : rank.getDisplayNames().get(HyriLanguage.EN);
     }
 
     private String getFormattedDisplayName(String displayName) {

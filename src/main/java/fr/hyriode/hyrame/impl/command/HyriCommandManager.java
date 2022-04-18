@@ -88,6 +88,7 @@ public class HyriCommandManager implements IHyriCommandManager {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends HyriCommand<?>> T getCommand(Class<T> commandClass) {
         return (T) this.commands.get(commandClass);

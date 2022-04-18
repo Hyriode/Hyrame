@@ -75,6 +75,7 @@ public class HyriListenerManager implements IHyriListenerManager {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends HyriListener<?>> T getListener(Class<T> listenerClass) {
         return (T) this.listeners.get(listenerClass);
     }

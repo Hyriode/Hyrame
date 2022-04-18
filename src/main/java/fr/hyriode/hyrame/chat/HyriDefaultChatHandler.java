@@ -1,20 +1,14 @@
 package fr.hyriode.hyrame.chat;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.chat.HyriDefaultChatChannel;
+import fr.hyriode.api.chat.IHyriChatChannelManager;
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.api.rank.EHyriRank;
-import fr.hyriode.api.rank.HyriRank;
-import fr.hyriode.hyrame.utils.RankUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-/**
- * Project: Hyrame
- * Created by AstFaster
- * on 14/12/2021 at 19:23
- */
+import java.util.UUID;
+
 public class HyriDefaultChatHandler implements IHyriChatHandler {
 
     private boolean cancelled;
@@ -23,27 +17,29 @@ public class HyriDefaultChatHandler implements IHyriChatHandler {
     public void onChat(AsyncPlayerChatEvent event) {
         event.setCancelled(true);
 
-        if (!this.cancelled) {
-            final Player player = event.getPlayer();
-            final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
-            final HyriRank rank = account.getRank();
-
-            for (Player target : Bukkit.getOnlinePlayers()) {
-                ChatColor color;
-                if (rank.getType() == EHyriRank.PLAYER) {
-                    color = ChatColor.GRAY;
-                } else {
-                    color = ChatColor.WHITE;
-                }
-
-                target.sendMessage(String.format(this.format(), RankUtil.formatRankForPlayer(rank, target) + player.getDisplayName(), color + event.getMessage()));
-            }
+        if (this.isCancelled()) {
+            return;
         }
+
+        final UUID uuid = event.getPlayer().getUniqueId();
+        final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(uuid);
+
+        if (account == null) {
+            return;
+        }
+
+        if (!IHyriChatChannelManager.canPlayerAccessChannel(account.getSettings().getChatChannel(), account)) {
+            event.getPlayer().sendMessage(ChatColor.RED + "You can't talk in this channel, transferring to default channel...");
+            account.getSettings().setChatChannel(HyriDefaultChatChannel.GLOBAL.getChannel());
+            account.update();
+        }
+
+        HyriAPI.get().getChatChannelManager().sendMessage(account.getSettings().getChatChannel(), event.getMessage(), uuid);
     }
 
     @Override
     public String format() {
-        return "%s" + ChatColor.WHITE + ": %s";
+        return null;
     }
 
     @Override
@@ -55,5 +51,4 @@ public class HyriDefaultChatHandler implements IHyriChatHandler {
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
-
 }
