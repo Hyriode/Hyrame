@@ -35,8 +35,9 @@ public interface IHyriLanguageManager {
         public static void registerInstance(Supplier<IHyriLanguageManager> instanceSupplier) {
             if (instance == null) {
                 instance = instanceSupplier.get();
+            } else {
+                throw new IllegalStateException("Language manager static instance is already registered!");
             }
-            throw new IllegalStateException("Language manager static instance is already registered!");
         }
 
         /**
