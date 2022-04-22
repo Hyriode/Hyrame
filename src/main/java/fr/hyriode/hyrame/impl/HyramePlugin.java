@@ -1,5 +1,7 @@
 package fr.hyriode.hyrame.impl;
 
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.hyrame.HyrameLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -25,6 +27,8 @@ public class HyramePlugin extends JavaPlugin {
         world.setGameRuleValue("doDaylightCycle", "false");
         world.setGameRuleValue("doMobSpawning", "false");
         world.setGameRuleValue("announceAdvancements", "false");
+        world.setGameRuleValue("doFireTick", "false");
+        world.setGameRuleValue("randomTickSpeed", "0");
     }
 
     @Override

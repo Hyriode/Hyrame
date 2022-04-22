@@ -2,6 +2,8 @@ package fr.hyriode.hyrame.command;
 
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.rank.HyriRank;
+import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.hyrame.language.HyriLanguageMessage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +22,7 @@ public class HyriCommandInfo {
     /** Command's description */
     private String description = "";
     /** Command's usage */
-    private String usage;
+    private HyriLanguageMessage usage;
     /** The boolean that means whether the invalid command message will be sent or not */
     private boolean invalidMessage;
     /** Command's aliases */
@@ -86,8 +88,31 @@ public class HyriCommandInfo {
      * @param invalidMessage Invalid message will be sent or not
      * @return {@link HyriCommandInfo}
      */
-    public HyriCommandInfo withUsage(String usage, boolean invalidMessage) {
+    public HyriCommandInfo withUsage(HyriLanguageMessage usage, boolean invalidMessage) {
         this.usage = usage;
+        this.invalidMessage = invalidMessage;
+        return this;
+    }
+
+    /**
+     * Set the usage of the command
+     *
+     * @param usage Command's usage
+     * @return {@link HyriCommandInfo}
+     */
+    public HyriCommandInfo withUsage(HyriLanguageMessage usage) {
+        return this.withUsage(usage, true);
+    }
+
+    /**
+     * Set the usage of the command
+     *
+     * @param usage Command's usage
+     * @param invalidMessage Invalid message will be sent or not
+     * @return {@link HyriCommandInfo}
+     */
+    public HyriCommandInfo withUsage(String usage, boolean invalidMessage) {
+        this.usage = new HyriLanguageMessage().addValue(HyriLanguage.EN, usage);
         this.invalidMessage = invalidMessage;
         return this;
     }
@@ -107,7 +132,7 @@ public class HyriCommandInfo {
      *
      * @return The command's usage
      */
-    public String getUsage() {
+    public HyriLanguageMessage getUsage() {
         return this.usage;
     }
 

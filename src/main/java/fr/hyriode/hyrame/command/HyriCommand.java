@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.command;
 
 import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
+import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -48,7 +49,7 @@ public abstract class HyriCommand<T extends JavaPlugin> {
      * @param usage Usage message if the input is not correct
      * @param callback Callback to fire after
      */
-    protected void handleArgument(HyriCommandContext ctx, String expected, String usage, Consumer<HyriCommandOutput> callback) {
+    protected void handleArgument(HyriCommandContext ctx, String expected, HyriLanguageMessage usage, Consumer<HyriCommandOutput> callback) {
         if (ctx.getResult() == null || ctx.getResult().getType() == HyriCommandResult.Type.ERROR) {
             final String[] expectedArgs = expected.toLowerCase(Locale.ROOT).split(" ");
             final String[] args = ctx.getArgs();
@@ -107,7 +108,7 @@ public abstract class HyriCommand<T extends JavaPlugin> {
      *
      * @param ctx Command context
      */
-    private void invalidCommandMessage(HyriCommandContext ctx, String usage) {
+    private void invalidCommandMessage(HyriCommandContext ctx, HyriLanguageMessage usage) {
         final CommandSender sender = ctx.getSender();
 
         String message = ChatColor.RED + "";
@@ -120,7 +121,7 @@ public abstract class HyriCommand<T extends JavaPlugin> {
             }
         }
 
-        ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, message + ChatColor.RESET + usage));
+        ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, message + ChatColor.RESET + usage.getForSender(sender)));
     }
 
     /**
