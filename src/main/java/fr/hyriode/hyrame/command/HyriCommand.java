@@ -62,6 +62,11 @@ public abstract class HyriCommand<T extends JavaPlugin> {
 
             ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.SUCCESS));
 
+            if (args.length < expectedArgs.length) {
+                this.invalidCommandMessage(ctx, usage);
+                return;
+            }
+
             for (int i = 0; i < args.length; i++) {
                 final String arg = args[i];
                 final String expectedArg = expectedArgs[i];
@@ -72,7 +77,7 @@ public abstract class HyriCommand<T extends JavaPlugin> {
                     final HyriCommandCheck check = HyriCommandCheck.fromSequence(expectedArg);
 
                     if (check == null) {
-                        this.invalidCommandMessage(ctx, arg);
+                        this.invalidCommandMessage(ctx, usage);
                         return;
                     }
 

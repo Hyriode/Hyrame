@@ -15,6 +15,7 @@ import java.util.Map;
  * Created by AstFaster
  * on 31/12/2021 at 23:06
  */
+@Deprecated
 public abstract class HyriConfigurationEntry<T> {
 
     /** The path of the configuration entry */

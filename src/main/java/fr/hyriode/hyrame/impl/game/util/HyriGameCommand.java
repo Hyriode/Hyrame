@@ -1,5 +1,7 @@
-package fr.hyriode.hyrame.impl.command.model.game;
+package fr.hyriode.hyrame.impl.game.util;
 
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.rank.type.HyriStaffRankType;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
@@ -21,11 +23,16 @@ public class HyriGameCommand extends HyriCommand<HyramePlugin> {
         super(plugin, new HyriCommandInfo("hyrigame")
                 .withType(HyriCommandType.ALL)
                 .withUsage("/hyrigame start|end")
+                .withPermission(player -> player.getRank().isSuperior(HyriStaffRankType.DEVELOPER))
                 .withDescription("Command used to start or end a running game."));
     }
 
     @Override
     public void handle(HyriCommandContext ctx) {
+        if (!HyriAPI.get().getConfiguration().isDevEnvironment()) {
+            return;
+        }
+
         final CommandSender sender = ctx.getSender();
         final HyriGame<?> game = this.plugin.getHyrame().getGameManager().getCurrentGame();
 

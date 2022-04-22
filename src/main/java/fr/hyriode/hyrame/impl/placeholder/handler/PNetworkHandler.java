@@ -20,12 +20,12 @@ public class PNetworkHandler extends PlaceholderPrefixHandler {
 
     @Override
     public String handle(Player player, String placeholder) {
-        final IHyriNetwork network = HyriAPI.get().getNetwork();
+        final IHyriNetwork network = HyriAPI.get().getNetworkManager().getNetwork();
         final IHyriMaintenance maintenance = network.getMaintenance();
 
         switch (placeholder) {
             case "player_count":
-                return String.valueOf(network.getPlayers());
+                return String.valueOf(network.getPlayerCount().getPlayers());
             case "slots":
                 return String.valueOf(network.getSlots());
             case "maintenance_reason":

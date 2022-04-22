@@ -19,14 +19,15 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.function.BiFunction;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -57,6 +58,8 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
     /** The class of the screen handler */
     private final Class<? extends ScreenHandler> screenHandler;
 
+    private final Map<UUID, BukkitTask> deathTasks;
+
     /**
      * Constructor of {@link HyriDeathProtocol}
      *
@@ -73,6 +76,7 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
         this.screen = screen;
         this.screenHandler = screenHandler;
         this.options = new Options();
+        this.deathTasks = new HashMap<>();
 
         if (this.screen != null) {
             final Consumer<Player> realCallback = this.screen.getCallback();
@@ -86,9 +90,13 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
                 p.setAllowFlight(false);
                 p.setFlying(false);
 
+                p.spigot().setCollidesWithEntities(true);
+
                 PlayerUtil.resetPotionEffects(p);
 
                 realCallback.accept(p);
+
+                this.deathTasks.remove(p.getUniqueId()).cancel();
             };
         }
 
@@ -110,7 +118,11 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
     void enable() {}
 
     @Override
-    void disable() {}
+    void disable() {
+        for (BukkitTask task : this.deathTasks.values()) {
+            task.cancel();
+        }
+    }
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
@@ -208,7 +220,7 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
             if (this.getGame().getState() != HyriGameState.ENDED) {
                 if (this.screen != null && this.screenHandler != null) {
                     try {
-                        this.screenHandler.getConstructor().newInstance().start(this.plugin, this.screen, player);
+                        this.deathTasks.put(player.getUniqueId(), this.screenHandler.getConstructor().newInstance().start(this.plugin, this.screen, player));
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                         e.printStackTrace();
                     }
@@ -353,13 +365,13 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
             private int currentTime;
 
             @Override
-            void start(JavaPlugin plugin, Screen screen, Player player) {
+            BukkitTask start(JavaPlugin plugin, Screen screen, Player player) {
                 this.screen = screen;
                 this.player = player;
                 this.plugin = plugin;
                 this.currentTime = this.screen.getTime();
 
-                this.runTaskTimerAsynchronously(this.plugin, 0L, 20L);
+                return this.runTaskTimerAsynchronously(this.plugin, 0L, 20L);
             }
 
             @Override
@@ -387,7 +399,7 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
 
         }
 
-        abstract void start(JavaPlugin plugin, Screen screen, Player player);
+        abstract BukkitTask start(JavaPlugin plugin, Screen screen, Player player);
 
     }
 

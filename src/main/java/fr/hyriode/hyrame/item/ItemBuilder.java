@@ -3,11 +3,16 @@ package fr.hyriode.hyrame.item;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import fr.hyriode.hyrame.item.enchant.HyriEnchant;
+import fr.hyriode.hyrame.language.IHyriLanguageManager;
+import fr.hyriode.hyrame.reflection.Reflection;
+import fr.hyriode.hyrame.utils.ProfileLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -55,8 +60,17 @@ public class ItemBuilder {
         this(potion, 1);
     }
 
+    public static ItemBuilder asHead() {
+        return new ItemBuilder(Material.SKULL_ITEM, 1, 3);
+    }
+
     public ItemBuilder withName(String name) {
         this.itemMeta.setDisplayName(name);
+        return this;
+    }
+
+    public ItemBuilder withName(Player player, String key) {
+        this.itemMeta.setDisplayName(IHyriLanguageManager.Provider.get().getValue(player, key));
         return this;
     }
 
@@ -69,22 +83,22 @@ public class ItemBuilder {
         return this.withLore(Arrays.asList(lore));
     }
 
-    public ItemBuilder withSkullOwner(UUID uuid) {
-        final OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-        final SkullMeta skullMeta = (SkullMeta) this.itemMeta;
-
-        skullMeta.setOwner(player.getName());
-
-        this.itemStack.setItemMeta(skullMeta);
+    public ItemBuilder withPlayerHead(String name) {
+        Reflection.setField("profile", this.itemMeta, new ProfileLoader(name, ProfileLoader.REDIS_KEY).loadProfile());
         return this;
     }
 
-    public ItemBuilder withCustomHead(String name) {
+    public ItemBuilder withPlayerHead(UUID uuid) {
+        Reflection.setField("profile", this.itemMeta, new ProfileLoader(uuid, ProfileLoader.REDIS_KEY).loadProfile());
+        return this;
+    }
+
+    public ItemBuilder withHeadTexture(String texture) {
         try {
             final SkullMeta skullMeta = (SkullMeta) this.itemMeta;
             final GameProfile profile = new GameProfile(UUID.randomUUID(), null);
 
-            profile.getProperties().put("textures", new Property("textures", name));
+            profile.getProperties().put("textures", new Property("textures", texture));
 
             final Field profileField = skullMeta.getClass().getDeclaredField("profile");
 

@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.impl.command.model.bukkit;
+package fr.hyriode.hyrame.impl.command.model;
 
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;

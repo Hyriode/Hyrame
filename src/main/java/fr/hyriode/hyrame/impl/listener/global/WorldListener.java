@@ -2,10 +2,14 @@ package fr.hyriode.hyrame.impl.listener.global;
 
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.listener.HyriListener;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 
@@ -38,6 +42,15 @@ public class WorldListener extends HyriListener<HyramePlugin> {
     @EventHandler(priority = EventPriority.LOW)
     public void onStructureGrow(StructureGrowEvent event) {
         event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onCropBreak(PlayerInteractEvent event) {
+        if (event.getAction() == Action.PHYSICAL) {
+            if (event.getClickedBlock().getType() == Material.SOIL) {
+                event.setCancelled(true);
+            }
+        }
     }
 
 }

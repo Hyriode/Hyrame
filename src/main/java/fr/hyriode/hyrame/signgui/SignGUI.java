@@ -47,7 +47,7 @@ public class SignGUI {
     /**
      * Open the gui for a player
      *
-     * @param player - Player
+     * @param player Player
      */
     public void open(Player player) {
         final Location location = player.getLocation();
@@ -77,7 +77,7 @@ public class SignGUI {
     /**
      * Get sign callback
      *
-     * @return - Sign callback
+     * @return Sign callback
      */
     public Callback getCompleteCallback() {
         return this.completeCallback;

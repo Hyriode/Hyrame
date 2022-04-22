@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.impl.command.model.bukkit;
+package fr.hyriode.hyrame.impl.command.model;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.settings.HyriLanguage;
@@ -35,21 +35,20 @@ public class PluginCommand extends HyriCommand<HyramePlugin> {
         final CommandSender sender = ctx.getSender();
         final IHyriLanguageManager languageManager = this.plugin.getHyrame().getLanguageManager();
         final boolean player = sender instanceof Player;
-        final String colon = player ? (HyriAPI.get().getPlayerManager().getPlayer(((Player) sender).getUniqueId()).getSettings().getLanguage() == HyriLanguage.FR ? " : " : ": ") : ": ";
         final String serverInformation = player ? languageManager.getValue((Player) sender, SERVER_INFORMATION_KEY) : languageManager.getValue(HyriLanguage.EN, SERVER_INFORMATION_KEY);
         final String current = player ? languageManager.getValue((Player) sender, CURRENT_KEY) : languageManager.getValue(HyriLanguage.EN, CURRENT_KEY);
         final String barLine = ChatColor.DARK_AQUA + "" + ChatColor.STRIKETHROUGH + "-------------------------------------------";
 
         sender.sendMessage(barLine);
-        sender.sendMessage(ChatColor.DARK_AQUA + serverInformation + colon);
-        sender.sendMessage(this.getCategory(current, colon, HyriAPI.get().getServer().getName()));
-        sender.sendMessage(this.getCategory("Version", colon, Bukkit.getVersion()));
-        sender.sendMessage(this.getCategory("Plugins", colon, this.getPlugins()));
+        sender.sendMessage(ChatColor.DARK_AQUA + serverInformation + ": ");
+        sender.sendMessage(this.getCategory(current, HyriAPI.get().getServer().getName()));
+        sender.sendMessage(this.getCategory("Version", Bukkit.getVersion()));
+        sender.sendMessage(this.getCategory("Plugins", this.getPlugins()));
         sender.sendMessage(barLine);
     }
 
-    private String getCategory(String category, String colon, String value) {
-        return ChatColor.AQUA + category + colon + ChatColor.WHITE + value;
+    private String getCategory(String category, String value) {
+        return ChatColor.AQUA + category + ": " + ChatColor.WHITE + value;
     }
 
     private String getPlugins() {

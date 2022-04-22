@@ -13,9 +13,11 @@ public interface IHyriChatHandler {
      * Method fired when a player chat
      *
      * @param event Event fired
+     * @return <code>true</code> if handlers processing can continue
      */
-    default void onChat(AsyncPlayerChatEvent event) {
+    default boolean onChat(AsyncPlayerChatEvent event) {
         event.setCancelled(this.isCancelled());
+        return true;
     }
 
     /**

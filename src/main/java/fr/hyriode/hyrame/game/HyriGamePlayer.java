@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.game;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent;
 import fr.hyriode.hyrame.game.protocol.HyriLastHitterProtocol;
@@ -106,10 +107,19 @@ public class HyriGamePlayer {
     /**
      * Get Spigot player object
      *
-     * @return - {@link Player} object
+     * @return {@link Player} object
      */
     public Player getPlayer() {
         return this.player;
+    }
+
+    /**
+     * Get the game player as a {@link IHyriPlayer} object
+     *
+     * @return The {@link IHyriPlayer} linked to the game player
+     */
+    public IHyriPlayer asHyriPlayer() {
+        return HyriAPI.get().getPlayerManager().getPlayer(this.player.getUniqueId());
     }
 
     /**

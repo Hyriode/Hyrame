@@ -1,10 +1,12 @@
 package fr.hyriode.hyrame.command;
 
-import fr.hyriode.api.rank.HyriPermission;
+import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.rank.HyriRank;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Project: Hyrame
@@ -24,7 +26,7 @@ public class HyriCommandInfo {
     /** Command's aliases */
     private List<String> aliases = new ArrayList<>();
     /** Permission needed to execute the command */
-    private HyriPermission permission;
+    private Predicate<IHyriPlayer> permission;
     /** Command's type */
     private HyriCommandType type = HyriCommandType.ALL;
 
@@ -152,10 +154,10 @@ public class HyriCommandInfo {
     /**
      * Set the permission of the command
      *
-     * @param permission Command's permission
+     * @param permission Command's permission predicate
      * @return {@link HyriCommandInfo}
      */
-    public HyriCommandInfo withPermission(HyriPermission permission) {
+    public HyriCommandInfo withPermission(Predicate<IHyriPlayer> permission) {
         this.permission = permission;
         return this;
     }
@@ -165,7 +167,7 @@ public class HyriCommandInfo {
      *
      * @return The permission
      */
-    public HyriPermission getPermission() {
+    public Predicate<IHyriPlayer> getPermission() {
         return this.permission;
     }
 

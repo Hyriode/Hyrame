@@ -15,6 +15,10 @@ public class DurationConverter {
         this.seconds = duration.getSeconds();
     }
 
+    public long toMonthsPart() {
+        return this.seconds  / 86400 / 30;
+    }
+
     public long toDaysPart() {
         return this.seconds / 86400;
     }

@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl.game;
 
+import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.IHyriGameManager;
@@ -57,21 +58,13 @@ class HyriGameHandler implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
-        this.runActionOnGame(game -> {
-            if (!game.getState().isAccessible()) {
-                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ChatColor.RED + "Partie en cours.");
-            }
-        });
-    }
-
-    @EventHandler(priority = EventPriority.LOW)
-    public void onJoin(PlayerJoinEvent event) {
-        this.runActionOnGame(game -> game.handleLogin(event.getPlayer()));
-    }
-
-    @EventHandler(priority = EventPriority.LOW)
-    public void onQuit(PlayerQuitEvent event) {
-        this.runActionOnGame(game -> game.handleLogout(event.getPlayer()));
+        if (HyriAPI.get().getConfiguration().isDevEnvironment()) {
+            this.runActionOnGame(game -> {
+                if (!game.getState().isAccessible()) {
+                    event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ChatColor.RED + "Partie en cours.");
+                }
+            });
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -82,7 +75,7 @@ class HyriGameHandler implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
-            this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING);
+            this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING || game.getPlayer(event.getEntity().getUniqueId()).isDead() || game.getPlayer(event.getEntity().getUniqueId()).isSpectator());
         }
     }
 

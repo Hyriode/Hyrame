@@ -2,9 +2,11 @@ package fr.hyriode.hyrame.impl.listener.global;
 
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.listener.HyriListener;
+import fr.hyriode.hyrame.utils.ProfileLoader;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
  * Project: Hyrame
@@ -15,6 +17,11 @@ public class PlayerListener extends HyriListener<HyramePlugin> {
 
     public PlayerListener(HyramePlugin plugin) {
         super(plugin);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onJoin(PlayerJoinEvent event) {
+        ProfileLoader.savePlayerProfile(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.LOW)

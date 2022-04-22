@@ -1,12 +1,19 @@
 package fr.hyriode.hyrame.game.protocol;
 
+import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.event.HyriEventHandler;
+import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
+import fr.hyriode.hyrame.game.event.player.HyriGameLeaveEvent;
+import fr.hyriode.hyrame.game.event.player.HyriGamePlayerEvent;
 import fr.hyriode.hyrame.game.scoreboard.HyriWaitingScoreboard;
 import fr.hyriode.hyrame.game.util.HyriGameItems;
 import fr.hyriode.hyrame.scoreboard.HyriScoreboard;
 import fr.hyriode.hyrame.scoreboard.IHyriScoreboardManager;
+import fr.hyriode.hyrame.utils.BroadcastUtil;
 import fr.hyriode.hyrame.utils.PlayerUtil;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,6 +21,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -33,6 +41,8 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
         super(hyrame, "waiting");
         this.plugin = plugin;
         this.teamSelector = teamSelector;
+
+        HyriAPI.get().getEventBus().register(this);
     }
 
     public HyriWaitingProtocol(IHyrame hyrame, JavaPlugin plugin) {
@@ -64,10 +74,17 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
         this.hyrame.getScoreboardManager().getScoreboards(SCOREBOARD_CLASS).forEach(HyriScoreboard::hide);
     }
 
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        final Player player = event.getPlayer();
+    @HyriEventHandler
+    public void onJoin(HyriGamePlayerEvent event) {
+        final Player player = event.getGamePlayer().getPlayer();
+        final UUID playerId = player.getUniqueId();
         final HyriGame<?> game = this.getGame();
+
+        if (game.getPlayer(playerId) == null) {
+            return;
+        }
+
+        final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(playerId);
 
         PlayerUtil.resetPlayer(player, true);
 
@@ -82,11 +99,28 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
         new HyriWaitingScoreboard(game, this.plugin, player).show();
 
         this.updateScoreboards();
+
+        final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + game.getMaxPlayers() + ")";
+
+        BroadcastUtil.broadcast(target -> account.getNameWithRank(true) + ChatColor.GRAY + hyrame.getLanguageManager().getValue(target, "message.game-join") + playerCounter);
     }
 
-    @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
+    @HyriEventHandler
+    public void onLeave(HyriGameLeaveEvent event) {
+        final Player player = event.getGamePlayer().getPlayer();
+        final HyriGame<?> game = this.getGame();
+
+        if (game.getPlayer(player.getUniqueId()) == null) {
+            return;
+        }
+
+        final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
+
         this.updateScoreboards();
+
+        final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + game.getMaxPlayers() + ")";
+
+        BroadcastUtil.broadcast(target -> account.getNameWithRank(true) + ChatColor.GRAY + hyrame.getLanguageManager().getValue(target, "message.game-left") + playerCounter);
     }
 
     private void updateScoreboards() {

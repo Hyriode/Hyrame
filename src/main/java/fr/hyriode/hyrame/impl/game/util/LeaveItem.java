@@ -18,12 +18,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
  */
 public class LeaveItem extends HyriItem<HyramePlugin> {
 
-    private static final HyriLanguageMessage EXIT_MESSAGE = new HyriLanguageMessage("exit")
-            .addValue(HyriLanguage.FR, ChatColor.RED + "Quitter")
-            .addValue(HyriLanguage.EN, ChatColor.RED + "Exit");
-
     public LeaveItem(HyramePlugin plugin) {
-        super(plugin, HyriGameItems.LEAVE_NAME, () -> EXIT_MESSAGE, Material.INK_SACK, (byte) 1);
+        super(plugin, HyriGameItems.LEAVE_NAME, displayName("item.global.leave"), Material.INK_SACK, (byte) 1);
     }
 
     @Override

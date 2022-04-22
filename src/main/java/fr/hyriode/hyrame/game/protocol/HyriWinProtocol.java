@@ -50,6 +50,8 @@ public class HyriWinProtocol extends HyriGameProtocol implements Listener {
 
     @HyriEventHandler
     public void onWin(HyriGameWinEvent event) {
+        this.game.getProtocolManager().disableProtocol(HyriDeathProtocol.class);
+
         final HyriGameTeam winner = event.getWinner();
 
         for (HyriGamePlayer player : this.game.getPlayers()) {

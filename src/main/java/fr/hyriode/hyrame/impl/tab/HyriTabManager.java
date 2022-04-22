@@ -39,20 +39,16 @@ public class HyriTabManager {
             final IHyrameConfiguration configuration = this.hyrame.getConfiguration();
             final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
 
-            if (this.hyrame.getConfiguration().areRanksInTabList()) {
-                this.handler.onLogin(player);
-            }
-
             final Tab tab = configuration.getTab() == null ? this.getTabForPlayer(account) : configuration.getTab();
 
             tab.send(player);
+
+            this.handler.onLogin(player);
         });
     }
 
     public void onLogout(Player player) {
-        ThreadUtil.EXECUTOR.execute(() -> {
-            this.handler.onLogout(player);
-        });
+        ThreadUtil.EXECUTOR.execute(() -> this.handler.onLogout(player));
     }
 
     public void enableTabList() {
@@ -67,6 +63,10 @@ public class HyriTabManager {
         final HyriLanguage language = player.getSettings().getLanguage();
 
         return this.tabs.get(language) != null ? this.tabs.get(language) : this.tabs.get(HyriLanguage.EN);
+    }
+
+    public HyriTabHandler getHandler() {
+        return this.handler;
     }
 
 }

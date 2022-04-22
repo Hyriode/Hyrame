@@ -26,6 +26,54 @@
   "message.death.fire": "%player% &7burned in the fire.",
   "message.death.player-and-fire": "%player% was killed by %killer% &7and the fire.",
   "message.death.lightning": "%player% &7was struck by lightning.",
-  "message.death.player-and-lightning": "%player% &7was struck by lightning and %killer%.",
-  "message.death.unknown": "%player% &7died."
+  "message.death.player-and-lightning": "%player% &7was struck by lightning and %killer%&7.",
+  "message.death.unknown": "%player% &7died.",
+
+  "message.chat.invalid": "This chat doesn't exist!",
+  "message.chat.cant-join": "You can't join this chat!",
+  "message.chat.already-in": "You are already in this chat!",
+  "message.chat.now-talking": "You are now talking in the chat: %chat%.",
+  "message.chat.message": "Invalid message.",
+  "message.chat.cant-talk": "You can't talk in this channel, transferring to default channel...",
+
+  "message.join.sending": "Sending you to %server%...",
+  "message.join.deny": "Couldn't sent you to %server%! %reason%",
+  "message.join.deny-full": "Server is full",
+  "message.join.deny-space": "Not enough space",
+
+  "message.private.cant-send-message-to-you": "&cYou can't send messages to you!",
+  "message.private.no-player-to-reply": "&cYou have no player to reply to!",
+  "message.private.not-online": "&c%player% is not online!",
+  "message.private.received": "&3Received from %player%&b:",
+  "message.private.sent": "&3Sent to %player%&b:",
+  "message.private.reply": "&7Reply to %player%",
+  "message.private.doesnt-accept": "%player% &cdoesn't accept private messages!",
+  "message.private.accept-friends": "%player% &conly accepts private messages from his friends!",
+
+  "message.lobby.already-in": "&cYou are already in the lobby!",
+  "message.lobby.sending": "&aYou will be teleported in the lobby.",
+
+  "message.nickname.player-exists": "&cA player already have this name!",
+  "message.nickname.already-in-use": "&cA player is already using this nickname!",
+  "message.nickname.fine": "&aYou are now nicked as %nickname%.",
+  "message.nickname.not-nick": "&cYou don't have a nickname!",
+  "message.nickname.remove-nick": "&aYou are no longer nick!",
+  "message.nickname.game": "&cYou can't change your nickname while being in a game!",
+
+  "item.global.leave": "&cLeave",
+
+  "item.spectator.settings": "&3Spectator Settings",
+  "item.spectator.play-again": "&3Play Again",
+  "item.spectator.teleporter": "&3Teleporter",
+
+  "gui.spectator.teleporter.title": "Teleporter",
+  "gui.spectator.settings.title": "Spectator Settings",
+
+  "gui.spectator.teleporter.lore": "&7Click to teleport",
+
+  "gui.nickname.title": "&8Customize your nickname",
+  "gui.nickname.random": "&3Random",
+  "gui.nickname.current": "&fCurrent: ",
+  "gui.nickname.edit": "&3Click to edit",
+  "gui.nickname.apply": "&aApply nickname"
 }

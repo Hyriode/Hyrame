@@ -42,7 +42,8 @@ public class HyriCommandBlocker {
         HyrameLogger.log("Removing default Spigot and Minecraft commands...");
 
         // Minecraft
-        this.addBlockedCommand(MINECRAFT_PREFIX, "tell", "me", "trigger");
+        this.addBlockedCommand(MINECRAFT_PREFIX, "me", "trigger");
+        this.removeCommand(MINECRAFT_PREFIX, "tell");
 
         // Bukkit
         this.removeCommand(BUKKIT_PREFIX, "about", "version", "ver", "icanhasbukkit");

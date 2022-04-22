@@ -1,21 +1,27 @@
 package fr.hyriode.hyrame.impl;
 
+import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.IHyrameConfiguration;
 import fr.hyriode.hyrame.bossbar.BossBarManager;
 import fr.hyriode.hyrame.chat.HyriDefaultChatHandler;
 import fr.hyriode.hyrame.chat.IHyriChatHandler;
+import fr.hyriode.hyrame.chat.IHyriChatManager;
 import fr.hyriode.hyrame.command.IHyriCommandManager;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.IHyriGameManager;
+import fr.hyriode.hyrame.impl.chat.HyriChatManager;
 import fr.hyriode.hyrame.impl.command.HyriCommandBlocker;
 import fr.hyriode.hyrame.impl.command.HyriCommandManager;
 import fr.hyriode.hyrame.impl.game.HyriGameManager;
 import fr.hyriode.hyrame.impl.inventory.HyriInventoryManager;
 import fr.hyriode.hyrame.impl.item.HyriItemManager;
+import fr.hyriode.hyrame.impl.join.HyriJoinHandler;
 import fr.hyriode.hyrame.impl.language.HyriLanguageManager;
 import fr.hyriode.hyrame.impl.listener.HyriListenerManager;
+import fr.hyriode.hyrame.impl.module.nickname.NicknameHandler;
+import fr.hyriode.hyrame.impl.module.nickname.NicknameModule;
 import fr.hyriode.hyrame.impl.placeholder.PlaceholderImpl;
 import fr.hyriode.hyrame.impl.placeholder.handler.PlaceholderRegistry;
 import fr.hyriode.hyrame.impl.scanner.HyriScanner;
@@ -32,6 +38,7 @@ import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.scanner.IHyriScanner;
 import fr.hyriode.hyrame.scoreboard.IHyriScoreboardManager;
 import fr.hyriode.hyrame.signgui.SignGUIManager;
+import fr.hyriode.hyrame.utils.ProfileLoader;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
@@ -58,7 +65,9 @@ public class Hyrame implements IHyrame {
     private final IHyriScoreboardManager scoreboardManager;
     private final IHyriInventoryManager inventoryManager;
     private final IHyriGameManager gameManager;
-    private IHyriChatHandler chatHandler;
+    private final HyriChatManager chatManager;
+
+    private final NicknameModule nicknameModule;
 
     private final HyramePlugin plugin;
 
@@ -73,11 +82,13 @@ public class Hyrame implements IHyrame {
         this.scoreboardManager = new HyriScoreboardManager();
         this.inventoryManager = new HyriInventoryManager();
         this.gameManager = new HyriGameManager(this);
-        this.chatHandler = new HyriDefaultChatHandler();
+        this.chatManager = new HyriChatManager(this);
         this.pluginProviders = new ArrayList<>();
         this.commandBlocker = new HyriCommandBlocker();
         this.tabManager = new HyriTabManager(this);
+        this.nicknameModule = new NicknameModule(this.tabManager, plugin);
 
+        IHyriLanguageManager.Provider.registerInstance(() -> this.languageManager);
         PlaceholderAPI.registerInstance(new PlaceholderImpl());
         PlaceholderRegistry.registerPlaceholders(this);
         HyriEnchant.register();
@@ -85,6 +96,8 @@ public class Hyrame implements IHyrame {
         new BossBarManager(plugin);
         new NPCManager(plugin, "npcs:");
         new SignGUIManager();
+
+        HyriAPI.get().getServerManager().getJoinManager().registerHandler(10, new HyriJoinHandler(this));
     }
 
     void disable() {
@@ -170,13 +183,8 @@ public class Hyrame implements IHyrame {
     }
 
     @Override
-    public IHyriChatHandler getChatHandler() {
-        return this.chatHandler;
-    }
-
-    @Override
-    public void setChatHandler(IHyriChatHandler chatHandler) {
-        this.chatHandler = chatHandler;
+    public HyriChatManager getChatManager() {
+        return this.chatManager;
     }
 
     public HyramePlugin getPlugin() {
@@ -185,6 +193,10 @@ public class Hyrame implements IHyrame {
 
     public List<IPluginProvider> getPluginProviders() {
         return this.pluginProviders;
+    }
+
+    public NicknameModule getNicknameModule() {
+        return this.nicknameModule;
     }
 
 }

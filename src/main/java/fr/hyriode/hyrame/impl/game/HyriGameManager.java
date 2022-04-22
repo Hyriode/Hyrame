@@ -24,8 +24,6 @@ import java.util.function.Supplier;
  */
 public class HyriGameManager implements IHyriGameManager {
 
-    private static final String GAMES_KEY = "games:";
-
     private Listener gameHandler;
     private HyriGame<?> currentGame;
 
@@ -43,24 +41,17 @@ public class HyriGameManager implements IHyriGameManager {
 
         HyriAPI.get().getEventBus().publishAsync(new HyriGameRegisteredEvent(this.currentGame = gameSupplier.get()));
 
-        this.hyrame.getTabManager().disableTabList();
+        if (this.currentGame.isUsingGameTabList()) {
+            this.hyrame.getTabManager().disableTabList();
+            this.hyrame.getConfiguration().setRanksInTabList(false);
+        }
+
 
         this.gameHandler = new HyriGameHandler(this.hyrame);
 
-        this.hyrame.getConfiguration().setRanksInTabList(false);
-        this.hyrame.setChatHandler(new HyriGameChatHandler(this.hyrame));
-
         this.currentGame.postRegistration();
 
-        HyriAPI.get().getRedisProcessor().process(jedis -> {
-            if (this.currentGame != null) {
-                final String key = GAMES_KEY + this.currentGame.getName() + ":" + this.currentGame.getType().getName();
-
-                jedis.sadd(key, HyriAPI.get().getServer().getName());
-
-                HyrameLogger.log("Registered '" + this.currentGame.getName() + "' game.");
-            }
-        });
+        HyrameLogger.log("Registered '" + this.currentGame.getName() + "' game.");
     }
 
     @Override
@@ -71,58 +62,23 @@ public class HyriGameManager implements IHyriGameManager {
 
         HandlerList.unregisterAll(this.gameHandler);
 
-        HyriAPI.get().getRedisProcessor().process(jedis -> {
-            final String key = GAMES_KEY + game.getName() + ":" + game.getType().getName();
+        game.getProtocolManager().disable();
 
-            jedis.srem(key, HyriAPI.get().getServer().getName());
-
-            game.getProtocolManager().disable();
-
+        if (this.currentGame.isUsingGameTabList()) {
             this.hyrame.getTabManager().enableTabList();
-
             this.hyrame.getConfiguration().setRanksInTabList(true);
-            this.hyrame.setChatHandler(new HyriDefaultChatHandler());
+        }
 
-            this.currentGame = null;
+        this.currentGame = null;
 
-            HyriAPI.get().getEventBus().publishAsync(new HyriGameUnregisteredEvent(game));
+        HyriAPI.get().getEventBus().publishAsync(new HyriGameUnregisteredEvent(game));
 
-            HyrameLogger.log("Unregistered '" + game.getName() + "' game.");
-        });
+        HyrameLogger.log("Unregistered '" + game.getName() + "' game.");
     }
 
     @Override
     public HyriGame<?> getCurrentGame() {
         return this.currentGame;
-    }
-
-    @Override
-    public List<String> getGames(String name, String type) {
-        return HyriAPI.get().getRedisProcessor().get(jedis -> new ArrayList<>(jedis.smembers(GAMES_KEY + name + ":" + type)));
-    }
-
-    @Override
-    public List<String> getGames(String name) {
-        return this.getGames(name, HyriGame.DEFAULT_TYPE.getName());
-    }
-
-    @Override
-    public List<String> getGames() {
-        return HyriAPI.get().getRedisProcessor().get(jedis -> {
-            final Set<String> keys = jedis.keys(GAMES_KEY + "*");
-            final List<String> games = new ArrayList<>();
-
-            for (String key : keys) {
-                if (key.contains(":")) {
-                    final String[] splitted = key.split(":");
-
-                    if (splitted.length == 3) {
-                        games.addAll(this.getGames(splitted[1], splitted[2]));
-                    }
-                }
-            }
-            return games;
-        });
     }
 
 }

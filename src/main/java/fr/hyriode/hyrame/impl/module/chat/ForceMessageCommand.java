@@ -1,8 +1,7 @@
-package fr.hyriode.hyrame.impl.command.model.other;
+package fr.hyriode.hyrame.impl.module.chat;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.rank.EHyriRank;
-import fr.hyriode.api.rank.HyriPermission;
+import fr.hyriode.api.rank.HyriRank;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
@@ -11,19 +10,14 @@ import fr.hyriode.hyrame.impl.HyramePlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class ForceMsgCommand extends HyriCommand<HyramePlugin> {
+public class ForceMessageCommand extends HyriCommand<HyramePlugin> {
 
-    public enum Permission implements HyriPermission {
-        USE
-    }
-
-    public ForceMsgCommand(HyramePlugin plugin) {
+    public ForceMessageCommand(HyramePlugin plugin) {
         super(plugin, new HyriCommandInfo("forcemsg")
                 .withDescription("Force a message to a chat")
                 .withUsage("/forcemsg <chat> <message>")
+                .withPermission(player -> player.getRank().isStaff())
                 .withType(HyriCommandType.PLAYER));
-
-        Permission.USE.add(EHyriRank.STAFF);
     }
 
     @Override
@@ -34,7 +28,7 @@ public class ForceMsgCommand extends HyriCommand<HyramePlugin> {
             final String chat = output.get(0, String.class);
 
             if (HyriAPI.get().getChatChannelManager().getHandler(chat) == null) {
-                player.sendMessage(ChatColor.RED + "Chat " + chat + " doesn't exist !");
+                player.sendMessage(ChatColor.RED + ChatCommand.MESSAGE.apply(player, "invalid"));
                 return;
             }
 

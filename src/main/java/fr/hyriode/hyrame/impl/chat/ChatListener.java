@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.impl.listener.global;
+package fr.hyriode.hyrame.impl.chat;
 
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.listener.HyriListener;
@@ -21,7 +21,7 @@ public class ChatListener extends HyriListener<HyramePlugin> {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onChat(AsyncPlayerChatEvent event) {
-        this.plugin.getHyrame().getChatHandler().onChat(event);
+        this.plugin.getHyrame().getChatManager().onEvent(event);
     }
 
     @EventHandler

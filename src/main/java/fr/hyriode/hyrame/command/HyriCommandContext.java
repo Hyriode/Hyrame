@@ -17,20 +17,23 @@ public class HyriCommandContext {
     private final String[] args;
     /** The result of the execution */
     private HyriCommandResult result;
+    /** The information about the command */
+    private final HyriCommandInfo commandInfo;
 
     private int argumentPosition;
 
     /**
      * Constructor of {@link HyriCommandContext}
-     *
-     * @param sender Command"s sender
+     *  @param sender Command"s sender
      * @param label Command's label
      * @param args Command's arguments
+     * @param commandInfo The command information
      */
-    public HyriCommandContext(CommandSender sender, String label, String[] args) {
+    public HyriCommandContext(CommandSender sender, String label, String[] args, HyriCommandInfo commandInfo) {
         this.sender = sender;
         this.label = label;
         this.args = args;
+        this.commandInfo = commandInfo;
     }
 
     /**
@@ -76,6 +79,10 @@ public class HyriCommandContext {
      */
     public void setResult(HyriCommandResult result) {
         this.result = result;
+    }
+
+    HyriCommandInfo getCommandInfo() {
+        return this.commandInfo;
     }
 
     int getArgumentPosition() {

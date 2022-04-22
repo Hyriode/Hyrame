@@ -1,6 +1,6 @@
 {
   "command.not.enabled": "&cCette commande n'est pas activée sur le serveur !",
-  "dont.have.permissions": "&cTu n'as pas les permissions nécessaires pour effectuer cette action !",
+  "dont.have.permissions": "&cVous n'avez pas les permissions nécessaires pour effectuer cette action !",
   "tab.website.and.forum": " Site et Forum : ",
   "tab.store": " Boutique : ",
   "tab.discord": " Discord : ",
@@ -11,19 +11,67 @@
   "message.game-join": " a rejoint",
   "message.game-left": " a quitté",
 
-  "error.chat.dead": "Tu ne peux pas parler dans le chat quand tu es mort !",
+  "error.chat.dead": "Vous ne pouvez pas parler dans le chat quand vous êtes mort !",
 
   "message.death.player": "%player% &7a été tué par %killer%&7.",
   "message.death.players": "%player% &7a été tué par %killer% &7et %second_killer%&7.",
   "message.death.void": "%player% &7est tombé dans le vide.",
   "message.death.player-and-void": "%player% &7a été tué par %killer% &7et le vide.",
   "message.death.fall": "%player% &7s'est écrasé sur le sol.",
-  "message.death.player-and-fall": "%player% &7a été tué par %killer% &et le sol.",
+  "message.death.player-and-fall": "%player% &7a été tué par %killer% &7et le sol.",
   "message.death.explosion": "%player% &7est mort d'une explosion.",
   "message.death.player-and-explosion": "%player% &7est mort d'une explosion et par %killer%&7.",
   "message.death.lava": "%player% &7est mort par la lave.",
   "message.death.player-and-lava": "%player% &7est mort par la lave et %killer%&7.",
   "message.death.fire": "%player% &7est mort brûlé par du feu.",
   "message.death.player-and-fire": "%player% a été tué par %killer% &et du feu.",
-  "message.death.unknown": "%player% &7est mort."
+  "message.death.unknown": "%player% &7est mort.",
+
+  "message.error.chat.invalid": "Ce chat n'existe pas !",
+  "message.error.chat.cant-join": "Vous ne pouvez pas rejoindre ce chat !",
+  "message.error.chat.already-in": "Vous êtes déjà dans ce chat !",
+  "message.error.chat.now-talking": "Vous parlez désormais dans le chat: %chat%.",
+  "message.error.chat.invalid-message": "Message invalide.",
+  "message.error.chat.cant-talk": "Vous ne pouvez pas parler dans ce channel, vous êtes donc transférer vers le channel par défaut.",
+
+  "message.join.sending": "Envoi en cours vers %server%...",
+  "message.join.deny": "Impossible de vous envoyer vers %server%! %reason%",
+  "message.join.deny.full": "Serveur plein",
+  "message.join.deny.space": "Pas assez de place",
+
+  "message.private.cant-send-message-to-you": "&cVous ne pouvez pas envoyer de messages à vous même!",
+  "message.private.no-player-to-reply": "&cVous n'avez aucun joueur à qui répondre !",
+  "message.private.not-online": "&c%player% n'est pas en ligne!",
+  "message.private.received": "&3Reçu de %player%&b:",
+  "message.private.sent": "&3Envoyé à %player%&b:",
+  "message.private.reply": "&7Répondre à %player%",
+  "message.private.doesnt-accept": "%player%  &cn'accepte pas les messages privées!",
+  "message.private.accept-friends": "%player% &conly accepts private messages from his friends!",
+
+  "message.lobby.already-in": "&cVous êtes déjà au lobby!",
+  "message.lobby.sending": "&aVous allez être téléporté au lobby.",
+
+  "message.nickname.player-exists": "&cUn joueur possède déjà ce nom!",
+  "message.nickname.already-in-use": "&cUn joueur utilise déjà ce nick!",
+  "message.nickname.fine": "&aVous êtes désormais nick en tant que %nickname%.",
+  "message.nickname.not-nick": "&cTu n'as pas de nick!",
+  "message.nickname.remove-nick": "&aVous n'êtes plus nick!",
+  "message.nickname.game": "&cVous ne pouvez pas changer votre /nick dans une partie!",
+
+  "item.global.leave": "&cQuitter",
+
+  "item.spectator.settings": "&3Paramètres Spectateur",
+  "item.spectator.play-again": "&3Relancer",
+  "item.spectator.teleporter": "&3Téléporteur",
+
+  "gui.spectator.teleporter.title": "Téléporteur",
+  "gui.spectator.settings.title": "Paramètres Spectateur",
+
+  "gui.spectator.teleporter.lore": "&7Cliquer pour se téléporter",
+
+  "gui.nickname.title": "&8Configurer votre nick",
+  "gui.nickname.random": "&3Aléatoire",
+  "gui.nickname.current": "&fActuel: ",
+  "gui.nickname.edit": "&3Cliquer pour modifier",
+  "gui.nickname.apply": "&aAppliquer le nick"
 }

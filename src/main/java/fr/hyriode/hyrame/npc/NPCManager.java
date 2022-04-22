@@ -2,7 +2,9 @@ package fr.hyriode.hyrame.npc;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import fr.hyriode.api.util.Skin;
 import fr.hyriode.hyrame.hologram.Hologram;
+import fr.hyriode.hyrame.utils.ProfileLoader;
 import fr.hyriode.hyrame.utils.PacketUtil;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
@@ -60,7 +62,7 @@ public class NPCManager {
      * @param hologramLines - NPCs hologram lines
      * @return - {@link NPC} object
      */
-    public static NPC createNPC(Location location, NPCSkin skin, List<String> hologramLines) {
+    public static NPC createNPC(Location location, Skin skin, List<String> hologramLines) {
         return createNPC(location, skin, hologramLines.toArray(new String[0]));
     }
     /**
@@ -72,7 +74,7 @@ public class NPCManager {
      * @return - {@link NPC} object
      */
 
-    public static NPC createNPC(Location location, NPCSkin skin, String[] hologramLines) {
+    public static NPC createNPC(Location location, Skin skin, String[] hologramLines) {
         final GameProfile gameProfile = new GameProfile(UUID.randomUUID(), ChatColor.DARK_GRAY + NPC_NAME_PREFIX + UUID.randomUUID().toString().split("-")[0]);
 
         gameProfile.getProperties().put("textures", new Property("textures", skin.getTextureData(), skin.getTextureSignature()));
@@ -101,7 +103,7 @@ public class NPCManager {
      * @return - {@link NPC} object
      */
     public static NPC createNPC(Location location, String skinOwner, String[] hologramLines) {
-        final GameProfile gameProfile = new NPCProfileLoader(UUID.randomUUID(), ChatColor.DARK_GRAY + NPC_NAME_PREFIX + UUID.randomUUID().toString().split("-")[0], skinOwner, cacheSkinRedisKey).loadProfile();
+        final GameProfile gameProfile = new ProfileLoader(UUID.randomUUID(), ChatColor.DARK_GRAY + NPC_NAME_PREFIX + UUID.randomUUID().toString().split("-")[0], skinOwner, cacheSkinRedisKey).loadProfile();
 
         return createNPC(location, gameProfile, hologramLines);
     }
@@ -272,7 +274,7 @@ public class NPCManager {
     public static void setSkinNPC(NPC npc, String owner) {
         removeNPC(npc);
 
-        final GameProfile profile = new NPCProfileLoader(npc.getProfile().getId(), npc.getName(), owner, cacheSkinRedisKey).loadProfileFromRedis();
+        final GameProfile profile = new ProfileLoader(npc.getProfile().getId(), npc.getName(), owner, cacheSkinRedisKey).loadProfile();
 
         npc.getProfile().getProperties().putAll(profile.getProperties());
 

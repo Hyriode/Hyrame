@@ -6,6 +6,7 @@ import fr.hyriode.hyrame.reflection.Reflection;
 import fr.hyriode.hyrame.signgui.SignGUI;
 import fr.hyriode.hyrame.signgui.SignGUIManager;
 import fr.hyriode.hyrame.utils.PacketUtil;
+import fr.hyriode.hyrame.utils.ThreadUtil;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -72,7 +73,8 @@ public class SignGUIHandler extends HyriListener<HyramePlugin> {
 
                         PacketUtil.sendPacket(player, blockChangePacket);
 
-                        sign.getCompleteCallback().call(player, lines.toArray(new String[4]));
+                        ThreadUtil.backOnMainThread(plugin, () -> sign.getCompleteCallback().call(player, lines.toArray(new String[4])));
+
                         signs.remove(player.getUniqueId());
                     }
                 }

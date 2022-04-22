@@ -38,8 +38,8 @@ public class PPlayerHandler extends PlaceholderPrefixHandler {
         switch (placeholder) {
             case "name":
                 return account.getName();
-            case "display_name":
-                return account.getCustomName();
+            case "nickname":
+                return account.getNickname().getName();
             case "proxy":
                 return account.getCurrentProxy();
             case "hyris":

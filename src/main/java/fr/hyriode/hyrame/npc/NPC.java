@@ -26,7 +26,6 @@ public class NPC extends EntityPlayer {
 
     /** NPC equipment */
     protected final Map<EnumItemSlot, ItemStack> equipment;
-
     /** NPC Hologram */
     protected Hologram hologram;
 
@@ -35,13 +34,11 @@ public class NPC extends EntityPlayer {
 
     /** Is NPC showing to all players */
     protected  boolean showingToAll;
-
     /** Is NPCs head tracking players */
     protected boolean trackingPlayer;
 
     /** NPCs location */
     protected Location location;
-
     /* Spigot plugin* */
     protected final JavaPlugin plugin;
 

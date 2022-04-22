@@ -1,31 +1,28 @@
-package fr.hyriode.hyrame.impl.command.model.profile;
+package fr.hyriode.hyrame.impl.module.chat;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.chat.IHyriChatChannelManager;
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.api.rank.EHyriRank;
-import fr.hyriode.api.rank.HyriPermission;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
 import fr.hyriode.hyrame.command.HyriCommandType;
 import fr.hyriode.hyrame.impl.HyramePlugin;
+import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class HyriChatCommand extends HyriCommand<HyramePlugin> {
+import java.util.function.BiFunction;
 
-    public enum Permission implements HyriPermission {
-        USE
-    }
+public class ChatCommand extends HyriCommand<HyramePlugin> {
 
-    public HyriChatCommand(HyramePlugin plugin) {
+    public static final BiFunction<Player, String, String> MESSAGE = (player, key) -> HyriLanguageMessage.get("message.chat." + key).getForPlayer(player);
+
+    public ChatCommand(HyramePlugin plugin) {
         super(plugin, new HyriCommandInfo("chat")
                 .withDescription("Change your current chat, or send a message to the specified chat")
                 .withUsage("/chat set <chat> | /chat <chat> <message>")
                 .withType(HyriCommandType.PLAYER));
-
-        Permission.USE.add(EHyriRank.PLAYER);
     }
 
     @Override
@@ -33,26 +30,27 @@ public class HyriChatCommand extends HyriCommand<HyramePlugin> {
         final Player player = (Player) ctx.getSender();
 
         this.handleArgument(ctx, "set %input%", output -> {
-            final String chat = output.get(String.class);
+            final String chat = output.get(String.class).toLowerCase();
 
             if (HyriAPI.get().getChatChannelManager().getHandler(chat) == null) {
-                player.sendMessage(ChatColor.RED + "Chat " + chat + " doesn't exist !");
+                player.sendMessage(ChatColor.RED + MESSAGE.apply(player, "invalid"));
                 return;
             }
 
             final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
 
             if (!IHyriChatChannelManager.canPlayerAccessChannel(chat, account)) {
-                player.sendMessage(ChatColor.RED + "You can't join this chat !");
+                player.sendMessage(ChatColor.RED + MESSAGE.apply(player, "cant-join"));
                 return;
             }
 
             if (account.getSettings().getChatChannel().equals(chat)) {
-                player.sendMessage(ChatColor.RED + "You are already in this chat !");
+                player.sendMessage(ChatColor.RED + MESSAGE.apply(player, "already-in"));
                 return;
             }
 
-            player.sendMessage(ChatColor.GREEN + "You are now talking in " + chat + " chat !");
+            player.sendMessage(ChatColor.GREEN + MESSAGE.apply(player, "now-talking").replace("%chat%", chat));
+
             account.getSettings().setChatChannel(chat);
             account.update();
         });
@@ -60,10 +58,10 @@ public class HyriChatCommand extends HyriCommand<HyramePlugin> {
         final IHyriChatChannelManager manager = HyriAPI.get().getChatChannelManager();
 
         this.handleArgument(ctx, "%input% %sentence%", output -> {
-            final String chat = output.get(0, String.class);
+            final String chat = output.get(0, String.class).toLowerCase();
 
             if (HyriAPI.get().getChatChannelManager().getHandler(chat) == null) {
-                player.sendMessage(ChatColor.RED + "Chat " + chat + " doesn't exist !");
+                player.sendMessage(ChatColor.RED + MESSAGE.apply(player, "invalid"));
                 return;
             }
 

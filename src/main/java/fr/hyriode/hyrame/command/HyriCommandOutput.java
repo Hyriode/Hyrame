@@ -51,6 +51,16 @@ public class HyriCommandOutput {
         return clazz.cast(objects.get(index));
     }
 
+    public int size(Class<?> clazz) {
+        final List<Object> objects = this.objectsMap.get(clazz);
+
+        if (objects == null) {
+            return 0;
+        }
+
+        return objects.size();
+    }
+
     /**
      * Get an object stored in the output by giving its {@link Class} and index
      *

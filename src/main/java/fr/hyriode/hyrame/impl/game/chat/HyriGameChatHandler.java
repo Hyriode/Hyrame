@@ -1,9 +1,10 @@
 package fr.hyriode.hyrame.impl.game.chat;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.chat.HyriDefaultChatChannel;
+import fr.hyriode.api.chat.HyriChatChannel;
 import fr.hyriode.api.chat.IHyriChatChannelManager;
 import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.rank.type.HyriPlayerRankType;
 import fr.hyriode.hyrame.chat.IHyriChatHandler;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
@@ -16,12 +17,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 /**
  * Project: Hyrame
  * Created by AstFaster
  * on 16/12/2021 at 20:45
  */
 public class HyriGameChatHandler implements IHyriChatHandler {
+
+    private final List<UUID> saidGG = new ArrayList<>();
 
     private boolean cancelled;
 
@@ -32,60 +39,75 @@ public class HyriGameChatHandler implements IHyriChatHandler {
     }
 
     @Override
-    public void onChat(AsyncPlayerChatEvent event) {
-        event.setCancelled(true);
-        event.setFormat(this.format());
+    public boolean onChat(AsyncPlayerChatEvent event) {
+        final HyriGame<?> game = this.hyrame.getGameManager().getCurrentGame();
 
-        if (!this.cancelled) {
-            final Player player = event.getPlayer();
-            final String message = event.getMessage();
-            final HyriGame<?> game = this.hyrame.getGameManager().getCurrentGame();
-
-            if (game != null) {
-                final IHyriLanguageManager languageManager = this.hyrame.getLanguageManager();
-                final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
-                final HyriGamePlayer gamePlayer = game.getPlayer(player.getUniqueId());
-                final HyriGameTeam team = gamePlayer.getTeam();
-                final HyriLanguageMessage teamChatPrefix = languageManager.getMessage("team.chat.prefix");
-
-                if (account.getSettings().getChatChannel().equalsIgnoreCase(HyriDefaultChatChannel.GLOBAL.getChannel())) {
-                    if (game.getState() == HyriGameState.PLAYING) {
-                        if (gamePlayer.isSpectator()) {
-                            game.sendMessageToSpectators(target -> String.format(this.format(), account.getNameWithRank(), message), true);
-                        } else if (gamePlayer.isDead()) {
-                            player.sendMessage(ChatColor.RED + languageManager.getValue(player, "error.chat.dead"));
-                        } else if (gamePlayer.getTeam().getTeamSize() == 1) {
-                            game.sendMessageToAll(target -> String.format(this.format(), team.getColor().getChatColor() + "[" + team.getDisplayName().getForPlayer(target) + "] " + account.getNameWithRank(), message));
-                        } else if (message.startsWith("!")) {
-                            game.sendMessageToAll(target -> String.format(this.format(), ChatColor.DARK_AQUA + "[Global] " + team.getColor().getChatColor() + "[" + team.getDisplayName().getForPlayer(target) + "] " + account.getNameWithRank(), message.substring(1)));
-                        } else {
-                            team.sendMessage(target -> String.format(this.format(), ChatColor.DARK_AQUA + "[" + teamChatPrefix.getForPlayer(target) + "] " + account.getNameWithRank(), message));
-                        }
-                    } else {
-                        game.sendMessageToAll(target -> {
-                            String messageStart = "";
-
-                            if (team != null) {
-                                messageStart = team.getColor().getChatColor() + "[" + team.getDisplayName().getForPlayer(target) + "] ";
-                            }
-
-                            messageStart += account.getNameWithRank();
-
-                            return String.format(this.format(), messageStart, message);
-                        });
-                    }
-                    return;
-                }
-
-                if (!IHyriChatChannelManager.canPlayerAccessChannel(account.getSettings().getChatChannel(), account)) {
-                    event.getPlayer().sendMessage(ChatColor.RED + "You can't talk in this channel, transferring to default channel...");
-                    account.getSettings().setChatChannel(HyriDefaultChatChannel.GLOBAL.getChannel());
-                    account.update();
-                }
-
-                HyriAPI.get().getChatChannelManager().sendMessage(account.getSettings().getChatChannel(), event.getMessage(), player.getUniqueId());
-            }
+        if (game == null || this.cancelled) {
+            return true;
         }
+
+        event.setCancelled(true);
+
+        final String message = event.getMessage();
+        final Player player = event.getPlayer();
+        final IHyriLanguageManager languageManager = this.hyrame.getLanguageManager();
+        final UUID uuid = player.getUniqueId();
+        final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(uuid);
+        final HyriGamePlayer gamePlayer = game.getPlayer(player.getUniqueId());
+        final HyriGameTeam team = gamePlayer.getTeam();
+        final HyriLanguageMessage teamChatPrefix = languageManager.getMessage("team.chat.prefix");
+        final String channel = account.getSettings().getChatChannel();
+
+        if (!IHyriChatChannelManager.canPlayerAccessChannel(channel, account)) {
+            player.sendMessage(ChatColor.RED + HyriLanguageMessage.get("message.error.chat.cant-talk").getForPlayer(player));
+            account.getSettings().setChatChannel(HyriChatChannel.GLOBAL.getChannel());
+            account.update();
+        }
+
+        if (channel.equalsIgnoreCase(HyriChatChannel.GLOBAL.getChannel())) {
+            if (game.getState() == HyriGameState.PLAYING) {
+                final ChatColor color = team.getColor().getChatColor();
+
+                if (gamePlayer.isSpectator()) {
+                    game.sendMessageToSpectators(target -> String.format(this.format(), account.getNameWithRank(true), message), true);
+                } else if (gamePlayer.isDead()) {
+                    player.sendMessage(ChatColor.RED + languageManager.getValue(player, "error.chat.dead"));
+                } else if (gamePlayer.getTeam().getTeamSize() == 1) {
+                    game.sendMessageToAll(target -> String.format(this.format(), color + "[" + team.getDisplayName().getForPlayer(target) + color + "] " + account.getNameWithRank(true), message));
+                } else if (message.startsWith("!")) {
+                    game.sendMessageToAll(target -> String.format(this.format(), ChatColor.DARK_AQUA + "[Global] " + color + "[" + team.getDisplayName().getForPlayer(target) + color + "] " + account.getNameWithRank(true), message.substring(1)));
+                } else {
+                    team.sendMessage(target -> String.format(this.format(), ChatColor.DARK_AQUA + "[" + teamChatPrefix.getForPlayer(target) + "] " + account.getNameWithRank(true), message));
+                }
+            } else if (game.getState() == HyriGameState.ENDED) {
+                if (message.equalsIgnoreCase("gg") && !this.saidGG.contains(uuid)) {
+                    if (account.getRank().isSuperior(HyriPlayerRankType.EPIC)) {
+                        account.getHyris().add(50, "Fairplay", true);
+
+                        this.saidGG.add(uuid);
+
+                        event.setMessage(ChatColor.GOLD + "GG");
+                    }
+                }
+            } else {
+                game.sendMessageToAll(target -> {
+                    String messageStart = "";
+
+                    if (team != null) {
+                        final ChatColor color = team.getColor().getChatColor();
+
+                        messageStart = color + "[" + team.getDisplayName().getForPlayer(target) + color + "] ";
+                    }
+
+                    messageStart += account.getNameWithRank(true);
+
+                    return String.format(this.format(), messageStart, message);
+                });
+            }
+        } else {
+            HyriAPI.get().getChatChannelManager().sendMessage(channel, event.getMessage(), uuid);
+        }
+        return false;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame;
 
 import fr.hyriode.hyrame.chat.IHyriChatHandler;
+import fr.hyriode.hyrame.chat.IHyriChatManager;
 import fr.hyriode.hyrame.command.IHyriCommandManager;
 import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.inventory.IHyriInventoryManager;
@@ -106,17 +107,10 @@ public interface IHyrame {
     IHyriGameManager getGameManager();
 
     /**
-     * Get current {@link IHyriChatHandler}
+     * Get the chat manager instance
      *
-     * @return {@link IHyriChatHandler} object
+     * @return The {@link IHyriChatManager} instance
      */
-    IHyriChatHandler getChatHandler();
-
-    /**
-     * Set current {@link IHyriChatHandler}
-     *
-     * @param chatHandler New {@link IHyriChatHandler} object
-     */
-    void setChatHandler(IHyriChatHandler chatHandler);
+    IHyriChatManager getChatManager();
 
 }

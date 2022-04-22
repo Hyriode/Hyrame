@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.game.scoreboard;
 
+import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.HyriConstants;
 import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.game.HyriGame;
@@ -19,11 +20,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class HyriWaitingScoreboard extends HyriScoreboard {
 
     private static final HyriLanguageMessage MAP = new HyriLanguageMessage("scoreboard.map")
-            .addValue(HyriLanguage.FR, "Carte : ")
+            .addValue(HyriLanguage.FR, "Carte: ")
             .addValue(HyriLanguage.EN, "Map: ");
 
     private static final HyriLanguageMessage PLAYERS = new HyriLanguageMessage("scoreboard.players")
-            .addValue(HyriLanguage.FR, "Joueurs : ")
+            .addValue(HyriLanguage.FR, "Joueurs: ")
             .addValue(HyriLanguage.EN, "Players: ");
 
     private static final HyriLanguageMessage WAITING = new HyriLanguageMessage("scoreboard.waiting")
@@ -31,24 +32,27 @@ public class HyriWaitingScoreboard extends HyriScoreboard {
             .addValue(HyriLanguage.EN, "Waiting for players");
 
     private static final HyriLanguageMessage STARTING = new HyriLanguageMessage("scoreboard.starting")
-            .addValue(HyriLanguage.FR, "Lancement dans : ")
+            .addValue(HyriLanguage.FR, "Lancement dans: ")
             .addValue(HyriLanguage.EN, "Starting in: ");
 
     private static final String DASH = ChatColor.WHITE + " ⁃ ";
 
     private int time = -1;
 
-    private final HyriGame<?> game;
-
     public HyriWaitingScoreboard(HyriGame<?> game, JavaPlugin plugin, Player player) {
         super(plugin, player, "waiting", ChatColor.DARK_AQUA + "" + ChatColor.BOLD + game.getDisplayName());
-        this.game = game;
 
         this.addLines();
 
+        String map = HyriAPI.get().getServer().getMap();
+
+        if (map != null) {
+            map = "Unknown";
+        }
+
         this.setLine(0, ChatColor.GRAY + TimeUtil.getCurrentFormattedDate(), line -> line.setValue(ChatColor.GRAY + TimeUtil.getCurrentFormattedDate()), 20);
         this.addBlankLine(1);
-        this.setLine(2,  DASH + MAP.getForPlayer(this.player) + ChatColor.RED + "Unknown");
+        this.setLine(2,  DASH + MAP.getForPlayer(this.player) + ChatColor.AQUA + map);
         this.addBlankLine(4);
         this.addBlankLine(6);
         this.setLine(7, ChatColor.DARK_AQUA + HyriConstants.SERVER_IP, new HyriScoreboardIpConsumer(HyriConstants.SERVER_IP), 2);

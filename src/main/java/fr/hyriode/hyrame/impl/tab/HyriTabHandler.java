@@ -2,14 +2,19 @@ package fr.hyriode.hyrame.impl.tab;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.api.rank.EHyriRank;
+import fr.hyriode.api.player.nickname.IHyriNickname;
 import fr.hyriode.api.rank.HyriRank;
+import fr.hyriode.api.rank.type.HyriPlayerRankType;
+import fr.hyriode.api.rank.type.HyriStaffRankType;
+import fr.hyriode.api.rank.type.IHyriRankType;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam;
 import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeamHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 /**
  * Project: Hyrame
@@ -26,21 +31,23 @@ public class HyriTabHandler {
         this.hyrame = hyrame;
         this.teamHandler = new HyriScoreboardTeamHandler();
 
-        for (EHyriRank rankEnum : EHyriRank.values()) {
-            final HyriRank rank = HyriAPI.get().getRankManager().getRank(rankEnum);
-            final HyriScoreboardTeam team = new HyriScoreboardTeam(rank.getName(), this.getAlphabetLetter(rankEnum.getId()), "", "", "");
+        this.loadDefaults(HyriPlayerRankType.values());
+        this.loadDefaults(HyriStaffRankType.values());
+    }
 
-            if (rank.getType().equals(EHyriRank.PLAYER)) {
-                final String display = ChatColor.GRAY + "";
+    private void loadDefaults(IHyriRankType[] rankTypes) {
+        for (IHyriRankType rankType : rankTypes) {
+            final HyriScoreboardTeam team = new HyriScoreboardTeam(rankType.getName(), this.getAlphabetLetter(rankType.getTabListPriority()), "", "", "");
 
-                team.setDisplay(display);
-                team.setPrefix(display);
+            final String display;
+            if (rankType.withSeparator()) {
+                display = rankType.getDefaultPrefix() + HyriRank.SEPARATOR + rankType.getDefaultColor();
             } else {
-                final String formattedDisplay = this.getFormattedDisplayName(rank.getPrefix());
-
-                team.setDisplay(formattedDisplay);
-                team.setPrefix(formattedDisplay);
+                display = rankType.getDefaultColor() + "";
             }
+
+            team.setDisplay(display);
+            team.setPrefix(display);
 
             this.teamHandler.addTeam(team);
         }
@@ -48,11 +55,34 @@ public class HyriTabHandler {
 
     public void onLogin(Player player) {
         if (this.hyrame.getConfiguration().areRanksInTabList()) {
+            final UUID playerId = player.getUniqueId();
+            final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(playerId);
+            final IHyriNickname nickname = account.getNickname();
+            final HyriRank rank = account.getRank();
+            final IHyriRankType rankType =  rank.getType();
+
             this.teamHandler.addReceiver(player);
 
-            final IHyriPlayer hyriPlayer = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
-            final HyriRank rank = hyriPlayer.getRank();
-            final HyriScoreboardTeam team = this.teamHandler.getTeamByName(rank.getName());
+            final HyriScoreboardTeam team;
+            if (nickname != null) {
+                team = this.teamHandler.getTeamByName(nickname.getRank().getName());
+            } else if (!rank.hasCustomPrefix()) {
+                team = this.teamHandler.getTeamByName(rank.getType().getName());
+            } else {
+                team = new HyriScoreboardTeam(playerId.toString(), this.getAlphabetLetter(rankType.getPriority()) + player.getName(), "", "", "");
+
+                final String display;
+                if (rank.withSeparator()) {
+                    display = ChatColor.translateAlternateColorCodes('&', rank.getPrefix()) + HyriRank.SEPARATOR + rank.getMainColor();
+                } else {
+                    display = rank.getMainColor() + "";
+                }
+
+                team.setDisplay(display);
+                team.setPrefix(display);
+
+                this.teamHandler.addTeam(team);
+            }
 
             this.teamHandler.addPlayerToTeam(player, team);
         }
@@ -60,6 +90,8 @@ public class HyriTabHandler {
 
     public void onLogout(Player player) {
         this.teamHandler.removeReceiver(player);
+
+        this.teamHandler.removeTeam(player.getUniqueId().toString());
     }
 
     public void enable() {
@@ -76,12 +108,6 @@ public class HyriTabHandler {
 
     private String getAlphabetLetter(int id) {
         return String.valueOf("abcdefghijklmnopqrstuvwxyz".toCharArray()[id % 24]);
-    }
-
-    private String getFormattedDisplayName(String displayName) {
-        displayName += ChatColor.WHITE + "・" + displayName.substring(0, 2);
-
-        return displayName.substring(0, Math.min(displayName.length(), 16));
     }
 
 }

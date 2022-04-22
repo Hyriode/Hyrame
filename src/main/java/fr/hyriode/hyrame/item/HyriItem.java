@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.item;
 
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -22,19 +23,14 @@ public abstract class HyriItem<T extends JavaPlugin> {
 
     /** Spigot plugin */
     protected final T plugin;
-
     /** Item name/id. Example: my_item */
     protected final String name;
-
     /** Item's display name */
     protected Supplier<HyriLanguageMessage> displayName;
-
     /** Item's description */
     protected Supplier<List<HyriLanguageMessage>> description;
-
     /** Item's material */
     protected Material material;
-
     /** Item's data */
     protected byte data;
 
@@ -93,6 +89,10 @@ public abstract class HyriItem<T extends JavaPlugin> {
      */
     public HyriItem(T plugin, String name, Supplier<HyriLanguageMessage> displayName, Material material) {
         this(plugin, name, displayName, ArrayList::new, material, (byte) 0);
+    }
+
+    public static Supplier<HyriLanguageMessage> displayName(String key) {
+        return () -> IHyriLanguageManager.Provider.get().getMessage(key);
     }
 
     /**

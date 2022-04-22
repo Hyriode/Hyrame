@@ -24,6 +24,11 @@ public class HyriCommonMessages {
             .addValue(HyriLanguage.EN, "Invalid command: ")
             .addValue(HyriLanguage.FR, "Commande invalide : ");
 
+    /** The input is invalid */
+    public static final HyriLanguageMessage INVALID_INPUT = new HyriLanguageMessage("invalid.input")
+            .addValue(HyriLanguage.EN, "Invalid input!")
+            .addValue(HyriLanguage.FR, "Valeur invalide!");
+
     /** The number is invalid */
     public static final HyriLanguageMessage INVALID_NUMBER = new HyriLanguageMessage("invalid.number")
             .addValue(HyriLanguage.EN, "Invalid number: ")

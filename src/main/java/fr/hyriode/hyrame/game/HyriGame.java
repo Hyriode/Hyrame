@@ -1,11 +1,18 @@
 package fr.hyriode.hyrame.game;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.game.IHyriGameInfo;
+import fr.hyriode.api.network.IHyriNetwork;
+import fr.hyriode.api.party.IHyriParty;
+import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.chat.HyriDefaultChatHandler;
 import fr.hyriode.hyrame.game.event.HyriGameStateChangedEvent;
 import fr.hyriode.hyrame.game.event.HyriGameWinEvent;
+import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
+import fr.hyriode.hyrame.game.event.player.HyriGameLeaveEvent;
 import fr.hyriode.hyrame.game.event.team.HyriGameTeamRegisteredEvent;
 import fr.hyriode.hyrame.game.event.team.HyriGameTeamUnregisteredEvent;
 import fr.hyriode.hyrame.game.protocol.HyriGameProtocolManager;
@@ -19,6 +26,7 @@ import fr.hyriode.hyrame.game.timer.HyriGameTimer;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.PlayerUtil;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -41,22 +49,18 @@ import java.util.stream.Collectors;
  */
 public abstract class HyriGame<P extends HyriGamePlayer> {
 
+    /** The hyphens that represent the length of game description message */
+    private static final String DESCRIPTION_HYPHENS = "----------------------------------------------------";
+
     /** The prefix to show when a message is sent to spectators */
     private static final HyriLanguageMessage SPECTATORS_CHAT_PREFIX = new HyriLanguageMessage("")
             .addValue(HyriLanguage.EN, "[Spectators] ")
             .addValue(HyriLanguage.FR, "[Spectateurs] ");
 
-    /** Default game type */
-    public static final HyriGameType DEFAULT_TYPE = () -> "default";
-
-    /** Redis constants */
-    private static final String CURRENT_GAME_KEY = "currentGame:";
-    private static final String LAST_GAME_KEY = "lastGame:";
-
     /** Minimum of players to start */
-    protected int minPlayers;
+    protected final int minPlayers;
     /** Maximum of players */
-    protected int maxPlayers;
+    protected final int maxPlayers;
 
     /** Tab list manager object */
     protected HyriGameTabListManager tabListManager;
@@ -70,8 +74,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     protected BukkitTask startingTimerTask;
     /** Is default starting */
     protected boolean defaultStarting = true;
-    /** Is tab list used */
-    protected boolean usingTabList = true;
+    /** Is game tab list used */
+    protected boolean usingGameTabList = true;
 
     /** Game timer task */
     protected BukkitTask timerTask;
@@ -88,12 +92,12 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /** Game state */
     private HyriGameState state;
 
-    /** Game name */
-    protected final String name;
-    /** Game display name */
-    protected final String displayName;
+    /** Game info */
+    protected final IHyriGameInfo info;
     /** Game type */
     protected final HyriGameType type;
+    /** The description of the game */
+    private HyriLanguageMessage description;
 
     /** Hyrame object */
     protected final IHyrame hyrame;
@@ -105,26 +109,24 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      *
      * @param hyrame Hyrame instance
      * @param plugin Game plugin instance
-     * @param name Game name
-     * @param displayName Game display name
+     * @param info Game information
      * @param playerClass Game player class
      * @param type Game type (for example 1v1, 2v2 etc.)
      */
-    public HyriGame(IHyrame hyrame, JavaPlugin plugin, String name, String displayName, Class<P> playerClass, HyriGameType type) {
+    public HyriGame(IHyrame hyrame, JavaPlugin plugin, IHyriGameInfo info, Class<P> playerClass, HyriGameType type) {
         this.hyrame = hyrame;
         this.plugin = plugin;
-        this.name = name;
-        this.displayName = displayName;
+        this.info = info;
         this.playerClass = playerClass;
         this.type = type;
         this.setState(HyriGameState.WAITING);
         this.players = new ArrayList<>();
         this.teams = new ArrayList<>();
         this.protocolManager = new HyriGameProtocolManager(this.plugin, this);
-        this.minPlayers = 4;
-        this.maxPlayers = this.minPlayers;
+        this.minPlayers = type.getMinPlayers();
+        this.maxPlayers = type.getMaxPlayers();
 
-        if (this.usingTabList) {
+        if (this.usingGameTabList) {
             this.tabListManager = new HyriGameTabListManager(this);
         }
     }
@@ -135,11 +137,11 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @param hyrame Hyrame instance
      * @param plugin Game plugin instance
      * @param name Game name
-     * @param displayName Game display name
      * @param playerClass Game player class
+     * @param type Game type (for example 1v1, 2v2 etc.)
      */
-    public HyriGame(IHyrame hyrame, JavaPlugin plugin, String name, String displayName, Class<P> playerClass) {
-        this(hyrame, plugin, name, displayName, playerClass, DEFAULT_TYPE);
+    public HyriGame(IHyrame hyrame, JavaPlugin plugin, String name, Class<P> playerClass, HyriGameType type) {
+        this(hyrame, plugin, HyriAPI.get().getGameManager().getGameInfo(name), playerClass, type);
     }
 
     /**
@@ -167,14 +169,44 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
             this.startingTimer = null;
         }
 
+        HyriAPI.get().getServer().setState(IHyriServer.State.PLAYING);
+
+        this.setState(HyriGameState.PLAYING);
+
         this.timer = new HyriGameTimer();
         this.timerTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, this.timer, 20L, 20L);
 
         this.giveRandomTeams();
 
-        this.setState(HyriGameState.PLAYING);
+        for (HyriGamePlayer gamePlayer : this.players) {
+            final Player player = gamePlayer.getPlayer();
+            final String displayName =  this.info.getDisplayName();
+            final int headerPartLength = (DESCRIPTION_HYPHENS.length() - displayName.length()) / 2 - 2;
+            final StringBuilder header = new StringBuilder();
 
-        this.players.forEach(player -> PlayerUtil.resetPlayer(player.getPlayer(), true));
+            for (int i = 0; i <= headerPartLength; i++) {
+                header.append(ChatColor.DARK_AQUA).append(ChatColor.STRIKETHROUGH).append("-");
+            }
+
+            header.append(" ").append(ChatColor.AQUA).append(displayName).append(" ");
+
+            for (int i = 0; i <= headerPartLength; i++) {
+                header.append(ChatColor.DARK_AQUA).append(ChatColor.STRIKETHROUGH).append("-");
+            }
+
+            if (this.description != null) {
+                player.spigot().sendMessage(new ComponentBuilder(header.toString())
+                        .append("\n")
+                        .reset()
+                        .append(this.description.getForPlayer(player))
+                        .append("\n")
+                        .append(ChatColor.DARK_AQUA + DESCRIPTION_HYPHENS)
+                        .strikethrough(true)
+                        .create());
+            }
+
+            PlayerUtil.resetPlayer(player, true);
+        }
     }
 
     /**
@@ -191,9 +223,11 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
                     this.players.add(player);
 
-                    HyriAPI.get().getRedisProcessor().process(jedis -> jedis.set(CURRENT_GAME_KEY + p.getUniqueId().toString(), this.getName()));
+                    this.updatePlayerCount();
 
-                    if (this.usingTabList) {
+                    HyriAPI.get().getEventBus().publish(new HyriGameJoinEvent(this, player));
+
+                    if (this.usingGameTabList) {
                         this.tabListManager.handleLogin(p);
                     }
                 }
@@ -205,6 +239,13 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         }
     }
 
+    private void updatePlayerCount() {
+        final IHyriNetwork network = HyriAPI.get().getNetworkManager().getNetwork();
+
+        network.getPlayerCount().getCategory(this.getName()).setType(this.type.getName(), this.players.size());
+        network.update();
+    }
+
     /**
      * Called on player logout<br>
      * Override this method to make actions on logout
@@ -214,10 +255,9 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     public void handleLogout(Player p) {
         final P player = this.getPlayer(p.getUniqueId());
 
-        HyriAPI.get().getRedisProcessor().process(jedis -> {
-            jedis.set(LAST_GAME_KEY + p.getUniqueId().toString(), this.getName());
-            jedis.del(CURRENT_GAME_KEY + p.getUniqueId().toString());
-        });
+        this.updatePlayerCount();
+
+        HyriAPI.get().getEventBus().publish(new HyriGameLeaveEvent(this, player));
 
         this.players.remove(player);
 
@@ -225,7 +265,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
             player.getTeam().removePlayer(player);
         }
 
-        if (this.usingTabList) {
+        if (this.usingGameTabList) {
             this.tabListManager.handleLogout(p);
         }
     }
@@ -245,7 +285,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
-     * To call when the game is over<br>
+     * To call when the game is over.<br>
      * Override this method to make actions on game end
      */
     public void end() {
@@ -253,13 +293,23 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
         this.timerTask.cancel();
 
-        this.hyrame.setChatHandler(new HyriDefaultChatHandler());
+        for (HyriGamePlayer gamePlayer : this.players) {
+            final UUID playerId = gamePlayer.getUUID();
+            final IHyriPlayer account = gamePlayer.asHyriPlayer();
+            final boolean autoQueue = account.getSettings().isAutoQueueEnabled();
+
+            if (autoQueue) {
+                HyriAPI.get().getQueueManager().addPlayerInQueueWithPartyCheck(playerId, this.info.getName(), this.type.getName());
+            }
+        }
 
         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-            for (HyriGamePlayer player : this.players) {
-                HyriAPI.get().getServerManager().sendPlayerToLobby(player.getUUID());
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                HyriAPI.get().getServerManager().sendPlayerToLobby(player.getUniqueId());
             }
         }, 20 * 30);
+
+        HyriAPI.get().getServer().setState(IHyriServer.State.SHUTDOWN);
 
         Bukkit.getScheduler().runTaskLater(this.plugin, Bukkit::shutdown, 20 * 40);
     }
@@ -274,7 +324,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         if (this.getTeam(team.getName()) == null) {
             this.teams.add(team);
 
-            if (this.usingTabList) {
+            if (this.usingGameTabList) {
                 this.tabListManager.addTeam(team);
             }
 
@@ -294,7 +344,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         if (this.getTeam(team.getName()) != null) {
             this.teams.remove(team);
 
-            if (this.usingTabList) {
+            if (this.usingGameTabList) {
                 this.tabListManager.removeTeam(team);
             }
 
@@ -332,7 +382,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * Update tab list if its used
      */
     public void updateTabList() {
-        if (this.usingTabList) {
+        if (this.usingGameTabList) {
             this.tabListManager.updateTabList();
         }
     }
@@ -344,12 +394,17 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @param condition The condition to send the message
      */
     public void sendMessageToAll(Function<Player, String> message, Predicate<HyriGamePlayer> condition) {
-        for (HyriGamePlayer gamePlayer : this.players) {
-            final Player player = gamePlayer.getPlayer();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            final HyriGamePlayer gamePlayer = this.getPlayer(player);
 
-            if (condition == null || condition.test(gamePlayer)) {
-                player.sendMessage(message.apply(player));
+            if (gamePlayer != null) {
+                if (condition == null || condition.test(gamePlayer)) {
+                    player.sendMessage(message.apply(player));
+                }
+                continue;
             }
+
+            player.sendMessage(message.apply(player));
         }
     }
 
@@ -388,10 +443,15 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @param withPrefix If <code>true</code>, a prefix will be added before the message
      */
     public void sendMessageToSpectators(Function<Player, String> message, boolean withPrefix) {
-        for (HyriGamePlayer player : this.getSpectators()) {
-            final Player target = player.getPlayer();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            final HyriGamePlayer gamePlayer = this.getPlayer(player.getUniqueId());
+            final String formattedMessage = ChatColor.GRAY + (withPrefix ? SPECTATORS_CHAT_PREFIX.getForSender(player) : "") + message.apply(player);
 
-            target.sendMessage(ChatColor.GRAY + (withPrefix ? SPECTATORS_CHAT_PREFIX.getForSender(target) : "") + message.apply(target));
+            if (gamePlayer == null) {
+                player.sendMessage(formattedMessage);
+            } else if (gamePlayer.isSpectator()) {
+                player.sendMessage(formattedMessage);
+            }
         }
     }
 
@@ -560,7 +620,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @return Game name
      */
     public String getName() {
-        return this.name;
+        return this.info.getName();
     }
 
     /**
@@ -569,7 +629,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @return Game display name
      */
     public String getDisplayName() {
-        return this.displayName;
+        return this.info.getDisplayName();
     }
 
     /**
@@ -647,6 +707,15 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
+     * Check if the game is using the game tab list system (with teams)
+     *
+     * @return <code>true</code> if yes
+     */
+    public boolean isUsingGameTabList() {
+        return this.usingGameTabList;
+    }
+
+    /**
      * Get the starting timer instance.
      * Warning: It might be null if the game is no longer in {@link HyriGameState#WAITING} or {@link HyriGameState#READY}
      *
@@ -675,30 +744,12 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
-     * Set maximum of game players
-     *
-     * @param maxPlayers New maximum of game players
-     */
-    public void setMaxPlayers(int maxPlayers) {
-        this.maxPlayers = maxPlayers;
-    }
-
-    /**
      * Get minimum of game players
      *
      * @return Minimum of game players
      */
     public int getMinPlayers() {
         return this.minPlayers;
-    }
-
-    /**
-     * Set minimum of game players
-     *
-     * @param minPlayers New minimum of game players
-     */
-    public void setMinPlayers(int minPlayers) {
-        this.minPlayers = minPlayers;
     }
 
     /**

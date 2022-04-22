@@ -1,7 +1,8 @@
 package fr.hyriode.hyrame.impl.command;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.rank.HyriPermission;
+import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.rank.HyriRank;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.command.*;
 import fr.hyriode.hyrame.impl.Hyrame;
@@ -17,6 +18,7 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 
 /**
@@ -106,18 +108,20 @@ public class HyriCommandManager implements IHyriCommandManager {
             @Override
             public boolean execute(CommandSender sender, String label, String[] args) {
                 if (type.getCheck().apply(sender)) {
-                    final HyriPermission permission = info.getPermission();
+                    final Predicate<IHyriPlayer> permission = info.getPermission();
 
                     if (permission != null) {
                         if (sender instanceof Player) {
-                            if (!HyriAPI.get().getPlayerManager().hasPermission(((Player) sender).getUniqueId(), info.getPermission())) {
+                            final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(((Player) sender).getUniqueId());
+
+                            if (!permission.test(account)) {
                                 sender.sendMessage(ChatColor.RED + HyriCommonMessages.DONT_HAVE_PERMISSION.getForSender(sender));
                                 return true;
                             }
                         }
                     }
 
-                    final HyriCommandContext ctx = new HyriCommandContext(sender, label, args);
+                    final HyriCommandContext ctx = new HyriCommandContext(sender, label, args, info);
 
                     command.handle(ctx);
 
