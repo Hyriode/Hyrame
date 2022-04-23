@@ -58,17 +58,6 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
         }.runTaskLater(this.plugin, 20);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onDeath(PlayerDeathEvent event) {
-        final Player player = event.getEntity();
-
-        for (NPC npc : NPCManager.getNPCs().keySet()) {
-            NPCManager.removeNPC(player, npc);
-        }
-
-        this.trackPlayer(player);
-    }
-
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTeleport(PlayerTeleportEvent event) {
@@ -126,9 +115,9 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
 
     private void checkDistance(Player player, Location from, Location to) {
         for (NPC npc : NPCManager.getNPCs().keySet()) {
-            if (from.distanceSquared(npc.getLocation()) > 2500 && to.distanceSquared(npc.getLocation()) < 2500) {
+            if (from.distance(npc.getLocation()) > 100 && to.distanceSquared(npc.getLocation()) < 100) {
                 NPCManager.sendNPC(player, npc);
-            } else if (from.distanceSquared(npc.getBukkitEntity().getLocation()) < 2500 && to.distanceSquared(npc.getBukkitEntity().getLocation()) > 2500) {
+            } else if (from.distanceSquared(npc.getLocation()) < 100 && to.distanceSquared(npc.getLocation()) > 100) {
                 NPCManager.removeNPC(player, npc);
             }
         }
@@ -138,25 +127,29 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
         final ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
             @Override
             public void channelRead(ChannelHandlerContext ctx, Object packet) throws Exception {
-                if (packet.getClass() == PacketPlayInUseEntity.class) {
-                    final Object entityId = Reflection.invokeField(packet, "a");
+                if (packet == null || packet.getClass() != PacketPlayInUseEntity.class) {
+                    super.channelRead(ctx, packet);
+                    return;
+                }
 
-                    if (entityId instanceof Integer) {
-                        for (NPC npc : NPCManager.getNPCs().keySet()) {
-                            if (npc.getId() == (int) entityId) {
-                                if (npc.getInteractCallback() != null) {
-                                    if (player.getLocation().distance(npc.getLocation()) <= 3.0D) {
-                                        final PacketPlayInUseEntity.EnumEntityUseAction action = (PacketPlayInUseEntity.EnumEntityUseAction) Reflection.invokeField(packet, "action");
+                final Object entityId = Reflection.invokeField(packet, "a");
 
-                                        if (action != null) {
-                                            npc.getInteractCallback().call(action.equals(PacketPlayInUseEntity.EnumEntityUseAction.INTERACT), player);
-                                        }
+                if (entityId instanceof Integer) {
+                    for (NPC npc : NPCManager.getNPCs().keySet()) {
+                        if (npc.getId() == (int) entityId) {
+                            if (npc.getInteractCallback() != null) {
+                                if (player.getLocation().distance(npc.getLocation()) <= 3.0D) {
+                                    final PacketPlayInUseEntity.EnumEntityUseAction action = (PacketPlayInUseEntity.EnumEntityUseAction) Reflection.invokeField(packet, "action");
+
+                                    if (action != null) {
+                                        npc.getInteractCallback().call(action.equals(PacketPlayInUseEntity.EnumEntityUseAction.INTERACT), player);
                                     }
                                 }
                             }
                         }
                     }
                 }
+
                 super.channelRead(ctx, packet);
             }
         };

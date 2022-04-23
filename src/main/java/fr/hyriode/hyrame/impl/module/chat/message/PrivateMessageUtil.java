@@ -1,7 +1,6 @@
 package fr.hyriode.hyrame.impl.module.chat.message;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.friend.IHyriFriendHandler;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.settings.HyriPrivateMessagesLevel;
 import fr.hyriode.api.settings.IHyriPlayerSettings;
@@ -15,7 +14,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
-import java.util.function.BiConsumer;
 
 /**
  * Project: Hyrame

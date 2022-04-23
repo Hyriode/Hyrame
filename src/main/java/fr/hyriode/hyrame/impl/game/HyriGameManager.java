@@ -2,19 +2,14 @@ package fr.hyriode.hyrame.impl.game;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.HyrameLogger;
-import fr.hyriode.hyrame.chat.HyriDefaultChatHandler;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.game.event.HyriGameRegisteredEvent;
 import fr.hyriode.hyrame.game.event.HyriGameUnregisteredEvent;
 import fr.hyriode.hyrame.impl.Hyrame;
-import fr.hyriode.hyrame.impl.game.chat.HyriGameChatHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
 
 /**

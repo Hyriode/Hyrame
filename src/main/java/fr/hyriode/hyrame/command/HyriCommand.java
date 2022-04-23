@@ -3,13 +3,20 @@ package fr.hyriode.hyrame.command;
 import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Project: Hyrame
@@ -49,7 +56,7 @@ public abstract class HyriCommand<T extends JavaPlugin> {
      * @param usage Usage message if the input is not correct
      * @param callback Callback to fire after
      */
-    protected void handleArgument(HyriCommandContext ctx, String expected, HyriLanguageMessage usage, Consumer<HyriCommandOutput> callback) {
+    protected void handleArgument(HyriCommandContext ctx, String expected, Function<CommandSender, BaseComponent[]> usage, Consumer<HyriCommandOutput> callback) {
         if (ctx.getResult() == null || ctx.getResult().getType() == HyriCommandResult.Type.ERROR) {
             final String[] expectedArgs = expected.toLowerCase(Locale.ROOT).split(" ");
             final String[] args = ctx.getArgs();
@@ -108,7 +115,7 @@ public abstract class HyriCommand<T extends JavaPlugin> {
      *
      * @param ctx Command context
      */
-    private void invalidCommandMessage(HyriCommandContext ctx, HyriLanguageMessage usage) {
+    private void invalidCommandMessage(HyriCommandContext ctx, Function<CommandSender, BaseComponent[]> usage) {
         final CommandSender sender = ctx.getSender();
 
         String message = ChatColor.RED + "";
@@ -121,7 +128,11 @@ public abstract class HyriCommand<T extends JavaPlugin> {
             }
         }
 
-        ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, message + ChatColor.RESET + usage.getForSender(sender)));
+        final List<BaseComponent> components = new ArrayList<>(Arrays.asList(TextComponent.fromLegacyText(message + ChatColor.RESET)));
+
+        components.addAll(Arrays.asList(usage.apply(sender)));
+
+        ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, components.toArray(new BaseComponent[0])));
     }
 
     /**

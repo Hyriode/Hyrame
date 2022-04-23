@@ -1,7 +1,8 @@
 package fr.hyriode.hyrame.impl;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.server.IHyriServer;
+import fr.hyriode.api.game.HyriGameType;
+import fr.hyriode.api.game.IHyriGameInfo;
 import fr.hyriode.hyrame.HyrameLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

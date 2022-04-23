@@ -2,13 +2,12 @@ package fr.hyriode.hyrame.game;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.game.IHyriGameInfo;
+import fr.hyriode.api.network.HyriPlayerCount;
 import fr.hyriode.api.network.IHyriNetwork;
-import fr.hyriode.api.party.IHyriParty;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.IHyrame;
-import fr.hyriode.hyrame.chat.HyriDefaultChatHandler;
 import fr.hyriode.hyrame.game.event.HyriGameStateChangedEvent;
 import fr.hyriode.hyrame.game.event.HyriGameWinEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
@@ -26,6 +25,7 @@ import fr.hyriode.hyrame.game.timer.HyriGameTimer;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.PlayerUtil;
+import fr.hyriode.hyrame.utils.Symbols;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -48,9 +48,6 @@ import java.util.stream.Collectors;
  * on 09/09/2021 at 19:16
  */
 public abstract class HyriGame<P extends HyriGamePlayer> {
-
-    /** The hyphens that represent the length of game description message */
-    private static final String DESCRIPTION_HYPHENS = "----------------------------------------------------";
 
     /** The prefix to show when a message is sent to spectators */
     private static final HyriLanguageMessage SPECTATORS_CHAT_PREFIX = new HyriLanguageMessage("")
@@ -181,14 +178,14 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         for (HyriGamePlayer gamePlayer : this.players) {
             final Player player = gamePlayer.getPlayer();
             final String displayName =  this.info.getDisplayName();
-            final int headerPartLength = (DESCRIPTION_HYPHENS.length() - displayName.length()) / 2 - 2;
+            final int headerPartLength = (Symbols.HYPHENS_LINE.length() - displayName.length()) / 2 - 2;
             final StringBuilder header = new StringBuilder();
 
             for (int i = 0; i <= headerPartLength; i++) {
                 header.append(ChatColor.DARK_AQUA).append(ChatColor.STRIKETHROUGH).append("-");
             }
 
-            header.append(" ").append(ChatColor.AQUA).append(displayName).append(" ");
+            header.append(ChatColor.RESET).append(" ").append(ChatColor.AQUA).append(displayName).append(" ");
 
             for (int i = 0; i <= headerPartLength; i++) {
                 header.append(ChatColor.DARK_AQUA).append(ChatColor.STRIKETHROUGH).append("-");
@@ -200,7 +197,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
                         .reset()
                         .append(this.description.getForPlayer(player))
                         .append("\n")
-                        .append(ChatColor.DARK_AQUA + DESCRIPTION_HYPHENS)
+                        .append(ChatColor.DARK_AQUA + Symbols.HYPHENS_LINE)
                         .strikethrough(true)
                         .create());
             }
@@ -241,8 +238,14 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
     private void updatePlayerCount() {
         final IHyriNetwork network = HyriAPI.get().getNetworkManager().getNetwork();
+        HyriPlayerCount count = network.getPlayerCount().getCategory(this.getName());
 
-        network.getPlayerCount().getCategory(this.getName()).setType(this.type.getName(), this.players.size());
+        if (count == null) {
+            count = new HyriPlayerCount(this.players.size());
+            network.getPlayerCount().setCategory(this.getName(), count);
+        }
+
+        count.setType(this.type.getName(), this.players.size());
         network.update();
     }
 
@@ -445,6 +448,11 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     public void sendMessageToSpectators(Function<Player, String> message, boolean withPrefix) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             final HyriGamePlayer gamePlayer = this.getPlayer(player.getUniqueId());
+
+            if (gamePlayer != null && !gamePlayer.isSpectator()) {
+                return;
+            }
+
             final String formattedMessage = ChatColor.GRAY + (withPrefix ? SPECTATORS_CHAT_PREFIX.getForSender(player) : "") + message.apply(player);
 
             if (gamePlayer == null) {

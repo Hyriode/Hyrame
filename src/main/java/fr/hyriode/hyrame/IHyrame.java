@@ -1,6 +1,5 @@
 package fr.hyriode.hyrame;
 
-import fr.hyriode.hyrame.chat.IHyriChatHandler;
 import fr.hyriode.hyrame.chat.IHyriChatManager;
 import fr.hyriode.hyrame.command.IHyriCommandManager;
 import fr.hyriode.hyrame.game.IHyriGameManager;

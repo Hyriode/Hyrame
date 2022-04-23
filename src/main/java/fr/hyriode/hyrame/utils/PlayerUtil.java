@@ -3,11 +3,7 @@ package fr.hyriode.hyrame.utils;
 import com.mojang.authlib.GameProfile;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;
@@ -38,17 +34,19 @@ import java.util.UUID;
  */
 public class PlayerUtil {
 
-    public static void hidePlayer(Player player, boolean tabList) {
+    public static void hidePlayer(Player player, boolean removeFromTabList) {
         for (Player target : Bukkit.getOnlinePlayers()) {
-            final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
+            target.hidePlayer(player);
 
-            if (!account.getRank().isStaff()) {
-                target.hidePlayer(player);
-
-                if (tabList) {
-                    PacketUtil.sendPacket(target, new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, ((CraftPlayer) player).getHandle()));
-                }
+            if (!removeFromTabList) {
+                PacketUtil.sendPacket(target, new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, ((CraftPlayer) player).getHandle()));
             }
+        }
+    }
+
+    public static void showPlayer(Player player) {
+        for (Player target : Bukkit.getOnlinePlayers()) {
+            target.showPlayer(player);
         }
     }
 

@@ -1,7 +1,6 @@
 package fr.hyriode.hyrame.impl.module.chat;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.rank.HyriRank;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;

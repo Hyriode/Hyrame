@@ -2,7 +2,6 @@ package fr.hyriode.hyrame.impl.module.nickname;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.player.nickname.IHyriNickname;
@@ -12,16 +11,13 @@ import fr.hyriode.api.util.Skin;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.impl.tab.HyriTabManager;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyrame.utils.*;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_8_R3.PacketPlayOutRespawn;
+import fr.hyriode.hyrame.utils.PlayerUtil;
+import fr.hyriode.hyrame.utils.ProfileLoader;
+import fr.hyriode.hyrame.utils.ThreadUtil;
+import fr.hyriode.hyrame.utils.UUIDFetcher;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.BufferedReader;
 import java.io.File;

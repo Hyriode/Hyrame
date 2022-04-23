@@ -1,13 +1,17 @@
 package fr.hyriode.hyrame.command;
 
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.api.rank.HyriRank;
 import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -22,7 +26,7 @@ public class HyriCommandInfo {
     /** Command's description */
     private String description = "";
     /** Command's usage */
-    private HyriLanguageMessage usage;
+    private Function<CommandSender, BaseComponent[]> usage;
     /** The boolean that means whether the invalid command message will be sent or not */
     private boolean invalidMessage;
     /** Command's aliases */
@@ -88,7 +92,7 @@ public class HyriCommandInfo {
      * @param invalidMessage Invalid message will be sent or not
      * @return {@link HyriCommandInfo}
      */
-    public HyriCommandInfo withUsage(HyriLanguageMessage usage, boolean invalidMessage) {
+    public HyriCommandInfo withUsage(Function<CommandSender, BaseComponent[]> usage, boolean invalidMessage) {
         this.usage = usage;
         this.invalidMessage = invalidMessage;
         return this;
@@ -100,7 +104,7 @@ public class HyriCommandInfo {
      * @param usage Command's usage
      * @return {@link HyriCommandInfo}
      */
-    public HyriCommandInfo withUsage(HyriLanguageMessage usage) {
+    public HyriCommandInfo withUsage(Function<CommandSender, BaseComponent[]> usage) {
         return this.withUsage(usage, true);
     }
 
@@ -112,7 +116,7 @@ public class HyriCommandInfo {
      * @return {@link HyriCommandInfo}
      */
     public HyriCommandInfo withUsage(String usage, boolean invalidMessage) {
-        this.usage = new HyriLanguageMessage().addValue(HyriLanguage.EN, usage);
+        this.usage = sender -> TextComponent.fromLegacyText(usage);
         this.invalidMessage = invalidMessage;
         return this;
     }
@@ -132,7 +136,7 @@ public class HyriCommandInfo {
      *
      * @return The command's usage
      */
-    public HyriLanguageMessage getUsage() {
+    public Function<CommandSender, BaseComponent[]> getUsage() {
         return this.usage;
     }
 

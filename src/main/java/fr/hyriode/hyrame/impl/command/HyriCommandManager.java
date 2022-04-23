@@ -2,13 +2,14 @@ package fr.hyriode.hyrame.impl.command;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.api.rank.HyriRank;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.command.*;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.reflection.Reflection;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -129,7 +130,11 @@ public class HyriCommandManager implements IHyriCommandManager {
 
                     if (result != null) {
                         if (result.getType() == HyriCommandResult.Type.ERROR) {
-                            sender.sendMessage(result.getMessage());
+                            if (sender instanceof Player) {
+                                ((Player) sender).spigot().sendMessage(result.getMessage());
+                            } else {
+                                sender.sendMessage(BaseComponent.toLegacyText(result.getMessage()));
+                            }
                         }
                     }
                 } else {

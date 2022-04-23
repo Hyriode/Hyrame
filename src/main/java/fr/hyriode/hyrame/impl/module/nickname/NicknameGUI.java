@@ -1,9 +1,6 @@
 package fr.hyriode.hyrame.impl.module.nickname;
 
-import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.player.nickname.IHyriNickname;
 import fr.hyriode.api.rank.type.HyriPlayerRankType;
-import fr.hyriode.api.util.Skin;
 import fr.hyriode.hyrame.inventory.HyriInventory;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
@@ -18,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 

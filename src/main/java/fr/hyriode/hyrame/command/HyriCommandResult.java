@@ -1,5 +1,8 @@
 package fr.hyriode.hyrame.command;
 
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+
 /**
  * Project: Hyrame
  * Created by AstFaster
@@ -10,7 +13,18 @@ public class HyriCommandResult {
     /** Result's type */
     private final Type type;
     /** Result's message */
-    private final String message;
+    private final BaseComponent[] message;
+
+    /**
+     * Constructor of {@link HyriCommandResult}
+     *
+     * @param type Result's type
+     * @param message Result's message
+     */
+    public HyriCommandResult(Type type, BaseComponent[] message) {
+        this.type = type;
+        this.message = message;
+    }
 
     /**
      * Constructor of {@link HyriCommandResult}
@@ -19,8 +33,7 @@ public class HyriCommandResult {
      * @param message Result's message
      */
     public HyriCommandResult(Type type, String message) {
-        this.type = type;
-        this.message = message;
+        this(type, TextComponent.fromLegacyText(message));
     }
 
     /**
@@ -46,7 +59,7 @@ public class HyriCommandResult {
      *
      * @return A message
      */
-    public String getMessage() {
+    public BaseComponent[] getMessage() {
         return this.message;
     }
 

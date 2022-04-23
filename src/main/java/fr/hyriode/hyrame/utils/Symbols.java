@@ -7,6 +7,9 @@ package fr.hyriode.hyrame.utils;
  */
 public class Symbols {
 
+    /** The line used for friends, game, parties, help, etc. */
+    public static final String HYPHENS_LINE = "--------------------------------------------------";
+
     public static final String SIMPLE_ARROW_THIN = "\u2192";
     public static final String SIMPLE_ARROW = "\u279E";
 

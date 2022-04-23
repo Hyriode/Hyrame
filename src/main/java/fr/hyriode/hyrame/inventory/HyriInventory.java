@@ -1,6 +1,5 @@
 package fr.hyriode.hyrame.inventory;
 
-import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

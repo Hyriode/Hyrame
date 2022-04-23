@@ -57,6 +57,10 @@ public class HyriItemManager implements IHyriItemManager {
 
         HyrameLogger.log("Searching for items in '" + packageName + "' package" + formattedPluginProviderName);
 
+        if (classes == null) {
+            return;
+        }
+
         for (Class<?> clazz : classes) {
             if (Reflection.inheritOf(clazz, HyriItem.class)) {
                 this.registerItem(pluginProvider, (Class<? extends HyriItem<?>>) clazz);
