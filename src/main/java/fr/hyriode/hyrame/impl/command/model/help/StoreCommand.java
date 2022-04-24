@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.impl.command.model;
+package fr.hyriode.hyrame.impl.command.model.help;
 
 import fr.hyriode.api.HyriConstants;
 import fr.hyriode.hyrame.command.HyriCommand;

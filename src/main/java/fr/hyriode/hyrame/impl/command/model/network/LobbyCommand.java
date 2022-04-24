@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.impl.command.model;
+package fr.hyriode.hyrame.impl.command.model.network;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyggdrasil.api.lobby.HyggLobbyAPI;
@@ -31,8 +31,6 @@ public class LobbyCommand extends HyriCommand<HyramePlugin> {
 
         if (!HyriAPI.get().getServer().getType().equalsIgnoreCase(HyggLobbyAPI.TYPE)) {
             HyriAPI.get().getServerManager().sendPlayerToLobby(player.getUniqueId());
-
-            player.sendMessage(HyriLanguageMessage.get("message.lobby.sending").getForPlayer(player));
         } else {
             player.sendMessage(HyriLanguageMessage.get("message.lobby.already-in").getForPlayer(player));
         }

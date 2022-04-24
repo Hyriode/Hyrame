@@ -46,16 +46,7 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
     public void onRespawn(PlayerRespawnEvent event) {
         final Player player = event.getPlayer();
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (NPC npc : NPCManager.getNPCs().keySet()) {
-                    NPCManager.sendNPC(player, npc);
-                }
-
-                trackPlayer(player);
-            }
-        }.runTaskLater(this.plugin, 20);
+        trackPlayer(player);
     }
 
 
@@ -115,9 +106,9 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
 
     private void checkDistance(Player player, Location from, Location to) {
         for (NPC npc : NPCManager.getNPCs().keySet()) {
-            if (from.distance(npc.getLocation()) > 100 && to.distanceSquared(npc.getLocation()) < 100) {
+            if (from.distance(npc.getLocation()) > 200 && to.distanceSquared(npc.getLocation()) < 200) {
                 NPCManager.sendNPC(player, npc);
-            } else if (from.distanceSquared(npc.getLocation()) < 100 && to.distanceSquared(npc.getLocation()) > 100) {
+            } else if (from.distance(npc.getLocation()) < 200 && to.distance(npc.getLocation()) > 200) {
                 NPCManager.removeNPC(player, npc);
             }
         }

@@ -44,6 +44,7 @@ public class HyriCommandBlocker {
         // Minecraft
         this.addBlockedCommand(MINECRAFT_PREFIX, "me", "trigger");
         this.removeCommand(MINECRAFT_PREFIX, "tell");
+        this.removeCommand(MINECRAFT_PREFIX, "whitelist");
 
         // Bukkit
         this.removeCommand(BUKKIT_PREFIX, "about", "version", "ver", "icanhasbukkit");

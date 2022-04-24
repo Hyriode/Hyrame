@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.impl.command.model;
+package fr.hyriode.hyrame.impl.command.model.network;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.command.HyriCommand;

@@ -123,6 +123,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         this.minPlayers = type.getMinPlayers();
         this.maxPlayers = type.getMaxPlayers();
 
+        HyriAPI.get().getServer().setSlots(this.maxPlayers);
+
         if (this.usingGameTabList) {
             this.tabListManager = new HyriGameTabListManager(this);
         }

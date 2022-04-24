@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftItem;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -22,6 +23,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -151,15 +153,15 @@ public class HyriGenerator {
         }
     }
 
-    private boolean splitItem() {
-        final List<Entity> players = this.location.getWorld().getNearbyEntities(this.location, 1.5D, 1.5D, 1.5D).stream().filter(entity -> entity.getType() == EntityType.PLAYER).filter(entity -> !this.ignoredPlayers.contains((Player) entity)).collect(Collectors.toList());
+    private boolean splitItem(ItemStack itemStack) {
+        final List<Entity> players = this.location.getWorld().getNearbyEntities(this.location, 2.0D, 2.0D, 2.0D).stream().filter(entity -> entity.getType() == EntityType.PLAYER).filter(entity -> !this.ignoredPlayers.contains((Player) entity)).collect(Collectors.toList());
 
         if (players.size() > 1) {
             for (Entity entity : players) {
                 final Player player = (Player) entity;
 
-                player.getInventory().addItem(this.item.clone());
-                player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 0.4F, 1.3F);
+                player.getInventory().addItem(itemStack);
+                player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 0.8F, 1.0F);
             }
             return true;
         }
@@ -167,11 +169,10 @@ public class HyriGenerator {
     }
 
     private void dropItem() {
-        LocationUtil.dropItem(this.location, this.getWithNBT()).setVelocity(new Vector(0.0D, 0.0D, 0.0D));
-    }
+        final Item item = LocationUtil.dropItem(this.location, this.item.clone());
 
-    private ItemStack getWithNBT() {
-        return new ItemNBT(this.item.clone()).setBoolean(ITEMS_TAG, true).build();
+        item.setVelocity(new Vector(0.0D, 0.0D, 0.0D));
+        item.setMetadata(ITEMS_TAG + ":" + this.item.getType().name(), new FixedMetadataValue(this.plugin, true));
     }
 
     private void createHologram(Player player) {
@@ -273,26 +274,21 @@ public class HyriGenerator {
 
         @EventHandler
         public void onPickup(PlayerPickupItemEvent event) {
-            final ItemStack itemStack = event.getItem().getItemStack();
+            final Item droppedItem = event.getItem();
+            final ItemStack itemStack = droppedItem.getItemStack();
             final Player player = event.getPlayer();
 
             if (ignoredPlayers.contains(player)) {
-                event.setCancelled(true);
                 return;
             }
 
-            final ItemNBT nbt = new ItemNBT(itemStack);
-
-            if (nbt.hasTag(ITEMS_TAG)) {
+            if (droppedItem.hasMetadata(ITEMS_TAG + ":" + item.getType().name())) {
                 if (tier.isSplitting()) {
-                    if (splitItem()) {
-                        event.setCancelled(true);
+                    if (splitItem(itemStack)) {
                         event.getItem().remove();
-                        return;
+                        event.setCancelled(true);
                     }
                 }
-
-                nbt.removeTag(ITEMS_TAG);
             }
         }
 
