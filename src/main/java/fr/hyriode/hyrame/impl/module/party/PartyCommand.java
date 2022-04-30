@@ -133,13 +133,7 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
             }
         }));
 
-        this.handleArgument(ctx, "chat %sentence%", this.partyOutput(ctx, party, output -> {
-            if (party.isChatEnabled() || party.getRank(playerId).canMute()) {
-                party.sendMessage(playerId, output.get(String.class));
-            } else {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.chat-muted").getForPlayer(player))));
-            }
-        }));
+        this.handleArgument(ctx, "chat %sentence%", this.partyOutput(ctx, party, output -> this.plugin.getHyrame().getPartyModule().sendPartyMessage(party, player, output.get(String.class))));
 
         this.handleArgument(ctx, "mute %input%", this.partyOutput(ctx, party, output -> {
             final String mutedInput = output.get(String.class);

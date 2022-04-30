@@ -7,11 +7,13 @@ import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
 import fr.hyriode.hyrame.command.HyriCommandType;
+import fr.hyriode.hyrame.chat.HyriMessageEvent;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
 import java.util.function.BiFunction;
 
 public class ChatCommand extends HyriCommand<HyramePlugin> {
@@ -28,6 +30,7 @@ public class ChatCommand extends HyriCommand<HyramePlugin> {
     @Override
     public void handle(HyriCommandContext ctx) {
         final Player player = (Player) ctx.getSender();
+        final UUID playerId = player.getUniqueId();
 
         this.handleArgument(ctx, "set %input%", output -> {
             final String chat = output.get(String.class).toLowerCase();
@@ -37,7 +40,7 @@ public class ChatCommand extends HyriCommand<HyramePlugin> {
                 return;
             }
 
-            final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
+            final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(playerId);
 
             if (!IHyriChatChannelManager.canPlayerAccessChannel(chat, account)) {
                 player.sendMessage(ChatColor.RED + MESSAGE.apply(player, "cant-join"));
@@ -65,7 +68,15 @@ public class ChatCommand extends HyriCommand<HyramePlugin> {
                 return;
             }
 
-            manager.sendMessage(chat, output.get(1, String.class), player.getUniqueId());
+            final String message = output.get(1, String.class);
+
+            final HyriMessageEvent event = new HyriMessageEvent(playerId, message);
+
+            HyriAPI.get().getEventBus().publish(event);
+
+            if (!event.isCancelled()) {
+                manager.sendMessage(chat, message, playerId);
+            }
         });
     }
 }

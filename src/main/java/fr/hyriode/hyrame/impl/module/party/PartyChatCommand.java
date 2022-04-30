@@ -2,7 +2,6 @@ package fr.hyriode.hyrame.impl.module.party;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.party.IHyriParty;
-import fr.hyriode.api.party.IHyriPartyManager;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
@@ -22,8 +21,6 @@ import static fr.hyriode.hyrame.impl.module.party.PartyModule.createMessage;
  */
 public class PartyChatCommand extends HyriCommand<HyramePlugin> {
 
-    private final IHyriPartyManager partyManager;
-
     public PartyChatCommand(HyramePlugin plugin) {
         super(plugin, new HyriCommandInfo("partychat")
                 .withAliases("pc")
@@ -31,7 +28,6 @@ public class PartyChatCommand extends HyriCommand<HyramePlugin> {
                 .withType(HyriCommandType.PLAYER)
                 .withUsage("/pc <message>")
                 .asynchronous());
-        this.partyManager = HyriAPI.get().getPartyManager();
     }
 
     @Override
@@ -45,13 +41,7 @@ public class PartyChatCommand extends HyriCommand<HyramePlugin> {
             return;
         }
 
-        this.handleArgument(ctx, "%sentence%", output -> {
-            if (party.isChatEnabled() || party.getRank(playerId).canMute()) {
-                party.sendMessage(playerId, output.get(String.class));
-            } else {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.chat-muted").getForPlayer(player))));
-            }
-        });
+        this.handleArgument(ctx, "%sentence%", output -> this.plugin.getHyrame().getPartyModule().sendPartyMessage(party, player, output.get(String.class)));
     }
 
 }

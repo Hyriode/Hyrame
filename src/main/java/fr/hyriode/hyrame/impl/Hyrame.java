@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.impl;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.IHyrameConfiguration;
@@ -209,6 +210,10 @@ public class Hyrame implements IHyrame {
 
     public PrivateMessageModule getPrivateMessageModule() {
         return this.privateMessageModule;
+    }
+
+    public PartyModule getPartyModule() {
+        return this.partyModule;
     }
 
 }

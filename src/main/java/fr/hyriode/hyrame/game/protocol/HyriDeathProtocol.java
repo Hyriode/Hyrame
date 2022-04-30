@@ -6,7 +6,7 @@ import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent.Reason;
-import fr.hyriode.hyrame.game.util.HyriDeathMessages;
+import fr.hyriode.hyrame.game.util.HyriGameMessages;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
@@ -207,7 +207,7 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
 
         if (this.options.isDeathMessages()) {
             this.getGame().sendMessageToAll(target -> {
-                final StringBuilder builder = new StringBuilder(HyriDeathMessages.createDeathMessage(gamePlayer, target, reason, lastHitters)).append(" ");
+                final StringBuilder builder = new StringBuilder(HyriGameMessages.createDeathMessage(gamePlayer, target, reason, lastHitters)).append(" ");
 
                 for (HyriLanguageMessage message : event.getMessagesToAdd()) {
                     builder.append(message.getForPlayer(target)).append(" ");

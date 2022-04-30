@@ -24,6 +24,7 @@ import fr.hyriode.hyrame.game.tab.HyriGameTabListManager;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.game.timer.HyriGameStartingTimer;
 import fr.hyriode.hyrame.game.timer.HyriGameTimer;
+import fr.hyriode.hyrame.game.util.HyriGameMessages;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.PlayerUtil;
@@ -181,29 +182,9 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
         for (HyriGamePlayer gamePlayer : this.players) {
             final Player player = gamePlayer.getPlayer();
-            final String displayName =  this.info.getDisplayName();
-            final int headerPartLength = (Symbols.HYPHENS_LINE.length() - displayName.length()) / 2 - 2;
-            final StringBuilder header = new StringBuilder();
-
-            for (int i = 0; i <= headerPartLength; i++) {
-                header.append(ChatColor.DARK_AQUA).append(ChatColor.STRIKETHROUGH).append("-");
-            }
-
-            header.append(ChatColor.RESET).append(" ").append(ChatColor.AQUA).append(displayName).append(" ");
-
-            for (int i = 0; i <= headerPartLength; i++) {
-                header.append(ChatColor.DARK_AQUA).append(ChatColor.STRIKETHROUGH).append("-");
-            }
 
             if (this.description != null) {
-                player.spigot().sendMessage(new ComponentBuilder(header.toString())
-                        .append("\n")
-                        .reset()
-                        .append(this.description.getForPlayer(player))
-                        .append("\n")
-                        .append(ChatColor.DARK_AQUA + Symbols.HYPHENS_LINE)
-                        .strikethrough(true)
-                        .create());
+                player.spigot().sendMessage(HyriGameMessages.createDescription(this, player));
             }
 
             PlayerUtil.resetPlayer(player, true);

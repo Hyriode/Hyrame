@@ -1,20 +1,27 @@
 package fr.hyriode.hyrame.game.util;
 
+import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
 import fr.hyriode.hyrame.game.protocol.HyriLastHitterProtocol;
+import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.utils.Symbols;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 /**
  * Project: Hyrame
  * Created by AstFaster
  * on 15/04/2022 at 09:12
  */
-public class HyriDeathMessages {
+public class HyriGameMessages {
 
     private static final String PLAYER_PLACEHOLDER = "%player%";
     private static final String KILLER_PLACEHOLDER = "%killer%";
@@ -79,6 +86,87 @@ public class HyriDeathMessages {
         }
 
         return result.replace(PLAYER_PLACEHOLDER, deadGamePlayer.formatNameWithTeam());
+    }
+
+    private static BaseComponent[] createFramedMessage(HyriGame<?> game, Consumer<ComponentBuilder> builderConsumer) {
+        final ComponentBuilder builder = new ComponentBuilder(Symbols.HYPHENS_LINE)
+                .color(net.md_5.bungee.api.ChatColor.DARK_AQUA)
+                .strikethrough(true)
+                .append("\n")
+                .reset();
+
+        for (int i = 0; i <= (Symbols.HYPHENS_LINE.length() - game.getDisplayName().length()) / 2; i++) {
+            builder.append("  ");
+        }
+
+        builder.append(game.getDisplayName()).color(ChatColor.AQUA).bold(true).append("\n\n");
+
+        builderConsumer.accept(builder);
+
+        return builder.append("\n")
+                .reset()
+                .append(Symbols.HYPHENS_LINE)
+                .color(net.md_5.bungee.api.ChatColor.DARK_AQUA)
+                .strikethrough(true)
+                .create();
+    }
+
+    public static BaseComponent[] createDescription(HyriGame<?> game, Player target) {
+        return createFramedMessage(game, builder -> builder.append(game.getDescription().getForPlayer(target)));
+    }
+
+    public static BaseComponent[] createWinMessage(HyriGame<?> game, Player target, HyriGameTeam winner, List<String> stats, List<String> rewards) {
+        return createFramedMessage(game, builder -> {
+            final String winnerLine = ChatColor.GOLD + HyriLanguageMessage.get("message.game.end.winner").getForPlayer(target) + ChatColor.GRAY + " - " + winner.getFormattedDisplayName(target);
+
+            for (int i = 0; i <= (Symbols.HYPHENS_LINE.length() - winnerLine.length()) / 2 + 2; i++) {
+                builder.append("  ");
+            }
+
+            builder.append(winnerLine);
+            builder.append("\n");
+
+            if (stats != null && stats.size() > 0) {
+                builder.append("\n");
+
+                final int space = (Symbols.HYPHENS_LINE.length() - stats.get(0).length()) / 2;
+
+                for (String statistic : stats) {
+
+                    for (int i = 0; i <= space; i++) {
+                        builder.append("  ");
+                    }
+
+                    builder.append(statistic).append("\n");
+                }
+            }
+
+            if (rewards != null && rewards.size() > 0) {
+                builder.append("\n");
+
+                final String rewardsLine = HyriLanguageMessage.get("message.game.end.rewards").getForPlayer(target);
+                final int space = (Symbols.HYPHENS_LINE.length() - rewardsLine.length()) / 2 - 3;
+
+                for (int i = 0; i <= space; i++) {
+                    builder.append("  ");
+                }
+
+                builder.append(rewardsLine)
+                        .color(ChatColor.GREEN)
+                        .bold(true)
+                        .append("")
+                        .reset()
+                        .append("\n");
+
+                for (String reward : rewards) {
+                    for (int i = 0; i <= space - 2; i++) {
+                        builder.append("  ");
+                    }
+
+                    builder.append("- ").color(ChatColor.WHITE).append(reward).reset().append("\n");
+                }
+            }
+        });
     }
 
 }
