@@ -48,7 +48,10 @@ public class SpectatorTeleporterItem extends HyriItem<HyramePlugin> {
                         .withLore(hyrame.getLanguageManager().getValue(this.owner, "gui.spectator.teleporter.lore"))
                         .build();
 
-                this.setItem(currentSlot, itemStack);
+                this.setItem(currentSlot, itemStack, event -> {
+                    this.owner.closeInventory();
+                    this.owner.teleport(player.getLocation());
+                });
 
                 currentSlot++;
             }

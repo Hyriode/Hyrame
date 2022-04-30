@@ -5,7 +5,9 @@ import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.impl.Hyrame;
+import fr.hyriode.hyrame.utils.block.BlockUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -51,9 +53,14 @@ class HyriGameHandler implements Listener {
     public void onInteract(PlayerInteractEvent event) {
         this.runActionOnGame(game -> {
             final Block block = event.getClickedBlock();
+            final Action action = event.getAction();
 
-            if (block != null && block.getState() instanceof InventoryHolder && event.getAction() != Action.LEFT_CLICK_BLOCK) {
-                event.setCancelled(true);
+            if (block != null) {
+                final Material type = block.getType();
+
+                if ((action == Action.PHYSICAL && BlockUtil.isPressurePlate(type)) || block.getState() instanceof InventoryHolder) {
+                    event.setCancelled(true);
+                }
             }
         }, game -> game.getState() != HyriGameState.PLAYING || game.getPlayer(event.getPlayer()).isSpectator());
     }

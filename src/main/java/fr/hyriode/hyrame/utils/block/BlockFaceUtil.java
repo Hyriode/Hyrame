@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.utils;
+package fr.hyriode.hyrame.utils.block;
 
 import org.bukkit.block.BlockFace;
 

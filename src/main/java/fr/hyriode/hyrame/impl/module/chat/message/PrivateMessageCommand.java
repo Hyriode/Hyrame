@@ -27,7 +27,7 @@ public class PrivateMessageCommand extends HyriCommand<HyramePlugin> {
     public void handle(HyriCommandContext ctx) {
         final Player player = (Player) ctx.getSender();
 
-        this.handleArgument(ctx, "%player% %sentence%", output -> PrivateMessageUtil.sendPrivateMessage(player, output.get(IHyriPlayer.class), output.get(String.class)));
+        this.handleArgument(ctx, "%player_online% %sentence%", output -> this.plugin.getHyrame().getPrivateMessageModule().sendPrivateMessage(player, output.get(IHyriPlayer.class), output.get(String.class)));
     }
 
 }

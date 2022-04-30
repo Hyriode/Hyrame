@@ -1,7 +1,6 @@
 package fr.hyriode.hyrame.impl.command.model.network;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.network.IHyriNetwork;
 import fr.hyriode.api.rank.type.HyriStaffRankType;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
@@ -23,7 +22,7 @@ public class WhitelistCommand extends HyriCommand<HyramePlugin> {
                 .withDescription("Whitelist command")
                 .withAliases("wl")
                 .withType(HyriCommandType.PLAYER)
-                .withUsage("/whitelist <player>")
+                .withUsage("/whitelist add <player>")
                 .withPermission(player -> player.getRank().is(HyriStaffRankType.ADMINISTRATOR)));
     }
 
@@ -31,13 +30,17 @@ public class WhitelistCommand extends HyriCommand<HyramePlugin> {
     public void handle(HyriCommandContext ctx) {
         final Player player = (Player) ctx.getSender();
 
-        this.handleArgument(ctx, "add %player%", output -> {
-            final IHyriNetwork network = HyriAPI.get().getNetworkManager().getNetwork();
+        this.handleArgument(ctx, "add %input%", output -> {
+            final String playerName = output.get(String.class);
 
-            network.getMaintenance().enable(player.getUniqueId(), null);
-            network.update();
+            if (HyriAPI.get().getPlayerManager().getWhitelistManager().isWhitelisted(playerName)) {
+                player.sendMessage(ChatColor.RED + "Ce joueur est déjà ajouté dans la whitelist.");
+                return;
+            }
 
-            player.sendMessage(ChatColor.GREEN + "Maintenance activé.");
+            HyriAPI.get().getPlayerManager().getWhitelistManager().whitelistPlayer(playerName);
+
+            player.sendMessage(ChatColor.GREEN + "Joueur ajouté dans la whitelist.");
         });
     }
 

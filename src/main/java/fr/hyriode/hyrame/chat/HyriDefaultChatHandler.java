@@ -1,8 +1,8 @@
 package fr.hyriode.hyrame.chat;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.chat.HyriChatChannel;
-import fr.hyriode.api.chat.IHyriChatChannelManager;
+import fr.hyriode.api.chat.channel.HyriChatChannel;
+import fr.hyriode.api.chat.channel.IHyriChatChannelManager;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.ChatColor;

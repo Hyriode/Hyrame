@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.impl.module.friend;
 import fr.hyriode.api.friend.HyriFriendRequest;
 import fr.hyriode.api.packet.HyriPacket;
 import fr.hyriode.api.packet.IHyriPacketReceiver;
+import fr.hyriode.hyrame.utils.ThreadUtil;
 
 /**
  * Project: Hyrame
@@ -20,7 +21,9 @@ public class FriendReceiver implements IHyriPacketReceiver {
     @Override
     public void receive(String channel, HyriPacket packet) {
         if (packet instanceof HyriFriendRequest.Packet) {
-            this.friendModule.onRequest(((HyriFriendRequest.Packet) packet).getRequest());
+            ThreadUtil.ASYNC_EXECUTOR.execute(() -> {
+                this.friendModule.onRequest(((HyriFriendRequest.Packet) packet).getRequest());
+            });
         }
     }
 

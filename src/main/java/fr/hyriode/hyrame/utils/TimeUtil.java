@@ -39,7 +39,7 @@ public class TimeUtil {
     public static String getCurrentFormattedDate(String pattern) {
         final SimpleDateFormat format = new SimpleDateFormat(pattern);
 
-        format.setTimeZone(TimeZone.getTimeZone("GMT+1"));
+        format.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
 
         return format.format(new Date());
     }
@@ -52,5 +52,20 @@ public class TimeUtil {
     public static String getCurrentFormattedDate() {
         return getCurrentFormattedDate(DEFAULT_PATTERN);
     }
+
+    /**
+     * Format a given date to the default pattern
+     *
+     * @param date The date to format
+     * @return A formatted date
+     */
+    public static String formatDate(Date date) {
+        final SimpleDateFormat format = new SimpleDateFormat(DEFAULT_PATTERN);
+
+        format.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+
+        return format.format(date);
+    }
+
 
 }

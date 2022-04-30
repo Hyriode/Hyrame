@@ -23,6 +23,9 @@ public class HyriWaitingScoreboard extends HyriScoreboard {
             .addValue(HyriLanguage.FR, "Carte: ")
             .addValue(HyriLanguage.EN, "Map: ");
 
+    private static final HyriLanguageMessage MODE = new HyriLanguageMessage("scoreboard.map")
+            .addValue(HyriLanguage.EN, "Mode: ");
+
     private static final HyriLanguageMessage PLAYERS = new HyriLanguageMessage("scoreboard.players")
             .addValue(HyriLanguage.FR, "Joueurs: ")
             .addValue(HyriLanguage.EN, "Players: ");
@@ -46,21 +49,22 @@ public class HyriWaitingScoreboard extends HyriScoreboard {
 
         String map = HyriAPI.get().getServer().getMap();
 
-        if (map != null) {
+        if (map == null) {
             map = "Unknown";
         }
 
         this.setLine(0, ChatColor.GRAY + TimeUtil.getCurrentFormattedDate(), line -> line.setValue(ChatColor.GRAY + TimeUtil.getCurrentFormattedDate()), 20);
         this.addBlankLine(1);
-        this.setLine(2,  DASH + MAP.getForPlayer(this.player) + ChatColor.AQUA + map);
-        this.addBlankLine(4);
-        this.addBlankLine(6);
-        this.setLine(7, ChatColor.DARK_AQUA + HyriConstants.SERVER_IP, new HyriScoreboardIpConsumer(HyriConstants.SERVER_IP), 2);
+        this.setLine(2, DASH + MAP.getForPlayer(this.player) + ChatColor.AQUA + map);
+        this.setLine(3, DASH + MAP.getForPlayer(this.player) + ChatColor.AQUA + map);
+        this.addBlankLine(5);
+        this.addBlankLine(7);
+        this.setLine(8, ChatColor.DARK_AQUA + HyriConstants.SERVER_IP, new HyriScoreboardIpConsumer(HyriConstants.SERVER_IP), 2);
     }
 
     private void addLines() {
-        this.setLine(3, this.getPlayersLine());
-        this.setLine(5, this.getStartingLine());
+        this.setLine(4, this.getPlayersLine());
+        this.setLine(6, this.getStartingLine());
     }
 
     public void update() {

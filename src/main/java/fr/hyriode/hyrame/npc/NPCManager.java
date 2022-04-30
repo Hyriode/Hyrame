@@ -183,10 +183,7 @@ public class NPCManager {
      */
     public static void sendNPC(Player player, NPC npc) {
         final Consumer<Player> sendConsumer = p -> {
-            for (Packet<?> packet : npc.getSpawnPackets()) {
-                PacketUtil.sendPacket(player, packet);
-            }
-
+            npc.spawnFor(p);
             npc.addPlayer(p);
 
             new BukkitRunnable() {
@@ -199,10 +196,8 @@ public class NPCManager {
 
         if (npc.isShowingToAll()) {
             sendConsumer.accept(player);
-        } else {
-            if (npc.getPlayers().contains(player)) {
-                sendConsumer.accept(player);
-            }
+        } else if (npc.getPlayers().contains(player)) {
+            sendConsumer.accept(player);
         }
     }
 
@@ -224,6 +219,10 @@ public class NPCManager {
      * @param npc - NPC to remove
      */
     public static void removeNPC(Player player, NPC npc) {
+        if (npc == null) {
+            return;
+        }
+
         for (Packet<?> packet : npc.getDestroyPackets()) {
             PacketUtil.sendPacket(player, packet);
         }

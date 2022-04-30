@@ -1,7 +1,7 @@
 package fr.hyriode.hyrame.impl.module.chat;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.chat.IHyriChatChannelManager;
+import fr.hyriode.api.chat.channel.IHyriChatChannelManager;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;

@@ -16,7 +16,7 @@ public class PrivateMessageReplyCommand extends HyriCommand<HyramePlugin> {
 
     public PrivateMessageReplyCommand(HyramePlugin plugin) {
         super(plugin, new HyriCommandInfo("reply")
-                .withAliases("r")
+                .withAliases("r", "respond")
                 .withDescription("The command used to reply to your latest message")
                 .withType(HyriCommandType.PLAYER)
                 .withUsage("/r <message>"));
@@ -26,7 +26,7 @@ public class PrivateMessageReplyCommand extends HyriCommand<HyramePlugin> {
     public void handle(HyriCommandContext ctx) {
         final Player player = (Player) ctx.getSender();
 
-        this.handleArgument(ctx, "%sentence%", output -> PrivateMessageUtil.replyToMessage(player, output.get(String.class)));
+        this.handleArgument(ctx, "%sentence%", output -> this.plugin.getHyrame().getPrivateMessageModule().replyToMessage(player, output.get(String.class)));
     }
 
 }

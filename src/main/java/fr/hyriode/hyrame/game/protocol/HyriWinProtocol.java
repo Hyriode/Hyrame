@@ -29,7 +29,8 @@ public class HyriWinProtocol extends HyriGameProtocol implements Listener {
 
     /** The game over to show */
     private static final HyriLanguageMessage GAME_OVER = new HyriLanguageMessage("")
-            .addValue(HyriLanguage.EN, "GAME OVER");
+            .addValue(HyriLanguage.EN, "DEFEAT")
+            .addValue(HyriLanguage.FR, "DEFAITE");
 
     private final HyriGame<?> game;
 
@@ -70,11 +71,11 @@ public class HyriWinProtocol extends HyriGameProtocol implements Listener {
 
         for (HyriGameTeam team : this.game.getTeams()) {
             if (team != winner) {
-                team.sendTitle(target -> ChatColor.DARK_RED + GAME_OVER.getForPlayer(target), target -> "", 0, 60, 5);
+                team.sendTitle(target -> ChatColor.RED + GAME_OVER.getForPlayer(target), target -> "", 0, 60, 5);
             }
         }
 
-        winner.sendTitle(target -> ChatColor.GOLD + Symbols.SPARKLES + " " + ChatColor.BOLD + VICTORY.getForPlayer(target) + ChatColor.RESET + ChatColor.GOLD + " " + Symbols.SPARKLES, target -> "", 0, 20 * 10, 5);
+        winner.sendTitle(target -> ChatColor.GOLD + Symbols.SPARKLES + " " + ChatColor.BOLD + VICTORY.getForPlayer(target) + ChatColor.RESET + ChatColor.GOLD + " " + Symbols.SPARKLES, target -> "", 0, 20 * 8, 5);
     }
 
 

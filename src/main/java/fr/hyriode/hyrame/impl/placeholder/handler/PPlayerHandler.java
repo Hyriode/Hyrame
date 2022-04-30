@@ -49,7 +49,7 @@ public class PPlayerHandler extends PlaceholderPrefixHandler {
             case "prefix":
                 return account.getRank().getPrefix();
             case "full_prefix":
-                return player.getDisplayName();
+                return account.getNameWithRank();
         }
         return null;
     }

@@ -1,6 +1,6 @@
 package fr.hyriode.hyrame.utils;
 
-import org.bukkit.Bukkit;
+import fr.hyriode.hyrame.IHyrame;
 import org.bukkit.Location;
 
 import java.util.UUID;
@@ -37,7 +37,7 @@ public class LocationWrapper {
     }
 
     public UUID getWorldId() {
-        return this.worldId;
+        return IHyrame.WORLD.get().getUID();
     }
 
     public void setWorldId(UUID worldId) {
@@ -85,7 +85,7 @@ public class LocationWrapper {
     }
 
     public Location asBukkit() {
-        return new Location(Bukkit.getWorld(this.worldId), this.x, this.y, this.z, this.yaw, this.pitch);
+        return new Location(IHyrame.WORLD.get(), this.x, this.y, this.z, this.yaw, this.pitch);
     }
 
     public static LocationWrapper from(Location location) {

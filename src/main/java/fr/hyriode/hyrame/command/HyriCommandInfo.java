@@ -1,12 +1,9 @@
 package fr.hyriode.hyrame.command;
 
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.api.settings.HyriLanguage;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +32,8 @@ public class HyriCommandInfo {
     private Predicate<IHyriPlayer> permission;
     /** Command's type */
     private HyriCommandType type = HyriCommandType.ALL;
+    /** Is the command executed asynchronously or not */
+    private boolean asynchronous;
 
     /**
      * Constructor of {@link HyriCommandInfo}
@@ -218,6 +217,25 @@ public class HyriCommandInfo {
      */
     public HyriCommandType getType() {
         return this.type;
+    }
+
+    /**
+     * Check if the command will be executed asynchronously
+     *
+     * @return <code>true</code> if yes
+     */
+    public boolean isAsynchronous() {
+        return this.asynchronous;
+    }
+
+    /**
+     * Set the command execution asynchronous
+     *
+     * @return This {@link HyriCommandInfo} instance
+     */
+    public HyriCommandInfo asynchronous() {
+        this.asynchronous = true;
+        return this;
     }
 
 }

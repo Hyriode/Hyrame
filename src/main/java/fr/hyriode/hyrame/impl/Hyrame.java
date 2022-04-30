@@ -17,8 +17,10 @@ import fr.hyriode.hyrame.impl.item.HyriItemManager;
 import fr.hyriode.hyrame.impl.join.HyriJoinHandler;
 import fr.hyriode.hyrame.impl.language.HyriLanguageManager;
 import fr.hyriode.hyrame.impl.listener.HyriListenerManager;
+import fr.hyriode.hyrame.impl.module.chat.message.PrivateMessageModule;
 import fr.hyriode.hyrame.impl.module.friend.FriendModule;
 import fr.hyriode.hyrame.impl.module.nickname.NicknameModule;
+import fr.hyriode.hyrame.impl.module.party.PartyModule;
 import fr.hyriode.hyrame.impl.placeholder.PlaceholderImpl;
 import fr.hyriode.hyrame.impl.placeholder.handler.PlaceholderRegistry;
 import fr.hyriode.hyrame.impl.scanner.HyriScanner;
@@ -65,6 +67,8 @@ public class Hyrame implements IHyrame {
 
     private final NicknameModule nicknameModule;
     private final FriendModule friendModule;
+    private final PrivateMessageModule privateMessageModule;
+    private final PartyModule partyModule;
 
     private final HyramePlugin plugin;
 
@@ -85,6 +89,8 @@ public class Hyrame implements IHyrame {
         this.tabManager = new HyriTabManager(this);
         this.nicknameModule = new NicknameModule(this.tabManager, plugin);
         this.friendModule = new FriendModule();
+        this.privateMessageModule = new PrivateMessageModule();
+        this.partyModule = new PartyModule();
 
         IHyriLanguageManager.Provider.registerInstance(() -> this.languageManager);
         PlaceholderAPI.registerInstance(new PlaceholderImpl());
@@ -199,6 +205,10 @@ public class Hyrame implements IHyrame {
 
     public FriendModule getFriendModule() {
         return this.friendModule;
+    }
+
+    public PrivateMessageModule getPrivateMessageModule() {
+        return this.privateMessageModule;
     }
 
 }

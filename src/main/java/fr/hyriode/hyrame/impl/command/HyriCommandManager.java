@@ -8,8 +8,8 @@ import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.reflection.Reflection;
+import fr.hyriode.hyrame.utils.ThreadUtil;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -124,18 +124,10 @@ public class HyriCommandManager implements IHyriCommandManager {
 
                     final HyriCommandContext ctx = new HyriCommandContext(sender, label, args, info);
 
-                    command.handle(ctx);
-
-                    final HyriCommandResult result = ctx.getResult();
-
-                    if (result != null) {
-                        if (result.getType() == HyriCommandResult.Type.ERROR) {
-                            if (sender instanceof Player) {
-                                ((Player) sender).spigot().sendMessage(result.getMessage());
-                            } else {
-                                sender.sendMessage(BaseComponent.toLegacyText(result.getMessage()));
-                            }
-                        }
+                    if (info.isAsynchronous()) {
+                        ThreadUtil.ASYNC_EXECUTOR.execute(() -> executeCommand(ctx, command));
+                    } else {
+                        executeCommand(ctx, command);
                     }
                 } else {
                     sender.sendMessage(ChatColor.RED + "You need to be " + type.getDisplay() + " to execute this command!");
@@ -143,6 +135,23 @@ public class HyriCommandManager implements IHyriCommandManager {
                 return true;
             }
         };
+    }
+
+    private void executeCommand(HyriCommandContext ctx, HyriCommand<?> command) {
+        command.handle(ctx);
+
+        final CommandSender sender = ctx.getSender();
+        final HyriCommandResult result = ctx.getResult();
+
+        if (result != null) {
+            if (result.getType() == HyriCommandResult.Type.ERROR) {
+                if (sender instanceof Player) {
+                    ((Player) sender).spigot().sendMessage(result.getMessage());
+                } else {
+                    sender.sendMessage(BaseComponent.toLegacyText(result.getMessage()));
+                }
+            }
+        }
     }
 
 }

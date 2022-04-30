@@ -106,7 +106,7 @@ public class NicknameGUI extends HyriInventory {
         new SignGUI((player, lines) -> {
             final String first = lines[0];
 
-            if (first.length() > 3 && !first.contains(" ")) {
+            if (first.length() > 3 && first.length() <= 16 && !first.contains(" ") && first.matches("[a-zA-Z0-9_]*")) {
                 final NicknameModule.Result result = this.nicknameModule.checkNickname(this.owner.getUniqueId(), first);
 
                 if (result == NicknameModule.Result.FINE) {

@@ -2,9 +2,7 @@ package fr.hyriode.hyrame.utils;
 
 import com.mojang.authlib.GameProfile;
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.player.IHyriPlayer;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.chat.ComponentSerializer;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
@@ -211,7 +209,7 @@ public class PlayerUtil {
      * @param components The components to send
      */
     public static void sendComponent(UUID playerId, BaseComponent... components) {
-        ThreadUtil.ASYNC_EXECUTOR.execute(() -> HyriAPI.get().getPlayerManager().sendComponent(playerId, ComponentSerializer.toString(components)));
+        ThreadUtil.ASYNC_EXECUTOR.execute(() -> HyriAPI.get().getPlayerManager().sendComponent(playerId, SerializerUtil.serializeComponent(components)));
     }
 
     /**

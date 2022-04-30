@@ -8,6 +8,8 @@ import fr.hyriode.hyrame.command.HyriCommandType;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.entity.Player;
 
 /**
@@ -29,7 +31,11 @@ public class StoreCommand extends HyriCommand<HyramePlugin> {
     public void handle(HyriCommandContext ctx) {
         final Player player = (Player) ctx.getSender();
 
-        player.sendMessage(HyriLanguageMessage.get("message.store-website").getForPlayer(player) + ChatColor.RESET + HyriConstants.STORE_WEBSITE_URL);
+        player.spigot().sendMessage(new ComponentBuilder(HyriLanguageMessage.get("message.store-website").getForPlayer(player))
+                .append(HyriConstants.STORE_WEBSITE_URL)
+                .color(ChatColor.WHITE)
+                .event(new ClickEvent(ClickEvent.Action.OPEN_URL, HyriConstants.STORE_WEBSITE_URL))
+                .create());
     }
 
 }

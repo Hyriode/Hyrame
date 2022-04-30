@@ -5,8 +5,8 @@ import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
+import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameLeaveEvent;
-import fr.hyriode.hyrame.game.event.player.HyriGamePlayerEvent;
 import fr.hyriode.hyrame.game.scoreboard.HyriWaitingScoreboard;
 import fr.hyriode.hyrame.game.util.HyriGameItems;
 import fr.hyriode.hyrame.scoreboard.HyriScoreboard;
@@ -14,6 +14,7 @@ import fr.hyriode.hyrame.scoreboard.IHyriScoreboardManager;
 import fr.hyriode.hyrame.utils.BroadcastUtil;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -72,20 +73,17 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
     }
 
     @HyriEventHandler
-    public void onJoin(HyriGamePlayerEvent event) {
+    public void onJoin(HyriGameJoinEvent event) {
         final Player player = event.getGamePlayer().getPlayer();
         final UUID playerId = player.getUniqueId();
         final HyriGame<?> game = this.getGame();
-
-        if (game.getPlayer(playerId) == null) {
-            return;
-        }
-
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(playerId);
 
         PlayerUtil.resetPlayer(player, true);
 
         player.setCanPickupItems(false);
+
+        player.setGameMode(GameMode.ADVENTURE);
 
         if (this.teamSelector) {
             HyriGameItems.TEAM_SELECTOR.give(this.hyrame, player, 0);

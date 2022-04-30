@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.impl.game.util;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.rank.type.HyriStaffRankType;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
@@ -11,6 +12,7 @@ import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * Project: Hyrame
@@ -24,12 +26,16 @@ public class HyriGameCommand extends HyriCommand<HyramePlugin> {
                 .withType(HyriCommandType.ALL)
                 .withUsage("/hyrigame start|end")
                 .withPermission(player -> player.getRank().isSuperior(HyriStaffRankType.DEVELOPER))
-                .withDescription("Command used to start or end a running game."));
+                .withDescription("Command used to start or end a running game.")
+                .withType(HyriCommandType.PLAYER));
     }
 
     @Override
     public void handle(HyriCommandContext ctx) {
-        if (!HyriAPI.get().getConfiguration().isDevEnvironment()) {
+        final Player player = (Player) ctx.getSender();
+        final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
+
+        if (!HyriAPI.get().getConfiguration().isDevEnvironment() && !account.getRank().is(HyriStaffRankType.ADMINISTRATOR)) {
             return;
         }
 

@@ -1,5 +1,7 @@
 package fr.hyriode.hyrame.utils;
 
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -19,6 +21,10 @@ import java.util.Objects;
  * on 12/11/2021 at 15:25
  */
 public class SerializerUtil {
+
+    public static String serializeComponent(BaseComponent[] components) {
+        return ComponentSerializer.toString(components);
+    }
 
     /**
      * Transform a player inventory to an array of string

@@ -34,4 +34,6 @@ public class Symbols {
 
     public static final String SKULL = "\u2620";
 
+    public static final String VERTICAL_LINE = "\uFE31";
+
 }

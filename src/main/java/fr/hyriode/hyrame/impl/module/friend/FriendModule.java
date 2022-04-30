@@ -37,7 +37,7 @@ public class FriendModule {
         final UUID targetId = target.getUniqueId();
 
         if (this.friendManager.hasRequest(targetId, playerId)) {
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.request-already").getForPlayer(player))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.request-already").getForPlayer(player).replace("%player%", target.getNameWithRank()))));
             return;
         }
 
@@ -54,11 +54,11 @@ public class FriendModule {
 
             player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.request-received").getForPlayer(player).replace("%player%", sender.getNameWithRank()))
                     .append("\n")
-                    .append("[" + HyriLanguageMessage.get("button.friend.accept").getForPlayer(player) + "]").color(ChatColor.GREEN)
+                    .append("[" + HyriLanguageMessage.get("button.accept").getForPlayer(player) + "]").color(ChatColor.GREEN)
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(HyriLanguageMessage.get("hover.friend.accept").getForPlayer(player))))
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/f accept " + sender.getName()))
                     .append(" ")
-                    .append("[" + HyriLanguageMessage.get("button.friend.deny").getForPlayer(player) + "]").color(ChatColor.RED)
+                    .append("[" + HyriLanguageMessage.get("button.deny").getForPlayer(player) + "]").color(ChatColor.RED)
                     .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(HyriLanguageMessage.get("hover.friend.deny").getForPlayer(player))))
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/f deny " + sender.getName()))));
         }
@@ -89,12 +89,16 @@ public class FriendModule {
     }
 
     public static BaseComponent[] createMessage(Consumer<ComponentBuilder> append) {
-        final ComponentBuilder builder = new ComponentBuilder(Symbols.HYPHENS_LINE).color(ChatColor.DARK_PURPLE).strikethrough(true)
+        final ComponentBuilder builder = new ComponentBuilder(Symbols.HYPHENS_LINE).color(ChatColor.LIGHT_PURPLE).strikethrough(true)
                 .append("\n").strikethrough(false);
 
         append.accept(builder);
 
-        builder.append(Symbols.HYPHENS_LINE).color(ChatColor.DARK_PURPLE).strikethrough(true);
+        builder.append(Symbols.HYPHENS_LINE)
+                .event((ClickEvent) null)
+                .event((HoverEvent) null)
+                .color(ChatColor.LIGHT_PURPLE)
+                .strikethrough(true);
 
         return builder.create();
     }

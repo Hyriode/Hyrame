@@ -1,7 +1,5 @@
 package fr.hyriode.hyrame.impl.command.model;
 
-import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.network.IHyriNetwork;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.rank.type.HyriPlayerRankType;
 import fr.hyriode.api.rank.type.HyriStaffRankType;
@@ -45,15 +43,23 @@ public class RankCommand extends HyriCommand<HyramePlugin> {
                 target.getRank().setPlayerType(rankType);
                 target.update();
 
-                player.sendMessage(ChatColor.GREEN + "Grade modifié!");
+                player.sendMessage(ChatColor.GREEN + "Grade joueur modifié!");
             } else {
-                player.sendMessage(ChatColor.RED + "Grade invalide!");
+                player.sendMessage(ChatColor.RED + "Grade joueur invalide!");
+            }
+        });
+
+        this.handleArgument(ctx, "staff %player% reset", output -> {
+            final IHyriPlayer target = output.get(IHyriPlayer.class);
+
+            if (player.getUniqueId().equals(target.getUniqueId())) {
+                return;
             }
 
-            final IHyriNetwork network = HyriAPI.get().getNetworkManager().getNetwork();
+            target.getRank().setStaffType(null);
+            target.update();
 
-            network.getMaintenance().enable(player.getUniqueId(), null);
-            network.update();
+            player.sendMessage(ChatColor.GREEN + "Grade staff reset!");
         });
 
         this.handleArgument(ctx, "staff %player% %input%", output -> {
@@ -69,15 +75,10 @@ public class RankCommand extends HyriCommand<HyramePlugin> {
                 target.getRank().setStaffType(rankType);
                 target.update();
 
-                player.sendMessage(ChatColor.GREEN + "Grade modifié!");
+                player.sendMessage(ChatColor.GREEN + "Grade staff modifié!");
             } else {
-                player.sendMessage(ChatColor.RED + "Grade invalide!");
+                player.sendMessage(ChatColor.RED + "Grade staff invalide!");
             }
-
-            final IHyriNetwork network = HyriAPI.get().getNetworkManager().getNetwork();
-
-            network.getMaintenance().enable(player.getUniqueId(), null);
-            network.update();
         });
     }
 

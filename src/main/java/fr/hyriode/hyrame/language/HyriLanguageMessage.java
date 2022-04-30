@@ -6,6 +6,7 @@ import fr.hyriode.api.settings.HyriLanguage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -109,7 +110,7 @@ public class HyriLanguageMessage {
      * @return - Value
      */
     public String getValue(HyriLanguage language) {
-        return this.values.getOrDefault(language, this.values.get(HyriLanguage.EN));
+        return this.values.getOrDefault(language, new ArrayList<>(this.values.entrySet()).get(0).getValue());
     }
 
     /**

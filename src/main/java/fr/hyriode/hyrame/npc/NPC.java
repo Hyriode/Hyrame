@@ -79,12 +79,11 @@ public class NPC extends EntityPlayer {
     public NPC setLocation(Location location) {
         this.location = location;
 
-        this.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        super.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             PacketUtil.sendPacket(player, this.getTeleportPacket());
         }
-
         return this;
     }
 
@@ -243,6 +242,21 @@ public class NPC extends EntityPlayer {
         return this;
     }
 
+    /**
+     * Spawn the npc for a given player
+     *
+     * @param player The player who will receive the npc
+     */
+    void spawnFor(Player player) {
+        for (Packet<?> packet : this.getSpawnPackets()) {
+            PacketUtil.sendPacket(player, packet);
+        }
+
+        PacketUtil.sendPacket(player, this.getTeleportPacket(player.getLocation()));
+
+        Bukkit.getScheduler().runTaskLater(this.plugin, () -> PacketUtil.sendPacket(player, this.getTeleportPacket()), 1L);
+    }
+
     public List<Packet<?>> getSpawnPackets() {
         final List<Packet<?>> packets = new ArrayList<>();
 
@@ -275,6 +289,10 @@ public class NPC extends EntityPlayer {
         return packets;
     }
 
+    public Packet<?> getTeleportPacket(Location location) {
+        return new PacketPlayOutEntityTeleport(this.getId(), MathHelper.floor(location.getX() * 32.0D), MathHelper.floor(location.getY() * 32.0D), MathHelper.floor(location.getZ() * 32.0D), (byte) (location.getYaw() * 256.0F / 360.0F), (byte) (location.getPitch() * 256.0F / 360.0F), this.onGround);
+    }
+
     public Packet<?> getTeleportPacket() {
         return new PacketPlayOutEntityTeleport(this);
     }
@@ -285,6 +303,11 @@ public class NPC extends EntityPlayer {
 
     public Packet<?> getMetadataPacket() {
         return new PacketPlayOutEntityMetadata(this.getId(), this.getDataWatcher(), true);
+    }
+
+    @Override
+    protected NPC clone() {
+        return new NPC(this.plugin, this.location, this.world, this.getProfile());
     }
 
 }

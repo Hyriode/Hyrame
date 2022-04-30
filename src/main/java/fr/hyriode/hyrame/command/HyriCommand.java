@@ -2,9 +2,7 @@ package fr.hyriode.hyrame.command;
 
 import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -76,6 +74,11 @@ public abstract class HyriCommand<T extends JavaPlugin> {
             }
 
             for (int i = 0; i < args.length; i++) {
+                if (expectedArgs.length < i) {
+                    this.invalidCommandMessage(ctx, usage);
+                    return;
+                }
+
                 final String arg = args[i];
                 final String expectedArg = expectedArgs[i];
 
@@ -100,6 +103,7 @@ public abstract class HyriCommand<T extends JavaPlugin> {
                         break;
                     }
                 }
+
             }
 
             callback.accept(output);

@@ -11,7 +11,6 @@ import fr.hyriode.hyrame.language.HyriCommonMessages;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.PlayerUtil;
-import fr.hyriode.hyrame.utils.Symbols;
 import fr.hyriode.hyrame.utils.ThreadUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -133,8 +132,11 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
             final EntityDamageEvent.DamageCause cause = event.getCause();
 
             if (player.getHealth() - event.getFinalDamage() <= 0.0D) {
-                event.setCancelled(true);
-                this.runDeath(this.getReasonFromCause(cause), player);
+                if (!event.isCancelled()) {
+                    event.setDamage(0.0D);
+                    event.setCancelled(true);
+                    this.runDeath(this.getReasonFromCause(cause), player);
+                }
             }
         }
     }
@@ -228,21 +230,19 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
                     }
                 }
             }
-        } else {
+        } else if (this.getGame().getState() != HyriGameState.ENDED) {
             PlayerUtil.resetPlayer(player, true);
             PlayerUtil.addSpectatorAbilities(player);
 
-            if (this.getGame().getState() != HyriGameState.ENDED) {
-                player.setAllowFlight(false);
-                player.setFlying(false);
+            player.setAllowFlight(false);
+            player.setFlying(false);
 
-                player.spigot().setCollidesWithEntities(true);
+            player.spigot().setCollidesWithEntities(true);
 
-                PlayerUtil.resetPotionEffects(player);
+            PlayerUtil.resetPotionEffects(player);
 
-                gamePlayer.show();
-                gamePlayer.setSpectator(true);
-            }
+            gamePlayer.show();
+            gamePlayer.setSpectator(true);
         }
 
         lastHitterProtocol.removeLastHitters(player);
@@ -394,9 +394,9 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
 
 
             private void sendRespawnTitle(HyriLanguageMessage message, int stayTime) {
-                final String title = ChatColor.DARK_AQUA + Symbols.ROTATED_SQUARE + " " + DEAD.getForPlayer(this.player) + " " + Symbols.ROTATED_SQUARE;
+                final String title = ChatColor.RED + DEAD.getForPlayer(this.player);
 
-                Title.sendTitle(this.player, title, ChatColor.AQUA + RESPAWN.getForPlayer(this.player) + ChatColor.WHITE + " " + this.currentTime + ChatColor.AQUA + " " + message.getForPlayer(this.player), 0, stayTime, 0);
+                Title.sendTitle(this.player, title, ChatColor.RED + RESPAWN.getForPlayer(this.player) + ChatColor.WHITE + " " + this.currentTime + ChatColor.RED + " " + message.getForPlayer(this.player), 0, stayTime, 0);
             }
 
         }

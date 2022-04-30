@@ -119,7 +119,7 @@ public class HyriGameTeam {
      */
     public String formatPlayerName(Player player) {
         if (this.getPlayer(player.getUniqueId()) != null) {
-            return this.color.getChatColor() + player.getDisplayName();
+            return this.color.getChatColor() + player.getName();
         }
         return null;
     }

@@ -11,6 +11,7 @@ import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -116,6 +117,8 @@ public class HyriJoinHandler implements IHyriJoinHandler {
             reason = RESPONSE.apply(account, "full");
         } else if (response == HyriJoinResponse.DENY_SPACE) {
             reason = RESPONSE.apply(account, "space");
+        } else if (response == HyriJoinResponse.DENY_STATE) {
+            reason = RESPONSE.apply(account, "state");;
         }
 
         return ChatColor.RED + HyriLanguageMessage.get(RESPONSE_KEY).getForPlayer(account)
@@ -141,16 +144,19 @@ public class HyriJoinHandler implements IHyriJoinHandler {
     }
 
     @Override
-    public void onLogout(UUID player) {
+    public void onLogout(UUID playerId) {
+        final Player player = Bukkit.getPlayer(playerId);
         final HyriGame<?> game = this.hyrame.getGameManager().getCurrentGame();
 
         if (game != null) {
-            final HyriGamePlayer gamePlayer = game.getPlayer(player);
+            final HyriGamePlayer gamePlayer = game.getPlayer(playerId);
 
             if (gamePlayer != null) {
                 game.handleLogout(gamePlayer.getPlayer());
             }
         }
+
+        Title.sendTitle(player, "", "", 0, 0, 0);
     }
 
 }

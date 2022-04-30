@@ -3,7 +3,6 @@ package fr.hyriode.hyrame.impl.command.model;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.rank.type.HyriPlayerRankType;
-import fr.hyriode.hyggdrasil.api.lobby.HyggLobbyAPI;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
@@ -42,15 +41,17 @@ public class VanishCommand extends HyriCommand<HyramePlugin> {
 
         if (account.isInVanishMode()) {
             account.setInVanishMode(false);
-            PlayerUtil.hidePlayer(player, true);
-
-            player.sendMessage(HyriLanguageMessage.get("message.vanish.set").getForPlayer(account));
-        } else {
-            account.setInVanishMode(true);
             PlayerUtil.showPlayer(player);
 
             player.sendMessage(HyriLanguageMessage.get("message.vanish.unset").getForPlayer(account));
+        } else {
+            account.setInVanishMode(true);
+            PlayerUtil.hidePlayer(player, true);
+
+            player.sendMessage(HyriLanguageMessage.get("message.vanish.set").getForPlayer(account));
         }
+
+        account.update();
     }
 
 }

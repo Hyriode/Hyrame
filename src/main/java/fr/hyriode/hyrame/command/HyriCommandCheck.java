@@ -35,6 +35,8 @@ public enum HyriCommandCheck {
     }),
     /** Handle a player name as an input, but it will check from players accounts */
     PLAYER("%player%", IHyriPlayer.class, arg -> HyriAPI.get().getPlayerManager().getPlayer(arg), (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getForSender(ctx.getSender()) + arg + "."),
+    /** Handle a player name as an input, but it will check from players accounts */
+    PLAYER_ONLINE("%player_online%", IHyriPlayer.class, arg -> HyriAPI.get().getPlayerManager().getPlayerFromRedis(arg), (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getForSender(ctx.getSender()) + arg + "."),
     /** Handle a player name as an input, but it will check from players on current server */
     PLAYER_ON_SERVER("%player_server%", Player.class, PlayerUtil::getPlayer, (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getForSender(ctx.getSender()) + arg + "."),
     /** Handle a short number */

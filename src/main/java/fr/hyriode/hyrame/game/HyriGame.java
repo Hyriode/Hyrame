@@ -2,11 +2,13 @@ package fr.hyriode.hyrame.game;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.game.IHyriGameInfo;
+import fr.hyriode.api.network.HyriNetworkCount;
 import fr.hyriode.api.network.HyriPlayerCount;
 import fr.hyriode.api.network.IHyriNetwork;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.event.HyriGameStateChangedEvent;
 import fr.hyriode.hyrame.game.event.HyriGameWinEvent;
@@ -94,7 +96,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /** Game type */
     protected final HyriGameType type;
     /** The description of the game */
-    private HyriLanguageMessage description;
+    protected HyriLanguageMessage description;
 
     /** Hyrame object */
     protected final IHyrame hyrame;
@@ -123,11 +125,11 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         this.minPlayers = type.getMinPlayers();
         this.maxPlayers = type.getMaxPlayers();
 
-        HyriAPI.get().getServer().setSlots(this.maxPlayers);
-
         if (this.usingGameTabList) {
             this.tabListManager = new HyriGameTabListManager(this);
         }
+
+        HyriAPI.get().getServer().setSlots(this.maxPlayers);
     }
 
     /**
@@ -222,6 +224,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
                     this.players.add(player);
 
+                    HyriAPI.get().getServer().addPlayerPlaying(p.getUniqueId());
+
                     this.updatePlayerCount();
 
                     HyriAPI.get().getEventBus().publish(new HyriGameJoinEvent(this, player));
@@ -240,12 +244,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
     private void updatePlayerCount() {
         final IHyriNetwork network = HyriAPI.get().getNetworkManager().getNetwork();
-        HyriPlayerCount count = network.getPlayerCount().getCategory(this.getName());
-
-        if (count == null) {
-            count = new HyriPlayerCount(this.players.size());
-            network.getPlayerCount().setCategory(this.getName(), count);
-        }
+        final HyriNetworkCount networkCount = network.getPlayerCount();
+        final HyriPlayerCount count = networkCount.getCategory(this.getName());
 
         count.setType(this.type.getName(), this.players.size());
         network.update();
@@ -258,13 +258,15 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @param p Logged out player
      */
     public void handleLogout(Player p) {
-        final P player = this.getPlayer(p.getUniqueId());
+        final UUID uuid = p.getUniqueId();
+        final P player = this.getPlayer(uuid);
 
         this.updatePlayerCount();
 
-        HyriAPI.get().getEventBus().publish(new HyriGameLeaveEvent(this, player));
-
         this.players.remove(player);
+
+        HyriAPI.get().getServer().removePlayerPlaying(uuid);
+        HyriAPI.get().getEventBus().publish(new HyriGameLeaveEvent(this, player));
 
         if (player.hasTeam()) {
             player.getTeam().removePlayer(player);
@@ -298,15 +300,17 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
         this.timerTask.cancel();
 
-        for (HyriGamePlayer gamePlayer : this.players) {
-            final UUID playerId = gamePlayer.getUUID();
-            final IHyriPlayer account = gamePlayer.asHyriPlayer();
-            final boolean autoQueue = account.getSettings().isAutoQueueEnabled();
+        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+            for (HyriGamePlayer gamePlayer : this.players) {
+                final UUID playerId = gamePlayer.getUUID();
+                final IHyriPlayer account = gamePlayer.asHyriPlayer();
+                final boolean autoQueue = account.getSettings().isAutoQueueEnabled();
 
-            if (autoQueue) {
-                HyriAPI.get().getQueueManager().addPlayerInQueueWithPartyCheck(playerId, this.info.getName(), this.type.getName());
+                if (autoQueue) {
+                    HyriAPI.get().getQueueManager().addPlayerInQueueWithPartyCheck(playerId, this.info.getName(), this.type.getName());
+                }
             }
-        }
+        }, 10 * 30);
 
         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -316,7 +320,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
         HyriAPI.get().getServer().setState(IHyriServer.State.SHUTDOWN);
 
-        Bukkit.getScheduler().runTaskLater(this.plugin, Bukkit::shutdown, 20 * 40);
+        Bukkit.getScheduler().runTaskLater(this.plugin, () -> HyriAPI.get().getServerManager().removeServer(HyriAPI.get().getServer().getName(), () -> HyrameLogger.log("Hyggdrasil is stopping the server...")), 20 * 40);
     }
 
     /**
@@ -649,6 +653,15 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      */
     public HyriGameType getType() {
         return this.type;
+    }
+
+    /**
+     * Get the description of the game
+     *
+     * @return A {@link HyriLanguageMessage}
+     */
+    public HyriLanguageMessage getDescription() {
+        return this.description;
     }
 
     /**

@@ -30,9 +30,7 @@ public class HyriChatManager implements IHyriChatManager {
 
     void onEvent(AsyncPlayerChatEvent event) {
         for (IHyriChatHandler handler : this.handlers.values()) {
-            final boolean continueProcess = handler.onChat(event);
-
-            if (!continueProcess) {
+            if (!handler.onChat(event)) {
                 return;
             }
         }

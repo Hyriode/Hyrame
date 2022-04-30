@@ -5,13 +5,11 @@ import fr.hyriode.hyrame.generator.event.HyriGeneratorDropEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorRemovedEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorUpgradedEvent;
 import fr.hyriode.hyrame.hologram.Hologram;
-import fr.hyriode.hyrame.item.ItemNBT;
 import fr.hyriode.hyrame.utils.LocationUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftItem;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -127,11 +125,12 @@ public class HyriGenerator {
                 if (entity.getType() == EntityType.DROPPED_ITEM) {
                     final Item item = (Item) entity;
                     final ItemStack itemStack = item.getItemStack();
-                    final ItemNBT nbt = new ItemNBT(itemStack);
 
-                    if (nbt.hasTag(ITEMS_TAG)) {
+                    if (item.hasMetadata(this.getTag())) {
                         itemsCount += itemStack.getAmount();
                     }
+
+
                     if (this.tier.getSpawnLimit() != -1 && itemsCount >= this.tier.getSpawnLimit()) {
                         this.checkForUpgrade();
                         return;
@@ -153,14 +152,14 @@ public class HyriGenerator {
         }
     }
 
-    private boolean splitItem(ItemStack itemStack) {
+    private boolean splitItem() {
         final List<Entity> players = this.location.getWorld().getNearbyEntities(this.location, 2.0D, 2.0D, 2.0D).stream().filter(entity -> entity.getType() == EntityType.PLAYER).filter(entity -> !this.ignoredPlayers.contains((Player) entity)).collect(Collectors.toList());
 
         if (players.size() > 1) {
             for (Entity entity : players) {
                 final Player player = (Player) entity;
 
-                player.getInventory().addItem(itemStack);
+                player.getInventory().addItem(this.item.clone());
                 player.playSound(player.getLocation(), Sound.ITEM_PICKUP, 0.8F, 1.0F);
             }
             return true;
@@ -172,7 +171,11 @@ public class HyriGenerator {
         final Item item = LocationUtil.dropItem(this.location, this.item.clone());
 
         item.setVelocity(new Vector(0.0D, 0.0D, 0.0D));
-        item.setMetadata(ITEMS_TAG + ":" + this.item.getType().name(), new FixedMetadataValue(this.plugin, true));
+        item.setMetadata(this.getTag(), new FixedMetadataValue(this.plugin, true));
+    }
+
+    private String getTag() {
+        return ITEMS_TAG + ":" + this.item.getType().name();
     }
 
     private void createHologram(Player player) {
@@ -275,17 +278,16 @@ public class HyriGenerator {
         @EventHandler
         public void onPickup(PlayerPickupItemEvent event) {
             final Item droppedItem = event.getItem();
-            final ItemStack itemStack = droppedItem.getItemStack();
             final Player player = event.getPlayer();
 
             if (ignoredPlayers.contains(player)) {
                 return;
             }
 
-            if (droppedItem.hasMetadata(ITEMS_TAG + ":" + item.getType().name())) {
+            if (droppedItem.hasMetadata(getTag())) {
                 if (tier.isSplitting()) {
-                    if (splitItem(itemStack)) {
-                        event.getItem().remove();
+                    if (splitItem()) {
+                        droppedItem.remove();
                         event.setCancelled(true);
                     }
                 }

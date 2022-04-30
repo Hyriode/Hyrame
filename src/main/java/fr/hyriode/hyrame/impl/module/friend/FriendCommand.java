@@ -15,6 +15,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -36,7 +37,8 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
                 .withAliases("f", "ami", "friends", "amis")
                 .withDescription("The command used to manage friends")
                 .withType(HyriCommandType.PLAYER)
-                .withUsage(sender -> getHelp((Player) sender), false));
+                .withUsage(sender -> getHelp((Player) sender), false)
+                .asynchronous());
         this.friendModule = this.plugin.getHyrame().getFriendModule();
     }
 
@@ -57,7 +59,7 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
             }
 
             if (friendHandler.getFriends().size() >= FriendLimit.getMaxFriends(account.getRank().getPlayerType())) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.no-space").getForPlayer(player))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.full").getForPlayer(player))));
                 return;
             }
 
@@ -82,7 +84,7 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
             HyriAPI.get().getFriendManager().removeRequest(playerId, sender.getUniqueId());
 
             PlayerUtil.sendComponent(sender.getUniqueId(), createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.deny-sender").getForPlayer(sender).replace("%player%", account.getNameWithRank()))));
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.deny-target").getForPlayer(sender).replace("%player%", account.getNameWithRank()))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.deny-target").getForPlayer(sender).replace("%player%", sender.getNameWithRank()))));
         });
 
         this.handleArgument(ctx, "remove %player%", output -> {
@@ -99,7 +101,8 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
 
         this.handleArgument(ctx, "list %integer%", output -> listFriends(output.get(Integer.class), player, friendHandler));
         this.handleArgument(ctx, "list", output -> listFriends(0, player, friendHandler));
-        this.handleArgument(ctx, "%player%", this.addFriend(player, friendHandler));
+        this.handleArgument(ctx, "help", output -> player.spigot().sendMessage(getHelp(player)));
+        this.handleArgument(ctx, "%player_online%", this.addFriend(player, friendHandler));
     }
 
     private Consumer<HyriCommandOutput> addFriend(Player player, IHyriFriendHandler friendHandler) {
@@ -118,7 +121,7 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
             }
 
             if (!target.isOnline()) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.not-online").getForPlayer(player).replace("%player%", target.getNameWithRank()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.not-online").getForPlayer(player).replace("%player%", target.getNameWithRank()))));
                 return;
             }
 
@@ -127,7 +130,7 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
                 return;
             }
 
-            if (!target.getSettings().isFriendRequestsEnabled()) {
+            if (!target.getSettings().isFriendRequestsEnabled() || target.hasNickname()) {
                 player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.doesnt-accept").getForPlayer(player).replace("%player%", target.getNameWithRank()))));
                 return;
             }
@@ -164,12 +167,7 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
             }
         }
 
-        showingFriends.sort((o1, o2) -> {
-            if (o1.isOnline() && !o2.isOnline()) {
-                return 0;
-            }
-            return 1;
-        });
+        showingFriends.sort(Comparator.comparing(friend -> !friend.isOnline()));
 
         player.spigot().sendMessage(createMessage(builder -> {
             for (IHyriPlayer friend : showingFriends) {

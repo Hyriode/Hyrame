@@ -1,8 +1,8 @@
 package fr.hyriode.hyrame.impl.game.chat;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.chat.HyriChatChannel;
-import fr.hyriode.api.chat.IHyriChatChannelManager;
+import fr.hyriode.api.chat.channel.HyriChatChannel;
+import fr.hyriode.api.chat.channel.IHyriChatChannelManager;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.rank.type.HyriPlayerRankType;
 import fr.hyriode.hyrame.chat.IHyriChatHandler;
@@ -20,6 +20,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Project: Hyrame
@@ -79,17 +80,18 @@ public class HyriGameChatHandler implements IHyriChatHandler {
                 } else {
                     team.sendMessage(target -> String.format(this.format(), ChatColor.DARK_AQUA + "[" + teamChatPrefix.getForPlayer(target) + "] " + account.getNameWithRank(true), message));
                 }
-            } else if (game.getState() == HyriGameState.ENDED) {
-                if (message.equalsIgnoreCase("gg") && !this.saidGG.contains(uuid)) {
+            } else {
+                if (game.getState() == HyriGameState.ENDED && message.equalsIgnoreCase("gg") && !this.saidGG.contains(uuid)) {
                     if (account.getRank().isSuperior(HyriPlayerRankType.EPIC)) {
-                        account.getHyris().add(50, "Fairplay", true);
+                        account.getHyris().add(ThreadLocalRandom.current().nextInt(1, 6), "Fairplay", true);
+                        account.update();
 
                         this.saidGG.add(uuid);
 
-                        event.setMessage(ChatColor.GOLD + "GG");
+                        event.setMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "GG");
                     }
                 }
-            } else {
+
                 game.sendMessageToAll(target -> {
                     String messageStart = "";
 
@@ -101,7 +103,7 @@ public class HyriGameChatHandler implements IHyriChatHandler {
 
                     messageStart += account.getNameWithRank(true);
 
-                    return String.format(this.format(), messageStart, message);
+                    return String.format(this.format(), messageStart, event.getMessage());
                 });
             }
         } else {
