@@ -98,8 +98,8 @@ public class Hyrame implements IHyrame {
         PlaceholderRegistry.registerPlaceholders(this);
         HyriEnchant.register();
 
-        new BossBarManager(plugin);
-        new NPCManager(plugin, "npcs:");
+        BossBarManager.init(plugin);
+        NPCManager.init(plugin, "npcs:");
         new SignGUIManager();
 
         HyriAPI.get().getServerManager().getJoinManager().registerHandler(10, new HyriJoinHandler(this));

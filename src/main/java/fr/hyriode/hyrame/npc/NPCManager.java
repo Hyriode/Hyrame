@@ -43,13 +43,7 @@ public class NPCManager {
     /** Spigot plugin */
     private static JavaPlugin plugin;
 
-    /**
-     * Constructor of {@link NPCManager}
-     *
-     * @param plugin Spigot plugin
-     * @param cacheSkinRedisKey Skin Redis key
-     */
-    public NPCManager(JavaPlugin plugin, String cacheSkinRedisKey) {
+    public static void init(JavaPlugin plugin, String cacheSkinRedisKey) {
         NPCManager.plugin = plugin;
         NPCManager.cacheSkinRedisKey = cacheSkinRedisKey;
     }

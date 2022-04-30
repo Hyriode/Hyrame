@@ -68,6 +68,8 @@
   "message.discord": "&bLe serveur Discord: ",
   "message.website": "&bLe site: ",
   "message.store-website": "&bLa boutique: ",
+  "message.game.end.winner": "Vainqueur",
+  "message.game.end.rewards": "Récompenses:",
 
   "message.help.discord": "Lien vers le Discord",
   "message.help.website": "Lien vers le site",

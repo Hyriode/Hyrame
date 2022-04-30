@@ -11,7 +11,7 @@
   "message.game-join": " joined",
   "message.game-left": " left",
   "message.game.end.winner": "Winner",
-  "message.game.end.rewards": "Récompenses:",
+  "message.game.end.rewards": "Rewards:",
 
   "error.chat.dead": "You can't speak in the chat while being dead!",
 

@@ -19,7 +19,7 @@ public class BossBarManager {
 
     private static JavaPlugin plugin;
 
-    public BossBarManager(JavaPlugin plugin) {
+    public static void init(JavaPlugin plugin) {
         BossBarManager.plugin = plugin;
     }
 
