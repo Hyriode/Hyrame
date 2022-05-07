@@ -1,7 +1,7 @@
 package fr.hyriode.hyrame.scoreboard.team;
 
+import fr.hyriode.hyrame.packet.PacketUtil;
 import fr.hyriode.hyrame.reflection.Reflection;
-import fr.hyriode.hyrame.utils.PacketUtil;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import org.bukkit.OfflinePlayer;

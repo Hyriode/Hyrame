@@ -69,7 +69,7 @@ public class PartyModule {
 
         append.accept(builder);
 
-        builder.append(Symbols.HYPHENS_LINE).color(ChatColor.DARK_AQUA).strikethrough(true).event((ClickEvent) null).event((HoverEvent) null);
+        builder.append("\n").append(Symbols.HYPHENS_LINE).color(ChatColor.DARK_AQUA).strikethrough(true).event((ClickEvent) null).event((HoverEvent) null);
 
         return builder.create();
     }

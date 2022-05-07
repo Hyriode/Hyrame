@@ -94,7 +94,8 @@ public class FriendModule {
 
         append.accept(builder);
 
-        builder.append(Symbols.HYPHENS_LINE)
+        builder.append("\n")
+                .append(Symbols.HYPHENS_LINE)
                 .event((ClickEvent) null)
                 .event((HoverEvent) null)
                 .color(ChatColor.LIGHT_PURPLE)

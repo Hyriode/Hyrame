@@ -55,19 +55,21 @@ public class PrivateMessageModule {
         final IHyriPlayerSettings settings = target.getSettings();
         final HyriPrivateMessagesLevel level = settings.getPrivateMessagesLevel();
 
-        if (level == HyriPrivateMessagesLevel.NONE) {
-            sender.sendMessage(HyriLanguageMessage.get("message.private.doesnt-accept").getForPlayer(sender).replace("%player%", target.getNameWithRank()));
-            return;
-        } else if (level == HyriPrivateMessagesLevel.FRIENDS) {
-            HyriAPI.get().getFriendManager().createHandlerAsync(targetId).whenComplete((friendHandler, throwable) -> {
-               if (friendHandler.areFriends(senderId)) {
-                   this.sendPrivateMessage0(target, senderAccount, message);
-                   return;
-               }
+        if (!senderAccount.getRank().isStaff()) {
+            if (level == HyriPrivateMessagesLevel.NONE) {
+                sender.sendMessage(HyriLanguageMessage.get("message.private.doesnt-accept").getForPlayer(sender).replace("%player%", target.getNameWithRank()));
+                return;
+            } else if (level == HyriPrivateMessagesLevel.FRIENDS) {
+                HyriAPI.get().getFriendManager().createHandlerAsync(targetId).whenComplete((friendHandler, throwable) -> {
+                    if (friendHandler.areFriends(senderId)) {
+                        this.sendPrivateMessage0(target, senderAccount, message);
+                        return;
+                    }
 
-                sender.sendMessage(HyriLanguageMessage.get("message.private.accept-friends").getForPlayer(sender).replace("%player%", target.getNameWithRank()));
-            });
-            return;
+                    sender.sendMessage(HyriLanguageMessage.get("message.private.accept-friends").getForPlayer(sender).replace("%player%", target.getNameWithRank()));
+                });
+                return;
+            }
         }
 
         this.sendPrivateMessage0(target, senderAccount, message);

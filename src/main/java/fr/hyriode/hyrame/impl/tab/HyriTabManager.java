@@ -9,8 +9,8 @@ import fr.hyriode.hyrame.tab.Tab;
 import fr.hyriode.hyrame.utils.ThreadUtil;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Project: Hyrame
@@ -20,35 +20,27 @@ import java.util.Map;
 public class HyriTabManager {
 
     private final HyriTabHandler handler;
-    private final Map<HyriLanguage, Tab> tabs;
-
-    private final Hyrame hyrame;
+    private final Map<UUID, HyriDefaultTab> tabs;
 
     public HyriTabManager(Hyrame hyrame) {
-        this.hyrame = hyrame;
-        this.handler = new HyriTabHandler(this.hyrame);
+        this.handler = new HyriTabHandler(hyrame);
         this.tabs = new HashMap<>();
 
-        for (HyriLanguage language : HyriLanguage.values()) {
-            this.tabs.put(language, new HyriDefaultTab(this.hyrame, language));
-        }
+        ThreadUtil.EXECUTOR.scheduleAtFixedRate(() -> {
+            for (HyriDefaultTab tab : this.tabs.values()) {
+                tab.update();
+            }
+        }, 0, 1, TimeUnit.SECONDS);
     }
 
     public void onLogin(Player player) {
-        ThreadUtil.EXECUTOR.execute(() -> {
-            final IHyrameConfiguration configuration = this.hyrame.getConfiguration();
-            final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
-
-            final Tab tab = configuration.getTab() == null ? this.getTabForPlayer(account) : configuration.getTab();
-
-            tab.send(player);
-
-            this.handler.onLogin(player);
-        });
+        this.tabs.put(player.getUniqueId(), new HyriDefaultTab(player));
+        this.handler.onLogin(player);
     }
 
     public void onLogout(Player player) {
-        ThreadUtil.EXECUTOR.execute(() -> this.handler.onLogout(player));
+        this.tabs.remove(player.getUniqueId());
+        this.handler.onLogout(player);
     }
 
     public void enableTabList() {
@@ -57,12 +49,6 @@ public class HyriTabManager {
 
     public void disableTabList() {
         this.handler.disable();
-    }
-
-    private Tab getTabForPlayer(IHyriPlayer player) {
-        final HyriLanguage language = player.getSettings().getLanguage();
-
-        return this.tabs.get(language) != null ? this.tabs.get(language) : this.tabs.get(HyriLanguage.EN);
     }
 
     public HyriTabHandler getHandler() {

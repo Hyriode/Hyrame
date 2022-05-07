@@ -1,6 +1,6 @@
 package fr.hyriode.hyrame.anvilgui;
 
-import fr.hyriode.hyrame.utils.PacketUtil;
+import fr.hyriode.hyrame.packet.PacketUtil;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

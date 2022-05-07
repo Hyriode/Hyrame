@@ -1,7 +1,7 @@
 package fr.hyriode.hyrame.hologram;
 
+import fr.hyriode.hyrame.packet.PacketUtil;
 import fr.hyriode.hyrame.utils.ListUtil;
-import fr.hyriode.hyrame.utils.PacketUtil;
 import net.minecraft.server.v1_8_R3.EntityArmorStand;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
@@ -148,8 +148,10 @@ public class Hologram {
      * @param player The player
      */
     private void sendLines0(Player player) {
-        if (this.entities.containsKey(player)) {
-            for (Map.Entry<Integer, EntityArmorStand> entry : this.entities.get(player).entrySet()) {
+        final Map<Integer, EntityArmorStand> entities = this.entities.get(player);
+
+        if (entities != null) {
+            for (Map.Entry<Integer, EntityArmorStand> entry : entities.entrySet()) {
                 this.sendLine(player, entry.getKey());
             }
         }
@@ -162,8 +164,10 @@ public class Hologram {
      * @param line The number of the line to send
      */
     public void sendLine(Player player, int line) {
-        if (this.entities.containsKey(player)) {
-            final EntityArmorStand armorStand = this.entities.get(player).get(line);
+        final Map<Integer, EntityArmorStand> entities = this.entities.get(player);
+
+        if (entities != null) {
+            final EntityArmorStand armorStand = entities.get(line);
 
             if (armorStand != null) {
                 this.sendEntity(player, armorStand);
@@ -187,10 +191,14 @@ public class Hologram {
      * @param player The player
      */
     public void removeLines(Player player) {
-        if (this.entities.containsKey(player)) {
-            for (Map.Entry<Integer, EntityArmorStand> entry : this.entities.get(player).entrySet()) {
-                this.removeLine(player, entry.getKey());
-            }
+        final Map<Integer, EntityArmorStand> entities = this.entities.get(player);
+
+        if (entities == null) {
+            return;
+        }
+
+        for (Map.Entry<Integer, EntityArmorStand> entry : entities.entrySet()) {
+            this.removeLine(player, entry.getKey());
         }
     }
 
@@ -201,9 +209,13 @@ public class Hologram {
      * @param line The number of the line
      */
     public void removeLine(Player player, int line) {
-        if (this.entities.containsKey(player)) {
-            this.removeEntity(player, this.entities.get(player).get(line));
+        final Map<Integer, EntityArmorStand> entities = this.entities.get(player);
+
+        if (entities == null) {
+            return;
         }
+
+        this.removeEntity(player, entities.get(line));
     }
 
     /**
@@ -216,13 +228,17 @@ public class Hologram {
 
         if (line != null) {
             for (Player player : this.receivers.keySet()) {
-                if (this.entities.containsKey(player)) {
-                    final EntityArmorStand entity = this.entities.get(player).get(slot);
+                final Map<Integer, EntityArmorStand> entities = this.entities.get(player);
 
-                    entity.setCustomName(line.getValue(player));
-
-                    this.sendMetadata(entity);
+                if (entities == null) {
+                    continue;
                 }
+
+                final EntityArmorStand entity = entities.get(slot);
+
+                entity.setCustomName(line.getValue(player));
+
+                this.sendMetadata(entity);
             }
         }
     }

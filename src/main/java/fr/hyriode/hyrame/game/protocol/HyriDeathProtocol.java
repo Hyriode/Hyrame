@@ -85,6 +85,10 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
             this.screen.callback = p -> {
                 final HyriGamePlayer gPlayer = this.getGamePlayer(p);
 
+                if (gPlayer == null) {
+                    return;
+                }
+
                 gPlayer.setNotDead();
                 gPlayer.show();
 

@@ -59,7 +59,7 @@ public class HyriGameTeamChooserGui extends HyriInventory {
 
     private static final String DASH = ChatColor.WHITE + " ⁃ ";
 
-    private static final List<Player> PLAYERS = new CopyOnWriteArrayList<>();
+    private final List<Player> players = new CopyOnWriteArrayList<>();
 
     private final int slot;
 
@@ -143,7 +143,7 @@ public class HyriGameTeamChooserGui extends HyriInventory {
     }
 
     public void refresh() {
-        for (Player player : PLAYERS) {
+        for (Player player : this.players) {
             new HyriGameTeamChooserGui(this.hyrame, this.game, player, this.slot).open();
         }
     }
@@ -160,12 +160,12 @@ public class HyriGameTeamChooserGui extends HyriInventory {
 
     @Override
     public void onOpen(InventoryOpenEvent event) {
-        PLAYERS.add((Player) event.getPlayer());
+        this.players.add((Player) event.getPlayer());
     }
 
     @Override
     public void onClose(InventoryCloseEvent event) {
-        PLAYERS.remove((Player) event.getPlayer());
+        this.players.remove((Player) event.getPlayer());
     }
 
 }

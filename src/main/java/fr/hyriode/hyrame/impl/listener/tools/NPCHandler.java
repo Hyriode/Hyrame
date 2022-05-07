@@ -3,20 +3,21 @@ package fr.hyriode.hyrame.impl.listener.tools;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.listener.HyriListener;
 import fr.hyriode.hyrame.npc.NPC;
+import fr.hyriode.hyrame.npc.NPCInteractCallback;
 import fr.hyriode.hyrame.npc.NPCManager;
-import fr.hyriode.hyrame.reflection.Reflection;
-import fr.hyriode.hyrame.utils.PacketUtil;
-import io.netty.channel.ChannelDuplexHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
+import fr.hyriode.hyrame.packet.IPacketContainer;
+import fr.hyriode.hyrame.packet.IPacketHandler;
+import fr.hyriode.hyrame.packet.PacketType;
+import fr.hyriode.hyrame.packet.PacketUtil;
 import net.minecraft.server.v1_8_R3.Packet;
-import net.minecraft.server.v1_8_R3.PacketPlayInUseEntity;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
 /**
@@ -26,10 +27,31 @@ import org.bukkit.util.Vector;
  */
 public class NPCHandler extends HyriListener<HyramePlugin> {
 
-    private static final String CHANNEL_HANDLER_NAME = "NPCPacketInjector";
-
     public NPCHandler(HyramePlugin plugin) {
         super(plugin);
+
+        this.plugin.getHyrame().getPacketInterceptor().addHandler(PacketType.Play.Client.USE_ENTITY, new IPacketHandler() {
+            @Override
+            public void onReceive(IPacketContainer container) {
+                final Player player = container.getPlayer();
+                final Location location = player.getLocation();
+                final int entityId = container.getIntegers().read(0);
+
+                for (NPC npc : NPCManager.getNPCs().keySet()) {
+                    final NPCInteractCallback callback = npc.getInteractCallback();
+
+                    if (npc.getId() != entityId || callback == null || location.distance(npc.getLocation()) > 3.0D) {
+                        continue;
+                    }
+
+                    final Object object = container.getValue("action");
+
+                    if (object != null) {
+                        npc.getInteractCallback().call(object.toString().equals("INTERACT"), player);
+                    }
+                }
+            }
+        });
     }
 
     @EventHandler
@@ -39,14 +61,6 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
         this.checkDistance(player, event.getFrom(), event.getTo());
         this.trackPlayer(player);
     }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onRespawn(PlayerRespawnEvent event) {
-        final Player player = event.getPlayer();
-
-        trackPlayer(player);
-    }
-
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTeleport(PlayerTeleportEvent event) {
@@ -59,8 +73,6 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-
-        this.inject(player);
 
         for (NPC npc : NPCManager.getNPCs().keySet()) {
             NPCManager.sendNPC(player, npc);
@@ -75,84 +87,41 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
 
         for (NPC npc : NPCManager.getNPCs().keySet()) {
             NPCManager.removeNPC(player, npc);
-        }
-
-        this.uninject(player);
-    }
-
-    private void trackPlayer(Player player) {
-        for (NPC npc : NPCManager.getNPCs().keySet()) {
-            if (npc.isTrackingPlayer()) {
-                final Location location = npc.getLocation();
-
-                if (location.distance(player.getLocation()) <= 4.0D) {
-                    final Vector direction = player.getLocation().toVector().subtract(npc.getLocation().toVector());
-
-                    location.setDirection(direction);
-
-                    npc.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-
-                    PacketUtil.sendPacket(player, npc.getTeleportPacket());
-
-                    for (Packet<?> packet : npc.getRotationPackets(location.getYaw(), location.getPitch())) {
-                        PacketUtil.sendPacket(player, packet);
-                    }
-                }
-            }
+            npc.removePlayer(player);
         }
     }
 
     private void checkDistance(Player player, Location from, Location to) {
         for (NPC npc : NPCManager.getNPCs().keySet()) {
-            if (from.distance(npc.getLocation()) > 200 && to.distanceSquared(npc.getLocation()) < 200) {
+            if (from.distanceSquared(npc.getLocation()) > 2500 && to.distanceSquared(npc.getLocation()) < 2500) {
                 NPCManager.sendNPC(player, npc);
-            } else if (from.distance(npc.getLocation()) < 200 && to.distance(npc.getLocation()) > 200) {
-                NPCManager.removeNPC(player, npc);
             }
         }
     }
 
-    private void inject(Player player) {
-        final ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
-            @Override
-            public void channelRead(ChannelHandlerContext ctx, Object packet) throws Exception {
-                if (packet == null || packet.getClass() != PacketPlayInUseEntity.class) {
-                    super.channelRead(ctx, packet);
-                    return;
-                }
-
-                final Object entityId = Reflection.invokeField(packet, "a");
-
-                if (entityId instanceof Integer) {
-                    for (NPC npc : NPCManager.getNPCs().keySet()) {
-                        if (npc.getId() == (int) entityId) {
-                            if (npc.getInteractCallback() != null) {
-                                if (player.getLocation().distance(npc.getLocation()) <= 3.0D) {
-                                    final PacketPlayInUseEntity.EnumEntityUseAction action = (PacketPlayInUseEntity.EnumEntityUseAction) Reflection.invokeField(packet, "action");
-
-                                    if (action != null) {
-                                        npc.getInteractCallback().call(action.equals(PacketPlayInUseEntity.EnumEntityUseAction.INTERACT), player);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                super.channelRead(ctx, packet);
+    private void trackPlayer(Player player) {
+        for (NPC npc : NPCManager.getNPCs().keySet()) {
+            if (!npc.isTrackingPlayer()) {
+                continue;
             }
-        };
 
-        final ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline();
+            final Location location = npc.getLocation();
 
-        pipeline.addBefore("packet_handler", CHANNEL_HANDLER_NAME, channelDuplexHandler);
-    }
+            if (location.distance(player.getLocation()) > 4.0D) {
+                continue;
+            }
 
-    private void uninject(Player player) {
-        final ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().playerConnection.networkManager.channel.pipeline();
+            final Vector direction = player.getLocation().toVector().subtract(npc.getLocation().toVector());
 
-        if (pipeline.get(CHANNEL_HANDLER_NAME) != null) {
-            pipeline.remove(CHANNEL_HANDLER_NAME);
+            location.setDirection(direction);
+
+            npc.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+
+            PacketUtil.sendPacket(player, npc.getTeleportPacket());
+
+            for (Packet<?> packet : npc.getRotationPackets(location.getYaw(), location.getPitch())) {
+                PacketUtil.sendPacket(player, packet);
+            }
         }
     }
 

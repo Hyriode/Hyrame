@@ -138,7 +138,7 @@ public class PartyListener {
             return;
         }
 
-        final UUID leaderId = event.getParty().getLeader();
+        final UUID leaderId = party.getLeader();
         final IHyriPlayer leader = HyriAPI.get().getPlayerManager().getPlayer(leaderId);
 
         for (UUID member : party.getMembers().keySet()) {

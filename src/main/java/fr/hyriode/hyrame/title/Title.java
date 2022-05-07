@@ -1,7 +1,7 @@
 package fr.hyriode.hyrame.title;
 
+import fr.hyriode.hyrame.packet.PacketUtil;
 import fr.hyriode.hyrame.reflection.Reflection;
-import fr.hyriode.hyrame.utils.PacketUtil;
 import net.minecraft.server.v1_8_R3.ChatComponentText;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;

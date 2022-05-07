@@ -130,7 +130,12 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
                 return;
             }
 
-            if (!target.getSettings().isFriendRequestsEnabled() || target.hasNickname()) {
+            if (target.hasNickname() && !account.getRank().isStaff()) {
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.doesnt-accept").getForPlayer(player).replace("%player%", target.getNickname().getName()))));
+                return;
+            }
+
+            if (!target.getSettings().isFriendRequestsEnabled() && !account.getRank().isStaff()) {
                 player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.doesnt-accept").getForPlayer(player).replace("%player%", target.getNameWithRank()))));
                 return;
             }
@@ -147,7 +152,7 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
             return;
         }
 
-        final List<IHyriPlayer> showingFriends = new ArrayList<>();
+        final List<ListedFriend> showingFriends = new ArrayList<>();
 
         int start = page != 0 ? FRIENDS_LIST_SIZE * (page - 1) : 0;
 
@@ -160,26 +165,31 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
                 break;
             }
 
-            final IHyriPlayer friend = HyriAPI.get().getPlayerManager().getPlayer(friends.get(i).getUniqueId());
+            final IHyriFriend friend = friends.get(i);
 
             if (friend != null) {
-                showingFriends.add(friend);
+                final UUID playerId = friend.getUniqueId();
+                final boolean online = HyriAPI.get().getPlayerManager().getPlayerFromRedis(playerId) != null;
+                final String prefix = HyriAPI.get().getPlayerManager().getPrefix(playerId);
+
+                showingFriends.add(new ListedFriend(playerId, online, prefix));
             }
         }
 
         showingFriends.sort(Comparator.comparing(friend -> !friend.isOnline()));
 
         player.spigot().sendMessage(createMessage(builder -> {
-            for (IHyriPlayer friend : showingFriends) {
-                if (friend == null) {
-                    continue;
-                }
+            for (ListedFriend friend : showingFriends) {
+                final UUID uuid = friend.getUniqueId();
+                final IHyriPlayer account = IHyriPlayer.get(uuid);
+                final String prefix = HyriAPI.get().getPlayerManager().getPrefix(uuid);
 
                 if (friend.isOnline()) {
-                    builder.append(HyriLanguageMessage.get("message.friend.list-player").getForPlayer(player).replace("%player%", friend.getNameWithRank()).replace("%server%", friend.getCurrentServer()));
+                    builder.append(HyriLanguageMessage.get("message.friend.list-player").getForPlayer(player).replace("%player%", prefix).replace("%server%", account.getCurrentServer()));
                 } else {
-                    builder.append(HyriLanguageMessage.get("message.friend.list-player-offline").getForPlayer(player).replace("%player%", friend.getNameWithRank()));
+                    builder.append(HyriLanguageMessage.get("message.friend.list-player-offline").getForPlayer(player).replace("%player%", prefix));
                 }
+
                 if (showingFriends.indexOf(friend) != showingFriends.size() - 1) {
                     builder.append("\n");
                 }
@@ -202,6 +212,32 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
                 .append(" - ").color(ChatColor.GRAY).event((ClickEvent) null)
                 .append(HyriLanguageMessage.get("message.friend." + suggest).getForPlayer(player)).color(ChatColor.LIGHT_PURPLE)
                 .append("\n");
+    }
+
+    private static class ListedFriend {
+
+        private final UUID uuid;
+        private final boolean online;
+        private final String prefix;
+
+        public ListedFriend(UUID uuid, boolean online, String prefix) {
+            this.uuid = uuid;
+            this.online = online;
+            this.prefix = prefix;
+        }
+
+        public UUID getUniqueId() {
+            return this.uuid;
+        }
+
+        public boolean isOnline() {
+            return this.online;
+        }
+
+        public String getPrefix() {
+            return this.prefix;
+        }
+
     }
 
 }

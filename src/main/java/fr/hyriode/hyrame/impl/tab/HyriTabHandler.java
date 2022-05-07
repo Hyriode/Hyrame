@@ -66,22 +66,44 @@ public class HyriTabHandler {
             final HyriScoreboardTeam team;
             if (nickname != null) {
                 team = this.teamHandler.getTeamByName(nickname.getRank().getName());
+            } else if (account.hasHyriPlus() && !account.getRank().isStaff()) {
+                final HyriScoreboardTeam oldTeam = this.teamHandler.getTeamByName(player.toString());
+
+                if (oldTeam == null) {
+                    team = new HyriScoreboardTeam(playerId.toString(), this.getAlphabetLetter(8) + player.getName(), "", "", "");
+
+                    final String display;
+                    if (rank.withSeparator()) {
+                        display = ChatColor.translateAlternateColorCodes('&', rank.getPrefix()) + HyriRank.SEPARATOR + rank.getMainColor();
+                    } else {
+                        display = rank.getMainColor().toString();
+                    }
+
+                    team.setDisplay(display);
+                    team.setPrefix(display);
+
+                    this.teamHandler.addTeam(team);
+                } else {
+                    team = oldTeam;
+                }
             } else if (!rank.hasCustomPrefix()) {
                 team = this.teamHandler.getTeamByName(rank.getType().getName());
             } else {
-                team = new HyriScoreboardTeam(playerId.toString(), this.getAlphabetLetter(rankType.getPriority()) + player.getName(), "", "", "");
+                final HyriScoreboardTeam oldTeam = this.teamHandler.getTeamByName(player.toString());
 
-                final String display;
-                if (rank.withSeparator()) {
-                    display = ChatColor.translateAlternateColorCodes('&', rank.getPrefix()) + HyriRank.SEPARATOR + rank.getMainColor();
+                if (oldTeam == null) {
+                    final String prefix = account.getPrefix();
+                    final String display = ChatColor.translateAlternateColorCodes('&', prefix) + HyriRank.SEPARATOR + rank.getMainColor();
+
+                    team = new HyriScoreboardTeam(playerId.toString(), this.getAlphabetLetter(rankType.getPriority()) + player.getName(), "", "", "");
+
+                    team.setDisplay(display);
+                    team.setPrefix(display);
+
+                    this.teamHandler.addTeam(team);
                 } else {
-                    display = rank.getMainColor() + "";
+                    team = oldTeam;
                 }
-
-                team.setDisplay(display);
-                team.setPrefix(display);
-
-                this.teamHandler.addTeam(team);
             }
 
             this.teamHandler.addPlayerToTeam(player, team);

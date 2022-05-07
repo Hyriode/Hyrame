@@ -56,7 +56,7 @@ public class HyriWaitingScoreboard extends HyriScoreboard {
         this.setLine(0, ChatColor.GRAY + TimeUtil.getCurrentFormattedDate(), line -> line.setValue(ChatColor.GRAY + TimeUtil.getCurrentFormattedDate()), 20);
         this.addBlankLine(1);
         this.setLine(2, DASH + MAP.getForPlayer(this.player) + ChatColor.AQUA + map);
-        this.setLine(3, DASH + MAP.getForPlayer(this.player) + ChatColor.AQUA + map);
+        this.setLine(3, DASH + MODE.getForPlayer(this.player) + ChatColor.AQUA + game.getType().getDisplayName());
         this.addBlankLine(5);
         this.addBlankLine(7);
         this.setLine(8, ChatColor.DARK_AQUA + HyriConstants.SERVER_IP, new HyriScoreboardIpConsumer(HyriConstants.SERVER_IP), 2);

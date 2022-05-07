@@ -74,7 +74,15 @@ public class HyriJoinHandler implements IHyriJoinHandler {
         }
 
         final IHyriParty party = HyriAPI.get().getPartyManager().getParty(partyId);
-        final int partySize = party.getMembers().size();
+
+        int partySize = 0;
+
+        for (UUID player : party.getMembers().keySet()) {
+            if (!HyriAPI.get().getServer().getPlayers().contains(player)) {
+                partySize++;
+            }
+        }
+
         final HyriGame<?> game = this.hyrame.getGameManager().getCurrentGame();
         final IHyriJoinManager joinManager = HyriAPI.get().getServerManager().getJoinManager();
 

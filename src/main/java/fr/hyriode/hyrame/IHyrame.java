@@ -7,6 +7,7 @@ import fr.hyriode.hyrame.inventory.IHyriInventoryManager;
 import fr.hyriode.hyrame.item.IHyriItemManager;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.listener.IHyriListenerManager;
+import fr.hyriode.hyrame.packet.IPacketInterceptor;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.scanner.IHyriScanner;
 import fr.hyriode.hyrame.scoreboard.IHyriScoreboardManager;
@@ -111,5 +112,13 @@ public interface IHyrame {
      * @return The {@link IHyriChatManager} instance
      */
     IHyriChatManager getChatManager();
+
+    /**
+     * Get the packet interceptor instance.<br>
+     * It can be used to check sending and received packet.
+     *
+     * @return The {@link IPacketInterceptor} instance
+     */
+    IPacketInterceptor getPacketInterceptor();
 
 }

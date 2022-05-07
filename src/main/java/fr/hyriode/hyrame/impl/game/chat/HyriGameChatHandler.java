@@ -55,6 +55,11 @@ public class HyriGameChatHandler implements IHyriChatHandler {
         final UUID uuid = player.getUniqueId();
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(uuid);
         final HyriGamePlayer gamePlayer = game.getPlayer(player.getUniqueId());
+
+        if (gamePlayer ==null) {
+            return true;
+        }
+
         final HyriGameTeam team = gamePlayer.getTeam();
         final HyriLanguageMessage teamChatPrefix = languageManager.getMessage("team.chat.prefix");
         final String channel = account.getSettings().getChatChannel();
@@ -82,8 +87,10 @@ public class HyriGameChatHandler implements IHyriChatHandler {
                 }
             } else {
                 if (game.getState() == HyriGameState.ENDED && message.equalsIgnoreCase("gg") && !this.saidGG.contains(uuid)) {
-                    if (account.getRank().isSuperior(HyriPlayerRankType.EPIC)) {
-                        account.getHyris().add(ThreadLocalRandom.current().nextInt(1, 6), "Fairplay", true);
+                    if (account.getRank().isSuperior(HyriPlayerRankType.VIP_PLUS)) {
+                        account.getHyris().add(ThreadLocalRandom.current().nextInt(1, 6))
+                                .withReason("Fairplay")
+                                .withMessage(true);
                         account.update();
 
                         this.saidGG.add(uuid);

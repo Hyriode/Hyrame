@@ -17,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -47,6 +48,11 @@ class HyriGameHandler implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onClick(InventoryClickEvent event) {
         this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING || game.getPlayer((Player) event.getWhoClicked()).isSpectator());
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onItemSpawn(ItemSpawnEvent event) {
+        this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING);
     }
 
     @EventHandler(priority = EventPriority.LOW)

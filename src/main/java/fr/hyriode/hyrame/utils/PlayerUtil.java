@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.utils;
 
 import com.mojang.authlib.GameProfile;
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.hyrame.packet.PacketUtil;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;

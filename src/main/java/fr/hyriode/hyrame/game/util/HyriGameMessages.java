@@ -112,7 +112,7 @@ public class HyriGameMessages {
     }
 
     public static BaseComponent[] createDescription(HyriGame<?> game, Player target) {
-        return createFramedMessage(game, builder -> builder.append(game.getDescription().getForPlayer(target)));
+        return createFramedMessage(game, builder -> builder.reset().append(game.getDescription().getForPlayer(target)));
     }
 
     public static BaseComponent[] createWinMessage(HyriGame<?> game, Player target, HyriGameTeam winner, List<String> stats, List<String> rewards) {
@@ -129,7 +129,7 @@ public class HyriGameMessages {
             if (stats != null && stats.size() > 0) {
                 builder.append("\n");
 
-                final int space = (Symbols.HYPHENS_LINE.length() - stats.get(0).length()) / 2;
+                final int space = (Symbols.HYPHENS_LINE.length() - ChatColor.stripColor(stats.get(0)).length()) / 2;
 
                 for (String statistic : stats) {
 
@@ -145,7 +145,7 @@ public class HyriGameMessages {
                 builder.append("\n");
 
                 final String rewardsLine = HyriLanguageMessage.get("message.game.end.rewards").getForPlayer(target);
-                final int space = (Symbols.HYPHENS_LINE.length() - rewardsLine.length()) / 2 - 3;
+                final int space = (Symbols.HYPHENS_LINE.length() - ChatColor.stripColor(rewardsLine).length()) / 2 - 3;
 
                 for (int i = 0; i <= space; i++) {
                     builder.append("  ");

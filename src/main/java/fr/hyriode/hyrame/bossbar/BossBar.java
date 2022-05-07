@@ -1,6 +1,6 @@
 package fr.hyriode.hyrame.bossbar;
 
-import fr.hyriode.hyrame.utils.PacketUtil;
+import fr.hyriode.hyrame.packet.PacketUtil;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;

@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import fr.hyriode.api.util.Skin;
 import fr.hyriode.hyrame.hologram.Hologram;
-import fr.hyriode.hyrame.utils.PacketUtil;
+import fr.hyriode.hyrame.packet.PacketUtil;
 import fr.hyriode.hyrame.utils.ProfileLoader;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;

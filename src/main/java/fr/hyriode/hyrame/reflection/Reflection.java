@@ -1,7 +1,9 @@
 package fr.hyriode.hyrame.reflection;
 
 import java.lang.reflect.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -137,6 +139,24 @@ public class Reflection {
             }
         }
         return result;
+    }
+
+    public static Field[] getFieldsOf(Class<?> clazz, Class<?> targetClass) {
+        final Field[] fields = clazz.getDeclaredFields();
+        final List<Field> result = new ArrayList<>();
+
+        for (Field field : fields) {
+            Class<?> fieldClass = DataType.getReference(targetClass);
+
+            if (fieldClass == null) {
+                fieldClass = field.getType();
+            }
+
+            if (fieldClass == targetClass) {
+                result.add(field);
+            }
+        }
+        return result.toArray(new Field[0]);
     }
 
     public enum DataType {

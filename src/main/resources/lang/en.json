@@ -1,9 +1,12 @@
 {
   "command.not.enabled": "&cThis command is not enabled on this server!",
   "dont.have.permissions": "&cYou don't have the required permissions to perform this action!",
-  "tab.website.and.forum": " Website and Forum: ",
+
+  "tab.information-line": "    &fTPS: &b%tps%   &fPing: &b%ping%   &fServer: &b%server%   &fPlayers: &b%players%    ",
+  "tab.website.and.forum": " Website: ",
   "tab.store": " Store: ",
   "tab.discord": " Discord: ",
+
   "command.plugin.info": "Server information",
   "command.plugin.current": "Current",
   "team.chat.prefix": "Team",
@@ -16,6 +19,8 @@
   "error.chat.dead": "You can't speak in the chat while being dead!",
 
   "message.queue.not-leader": "&cYou need to be the leader of your party to queue for games.",
+
+  "message.leveling.new": "&fYou gain a level ! &3(%old_level%✯ > %new_level%✯)",
 
   "message.death.player": "%player% &7was killed by %killer%&7.",
   "message.death.players": "%player% &7was killed by %killer% &7and %second_killer%&7.",
@@ -48,7 +53,7 @@
 
   "message.private.cant-send-message-to-you": "&cYou can't send messages to you!",
   "message.private.no-player-to-reply": "&cYou have no player to reply to!",
-  "message.private.not-online": "&c%player% is not online!",
+  "message.private.not-online": "&c%player% &cis not online!",
   "message.private.received": "&3Received from %player%&b:",
   "message.private.sent": "&3Sent to %player%&b:",
   "message.private.reply": "&7Reply to %player%",

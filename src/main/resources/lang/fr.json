@@ -1,9 +1,12 @@
 {
   "command.not.enabled": "&cCette commande n'est pas activée sur le serveur !",
   "dont.have.permissions": "&cVous n'avez pas les permissions nécessaires pour effectuer cette action !",
-  "tab.website.and.forum": " Site et Forum : ",
-  "tab.store": " Boutique : ",
-  "tab.discord": " Discord : ",
+
+  "tab.information-line": "    &fTPS: &b%tps%   &fPing: &b%ping%   &fServeur: &b%server%   &fJoueurs: &b%players%    ",
+  "tab.website.and.forum": " Site: ",
+  "tab.store": " Boutique: ",
+  "tab.discord": " Discord: ",
+
   "command.plugin.info": "Information du serveur",
   "command.plugin.current": "Actuel",
   "team.chat.prefix": "Equipe",
@@ -14,6 +17,8 @@
   "error.chat.dead": "Vous ne pouvez pas parler dans le chat quand vous êtes mort!",
 
   "message.queue.not-leader": "&cVous devez être le chef de votre partie pour lancer une partie.",
+
+  "message.leveling.new": "&fVous venez de gagner un niveau ! &3(%old_level%✯ > %new_level%✯)",
 
   "message.death.player": "%player% &7a été tué par %killer%&7.",
   "message.death.players": "%player% &7a été tué par %killer% &7et %second_killer%&7.",
@@ -44,7 +49,7 @@
 
   "message.private.cant-send-message-to-you": "&cVous ne pouvez pas envoyer de messages à vous même!",
   "message.private.no-player-to-reply": "&cVous n'avez aucun joueur à qui répondre !",
-  "message.private.not-online": "&c%player% n'est pas en ligne!",
+  "message.private.not-online": "&c%player% &cn'est pas en ligne!",
   "message.private.received": "&3Reçu de %player%&b:",
   "message.private.sent": "&3Envoyé à %player%&b:",
   "message.private.reply": "&7Répondre à %player%",

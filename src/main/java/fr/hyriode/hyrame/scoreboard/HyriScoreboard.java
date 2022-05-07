@@ -1,8 +1,8 @@
 package fr.hyriode.hyrame.scoreboard;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.hyrame.packet.PacketUtil;
 import fr.hyriode.hyrame.reflection.Reflection;
-import fr.hyriode.hyrame.utils.PacketUtil;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

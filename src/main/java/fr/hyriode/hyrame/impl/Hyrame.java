@@ -20,8 +20,10 @@ import fr.hyriode.hyrame.impl.language.HyriLanguageManager;
 import fr.hyriode.hyrame.impl.listener.HyriListenerManager;
 import fr.hyriode.hyrame.impl.module.chat.message.PrivateMessageModule;
 import fr.hyriode.hyrame.impl.module.friend.FriendModule;
+import fr.hyriode.hyrame.impl.module.leveling.LevelingModule;
 import fr.hyriode.hyrame.impl.module.nickname.NicknameModule;
 import fr.hyriode.hyrame.impl.module.party.PartyModule;
+import fr.hyriode.hyrame.impl.packet.PacketInterceptor;
 import fr.hyriode.hyrame.impl.placeholder.PlaceholderImpl;
 import fr.hyriode.hyrame.impl.placeholder.handler.PlaceholderRegistry;
 import fr.hyriode.hyrame.impl.scanner.HyriScanner;
@@ -33,6 +35,7 @@ import fr.hyriode.hyrame.item.enchant.HyriEnchant;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.listener.IHyriListenerManager;
 import fr.hyriode.hyrame.npc.NPCManager;
+import fr.hyriode.hyrame.packet.IPacketInterceptor;
 import fr.hyriode.hyrame.placeholder.PlaceholderAPI;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.scanner.IHyriScanner;
@@ -65,11 +68,13 @@ public class Hyrame implements IHyrame {
     private final IHyriInventoryManager inventoryManager;
     private final IHyriGameManager gameManager;
     private final HyriChatManager chatManager;
+    private final PacketInterceptor packetInterceptor;
 
     private final NicknameModule nicknameModule;
     private final FriendModule friendModule;
     private final PrivateMessageModule privateMessageModule;
     private final PartyModule partyModule;
+    private final LevelingModule levelingModule;
 
     private final HyramePlugin plugin;
 
@@ -85,6 +90,7 @@ public class Hyrame implements IHyrame {
         this.inventoryManager = new HyriInventoryManager();
         this.gameManager = new HyriGameManager(this);
         this.chatManager = new HyriChatManager(this);
+        this.packetInterceptor = new PacketInterceptor();
         this.pluginProviders = new ArrayList<>();
         this.commandBlocker = new HyriCommandBlocker();
         this.tabManager = new HyriTabManager(this);
@@ -92,15 +98,19 @@ public class Hyrame implements IHyrame {
         this.friendModule = new FriendModule();
         this.privateMessageModule = new PrivateMessageModule();
         this.partyModule = new PartyModule();
+        this.levelingModule = new LevelingModule();
 
         IHyriLanguageManager.Provider.registerInstance(() -> this.languageManager);
         PlaceholderAPI.registerInstance(new PlaceholderImpl());
         PlaceholderRegistry.registerPlaceholders(this);
         HyriEnchant.register();
 
-        BossBarManager.init(plugin);
-        NPCManager.init(plugin, "npcs:");
-        new SignGUIManager();
+        BossBarManager.init(this.plugin);
+        NPCManager.init(this.plugin, "npcs:");
+        new SignGUIManager(this, this.plugin);
+
+        HyriAPI.get().getServer().setState(IHyriServer.State.READY);
+        HyriAPI.get().getServer().setSlots(50);
 
         HyriAPI.get().getServerManager().getJoinManager().registerHandler(10, new HyriJoinHandler(this));
     }
@@ -113,6 +123,8 @@ public class Hyrame implements IHyrame {
         if (game != null) {
             this.gameManager.unregisterGame(game);
         }
+
+        this.packetInterceptor.stopIntercepting();
     }
 
     @Override
@@ -192,6 +204,11 @@ public class Hyrame implements IHyrame {
         return this.chatManager;
     }
 
+    @Override
+    public PacketInterceptor getPacketInterceptor() {
+        return this.packetInterceptor;
+    }
+
     public HyramePlugin getPlugin() {
         return this.plugin;
     }
@@ -214,6 +231,10 @@ public class Hyrame implements IHyrame {
 
     public PartyModule getPartyModule() {
         return this.partyModule;
+    }
+
+    public LevelingModule getLevelingModule() {
+        return this.levelingModule;
     }
 
 }

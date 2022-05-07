@@ -112,7 +112,6 @@ public class ProfileLoader {
                     skinProfile.getProperties().putAll(profile.getProperties());
                 }
             } else {
-                System.out.println("Loading skin from Redis");
                 final JsonArray parse = new JsonParser().parse(json).getAsJsonArray();
 
                 for (JsonElement element : parse) {

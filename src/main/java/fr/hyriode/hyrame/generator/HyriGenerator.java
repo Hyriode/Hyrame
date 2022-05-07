@@ -130,7 +130,6 @@ public class HyriGenerator {
                         itemsCount += itemStack.getAmount();
                     }
 
-
                     if (this.tier.getSpawnLimit() != -1 && itemsCount >= this.tier.getSpawnLimit()) {
                         this.checkForUpgrade();
                         return;

@@ -1,6 +1,6 @@
 package fr.hyriode.hyrame.actionbar;
 
-import fr.hyriode.hyrame.utils.PacketUtil;
+import fr.hyriode.hyrame.packet.PacketUtil;
 import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.server.v1_8_R3.ChatComponentText;
 import net.minecraft.server.v1_8_R3.Packet;
@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Project: Hyrame
@@ -23,10 +24,10 @@ import java.util.Set;
 public class ActionBar {
 
     /** Permanent message task */
-    private final Map<Player, BukkitTask> permanentMessageTasks;
+    private final Map<UUID, BukkitTask> permanentMessageTasks;
 
     /** Players with the action bar */
-    private final Set<Player> players;
+    private final Set<UUID> players;
 
     /** Message to display */
     private String message;
@@ -45,7 +46,7 @@ public class ActionBar {
     public void send(Player player) {
         PacketUtil.sendPacket(player, this.getPacket());
 
-        this.players.add(player);
+        this.players.add(player.getUniqueId());
     }
 
     public void send() {
@@ -55,7 +56,7 @@ public class ActionBar {
     }
 
     public void sendPermanent(JavaPlugin plugin, Player player) {
-        this.permanentMessageTasks.put(player, new BukkitRunnable() {
+        this.permanentMessageTasks.put(player.getUniqueId(), new BukkitRunnable() {
             @Override
             public void run() {
                 send(player);
@@ -70,19 +71,24 @@ public class ActionBar {
     }
 
     public void remove(Player player) {
-        if (this.permanentMessageTasks.containsKey(player)) {
-            this.permanentMessageTasks.get(player).cancel();
-            this.permanentMessageTasks.remove(player);
+        final BukkitTask task = this.permanentMessageTasks.remove(player.getUniqueId());
+
+        if (task != null) {
+            task.cancel();
         }
 
         PacketUtil.sendPacket(player, new PacketPlayOutChat(new ChatComponentText(""), (byte) 2));
 
-        this.players.remove(player);
+        this.players.remove(player.getUniqueId());
     }
 
     public void remove() {
-        for (Player player : this.players) {
-            this.remove(player);
+        for (UUID uuid : this.players) {
+            final Player player = Bukkit.getPlayer(uuid);
+
+            if (player != null) {
+                this.remove(player);
+            }
         }
     }
 

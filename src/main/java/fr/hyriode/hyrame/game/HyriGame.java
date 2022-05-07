@@ -28,8 +28,6 @@ import fr.hyriode.hyrame.game.util.HyriGameMessages;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.PlayerUtil;
-import fr.hyriode.hyrame.utils.Symbols;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -203,11 +201,13 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
                 if (!this.isFull()) {
                     final P player = this.playerClass.getConstructor(HyriGame.class, Player.class).newInstance(this, p);
 
+                    player.setConnectionTime();
+
                     this.players.add(player);
 
                     HyriAPI.get().getServer().addPlayerPlaying(p.getUniqueId());
 
-                    this.updatePlayerCount();
+                    this.updatePlayerCount(false);
 
                     HyriAPI.get().getEventBus().publish(new HyriGameJoinEvent(this, player));
 
@@ -223,15 +223,6 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         }
     }
 
-    private void updatePlayerCount() {
-        final IHyriNetwork network = HyriAPI.get().getNetworkManager().getNetwork();
-        final HyriNetworkCount networkCount = network.getPlayerCount();
-        final HyriPlayerCount count = networkCount.getCategory(this.getName());
-
-        count.setType(this.type.getName(), this.players.size());
-        network.update();
-    }
-
     /**
      * Called on player logout<br>
      * Override this method to make actions on logout
@@ -242,12 +233,13 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         final UUID uuid = p.getUniqueId();
         final P player = this.getPlayer(uuid);
 
-        this.updatePlayerCount();
+        HyriAPI.get().getServer().removePlayerPlaying(uuid);
 
         this.players.remove(player);
 
-        HyriAPI.get().getServer().removePlayerPlaying(uuid);
         HyriAPI.get().getEventBus().publish(new HyriGameLeaveEvent(this, player));
+
+        this.updatePlayerCount(true);
 
         if (player.hasTeam()) {
             player.getTeam().removePlayer(player);
@@ -256,6 +248,25 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         if (this.usingGameTabList) {
             this.tabListManager.handleLogout(p);
         }
+    }
+
+    /**
+     * Update the player counter
+     *
+     * @param remove Is the method when removing
+     */
+    private void updatePlayerCount(boolean remove) {
+        final IHyriNetwork network = HyriAPI.get().getNetworkManager().getNetwork();
+        final HyriNetworkCount networkCount = network.getPlayerCount();
+        final HyriPlayerCount count = networkCount.getCategory(this.getName());
+        final int currentPlayers = count.getType(this.type.getName());
+
+        if (currentPlayers <= 0 && remove) {
+            return;
+        }
+
+        count.setType(this.type.getName(), currentPlayers + (remove ? -1 : 1));
+        network.update();
     }
 
     /**

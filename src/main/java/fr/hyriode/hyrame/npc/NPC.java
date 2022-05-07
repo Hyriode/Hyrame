@@ -2,8 +2,8 @@ package fr.hyriode.hyrame.npc;
 
 import com.mojang.authlib.GameProfile;
 import fr.hyriode.hyrame.hologram.Hologram;
+import fr.hyriode.hyrame.packet.PacketUtil;
 import fr.hyriode.hyrame.reflection.entity.EnumItemSlot;
-import fr.hyriode.hyrame.utils.PacketUtil;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
