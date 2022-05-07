@@ -12,16 +12,48 @@ import org.bukkit.inventory.ItemStack;
  */
 public interface IPacketContainer {
 
+    /**
+     * Get the type of the packet
+     *
+     * @return A {@link PacketType}
+     */
     PacketType getType();
 
+    /**
+     * Get the player that received/sent the packet
+     *
+     * @return The {@link Player} link to the packet process
+     */
     Player getPlayer();
 
+    /**
+     * Get the packet
+     *
+     * @return A packet
+     */
     Object getPacket();
 
+    /**
+     * Set the packet
+     *
+     * @param packet A packet
+     */
     void setPacket(Object packet);
 
+    /**
+     * Get the name of the packet.<br>
+     * Example: PacketPlayOutChat
+     *
+     * @return A name
+     */
     String getPacketName();
 
+    /**
+     * Set the value of a field in the packet
+     *
+     * @param field The name of the field to edit
+     * @param value The value of the field
+     */
     void setValue(String field, Object value);
 
     Object getValue(String field);

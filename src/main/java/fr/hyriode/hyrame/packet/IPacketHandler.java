@@ -7,8 +7,18 @@ package fr.hyriode.hyrame.packet;
  */
 public interface IPacketHandler {
 
+    /**
+     * Fired when a packet is received
+     *
+     * @param container The container of the packet
+     */
     default void onReceive(IPacketContainer container) {}
 
+    /**
+     * Fired when a packet is sending
+     *
+     * @param container The container of the packet
+     */
     default void onSend(IPacketContainer container) {}
 
 }
