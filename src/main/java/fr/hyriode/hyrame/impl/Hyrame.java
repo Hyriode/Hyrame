@@ -109,9 +109,6 @@ public class Hyrame implements IHyrame {
         NPCManager.init(this.plugin, "npcs:");
         new SignGUIManager(this, this.plugin);
 
-        HyriAPI.get().getServer().setState(IHyriServer.State.READY);
-        HyriAPI.get().getServer().setSlots(50);
-
         HyriAPI.get().getServerManager().getJoinManager().registerHandler(10, new HyriJoinHandler(this));
     }
 

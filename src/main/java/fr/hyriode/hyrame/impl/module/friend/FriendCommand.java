@@ -4,6 +4,7 @@ import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.friend.IHyriFriend;
 import fr.hyriode.api.friend.IHyriFriendHandler;
 import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.rank.HyriRank;
 import fr.hyriode.hyrame.command.*;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
@@ -181,13 +182,16 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
         player.spigot().sendMessage(createMessage(builder -> {
             for (ListedFriend friend : showingFriends) {
                 final UUID uuid = friend.getUniqueId();
-                final IHyriPlayer account = IHyriPlayer.get(uuid);
-                final String prefix = HyriAPI.get().getPlayerManager().getPrefix(uuid);
 
                 if (friend.isOnline()) {
-                    builder.append(HyriLanguageMessage.get("message.friend.list-player").getForPlayer(player).replace("%player%", prefix).replace("%server%", account.getCurrentServer()));
+                    final IHyriPlayer account = IHyriPlayer.get(uuid);
+
+                    builder.append(HyriLanguageMessage.get("message.friend.list-player").getForPlayer(player)
+                            .replace("%player%", account.getNameWithRank())
+                            .replace("%server%", account.getCurrentServer()));
                 } else {
-                    builder.append(HyriLanguageMessage.get("message.friend.list-player-offline").getForPlayer(player).replace("%player%", prefix));
+                    builder.append(HyriLanguageMessage.get("message.friend.list-player-offline").getForPlayer(player)
+                            .replace("%player%", friend.getPrefix()));
                 }
 
                 if (showingFriends.indexOf(friend) != showingFriends.size() - 1) {
@@ -201,17 +205,17 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
         return createMessage(builder -> {
             final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
 
-            addCommandLine(builder, account, "add", "add <player>");
-            addCommandLine(builder, account, "remove", "remove <player>");
-            addCommandLine(builder, account, "list", "list <page>");
+            addCommandLine(builder, account, "add", "add <player>", true);
+            addCommandLine(builder, account, "remove", "remove <player>", true);
+            addCommandLine(builder, account, "list", "list <page>", false);
         });
     }
 
-    private static void addCommandLine(ComponentBuilder builder, IHyriPlayer player, String suggest, String arguments) {
+    private static void addCommandLine(ComponentBuilder builder, IHyriPlayer player, String suggest, String arguments, boolean newLine) {
         builder.append("/f " + arguments).color(ChatColor.DARK_PURPLE).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/f " + suggest + " "))
                 .append(" - ").color(ChatColor.GRAY).event((ClickEvent) null)
                 .append(HyriLanguageMessage.get("message.friend." + suggest).getForPlayer(player)).color(ChatColor.LIGHT_PURPLE)
-                .append("\n");
+                .append(newLine ? "\n" : "");
     }
 
     private static class ListedFriend {

@@ -143,7 +143,7 @@ public class HyriGamePlayer {
     /**
      * Set the player connection time as the current time
      */
-    public void setConnectionTime() {
+    public void initConnectionTime() {
         this.connectionTime = System.currentTimeMillis();
     }
 

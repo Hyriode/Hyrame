@@ -67,14 +67,14 @@ public class HyriTabHandler {
             if (nickname != null) {
                 team = this.teamHandler.getTeamByName(nickname.getRank().getName());
             } else if (account.hasHyriPlus() && !account.getRank().isStaff()) {
-                final HyriScoreboardTeam oldTeam = this.teamHandler.getTeamByName(player.toString());
+                final HyriScoreboardTeam oldTeam = this.teamHandler.getTeamByName(playerId.toString());
 
                 if (oldTeam == null) {
                     team = new HyriScoreboardTeam(playerId.toString(), this.getAlphabetLetter(8) + player.getName(), "", "", "");
 
                     final String display;
                     if (rank.withSeparator()) {
-                        display = ChatColor.translateAlternateColorCodes('&', rank.getPrefix()) + HyriRank.SEPARATOR + rank.getMainColor();
+                        display = ChatColor.translateAlternateColorCodes('&', account.getPrefix()) + HyriRank.SEPARATOR + rank.getMainColor();
                     } else {
                         display = rank.getMainColor().toString();
                     }
@@ -89,7 +89,7 @@ public class HyriTabHandler {
             } else if (!rank.hasCustomPrefix()) {
                 team = this.teamHandler.getTeamByName(rank.getType().getName());
             } else {
-                final HyriScoreboardTeam oldTeam = this.teamHandler.getTeamByName(player.toString());
+                final HyriScoreboardTeam oldTeam = this.teamHandler.getTeamByName(playerId.toString());
 
                 if (oldTeam == null) {
                     final String prefix = account.getPrefix();

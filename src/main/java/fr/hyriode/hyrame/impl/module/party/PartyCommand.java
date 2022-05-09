@@ -398,27 +398,27 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
         return createMessage(builder -> {
             final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
 
-            addCommandLine(builder, account, "invite", "invite <player>");
-            addCommandLine(builder, account, "kick", "kick <player>");
-            addCommandLine(builder, account, "accept", "accept <player>");
-            addCommandLine(builder, account, "deny", "deny <player>");
-            addCommandLine(builder, account, "promote", "promote <player>");
-            addCommandLine(builder, account, "demote", "demote <player>");
-            addCommandLine(builder, account, "lead", "lead <player>");
-            addCommandLine(builder, account, "disband", "disband");
-            addCommandLine(builder, account, "warp", "warp");
-            addCommandLine(builder, account, "info", "info");
-            addCommandLine(builder, account, "chat", "chat <message>");
-            addCommandLine(builder, account, "mute", "mute <on|off>");
-            addCommandLine(builder, account, "stream", "stream");
+            addCommandLine(builder, account, "invite", "invite <player>", true);
+            addCommandLine(builder, account, "kick", "kick <player>", true);
+            addCommandLine(builder, account, "accept", "accept <player>", true);
+            addCommandLine(builder, account, "deny", "deny <player>", true);
+            addCommandLine(builder, account, "promote", "promote <player>", true);
+            addCommandLine(builder, account, "demote", "demote <player>", true);
+            addCommandLine(builder, account, "lead", "lead <player>", true);
+            addCommandLine(builder, account, "disband", "disband", true);
+            addCommandLine(builder, account, "warp", "warp", true);
+            addCommandLine(builder, account, "info", "info", true);
+            addCommandLine(builder, account, "chat", "chat <message>", true);
+            addCommandLine(builder, account, "mute", "mute <on|off>", true);
+            addCommandLine(builder, account, "stream", "stream", false);
         });
     }
 
-    private static void addCommandLine(ComponentBuilder builder, IHyriPlayer player, String suggest, String arguments) {
+    private static void addCommandLine(ComponentBuilder builder, IHyriPlayer player, String suggest, String arguments, boolean newLine) {
         builder.append("/p " + arguments).color(ChatColor.DARK_AQUA).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/p " + suggest + " "))
                 .append(" - ").color(ChatColor.GRAY).event((ClickEvent) null)
                 .append(HyriLanguageMessage.get("message.party.command." + suggest).getForPlayer(player)).color(ChatColor.AQUA)
-                .append("\n");
+                .append(newLine ? "\n" : "");
     }
 
 }

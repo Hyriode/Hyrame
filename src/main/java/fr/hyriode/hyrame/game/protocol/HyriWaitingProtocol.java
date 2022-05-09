@@ -5,6 +5,7 @@ import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
+import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameLeaveEvent;
@@ -105,13 +106,20 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
     public void onLeave(HyriGameLeaveEvent event) {
         final Player player = event.getGamePlayer().getPlayer();
         final HyriGame<?> game = this.getGame();
-
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
 
         this.updateScoreboards();
 
         if (game.getState() == HyriGameState.PLAYING) {
-            BroadcastUtil.broadcast(target -> account.getNameWithRank(true) + ChatColor.GRAY + hyrame.getLanguageManager().getValue(target, "message.game-left"));
+            final HyriGamePlayer gamePlayer = game.getPlayer(player);
+
+            if (gamePlayer == null) {
+                return;
+            }
+
+            if (gamePlayer.isSpectator()) {
+                BroadcastUtil.broadcast(target -> account.getNameWithRank(true) + ChatColor.GRAY + hyrame.getLanguageManager().getValue(target, "message.game-left"));
+            }
             return;
         }
 

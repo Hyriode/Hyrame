@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.impl.game;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.game.HyriGame;
+import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.impl.Hyrame;
@@ -115,8 +116,13 @@ class HyriGameHandler implements Listener {
 
     private boolean cancelDamages(Player player, Player target) {
         final HyriGame<?> game = this.gameManager.getCurrentGame();
+        final HyriGamePlayer gamePlayer = game.getPlayer(player);
 
-        return (game.areInSameTeam(player, target) && !game.getPlayerTeam(player).isFriendlyFire()) || game.getPlayer(player).isSpectator();
+        if (gamePlayer == null) {
+            return true;
+        }
+
+        return (game.areInSameTeam(player, target) && !game.getPlayerTeam(player).isFriendlyFire()) || gamePlayer.isSpectator() || gamePlayer.isDead();
     }
 
     private void runActionOnGame(Consumer<HyriGame<?>> action) {

@@ -181,6 +181,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         for (HyriGamePlayer gamePlayer : this.players) {
             final Player player = gamePlayer.getPlayer();
 
+            gamePlayer.initConnectionTime();
+
             if (this.description != null) {
                 player.spigot().sendMessage(HyriGameMessages.createDescription(this, player));
             }
@@ -200,8 +202,6 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
             if (this.state == HyriGameState.WAITING || this.state == HyriGameState.READY) {
                 if (!this.isFull()) {
                     final P player = this.playerClass.getConstructor(HyriGame.class, Player.class).newInstance(this, p);
-
-                    player.setConnectionTime();
 
                     this.players.add(player);
 
@@ -303,6 +303,14 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
                 }
             }
         }, 10 * 30);
+
+        final IHyriNetwork network = HyriAPI.get().getNetworkManager().getNetwork();
+        final HyriNetworkCount networkCount = network.getPlayerCount();
+        final HyriPlayerCount count = networkCount.getCategory(this.getName());
+        final int currentPlayers = count.getType(this.type.getName());
+
+        count.setType(this.type.getName(), currentPlayers - this.players.size());
+        network.update();
 
         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {

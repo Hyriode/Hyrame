@@ -22,7 +22,6 @@ public class PacketType {
         public static class Client {
 
             public static final Bound BOUND = Bound.CLIENT;
-            private static final Client INSTANCE = new Client();
 
             public static final PacketType SET_PROTOCOL = new PacketType(PROTOCOL, BOUND, "SetProtocol");
 

@@ -46,6 +46,9 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
 
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             final Player player = (Player) event.getEntity();
             final Player hitter = (Player) event.getDamager();

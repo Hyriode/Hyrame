@@ -90,7 +90,8 @@ public class HyriGameChatHandler implements IHyriChatHandler {
                     if (account.getRank().isSuperior(HyriPlayerRankType.VIP_PLUS)) {
                         account.getHyris().add(ThreadLocalRandom.current().nextInt(1, 6))
                                 .withReason("Fairplay")
-                                .withMessage(true);
+                                .withMessage(true)
+                                .exec();
                         account.update();
 
                         this.saidGG.add(uuid);

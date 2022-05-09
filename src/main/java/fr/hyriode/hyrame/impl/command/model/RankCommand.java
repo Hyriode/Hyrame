@@ -1,6 +1,8 @@
 package fr.hyriode.hyrame.impl.command.model;
 
+import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.player.IHyriPlayerManager;
 import fr.hyriode.api.rank.type.HyriPlayerRankType;
 import fr.hyriode.api.rank.type.HyriStaffRankType;
 import fr.hyriode.hyrame.command.HyriCommand;
@@ -10,6 +12,8 @@ import fr.hyriode.hyrame.command.HyriCommandType;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 /**
  * Project: Hyrame
@@ -23,17 +27,20 @@ public class RankCommand extends HyriCommand<HyramePlugin> {
                 .withDescription("Maintenance command")
                 .withType(HyriCommandType.PLAYER)
                 .withUsage("/rank")
+                .asynchronous()
                 .withPermission(player -> player.getRank().is(HyriStaffRankType.ADMINISTRATOR)));
     }
 
     @Override
     public void handle(HyriCommandContext ctx) {
         final Player player = (Player) ctx.getSender();
+        final IHyriPlayerManager playerManager = HyriAPI.get().getPlayerManager();
 
         this.handleArgument(ctx, "player %player% %input%", output -> {
             final IHyriPlayer target = output.get(IHyriPlayer.class);
+            final UUID targetId = target.getUniqueId();
 
-            if (player.getUniqueId().equals(target.getUniqueId())) {
+            if (player.getUniqueId().equals(targetId)) {
                 return;
             }
 
@@ -41,6 +48,10 @@ public class RankCommand extends HyriCommand<HyramePlugin> {
 
             if (rankType != null) {
                 target.getRank().setPlayerType(rankType);
+
+                playerManager.savePrefix(targetId, target.getNameWithRank());
+                playerManager.sendPlayerToHydrion(target);
+
                 target.update();
 
                 player.sendMessage(ChatColor.GREEN + "Grade joueur modifié!");
@@ -51,12 +62,17 @@ public class RankCommand extends HyriCommand<HyramePlugin> {
 
         this.handleArgument(ctx, "staff %player% reset", output -> {
             final IHyriPlayer target = output.get(IHyriPlayer.class);
+            final UUID targetId = target.getUniqueId();
 
             if (player.getUniqueId().equals(target.getUniqueId())) {
                 return;
             }
 
             target.getRank().setStaffType(null);
+
+            playerManager.savePrefix(targetId, target.getNameWithRank());
+            playerManager.sendPlayerToHydrion(target);
+
             target.update();
 
             player.sendMessage(ChatColor.GREEN + "Grade staff reset!");
@@ -73,12 +89,31 @@ public class RankCommand extends HyriCommand<HyramePlugin> {
 
             if (rankType != null) {
                 target.getRank().setStaffType(rankType);
+                playerManager.sendPlayerToHydrion(target);
                 target.update();
 
                 player.sendMessage(ChatColor.GREEN + "Grade staff modifié!");
             } else {
                 player.sendMessage(ChatColor.RED + "Grade staff invalide!");
             }
+        });
+
+        this.handleArgument(ctx, "player %player% reset", output -> {
+            final IHyriPlayer target = output.get(IHyriPlayer.class);
+            final UUID targetId = target.getUniqueId();
+
+            if (player.getUniqueId().equals(target.getUniqueId())) {
+                return;
+            }
+
+            target.getRank().setPlayerType(null);
+
+            playerManager.savePrefix(targetId, target.getNameWithRank());
+            playerManager.sendPlayerToHydrion(target);
+
+            target.update();
+
+            player.sendMessage(ChatColor.GREEN + "Grade joueur reset!");
         });
     }
 

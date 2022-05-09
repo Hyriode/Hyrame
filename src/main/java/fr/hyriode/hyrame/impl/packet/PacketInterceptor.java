@@ -63,7 +63,7 @@ public class PacketInterceptor implements IPacketInterceptor {
     public void injectChannel(Player player) {
         final ChannelPipeline pipeline = this.getPlayerPipeline(player);
 
-        if (pipeline.get(PACKET_HANDLER_KEY) != null) {
+        if (pipeline.get(PACKET_HANDLER_KEY) != null && pipeline.get(KEY) == null) {
             pipeline.addBefore(PACKET_HANDLER_KEY, KEY, new ChannelHandler(player));
         }
     }
