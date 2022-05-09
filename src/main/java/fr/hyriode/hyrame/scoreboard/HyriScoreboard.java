@@ -48,7 +48,7 @@ public class HyriScoreboard {
     public HyriScoreboard(JavaPlugin plugin, Player player, String name, String displayName) {
         this.plugin = plugin;
         this.player = player;
-        this.name = UUID.randomUUID().toString().substring(0, 15);
+        this.name = name;
         this.displayName = displayName;
         this.lines = new ConcurrentHashMap<>();
         this.show = false;
