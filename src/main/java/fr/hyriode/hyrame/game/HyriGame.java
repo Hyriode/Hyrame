@@ -304,14 +304,6 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
             }
         }, 10 * 30);
 
-        final IHyriNetwork network = HyriAPI.get().getNetworkManager().getNetwork();
-        final HyriNetworkCount networkCount = network.getPlayerCount();
-        final HyriPlayerCount count = networkCount.getCategory(this.getName());
-        final int currentPlayers = count.getType(this.type.getName());
-
-        count.setType(this.type.getName(), currentPlayers - this.players.size());
-        network.update();
-
         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 HyriAPI.get().getServerManager().sendPlayerToLobby(player.getUniqueId());
