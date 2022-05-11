@@ -9,10 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -75,19 +72,23 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
 
                 this.lastHitters.put(player, hitters);
 
-                this.removePlayerAfter(player, hitter);
+                this.removePlayerAfter(player, lastHitter);
             }
         }
     }
 
-    private void removePlayerAfter(Player player, Player hitter) {
+    private void removePlayerAfter(Player player, LastHitter initial) {
         Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
             final Set<LastHitter> hitters = this.lastHitters.get(player);
 
-            if (hitters != null) {
-                final LastHitter lastHitter = this.getLastHitter(player, hitter);
+            if (hitters != null && initial != null) {
+                final LastHitter lastHitter = this.getLastHitter(player, initial.asPlayer());
 
                 if (lastHitter != null) {
+                    if (!lastHitter.getIdentifier().equals(initial.getIdentifier())) {
+                        return;
+                    }
+
                     hitters.remove(lastHitter);
 
                     if (hitters.size() == 0) {
@@ -136,12 +137,18 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
 
     public class LastHitter {
 
+        private final UUID identifier;
         private final Player player;
         private int hits;
 
         public LastHitter(Player player) {
+            this.identifier = UUID.randomUUID();
             this.player = player;
             this.hits = 1;
+        }
+
+        UUID getIdentifier() {
+            return this.identifier;
         }
 
         public Player asPlayer() {

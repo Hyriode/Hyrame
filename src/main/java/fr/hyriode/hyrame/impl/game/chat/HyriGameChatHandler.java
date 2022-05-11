@@ -87,7 +87,7 @@ public class HyriGameChatHandler implements IHyriChatHandler {
                 }
             } else {
                 if (game.getState() == HyriGameState.ENDED && message.equalsIgnoreCase("gg") && !this.saidGG.contains(uuid)) {
-                    if (account.getRank().isSuperior(HyriPlayerRankType.VIP_PLUS)) {
+                    if (account.getRank().isSuperior(HyriPlayerRankType.VIP_PLUS) && !account.hasNickname()) {
                         account.getHyris().add(ThreadLocalRandom.current().nextInt(1, 6))
                                 .withReason("Fairplay")
                                 .withMessage(true)

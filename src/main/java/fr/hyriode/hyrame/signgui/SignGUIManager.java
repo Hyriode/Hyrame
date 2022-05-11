@@ -52,13 +52,15 @@ public class SignGUIManager {
                         lines.add(component.getText());
                     }
 
-                    final PacketPlayOutBlockChange blockChangePacket = new PacketPlayOutBlockChange(((CraftWorld) player.getWorld()).getHandle(), blockPosition);
+                    ThreadUtil.backOnMainThread(plugin, () -> {
+                        final PacketPlayOutBlockChange blockChangePacket = new PacketPlayOutBlockChange(((CraftWorld) player.getWorld()).getHandle(), blockPosition);
 
-                    blockChangePacket.block = Blocks.AIR.getBlockData();
+                        blockChangePacket.block = Blocks.AIR.getBlockData();
 
-                    PacketUtil.sendPacket(player, blockChangePacket);
+                        PacketUtil.sendPacket(player, blockChangePacket);
 
-                    ThreadUtil.backOnMainThread(plugin, () -> sign.getCompleteCallback().call(player, lines.toArray(new String[4])));
+                        sign.getCompleteCallback().call(player, lines.toArray(new String[4]));
+                    });
 
                     signs.remove(player.getUniqueId());
                 }

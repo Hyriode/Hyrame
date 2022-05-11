@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.game.protocol;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
@@ -80,11 +81,18 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
         final UUID playerId = player.getUniqueId();
         final HyriGame<?> game = this.getGame();
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(playerId);
+        final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + game.getMaxPlayers() + ")";
+        final IHyriServer server = HyriAPI.get().getServer();
+
+        if (game.getPlayers().size() >= game.getMaxPlayers() && server.isAccessible()) {
+            server.setAccessible(false);
+        } else if (!server.isAccessible()){
+            server.setAccessible(true);
+        }
 
         PlayerUtil.resetPlayer(player, true);
 
         player.setCanPickupItems(false);
-
         player.setGameMode(GameMode.ADVENTURE);
 
         if (this.teamSelector) {
@@ -97,7 +105,6 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
 
         this.updateScoreboards();
 
-        final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + game.getMaxPlayers() + ")";
 
         BroadcastUtil.broadcast(target -> account.getNameWithRank(true) + ChatColor.GRAY + hyrame.getLanguageManager().getValue(target, "message.game-join") + playerCounter);
     }
