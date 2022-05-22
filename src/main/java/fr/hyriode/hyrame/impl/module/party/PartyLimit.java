@@ -32,6 +32,9 @@ public enum PartyLimit {
     }
 
     public static int getMaxSlots(IHyriPlayer account) {
+        if (account.getRank().isStaff()) {
+            return PARTNER.getMaxSlots();
+        }
         for (PartyLimit limit : values()) {
             if (limit.getValidation().test(account)) {
                 return limit.getMaxSlots();

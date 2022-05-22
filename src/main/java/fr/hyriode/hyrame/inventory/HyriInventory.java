@@ -10,6 +10,8 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +26,9 @@ public abstract class HyriInventory implements InventoryHolder {
 
     /** If its <code>true</code>, when a player clicks, it will be cancelled */
     protected boolean cancelClickEvent = true;
+
+    /** The update of the inventory */
+    protected Update update;
 
     /** The Spigot inventory */
     protected final Inventory inventory;
@@ -153,8 +158,12 @@ public abstract class HyriInventory implements InventoryHolder {
      */
     public void addItem(ItemStack itemStack, Consumer<InventoryClickEvent> clickConsumer) {
         final int slot = this.inventory.firstEmpty();
+
         this.setItem(slot, itemStack);
-        if (clickConsumer != null) this.clickConsumers.put(slot, clickConsumer);
+
+        if (clickConsumer != null) {
+            this.clickConsumers.put(slot, clickConsumer);
+        }
     }
 
     /**
@@ -238,21 +247,21 @@ public abstract class HyriInventory implements InventoryHolder {
      *
      * @param event The triggered event
      */
-    public void onOpen(InventoryOpenEvent event){}
+    public void onOpen(InventoryOpenEvent event) {}
 
     /**
      * Fired when the inventory is closed
      *
      * @param event The triggered event
      */
-    public void onClose(InventoryCloseEvent event){}
+    public void onClose(InventoryCloseEvent event) {}
 
     /**
      * Fired when a slot in the inventory is clicked
      *
      * @param event The triggered event
      */
-    public void onClick(InventoryClickEvent event){}
+    public void onClick(InventoryClickEvent event) {}
 
     /**
      * Get the Spigot inventory object
@@ -301,6 +310,28 @@ public abstract class HyriInventory implements InventoryHolder {
     }
 
     /**
+     * Get the update of the inventory
+     *
+     * @return The inventory's {@linkplain Update update}
+     */
+    public Update getUpdate() {
+        return this.update;
+    }
+
+    /**
+     * Set the new update of the inventory
+     *
+     * @param ticks The ticks to wait between each update
+     */
+    public void newUpdate(int ticks) {
+        if (this.update != null) {
+            this.update.cancel();
+        }
+
+        this.update = new Update(this, ticks);
+    }
+
+    /**
      * Check if the click event is cancelled
      *
      * @return <code>true</code> if yes
@@ -316,6 +347,40 @@ public abstract class HyriInventory implements InventoryHolder {
      */
     public void setCancelClickEvent(boolean cancelClickEvent) {
         this.cancelClickEvent = cancelClickEvent;
+    }
+
+    /**
+     * The update class used to add auto-update
+     */
+    public static class Update {
+
+        private boolean started;
+
+        private BukkitTask task;
+
+        private final HyriInventory inventory;
+        private final int ticks;
+
+        public Update(HyriInventory inventory, int ticks) {
+            this.inventory = inventory;
+            this.ticks = ticks;
+        }
+
+        public void start(JavaPlugin plugin) {
+            if (this.started) {
+                return;
+            }
+
+            this.started = true;
+            this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, this.inventory::update, this.ticks, this.ticks);
+        }
+
+        public void cancel() {
+            if (this.started) {
+                this.task.cancel();
+            }
+        }
+
     }
 
 

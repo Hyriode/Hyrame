@@ -73,11 +73,10 @@ public class Hologram {
             line.cancelUpdate();
         }
 
-        this.lines.clear();
-        this.entities.clear();
-
         this.removeLines();
 
+        this.lines.clear();
+        this.entities.clear();
         this.receivers.clear();
     }
 

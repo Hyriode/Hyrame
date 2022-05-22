@@ -91,6 +91,7 @@ public class HyriGameChatHandler implements IHyriChatHandler {
                         account.getHyris().add(ThreadLocalRandom.current().nextInt(1, 6))
                                 .withReason("Fairplay")
                                 .withMessage(true)
+                                .withMultiplier(false)
                                 .exec();
                         account.update();
 

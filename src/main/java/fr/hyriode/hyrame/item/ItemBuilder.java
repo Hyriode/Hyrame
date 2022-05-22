@@ -66,6 +66,10 @@ public class ItemBuilder {
         return this;
     }
 
+    public String getName() {
+        return this.itemMeta.getDisplayName();
+    }
+
     public ItemBuilder withName(Player player, String key) {
         this.itemMeta.setDisplayName(IHyriLanguageManager.Provider.get().getValue(player, key));
         return this;
@@ -78,6 +82,15 @@ public class ItemBuilder {
 
     public ItemBuilder withLore(String... lore) {
         return this.withLore(Arrays.asList(lore));
+    }
+
+    public List<String> getLore() {
+        return this.itemMeta.getLore();
+    }
+
+    public ItemBuilder appendLore(String... lines) {
+        this.itemMeta.getLore().addAll(Arrays.asList(lines));
+        return this;
     }
 
     public ItemBuilder withPlayerHead(String name) {

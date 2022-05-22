@@ -287,7 +287,7 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
 
     private boolean isSameParty(Player player, IHyriParty party, IHyriPlayer target) {
         if (!target.getParty().equals(party.getId())) {
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.not-in-party").getForPlayer(player).replace("%player%",target.getNameWithRank()))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.not-in-party").getForPlayer(player).replace("%player%", target.getNameWithRank()))));
             return false;
         }
         return true;

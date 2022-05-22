@@ -170,7 +170,7 @@ public class PartyListener {
             final Player player = Bukkit.getPlayer(member);
 
             if (player != null) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.promote-player").getForPlayer(player).replace("%player%", account.getNameWithRank()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.promote-player").getForPlayer(player).replace("%target%", account.getNameWithRank()))));
             }
         }
     }

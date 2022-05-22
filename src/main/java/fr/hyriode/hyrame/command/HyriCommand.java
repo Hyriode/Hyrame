@@ -74,7 +74,7 @@ public abstract class HyriCommand<T extends JavaPlugin> {
             }
 
             for (int i = 0; i < args.length; i++) {
-                if (expectedArgs.length < i) {
+                if (expectedArgs.length <= i) {
                     this.invalidCommandMessage(ctx, usage);
                     return;
                 }

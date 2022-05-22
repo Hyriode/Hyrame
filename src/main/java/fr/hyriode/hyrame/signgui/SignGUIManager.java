@@ -43,16 +43,16 @@ public class SignGUIManager {
                 final Map<UUID, SignGUI> signs = SignGUIManager.get().getSigns();
 
                 if (signs.containsKey(player.getUniqueId())) {
-                    final SignGUI sign = signs.get(player.getUniqueId());
-                    final BlockPosition blockPosition = container.getModifier(BlockPosition.class).read(0);
-                    final IChatBaseComponent[] components = container.getModifier(IChatBaseComponent[].class).read(0);
-                    final List<String> lines = new ArrayList<>();
-
-                    for (IChatBaseComponent component : components) {
-                        lines.add(component.getText());
-                    }
-
                     ThreadUtil.backOnMainThread(plugin, () -> {
+                        final SignGUI sign = signs.get(player.getUniqueId());
+                        final BlockPosition blockPosition = container.getModifier(BlockPosition.class).read(0);
+                        final IChatBaseComponent[] components = container.getModifier(IChatBaseComponent[].class).read(0);
+                        final List<String> lines = new ArrayList<>();
+
+                        for (IChatBaseComponent component : components) {
+                            lines.add(component.getText());
+                        }
+
                         final PacketPlayOutBlockChange blockChangePacket = new PacketPlayOutBlockChange(((CraftWorld) player.getWorld()).getHandle(), blockPosition);
 
                         blockChangePacket.block = Blocks.AIR.getBlockData();
@@ -60,9 +60,9 @@ public class SignGUIManager {
                         PacketUtil.sendPacket(player, blockChangePacket);
 
                         sign.getCompleteCallback().call(player, lines.toArray(new String[4]));
-                    });
 
-                    signs.remove(player.getUniqueId());
+                        signs.remove(player.getUniqueId());
+                    });
                 }
             }
         });

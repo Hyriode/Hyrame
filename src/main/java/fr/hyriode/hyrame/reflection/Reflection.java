@@ -1,5 +1,8 @@
 package fr.hyriode.hyrame.reflection;
 
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
+import net.minecraft.server.v1_8_R3.PacketPlayOutUpdateSign;
+
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -146,11 +149,7 @@ public class Reflection {
         final List<Field> result = new ArrayList<>();
 
         for (Field field : fields) {
-            Class<?> fieldClass = DataType.getReference(targetClass);
-
-            if (fieldClass == null) {
-                fieldClass = field.getType();
-            }
+            final Class<?> fieldClass = DataType.getReference(field.getType());
 
             if (fieldClass == targetClass) {
                 result.add(field);

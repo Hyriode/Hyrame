@@ -144,10 +144,18 @@ public class HyriJoinHandler implements IHyriJoinHandler {
             return;
         }
 
-        final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(playerId);
+        final IHyriPlayer account = IHyriPlayer.get(playerId);
 
         if (account.isInVanishMode()) {
             PlayerUtil.hidePlayer(player, true);
+        }
+
+        for (Player target : Bukkit.getOnlinePlayers()) {
+            final IHyriPlayer targetAccount = IHyriPlayer.get(target.getUniqueId());
+
+            if (targetAccount.isInVanishMode()) {
+                player.hidePlayer(target);
+            }
         }
     }
 

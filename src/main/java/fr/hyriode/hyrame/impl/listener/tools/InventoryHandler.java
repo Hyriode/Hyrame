@@ -44,8 +44,13 @@ public class InventoryHandler extends HyriListener<HyramePlugin> {
     public void onOpen(InventoryOpenEvent event) {
         if (event.getInventory().getHolder() != null && event.getInventory().getHolder() instanceof HyriInventory) {
             final HyriInventory inventory = (HyriInventory) event.getInventory().getHolder();
+            final HyriInventory.Update update = inventory.getUpdate();
 
             inventory.onOpen(event);
+
+            if (update != null) {
+                update.start(this.plugin);
+            }
 
             HyriAPI.get().getEventBus().publish(new HyriInventoryEvent(inventory, (Player) event.getPlayer(), HyriInventoryEvent.Action.OPEN));
         }
@@ -55,6 +60,11 @@ public class InventoryHandler extends HyriListener<HyramePlugin> {
     public void onClose(InventoryCloseEvent event) {
         if (event.getInventory().getHolder() != null && event.getInventory().getHolder() instanceof HyriInventory) {
             final HyriInventory inventory = (HyriInventory) event.getInventory().getHolder();
+            final HyriInventory.Update update = inventory.getUpdate();
+
+            if (update != null) {
+                update.cancel();
+            }
 
             inventory.onClose(event);
 

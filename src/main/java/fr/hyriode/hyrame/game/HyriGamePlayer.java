@@ -30,6 +30,8 @@ public class HyriGamePlayer {
     private boolean dead;
     /** The timestamp of the player connection */
     protected long connectionTime = -1;
+    /** Is player online or no */
+    protected boolean online;
 
     /** Player object */
     protected final Player player;
@@ -166,6 +168,24 @@ public class HyriGamePlayer {
      */
     public boolean isDead() {
         return this.dead;
+    }
+
+    /**
+     * Check if the player is online or not
+     *
+     * @return <code>true</code> if yes
+     */
+    public boolean isOnline() {
+        return this.online;
+    }
+
+    /**
+     * Set if the player is online or not
+     *
+     * @param online New value for online field
+     */
+    public void setOnline(boolean online) {
+        this.online = online;
     }
 
     /**
