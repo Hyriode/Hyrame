@@ -10,6 +10,7 @@ import fr.hyriode.api.server.join.IHyriJoinManager;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
+import fr.hyriode.hyrame.game.event.player.HyriGameReconnectEvent;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.PlayerUtil;
@@ -62,6 +63,35 @@ public class HyriJoinHandler implements IHyriJoinHandler {
             return HyriJoinResponse.DENY_FULL;
         }
         return HyriJoinResponse.ALLOW;
+    }
+
+    @Override
+    public HyriJoinResponse requestReconnect(UUID player, HyriJoinResponse currentResponse) {
+        final IHyriServer server = HyriAPI.get().getServer();
+        final IHyriServer.State state = server.getState();
+        final HyriGame<?> game = this.hyrame.getGameManager().getCurrentGame();
+
+        if (state != IHyriServer.State.PLAYING) {
+            return HyriJoinResponse.DENY_STATE;
+        }
+
+        if (game == null || !game.isReconnectionAllowed()) {
+            return HyriJoinResponse.DENY_OTHER;
+        }
+
+        final HyriGamePlayer gamePlayer = game.getPlayer(player);
+
+        if (gamePlayer == null) {
+            return HyriJoinResponse.DENY_OTHER;
+        }
+
+        final HyriGameReconnectEvent event = new HyriGameReconnectEvent(game, gamePlayer);
+
+        System.out.println("Reconnecting " + player.toString());
+
+        HyriAPI.get().getEventBus().publish(event);
+
+        return event.isAllowed() ? HyriJoinResponse.ALLOW : HyriJoinResponse.DENY_OTHER;
     }
 
     @Override
@@ -120,7 +150,7 @@ public class HyriJoinHandler implements IHyriJoinHandler {
             return null;
         }
 
-        String reason = "";
+        String reason = null;
         if (response == HyriJoinResponse.DENY_FULL) {
             reason = RESPONSE.apply(account, "full");
         } else if (response == HyriJoinResponse.DENY_SPACE) {
@@ -140,7 +170,11 @@ public class HyriJoinHandler implements IHyriJoinHandler {
         final Player player = Bukkit.getPlayer(playerId);
 
         if (game != null) {
-            game.handleLogin(player);
+            if (game.getPlayer(playerId) == null) {
+                game.handleLogin(player);
+            } else {
+                game.handleReconnection(player);
+            }
             return;
         }
 
@@ -161,7 +195,6 @@ public class HyriJoinHandler implements IHyriJoinHandler {
 
     @Override
     public void onLogout(UUID playerId) {
-        final Player player = Bukkit.getPlayer(playerId);
         final HyriGame<?> game = this.hyrame.getGameManager().getCurrentGame();
 
         if (game != null) {
@@ -171,8 +204,6 @@ public class HyriJoinHandler implements IHyriJoinHandler {
                 game.handleLogout(gamePlayer.getPlayer());
             }
         }
-
-        Title.sendTitle(player, "", "", 0, 0, 0);
     }
 
 }

@@ -34,6 +34,9 @@ import java.util.UUID;
 public class PlayerUtil {
 
     public static void hidePlayer(Player player, boolean removeFromTabList) {
+        if (!(player instanceof CraftPlayer)) {
+            return;
+        }
         for (Player target : Bukkit.getOnlinePlayers()) {
             target.hidePlayer(player);
 
@@ -44,12 +47,20 @@ public class PlayerUtil {
     }
 
     public static void showPlayer(Player player) {
+        if (!(player instanceof CraftPlayer)) {
+            return;
+        }
+
         for (Player target : Bukkit.getOnlinePlayers()) {
             target.showPlayer(player);
         }
     }
 
     public static void reloadSkin(JavaPlugin plugin, Player player) {
+        if (!(player instanceof CraftPlayer)) {
+            return;
+        }
+
         final EntityPlayer ep = ((CraftPlayer) player).getHandle();
         final PacketPlayOutPlayerInfo removeInfo = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, ep);
         final PacketPlayOutPlayerInfo addInfo = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, ep);
@@ -149,6 +160,10 @@ public class PlayerUtil {
      * @param player The {@link Player} to reset
      */
     public static void resetPlayerInventory(Player player) {
+        if (!(player instanceof CraftPlayer)) {
+            return;
+        }
+
         final PlayerInventory inventory = player.getInventory();
 
         inventory.setArmorContents(null);
@@ -161,8 +176,11 @@ public class PlayerUtil {
      * @param player The {@link Player} used to set abilities
      */
     public static void addSpectatorAbilities(Player player) {
-        player.getInventory().setHeldItemSlot(0);
+        if (!(player instanceof CraftPlayer)) {
+            return;
+        }
 
+        player.getInventory().setHeldItemSlot(0);
         player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1, false, false));
         player.setGameMode(GameMode.ADVENTURE);
@@ -176,6 +194,10 @@ public class PlayerUtil {
      * @param player The concerned {@link Player}
      */
     public static void removeArrowsFromBody(Player player) {
+        if (!(player instanceof CraftPlayer)) {
+            return;
+        }
+
         ((CraftPlayer) player).getHandle().getDataWatcher().watch(9, (byte) -1);
     }
 
@@ -186,6 +208,10 @@ public class PlayerUtil {
      * @param target The target that will no longer see the player armor
      */
     public static void hideArmor(Player player, Player target) {
+        if (!(player instanceof CraftPlayer)) {
+            return;
+        }
+
         for (int i = 1; i <= 4; i++) {
             PacketUtil.sendPacket(target, new PacketPlayOutEntityEquipment(player.getEntityId(), i, CraftItemStack.asNMSCopy(new ItemStack(Material.AIR))));
         }
@@ -198,6 +224,10 @@ public class PlayerUtil {
      * @param target The target that will see the player armor
      */
     public static void showArmor(Player player, Player target) {
+        if (!(player instanceof CraftPlayer)) {
+            return;
+        }
+
         for (int i = 1; i <= 4; i++) {
             PacketUtil.sendPacket(target, new PacketPlayOutEntityEquipment(player.getEntityId(), i, CraftItemStack.asNMSCopy(player.getInventory().getArmorContents()[i - 1])));
         }

@@ -1,6 +1,5 @@
 package fr.hyriode.hyrame.game.protocol;
 
-import com.google.common.collect.Sets;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import org.bukkit.Bukkit;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
  */
 public class HyriLastHitterProtocol extends HyriGameProtocol {
 
-    private Map<Player, Set<LastHitter>> lastHitters = new ConcurrentHashMap<>();
+    private Map<UUID, Set<LastHitter>> lastHitters = new ConcurrentHashMap<>();
 
     private long removeTime;
 
@@ -46,8 +45,10 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
         if (event.isCancelled()) {
             return;
         }
+
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             final Player player = (Player) event.getEntity();
+            final UUID playerId = player.getUniqueId();
             final Player hitter = (Player) event.getDamager();
             final HyriGamePlayer gamePlayer = this.getGamePlayer(hitter);
 
@@ -56,21 +57,17 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
             }
 
             if (!gamePlayer.isSpectator()) {
-                Set<LastHitter> hitters = this.lastHitters.get(player);
+                final Set<LastHitter> hitters = this.lastHitters.getOrDefault(playerId, new HashSet<>());
+                LastHitter lastHitter = this.getLastHitter(player, hitter);
 
-                if (hitters == null) {
-                    hitters = Sets.newConcurrentHashSet();
+                if (lastHitter == null) {
+                    lastHitter = new LastHitter(hitter.getUniqueId());
                 }
 
-                final LastHitter lastHitter = this.getLastHitter(player, hitter);
+                lastHitter.addHit();
+                hitters.add(lastHitter);
 
-                if (lastHitter != null) {
-                    lastHitter.addHit();
-                } else {
-                    hitters.add(new LastHitter(hitter));
-                }
-
-                this.lastHitters.put(player, hitters);
+                this.lastHitters.put(playerId, hitters);
 
                 this.removePlayerAfter(player, lastHitter);
             }
@@ -79,7 +76,7 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
 
     private void removePlayerAfter(Player player, LastHitter initial) {
         Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
-            final Set<LastHitter> hitters = this.lastHitters.get(player);
+            final Set<LastHitter> hitters = this.lastHitters.get(player.getUniqueId());
 
             if (hitters != null && initial != null) {
                 final LastHitter lastHitter = this.getLastHitter(player, initial.asPlayer());
@@ -92,9 +89,9 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
                     hitters.remove(lastHitter);
 
                     if (hitters.size() == 0) {
-                        this.lastHitters.remove(player);
+                        this.removeLastHitters(player);
                     } else {
-                        this.lastHitters.put(player, hitters);
+                        this.lastHitters.put(player.getUniqueId(), hitters);
                     }
                 }
             }
@@ -102,28 +99,32 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
     }
 
     public LastHitter getLastHitter(Player player, Player hitter) {
-        final Set<LastHitter> lastHitters = this.lastHitters.get(player);
+        if (hitter == null || player == null) {
+            return null;
+        }
+
+        final Set<LastHitter> lastHitters = this.lastHitters.get(player.getUniqueId());
 
         if (lastHitters != null) {
-            return lastHitters.stream().filter(h -> h.asPlayer().equals(hitter)).findFirst().orElse(null);
+            return lastHitters.stream().filter(h -> h.getUniqueId().equals(hitter.getUniqueId())).findFirst().orElse(null);
         }
         return null;
     }
 
     public List<LastHitter> getLastHitters(Player player) {
-        final Set<LastHitter> lastHitters = this.lastHitters.get(player);
+        final Set<LastHitter> lastHitters = this.lastHitters.get(player.getUniqueId());
 
         if (lastHitters != null) {
-            return lastHitters.stream().sorted(Comparator.comparing(LastHitter::getHits)).collect(Collectors.toList());
+            return lastHitters.stream().sorted((o1, o2) -> o2.getHits() - o1.getHits()).collect(Collectors.toList());
         }
         return null;
     }
 
     public void removeLastHitters(Player player) {
-        this.lastHitters.remove(player);
+        this.lastHitters.remove(player.getUniqueId());
     }
 
-    public Map<Player, Set<LastHitter>> getLastHittersMap() {
+    public Map<UUID, Set<LastHitter>> getLastHittersMap() {
         return this.lastHitters;
     }
 
@@ -138,10 +139,10 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
     public class LastHitter {
 
         private final UUID identifier;
-        private final Player player;
+        private final UUID player;
         private int hits;
 
-        public LastHitter(Player player) {
+        public LastHitter(UUID player) {
             this.identifier = UUID.randomUUID();
             this.player = player;
             this.hits = 1;
@@ -151,12 +152,16 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
             return this.identifier;
         }
 
-        public Player asPlayer() {
+        public UUID getUniqueId() {
             return this.player;
         }
 
+        public Player asPlayer() {
+            return Bukkit.getPlayer(this.player);
+        }
+
         public HyriGamePlayer asGamePlayer() {
-            return hyrame.getGameManager().getCurrentGame().getPlayer(this.player.getUniqueId());
+            return hyrame.getGameManager().getCurrentGame().getPlayer(this.player);
         }
 
         public Integer getHits() {

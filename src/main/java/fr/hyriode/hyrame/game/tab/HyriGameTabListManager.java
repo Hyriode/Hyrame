@@ -49,6 +49,18 @@ public class HyriGameTabListManager {
         this.teamHandler.addPlayerToTeam(player, this.teamHandler.getTeamByName(DEFAULT));
     }
 
+    public void handleReconnection(HyriGamePlayer gamePlayer) {
+        final Player player = gamePlayer.getPlayer();
+        final HyriGameTeam team = gamePlayer.getTeam();
+
+        if (team == null) {
+            return;
+        }
+
+        this.teamHandler.addReceiver(player);
+        this.teamHandler.addPlayerToTeam(player, this.teamHandler.getTeamByName(team.getName()));
+    }
+
     public void handleLogout(Player player) {
         this.teamHandler.removeReceiver(player);
     }

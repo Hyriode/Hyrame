@@ -323,7 +323,7 @@ public abstract class HyriInventory implements InventoryHolder {
      *
      * @param ticks The ticks to wait between each update
      */
-    public void newUpdate(int ticks) {
+    public void newUpdate(long ticks) {
         if (this.update != null) {
             this.update.cancel();
         }
@@ -359,9 +359,9 @@ public abstract class HyriInventory implements InventoryHolder {
         private BukkitTask task;
 
         private final HyriInventory inventory;
-        private final int ticks;
+        private final long ticks;
 
-        public Update(HyriInventory inventory, int ticks) {
+        public Update(HyriInventory inventory, long ticks) {
             this.inventory = inventory;
             this.ticks = ticks;
         }
@@ -378,6 +378,8 @@ public abstract class HyriInventory implements InventoryHolder {
         public void cancel() {
             if (this.started) {
                 this.task.cancel();
+                this.task = null;
+                this.started = false;
             }
         }
 

@@ -61,7 +61,7 @@ public class HyriGameScoreboard<G extends HyriGame<?>> extends HyriScoreboard {
      * @param total If <code>true</code> it will add the maximum of players next to the current amount of players
      */
     protected void addPlayersLine(int line, String prefix, boolean total) {
-        this.setLine(line, ChatColor.WHITE + prefix + ChatColor.AQUA + (this.game.getPlayers().size() - this.game.getSpectators().size()) + (total ? ChatColor.AQUA + "/" + this.game.getMaxPlayers() : ""));
+        this.setLine(line, ChatColor.WHITE + prefix + ChatColor.AQUA + (this.game.getOnlinePlayers().size() - this.game.getSpectators().size()) + (total ? ChatColor.AQUA + "/" + this.game.getMaxPlayers() : ""));
     }
 
     /**

@@ -11,8 +11,13 @@
   "command.plugin.current": "Current",
   "team.chat.prefix": "Team",
 
-  "message.game-join": " joined",
-  "message.game-left": " left",
+  "message.rejoin.processing": "&bReconnecting to game...",
+  "message.rejoin.cancel": "&cCannot reconnect you to a game!",
+
+  "message.game.join": "%player% &7joined",
+  "message.game.left": "%player% &7left",
+  "message.game.disconnected": "%player% &7disconnected",
+  "message.game.reconnected": "%player% &7reconnected",
   "message.game.end.winner": "Winner",
   "message.game.end.rewards": "Rewards:",
 

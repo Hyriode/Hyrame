@@ -24,7 +24,7 @@ public class RankCommand extends HyriCommand<HyramePlugin> {
 
     public RankCommand(HyramePlugin plugin) {
         super(plugin, new HyriCommandInfo("rank")
-                .withDescription("Maintenance command")
+                .withDescription("Rank command")
                 .withType(HyriCommandType.PLAYER)
                 .withUsage("/rank")
                 .asynchronous()

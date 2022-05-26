@@ -58,7 +58,7 @@ public class HyriGameProtocolManager {
 
             this.activeProtocols.put(protocolName, protocol);
 
-            HyriAPI.get().getEventBus().publishAsync(new HyriGameProtocolEnabledEvent(this.game, protocol));
+            HyriAPI.get().getEventBus().publish(new HyriGameProtocolEnabledEvent(this.game, protocol));
 
             return true;
         }
@@ -77,9 +77,12 @@ public class HyriGameProtocolManager {
         if (protocol != null) {
             HandlerList.unregisterAll(protocol);
 
+            HyriAPI.get().getEventBus().unregister(protocol);
+            HyriAPI.get().getNetworkManager().getEventBus().unregister(protocol);
+
             protocol.disable();
 
-            HyriAPI.get().getEventBus().publishAsync(new HyriGameProtocolDisabledEvent(this.game, protocol));
+            HyriAPI.get().getEventBus().publish(new HyriGameProtocolDisabledEvent(this.game, protocol));
 
             return true;
         }

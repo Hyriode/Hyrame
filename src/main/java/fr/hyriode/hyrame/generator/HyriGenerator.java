@@ -233,11 +233,11 @@ public class HyriGenerator {
     }
 
     public ItemStack getItem() {
-        return this.item;
+        return this.item.clone();
     }
 
     public void setItem(ItemStack item) {
-        this.item = item;
+        this.item = item.clone();
     }
 
     public IHyriGeneratorTier getTier() {

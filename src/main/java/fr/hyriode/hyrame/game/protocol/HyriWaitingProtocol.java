@@ -105,8 +105,7 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
 
         this.updateScoreboards();
 
-
-        BroadcastUtil.broadcast(target -> account.getNameWithRank(true) + ChatColor.GRAY + hyrame.getLanguageManager().getValue(target, "message.game-join") + playerCounter);
+        BroadcastUtil.broadcast(target -> hyrame.getLanguageManager().getValue(target, "message.game.join").replace("%player%", account.getNameWithRank(true)) + playerCounter);
     }
 
     @HyriEventHandler
@@ -117,22 +116,9 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
 
         this.updateScoreboards();
 
-        if (game.getState() == HyriGameState.PLAYING) {
-            final HyriGamePlayer gamePlayer = game.getPlayer(player);
-
-            if (gamePlayer == null) {
-                return;
-            }
-
-            if (gamePlayer.isSpectator()) {
-                BroadcastUtil.broadcast(target -> account.getNameWithRank(true) + ChatColor.GRAY + hyrame.getLanguageManager().getValue(target, "message.game-left"));
-            }
-            return;
-        }
-
         final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + game.getMaxPlayers() + ")";
 
-        BroadcastUtil.broadcast(target -> account.getNameWithRank(true) + ChatColor.GRAY + hyrame.getLanguageManager().getValue(target, "message.game-left") + playerCounter);
+        BroadcastUtil.broadcast(target -> ChatColor.GRAY + hyrame.getLanguageManager().getValue(target, "message.game.left").replace("%player%", account.getNameWithRank(true)) + playerCounter);
     }
 
     private void updateScoreboards() {

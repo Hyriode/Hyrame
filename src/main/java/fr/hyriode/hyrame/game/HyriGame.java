@@ -14,6 +14,7 @@ import fr.hyriode.hyrame.game.event.HyriGameStateChangedEvent;
 import fr.hyriode.hyrame.game.event.HyriGameWinEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameLeaveEvent;
+import fr.hyriode.hyrame.game.event.player.HyriGameReconnectedEvent;
 import fr.hyriode.hyrame.game.event.team.HyriGameTeamRegisteredEvent;
 import fr.hyriode.hyrame.game.event.team.HyriGameTeamUnregisteredEvent;
 import fr.hyriode.hyrame.game.protocol.HyriGameProtocolManager;
@@ -27,6 +28,7 @@ import fr.hyriode.hyrame.game.timer.HyriGameTimer;
 import fr.hyriode.hyrame.game.util.HyriGameMessages;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
+import fr.hyriode.hyrame.utils.BroadcastUtil;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -74,6 +76,9 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     protected boolean defaultStarting = true;
     /** Is game tab list used */
     protected boolean usingGameTabList = true;
+
+    /** Max reconnection time for a player (if -1, reconnection will not be enabled) */
+    protected int reconnectionTime;
 
     /** Game timer task */
     protected BukkitTask timerTask;
@@ -206,6 +211,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
                     this.players.add(player);
 
                     HyriAPI.get().getServer().addPlayerPlaying(p.getUniqueId());
+                    HyriAPI.get().getServerManager().getReconnectionHandler().remove(p.getUniqueId());
 
                     this.updatePlayerCount(false);
 
@@ -224,29 +230,70 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
-     * Called on player logout<br>
+     * Called on player logout.<br>
      * Override this method to make actions on logout
      *
-     * @param p Logged out player
+     * @param player Logged out player
      */
-    public void handleLogout(Player p) {
-        final UUID uuid = p.getUniqueId();
-        final P player = this.getPlayer(uuid);
+    public void handleLogout(Player player) {
+        final UUID uuid = player.getUniqueId();
+        final P gamePlayer = this.getPlayer(uuid);
+        final IHyriServer server = HyriAPI.get().getServer();
 
-        HyriAPI.get().getServer().removePlayerPlaying(uuid);
+        server.removePlayerPlaying(uuid);
 
-        this.players.remove(player);
+        gamePlayer.setOnline(false);
 
-        HyriAPI.get().getEventBus().publish(new HyriGameLeaveEvent(this, player));
+        if (!this.isReconnectionAllowed() || this.state != HyriGameState.PLAYING) {
+            this.players.remove(gamePlayer);
+
+            if (gamePlayer.hasTeam()) {
+                gamePlayer.getTeam().removePlayer(gamePlayer);
+            }
+        } else {
+            HyriAPI.get().getServerManager().getReconnectionHandler().set(uuid, server.getName(), this.reconnectionTime);
+        }
+
+        if (this.state == HyriGameState.PLAYING) {
+            if (!gamePlayer.isSpectator()) {
+                BroadcastUtil.broadcast(target ->  hyrame.getLanguageManager().getValue(target, this.isReconnectionAllowed() ? "message.game.disconnected" : "message.game.left").replace("%player%", gamePlayer.formatNameWithTeam()));
+            }
+        }
 
         this.updatePlayerCount(true);
 
-        if (player.hasTeam()) {
-            player.getTeam().removePlayer(player);
+        if (this.usingGameTabList) {
+            this.tabListManager.handleLogout(player);
         }
 
+        HyriAPI.get().getEventBus().publish(new HyriGameLeaveEvent(this, gamePlayer));
+    }
+
+    /**
+     * Called when a player reconnects on the game.<br>
+     * Override this method to make actions on reconnection
+     *
+     * @param player The player that reconnected
+     */
+    public void handleReconnection(Player player) {
+        final P gamePlayer = this.getPlayer(player);
+
+        HyriAPI.get().getServer().addPlayerPlaying(player.getUniqueId());
+
+        gamePlayer.setOnline(true);
+
+        this.updatePlayerCount(false);
+
         if (this.usingGameTabList) {
-            this.tabListManager.handleLogout(p);
+            this.tabListManager.handleReconnection(gamePlayer);
+        }
+
+        HyriAPI.get().getEventBus().publish(new HyriGameReconnectedEvent(this, gamePlayer));
+
+        if (this.state == HyriGameState.PLAYING) {
+            if (!gamePlayer.isSpectator()) {
+                BroadcastUtil.broadcast(target -> hyrame.getLanguageManager().getValue(target, "message.game.reconnected").replace("%player%", gamePlayer.formatNameWithTeam()));
+            }
         }
     }
 
@@ -686,6 +733,22 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
+     * Get all the online game players
+     *
+     * @return A list of game players
+     */
+    public List<P> getOnlinePlayers() {
+        final List<P> players = new ArrayList<>();
+
+        for (P player : this.players) {
+            if (player.isOnline()) {
+                players.add(player);
+            }
+        }
+        return players;
+    }
+
+    /**
      * Get all game teams
      *
      * @return A list of game teams
@@ -728,6 +791,24 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      */
     public boolean isUsingGameTabList() {
         return this.usingGameTabList;
+    }
+
+    /**
+     * Get the reconnection time for a player
+     *
+     * @return The game reconnection time
+     */
+    public int getReconnectionTime() {
+        return this.reconnectionTime;
+    }
+
+    /**
+     * Check if reconnection is enabled for this game
+     *
+     * @return <code>true</code> if reconnection is enabled
+     */
+    public boolean isReconnectionAllowed() {
+        return this.reconnectionTime > 0;
     }
 
     /**

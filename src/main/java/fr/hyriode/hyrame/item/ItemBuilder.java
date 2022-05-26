@@ -89,7 +89,11 @@ public class ItemBuilder {
     }
 
     public ItemBuilder appendLore(String... lines) {
-        this.itemMeta.getLore().addAll(Arrays.asList(lines));
+        final List<String> lore = this.itemMeta.getLore();
+
+        lore.addAll(Arrays.asList(lines));
+
+        this.itemMeta.setLore(lore);
         return this;
     }
 

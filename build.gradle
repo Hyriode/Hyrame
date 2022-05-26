@@ -84,7 +84,7 @@ publishing {
                 artifactId = 'hyrame'
                 version = project.version
                 name = 'Hyrame'
-                description = 'Project to create game easily'
+                description = 'Project to create games and plugins easily'
                 url = 'https://github.com/Hyriode/Hyrame'
             }
         }
@@ -104,7 +104,7 @@ publishing {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    shade 'fr.hyriode:hyriapi:1.1.9'
+    shade 'fr.hyriode:hyriapi:1.2.1'
     shade 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
 }
 

@@ -7,12 +7,19 @@
   "tab.store": " Boutique: ",
   "tab.discord": " Discord: ",
 
-  "command.plugin.info": "Information du serveur",
+  "command.plugin.info": "Informations du serveur",
   "command.plugin.current": "Actuel",
   "team.chat.prefix": "Equipe",
 
-  "message.game-join": " a rejoint",
-  "message.game-left": " a quitté",
+  "message.rejoin.processing": "&bReconnexion au jeu...",
+  "message.rejoin.cancel": "&cImpossible de vous reconnecter à un jeu!",
+
+  "message.game.join": "%player% &7a rejoint",
+  "message.game.left": "%player% &7a quitté",
+  "message.game.disconnected": "%player% &7s'est déconnecté.",
+  "message.game.reconnected": "%player% &7s'est reconnecté.",
+  "message.game.end.winner": "Vainqueur",
+  "message.game.end.rewards": "Récompenses:",
 
   "error.chat.dead": "Vous ne pouvez pas parler dans le chat quand vous êtes mort!",
 
@@ -73,8 +80,6 @@
   "message.discord": "&bLe serveur Discord: ",
   "message.website": "&bLe site: ",
   "message.store-website": "&bLa boutique: ",
-  "message.game.end.winner": "Vainqueur",
-  "message.game.end.rewards": "Récompenses:",
 
   "message.help.discord": "Lien vers le Discord",
   "message.help.website": "Lien vers le site",

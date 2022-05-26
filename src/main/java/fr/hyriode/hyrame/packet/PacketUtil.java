@@ -18,7 +18,9 @@ public class PacketUtil {
      * @param packet - Packet to send
      */
     public static void sendPacket(Player player, Packet<?> packet) {
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+        if (player instanceof CraftPlayer) {
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+        }
     }
 
 }

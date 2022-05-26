@@ -7,7 +7,9 @@ import fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent;
 import fr.hyriode.hyrame.game.protocol.HyriLastHitterProtocol;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.packet.PacketUtil;
+import fr.hyriode.hyrame.utils.VoidPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -31,10 +33,10 @@ public class HyriGamePlayer {
     /** The timestamp of the player connection */
     protected long connectionTime = -1;
     /** Is player online or no */
-    protected boolean online;
+    private boolean online = true;
 
     /** Player object */
-    protected final Player player;
+    protected Player player;
 
     /** The running game */
     protected final HyriGame<?> game;
@@ -84,6 +86,10 @@ public class HyriGamePlayer {
      * @param removeFromTabList If <code>true</code> the player will not be removed from the tab list
      */
     public void hide(boolean removeFromTabList) {
+        if (!(this.player instanceof CraftPlayer)) {
+            return;
+        }
+
         for (HyriGamePlayer gamePlayer : this.game.getPlayers()) {
             if (gamePlayer != this) {
                 final Player player = gamePlayer.getPlayer();
@@ -121,7 +127,7 @@ public class HyriGamePlayer {
      * @return The {@link IHyriPlayer} linked to the game player
      */
     public IHyriPlayer asHyriPlayer() {
-        return HyriAPI.get().getPlayerManager().getPlayer(this.player.getUniqueId());
+        return IHyriPlayer.get(this.player.getUniqueId());
     }
 
     /**
@@ -186,6 +192,13 @@ public class HyriGamePlayer {
      */
     public void setOnline(boolean online) {
         this.online = online;
+
+        if (online) {
+            this.player = Bukkit.getPlayer(this.player.getUniqueId());
+            return;
+        }
+
+        this.player = new VoidPlayer(this.player.getDisplayName(), this.player.getName(), this.player.getUniqueId());
     }
 
     /**
