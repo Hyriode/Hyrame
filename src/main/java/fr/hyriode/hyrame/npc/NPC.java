@@ -81,7 +81,7 @@ public class NPC extends EntityPlayer {
 
         super.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
+        for (Player player : this.players) {
             PacketUtil.sendPacket(player, this.getTeleportPacket());
         }
         return this;
@@ -104,7 +104,6 @@ public class NPC extends EntityPlayer {
      */
     public NPC setTrackingPlayer(boolean trackingPlayer) {
         this.trackingPlayer = trackingPlayer;
-
         return this;
     }
 
@@ -125,7 +124,6 @@ public class NPC extends EntityPlayer {
      */
     public NPC setShowingToAll(boolean showingToAll) {
         this.showingToAll = showingToAll;
-
         return this;
     }
 
@@ -146,7 +144,6 @@ public class NPC extends EntityPlayer {
      */
     public NPC setPlayers(Set<Player> players) {
         this.players = players;
-
         return this;
     }
 
@@ -179,7 +176,6 @@ public class NPC extends EntityPlayer {
         if (this.hologram != null) {
             this.hologram.removeReceiver(player);
         }
-
         return this;
     }
 
@@ -200,7 +196,6 @@ public class NPC extends EntityPlayer {
      */
     public NPC setHologram(Hologram hologram) {
         this.hologram = hologram;
-
         return this;
     }
 
@@ -217,7 +212,6 @@ public class NPC extends EntityPlayer {
         for (Player player : Bukkit.getOnlinePlayers()) {
             PacketUtil.sendPacket(player, this.getEquipmentPacket(slot, itemStack));
         }
-
         return this;
     }
 
@@ -238,7 +232,6 @@ public class NPC extends EntityPlayer {
      */
     public NPC setInteractCallback(NPCInteractCallback interactCallback) {
         this.interactCallback = interactCallback;
-
         return this;
     }
 
@@ -251,10 +244,6 @@ public class NPC extends EntityPlayer {
         for (Packet<?> packet : this.getSpawnPackets()) {
             PacketUtil.sendPacket(player, packet);
         }
-
-        PacketUtil.sendPacket(player, this.getTeleportPacket(player.getLocation()));
-
-        Bukkit.getScheduler().runTaskLater(this.plugin, () -> PacketUtil.sendPacket(player, this.getTeleportPacket()), 1L);
     }
 
     public List<Packet<?>> getSpawnPackets() {
@@ -263,6 +252,7 @@ public class NPC extends EntityPlayer {
         packets.add(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, this));
         packets.add(new PacketPlayOutNamedEntitySpawn(this));
         packets.add(new PacketPlayOutEntityHeadRotation(this, (byte) (this.yaw * 256.0F / 360.0F)));
+        packets.add(new PacketPlayOutAnimation(this, 0));
 
         for (Map.Entry<EnumItemSlot, ItemStack> entry : this.equipment.entrySet()) {
             packets.add(this.getEquipmentPacket(entry.getKey(), entry.getValue()));
@@ -287,10 +277,6 @@ public class NPC extends EntityPlayer {
         packets.add(new PacketPlayOutEntityHeadRotation(this, (byte) (yaw * 256.0F / 360.0F)));
 
         return packets;
-    }
-
-    public Packet<?> getTeleportPacket(Location location) {
-        return new PacketPlayOutEntityTeleport(this.getId(), MathHelper.floor(location.getX() * 32.0D), MathHelper.floor(location.getY() * 32.0D), MathHelper.floor(location.getZ() * 32.0D), (byte) (location.getYaw() * 256.0F / 360.0F), (byte) (location.getPitch() * 256.0F / 360.0F), this.onGround);
     }
 
     public Packet<?> getTeleportPacket() {

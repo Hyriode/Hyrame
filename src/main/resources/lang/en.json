@@ -7,6 +7,12 @@
   "tab.store": " Store: ",
   "tab.discord": " Discord: ",
 
+  "waiting-room.npc.statistics": "&3Statistics: &f%game%",
+  "waiting-room.npc.statistics-click": "&7Click to see",
+  "waiting-room.gui.name": "&3Statistics",
+  "waiting-room.gui.item.name": "&3Statistics: &f%game%",
+  "waiting-room.gui.item.lore": "&7Check all of your statistics in\n&7this game.",
+
   "command.plugin.info": "Server information",
   "command.plugin.current": "Current",
   "team.chat.prefix": "Team",

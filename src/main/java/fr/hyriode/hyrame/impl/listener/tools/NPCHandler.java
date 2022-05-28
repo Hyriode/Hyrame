@@ -14,10 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.util.Vector;
 
 /**
@@ -71,6 +68,14 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
+    public void onRespawn(PlayerRespawnEvent event) {
+        final Player player = event.getPlayer();
+
+        this.checkDistance(player, player.getLocation(), event.getRespawnLocation());
+        this.trackPlayer(player);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
 
@@ -87,13 +92,16 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
 
         for (NPC npc : NPCManager.getNPCs().keySet()) {
             NPCManager.removeNPC(player, npc);
+
             npc.removePlayer(player);
         }
     }
 
     private void checkDistance(Player player, Location from, Location to) {
         for (NPC npc : NPCManager.getNPCs().keySet()) {
-            if (from.distanceSquared(npc.getLocation()) > 2500 && to.distanceSquared(npc.getLocation()) < 2500) {
+            final Location location = npc.getLocation();
+
+            if (from.distanceSquared(location) > 2500 && to.distanceSquared(location) < 2500) {
                 NPCManager.sendNPC(player, npc);
             }
         }

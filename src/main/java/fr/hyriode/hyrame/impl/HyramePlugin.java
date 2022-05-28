@@ -27,7 +27,6 @@ public class HyramePlugin extends JavaPlugin {
         world.setGameRuleValue("announceAdvancements", "false");
         world.setGameRuleValue("doFireTick", "false");
         world.setGameRuleValue("randomTickSpeed", "0");
-
         world.setTime(4000);
     }
 

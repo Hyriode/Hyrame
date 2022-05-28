@@ -26,6 +26,7 @@ import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.game.timer.HyriGameStartingTimer;
 import fr.hyriode.hyrame.game.timer.HyriGameTimer;
 import fr.hyriode.hyrame.game.util.HyriGameMessages;
+import fr.hyriode.hyrame.game.waitingroom.HyriWaitingRoom;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.BroadcastUtil;
@@ -84,6 +85,9 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     protected BukkitTask timerTask;
     /** The game timer instance */
     protected HyriGameTimer timer;
+
+    /** The waiting room object of the game */
+    protected HyriWaitingRoom waitingRoom;
 
     /** All game teams */
     protected final List<HyriGameTeam> teams;
@@ -159,8 +163,12 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
             this.protocolManager.enableProtocol(new HyriWaitingProtocol(this.hyrame, this.plugin));
         }
-        this.protocolManager.enableProtocol(new HyriSpectatorProtocol(this.hyrame, this.plugin));
+        this.protocolManager.enableProtocol(new HyriSpectatorProtocol(this.hyrame));
         this.protocolManager.enableProtocol(new HyriWinProtocol(this.hyrame, this));
+
+        if (this.waitingRoom != null) {
+            this.waitingRoom.setup();
+        }
     }
 
     /**
@@ -172,6 +180,10 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
             this.startingTimerTask.cancel();
             this.startingTimer = null;
+        }
+
+        if (this.waitingRoom != null) {
+            this.waitingRoom.remove();
         }
 
         HyriAPI.get().getServer().setState(IHyriServer.State.PLAYING);
@@ -755,6 +767,15 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      */
     public List<HyriGameTeam> getTeams() {
         return this.teams;
+    }
+
+    /**
+     * Get the game waiting room object
+     *
+     * @return The game's {@linkplain HyriWaitingRoom waiting room}
+     */
+    public HyriWaitingRoom getWaitingRoom() {
+        return this.waitingRoom;
     }
 
     /**

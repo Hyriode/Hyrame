@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.item;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import fr.hyriode.hyrame.item.enchant.HyriEnchant;
+import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.reflection.Reflection;
 import fr.hyriode.hyrame.utils.ProfileLoader;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.Potion;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -75,13 +77,19 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder withLore(List<String> lore) {
+    public ItemBuilder withLore(List<String> inputLore) {
+        final List<String> lore = new ArrayList<>();
+
+        for (String line : inputLore) {
+            lore.addAll(Arrays.asList(line.split("\n")));
+        }
+
         this.itemMeta.setLore(lore);
         return this;
     }
 
-    public ItemBuilder withLore(String... lore) {
-        return this.withLore(Arrays.asList(lore));
+    public ItemBuilder withLore(String... inputLore) {
+        return this.withLore(Arrays.asList(inputLore));
     }
 
     public List<String> getLore() {

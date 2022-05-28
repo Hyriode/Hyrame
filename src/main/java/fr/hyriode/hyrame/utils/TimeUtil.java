@@ -67,5 +67,4 @@ public class TimeUtil {
         return format.format(date);
     }
 
-
 }

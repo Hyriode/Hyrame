@@ -20,17 +20,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class HyriScoreboardTeamHandler {
 
+    /** Teams */
+    private final List<HyriScoreboardTeam> teams;
     /** Receivers */
     private final List<OfflinePlayer> receivers;
-
-    /** Teams */
-    private final Queue<HyriScoreboardTeam> teams;
 
     /**
      * Constructor of {@link HyriScoreboardTeamHandler}
      */
     public HyriScoreboardTeamHandler() {
-        this.teams = new ConcurrentLinkedQueue<>();
+        this.teams = new ArrayList<>();
         this.receivers = new ArrayList<>();
     }
 

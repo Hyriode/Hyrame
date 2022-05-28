@@ -95,7 +95,6 @@ public class ProfileLoader {
      *
      * @return A {@link GameProfile} object
      */
-    @SuppressWarnings("deprecation")
     public GameProfile loadProfile() {
         return HyriAPI.get().getRedisProcessor().get(jedis -> {
             final GameProfile skinProfile = new GameProfile(this.uuid, this.name);
