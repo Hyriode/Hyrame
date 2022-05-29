@@ -1,11 +1,13 @@
 package fr.hyriode.hyrame.game.protocol;
 
+import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent.Reason;
+import fr.hyriode.hyrame.game.event.player.HyriGameRespawnEvent;
 import fr.hyriode.hyrame.game.util.HyriGameMessages;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
@@ -82,26 +84,28 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
         if (this.screen != null) {
             final Consumer<Player> realCallback = this.screen.getCallback();
 
-            this.screen.callback = p -> {
-                final HyriGamePlayer gPlayer = this.getGamePlayer(p);
+            this.screen.callback = player -> {
+                final HyriGamePlayer gamePlayer = this.getGamePlayer(player);
 
-                if (gPlayer == null) {
+                if (gamePlayer == null) {
                     return;
                 }
 
-                gPlayer.setNotDead();
-                gPlayer.show();
+                gamePlayer.setNotDead();
+                gamePlayer.show();
 
-                p.setAllowFlight(false);
-                p.setFlying(false);
+                player.setAllowFlight(false);
+                player.setFlying(false);
 
-                p.spigot().setCollidesWithEntities(true);
+                player.spigot().setCollidesWithEntities(true);
 
-                PlayerUtil.resetPotionEffects(p);
+                PlayerUtil.resetPotionEffects(player);
 
-                realCallback.accept(p);
+                HyriAPI.get().getEventBus().publish(new HyriGameRespawnEvent(this.getGame(), gamePlayer));
 
-                this.deathTasks.remove(p.getUniqueId()).cancel();
+                realCallback.accept(player);
+
+                this.deathTasks.remove(player.getUniqueId()).cancel();
             };
         }
 
@@ -139,6 +143,7 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
                 if (!event.isCancelled()) {
                     event.setDamage(0.0D);
                     event.setCancelled(true);
+
                     this.runDeath(this.getReasonFromCause(cause), player);
                 }
             }
@@ -204,6 +209,12 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
         if (lastHitters != null) {
             final Player bestLastHitter = lastHitters.get(0).asPlayer();
 
+            for (HyriLastHitterProtocol.LastHitter lastHitter : lastHitters) {
+                if (!lastHitter.getUniqueId().equals(bestLastHitter.getUniqueId()) && lastHitter.isLast()) {
+                    this.playDeathSound(lastHitter.asPlayer());
+                }
+            }
+
             this.playDeathSound(bestLastHitter);
         }
 
@@ -258,6 +269,10 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
      * @param player The {@link Player} to play the sound
      */
     private void playDeathSound(Player player) {
+        if (player == null) {
+            return;
+        }
+
         if (this.options.isDeathSound()) {
             player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1.0F, 1.0F);
         }

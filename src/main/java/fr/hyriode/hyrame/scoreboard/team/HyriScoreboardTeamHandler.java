@@ -179,13 +179,13 @@ public class HyriScoreboardTeamHandler {
         for (HyriScoreboardTeam team : this.teams) {
             for (String p : team.getPlayers()) {
                 if (player.equals(p)) {
-                    team.removePlayer(player);
-
                     for (OfflinePlayer receiver : this.receivers) {
                         if (receiver.isOnline()) {
                             ScoreboardTeamPacket.removePlayerFromTeam(receiver.getPlayer(), team, player);
                         }
                     }
+
+                    team.removePlayer(player);
                 }
             }
         }
@@ -306,6 +306,10 @@ public class HyriScoreboardTeamHandler {
 
             if (newPlayers == null) {
                 newPlayers = new ArrayList<>();
+            }
+
+            for (String player : newPlayers) {
+                System.out.println("Adding: " + player);
             }
 
             Reflection.setField("a", packet, team.getRealName());

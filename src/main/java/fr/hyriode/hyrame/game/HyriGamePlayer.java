@@ -239,9 +239,11 @@ public class HyriGamePlayer {
      * @param spectator <code>true</code> to toggle
      */
     public void setSpectator(boolean spectator) {
+        final boolean oldValue = this.spectator;
+
         this.spectator = spectator;
 
-        if (this.spectator) {
+        if (!oldValue && this.spectator) {
             HyriAPI.get().getEventBus().publish(new HyriGameSpectatorEvent(this.game, this));
         }
     }

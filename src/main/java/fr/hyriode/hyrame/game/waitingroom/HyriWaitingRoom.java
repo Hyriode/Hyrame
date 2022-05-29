@@ -3,7 +3,7 @@ package fr.hyriode.hyrame.game.waitingroom;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.hyrame.IHyrame;
+import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
@@ -19,7 +19,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 import java.util.function.Function;
@@ -39,12 +44,14 @@ public class HyriWaitingRoom {
     protected final Map<Integer, NPCCategory> npcCategories;
 
     protected final HyriGame<?> game;
+    protected final JavaPlugin plugin;
     protected final Material item;
     protected final Config config;
     protected final Handler handler;
 
     public HyriWaitingRoom(HyriGame<?> game, Material item, Config config) {
         this.game = game;
+        this.plugin = this.game.getPlugin();
         this.item = item;
         this.config = config;
         this.handler = new Handler();
@@ -57,8 +64,11 @@ public class HyriWaitingRoom {
             throw new IllegalStateException("Waiting room has already been setup!");
         }
 
+        HyrameLogger.log("Creating waiting room...");
+
         this.setup = true;
 
+        this.plugin.getServer().getPluginManager().registerEvents(this.handler, this.plugin);
         HyriAPI.get().getEventBus().register(this.handler);
 
         for (HyriGamePlayer gamePlayer : this.game.getPlayers()) {
@@ -75,6 +85,8 @@ public class HyriWaitingRoom {
             throw new IllegalStateException("Waiting room cannot be remove because it has not been setup yet!");
         }
 
+        HyrameLogger.log("Removing waiting room...");
+
         for (NPC npc : this.npcs.values()) {
             NPCManager.removeNPC(npc);
         }
@@ -85,6 +97,7 @@ public class HyriWaitingRoom {
             block.setType(Material.AIR);
         }
 
+        HandlerList.unregisterAll(this.handler);
         HyriAPI.get().getEventBus().unregister(this.handler);
 
         this.setup = false;
@@ -194,6 +207,8 @@ public class HyriWaitingRoom {
      */
     public static class Config {
 
+        /** The player spawn location of the waiting room */
+        private final LocationWrapper spawn;
         /** First waiting room area position */
         private final LocationWrapper firstPos;
         /** Second waiting room area position */
@@ -201,10 +216,15 @@ public class HyriWaitingRoom {
         /** The location of the npc */
         private final LocationWrapper npcLocation;
 
-        public Config(LocationWrapper firstPos, LocationWrapper secondPos, LocationWrapper npcLocation) {
+        public Config(LocationWrapper spawn, LocationWrapper firstPos, LocationWrapper secondPos, LocationWrapper npcLocation) {
+            this.spawn = spawn;
             this.firstPos = firstPos;
             this.secondPos = secondPos;
             this.npcLocation = npcLocation;
+        }
+
+        public LocationWrapper getSpawn() {
+            return this.spawn;
         }
 
         public LocationWrapper getFirstPos() {
@@ -268,7 +288,7 @@ public class HyriWaitingRoom {
     /**
      * The handler class with listeners of the waiting room
      */
-    public class Handler {
+    public class Handler implements Listener {
 
         @HyriEventHandler
         public void onJoin(HyriGameJoinEvent event) {
@@ -287,6 +307,16 @@ public class HyriWaitingRoom {
 
             if (npc != null) {
                 NPCManager.removeNPC(gamePlayer.getPlayer(), npc);
+            }
+        }
+
+        @EventHandler
+        public void onMove(PlayerMoveEvent event) {
+            final double firstY = config.getFirstPos().getY();
+            final double secondY = config.getSecondPos().getY();
+
+            if (event.getTo().getY() < Math.min(firstY, secondY)) {
+                event.getPlayer().teleport(config.getSpawn().asBukkit());
             }
         }
 

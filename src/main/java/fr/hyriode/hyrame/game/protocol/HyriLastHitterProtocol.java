@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,6 +37,12 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
 
     @Override
     void disable() {
+        for (Set<LastHitter> hitters : lastHitters.values()) {
+            for (LastHitter hitter : hitters) {
+                hitter.cancelRemoveTask();
+            }
+        }
+
         this.lastHitters.clear();
         this.lastHitters = null;
     }
@@ -64,6 +71,12 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
                     lastHitter = new LastHitter(hitter.getUniqueId());
                 }
 
+                for (LastHitter lh : hitters) {
+                    lh.setLast(false);
+                }
+
+                lastHitter.setLast(true);
+
                 lastHitter.addHit();
                 hitters.add(lastHitter);
 
@@ -75,10 +88,12 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
     }
 
     private void removePlayerAfter(Player player, LastHitter initial) {
-        Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
+        initial.cancelRemoveTask();
+
+        initial.setRemoveTask(Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
             final Set<LastHitter> hitters = this.lastHitters.get(player.getUniqueId());
 
-            if (hitters != null && initial != null) {
+            if (hitters != null) {
                 final LastHitter lastHitter = this.getLastHitter(player, initial.asPlayer());
 
                 if (lastHitter != null) {
@@ -95,7 +110,7 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
                     }
                 }
             }
-        }, this.removeTime);
+        }, this.removeTime));
     }
 
     public LastHitter getLastHitter(Player player, Player hitter) {
@@ -141,6 +156,9 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
         private final UUID identifier;
         private final UUID player;
         private int hits;
+        private boolean last;
+
+        private BukkitTask removeTask;
 
         public LastHitter(UUID player) {
             this.identifier = UUID.randomUUID();
@@ -170,6 +188,28 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
 
         public void addHit() {
             this.hits++;
+        }
+
+        public boolean isLast() {
+            return this.last;
+        }
+
+        public void setLast(boolean last) {
+            this.last = last;
+        }
+
+        BukkitTask getRemoveTask() {
+            return this.removeTask;
+        }
+
+        void setRemoveTask(BukkitTask removeTask) {
+            this.removeTask = removeTask;
+        }
+
+        void cancelRemoveTask() {
+            if (this.removeTask != null) {
+                this.removeTask.cancel();
+            }
         }
 
     }

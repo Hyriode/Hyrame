@@ -556,6 +556,24 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
+     * Get the Hyrame instance
+     *
+     * @return The {@link IHyrame} instance
+     */
+    public IHyrame getHyrame() {
+        return this.hyrame;
+    }
+
+    /**
+     * Get the plugin instance of the game
+     *
+     * @return A {@link JavaPlugin} instance
+     */
+    public JavaPlugin getPlugin() {
+        return this.plugin;
+    }
+
+    /**
      * Get a game player object by giving player's {@link UUID}
      *
      * @param uuid Player {@link UUID}
