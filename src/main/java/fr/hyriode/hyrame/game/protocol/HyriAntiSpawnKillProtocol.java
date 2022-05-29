@@ -88,6 +88,10 @@ public class HyriAntiSpawnKillProtocol extends HyriGameProtocol {
         }
     }
 
+    public Options getOptions() {
+        return this.options;
+    }
+
     public static class Options {
 
         /** The time before allowing other players to hit the player */
