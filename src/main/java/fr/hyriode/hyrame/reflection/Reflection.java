@@ -1,8 +1,5 @@
 package fr.hyriode.hyrame.reflection;
 
-import net.minecraft.server.v1_8_R3.IChatBaseComponent;
-import net.minecraft.server.v1_8_R3.PacketPlayOutUpdateSign;
-
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -5,7 +5,7 @@ import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.player.nickname.HyriNicknameUpdatedEvent;
 import fr.hyriode.api.player.nickname.IHyriNickname;
-import fr.hyriode.hyrame.impl.tab.HyriTabHandler;
+import fr.hyriode.hyrame.impl.tablist.HyriRanksHandler;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import fr.hyriode.hyrame.utils.ThreadUtil;
 import org.bukkit.Bukkit;
@@ -24,11 +24,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class NicknameHandler implements Listener {
 
-    private final HyriTabHandler tabHandler;
+    private final HyriRanksHandler ranksHandler;
     private final NicknameModule nicknameModule;
 
-    public NicknameHandler(HyriTabHandler tabHandler, NicknameModule nicknameModule) {
-        this.tabHandler = tabHandler;
+    public NicknameHandler(HyriRanksHandler ranksHandler, NicknameModule nicknameModule) {
+        this.ranksHandler = ranksHandler;
         this.nicknameModule = nicknameModule;
 
         HyriAPI.get().getEventBus().register(this);
@@ -52,9 +52,9 @@ public class NicknameHandler implements Listener {
         final IHyriPlayer account = event.getPlayer();
         final Player player = Bukkit.getPlayer(account.getUniqueId());
 
-        this.tabHandler.onLogout(player);
+        this.ranksHandler.onLogout(player);
 
-        ThreadUtil.EXECUTOR.schedule(() -> this.tabHandler.onLogin(player), 50, TimeUnit.MILLISECONDS);
+        ThreadUtil.EXECUTOR.schedule(() -> this.ranksHandler.onLogin(player), 50, TimeUnit.MILLISECONDS);
     }
 
 }

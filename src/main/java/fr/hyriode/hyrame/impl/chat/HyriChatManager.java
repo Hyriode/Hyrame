@@ -4,7 +4,7 @@ import fr.hyriode.hyrame.chat.HyriDefaultChatHandler;
 import fr.hyriode.hyrame.chat.IHyriChatHandler;
 import fr.hyriode.hyrame.chat.IHyriChatManager;
 import fr.hyriode.hyrame.impl.Hyrame;
-import fr.hyriode.hyrame.impl.game.chat.HyriGameChatHandler;
+import fr.hyriode.hyrame.impl.game.chat.GameChatHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class HyriChatManager implements IHyriChatManager {
         this.handlers = new TreeMap<>();
 
         this.registerHandler(100, new HyriDefaultChatHandler());
-        this.registerHandler(99, new HyriGameChatHandler(hyrame));
+        this.registerHandler(99, new GameChatHandler(hyrame));
     }
 
     void onEvent(AsyncPlayerChatEvent event) {

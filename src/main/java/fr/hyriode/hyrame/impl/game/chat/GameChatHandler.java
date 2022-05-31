@@ -27,7 +27,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Created by AstFaster
  * on 16/12/2021 at 20:45
  */
-public class HyriGameChatHandler implements IHyriChatHandler {
+public class GameChatHandler implements IHyriChatHandler {
 
     private final List<UUID> saidGG = new ArrayList<>();
 
@@ -35,7 +35,7 @@ public class HyriGameChatHandler implements IHyriChatHandler {
 
     private final Hyrame hyrame;
 
-    public HyriGameChatHandler(Hyrame hyrame) {
+    public GameChatHandler(Hyrame hyrame) {
         this.hyrame = hyrame;
     }
 
@@ -56,7 +56,7 @@ public class HyriGameChatHandler implements IHyriChatHandler {
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(uuid);
         final HyriGamePlayer gamePlayer = game.getPlayer(player.getUniqueId());
 
-        if (gamePlayer ==null) {
+        if (gamePlayer == null || message == null || message.isEmpty()) {
             return true;
         }
 

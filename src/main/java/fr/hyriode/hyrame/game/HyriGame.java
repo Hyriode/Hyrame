@@ -21,7 +21,7 @@ import fr.hyriode.hyrame.game.protocol.HyriGameProtocolManager;
 import fr.hyriode.hyrame.game.protocol.HyriSpectatorProtocol;
 import fr.hyriode.hyrame.game.protocol.HyriWaitingProtocol;
 import fr.hyriode.hyrame.game.protocol.HyriWinProtocol;
-import fr.hyriode.hyrame.game.tab.HyriGameTabListManager;
+import fr.hyriode.hyrame.game.tablist.HyriGameTabListManager;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.game.timer.HyriGameStartingTimer;
 import fr.hyriode.hyrame.game.timer.HyriGameTimer;
@@ -134,7 +134,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         this.maxPlayers = type.getMaxPlayers();
 
         if (this.usingGameTabList) {
-            this.tabListManager = new HyriGameTabListManager(this);
+            this.tabListManager = new HyriGameTabListManager(this, this.hyrame.getTabListManager());
         }
 
         HyriAPI.get().getServer().setSlots(this.maxPlayers);
@@ -273,10 +273,6 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         }
 
         this.updatePlayerCount(true);
-
-        if (this.usingGameTabList) {
-            this.tabListManager.handleLogout(player);
-        }
 
         HyriAPI.get().getEventBus().publish(new HyriGameLeaveEvent(this, gamePlayer));
     }
@@ -430,7 +426,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
                 player.setTeam(team);
 
-                this.updateTabList();
+                this.tabListManager.updatePlayer(player);
             } else {
                 HyriAPI.get().getPlayerManager().sendMessage(player.getUUID(), ChatColor.RED + "An error occurred while giving your team! Sending you back to lobby...");
                 HyriAPI.get().getServerManager().sendPlayerToLobby(player.getUUID());
@@ -821,6 +817,15 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      */
     public void setDefaultStarting(boolean defaultStarting) {
         this.defaultStarting = defaultStarting;
+    }
+
+    /**
+     * Get the game tab list manager instance
+     *
+     * @return The {@link HyriGameTabListManager} instance
+     */
+    public HyriGameTabListManager getTabListManager() {
+        return this.tabListManager;
     }
 
     /**

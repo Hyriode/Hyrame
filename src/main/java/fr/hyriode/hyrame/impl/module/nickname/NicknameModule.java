@@ -9,7 +9,7 @@ import fr.hyriode.api.player.nickname.IHyriNicknameManager;
 import fr.hyriode.api.rank.type.HyriPlayerRankType;
 import fr.hyriode.api.util.Skin;
 import fr.hyriode.hyrame.HyrameLogger;
-import fr.hyriode.hyrame.impl.tab.HyriTabManager;
+import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import fr.hyriode.hyrame.utils.ProfileLoader;
@@ -46,7 +46,7 @@ public class NicknameModule {
 
     private final JavaPlugin plugin;
 
-    public NicknameModule(HyriTabManager tabManager, JavaPlugin plugin) {
+    public NicknameModule(Hyrame hyrame, JavaPlugin plugin) {
         this.randomNicknames = new ArrayList<>();
         this.nicknamesFile = new File(plugin.getDataFolder(), "nicknames.txt");
         this.randomSkins = new ArrayList<>();
@@ -72,7 +72,7 @@ public class NicknameModule {
         this.loadRandomNicknames();
         this.loadRandomSkins();
 
-        plugin.getServer().getPluginManager().registerEvents(new NicknameHandler(tabManager.getHandler(), this), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new NicknameHandler(hyrame.getTabListManager().getRanksHandler(), this), plugin);
     }
 
     private void loadRandomNicknames() {

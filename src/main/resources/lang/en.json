@@ -13,6 +13,14 @@
   "waiting-room.gui.item.name": "&3Statistics: &f%game%",
   "waiting-room.gui.item.lore": "&7Check all of your statistics in\n&7this game.",
 
+  "team-chooser.message.already-in": "&cYou are already in this team!",
+  "team-chooser.message.full": "&cThis team is full!",
+  "team-chooser.message.join": "&3You joined the team: %team%",
+  "team-chooser.message.join-random": "&3You will be in a random team.",
+  "team-chooser.message.already-in-random": "&cYou are already in random team!",
+  "team-chooser.gui.title": "Select team",
+  "team-chooser.gui.random-team": "&7Random team",
+
   "command.plugin.info": "Server information",
   "command.plugin.current": "Current",
   "team.chat.prefix": "Team",

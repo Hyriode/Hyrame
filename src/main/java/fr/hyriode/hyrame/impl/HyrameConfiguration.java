@@ -13,10 +13,7 @@ public class HyrameConfiguration implements IHyrameConfiguration {
     private Tab tab;
     private boolean ranksInTabList;
 
-    private final Hyrame hyrame;
-
-    public HyrameConfiguration(Hyrame hyrame) {
-        this.hyrame = hyrame;
+    public HyrameConfiguration() {
         this.ranksInTabList = true;
     }
 
@@ -36,14 +33,8 @@ public class HyrameConfiguration implements IHyrameConfiguration {
     }
 
     @Override
-    public void setRanksInTabList(boolean value) {
-        if (value && !this.ranksInTabList) {
-            this.hyrame.getTabManager().enableTabList();
-        } else if (!value && this.ranksInTabList){
-            this.hyrame.getTabManager().disableTabList();
-        }
-
-        this.ranksInTabList = value;
+    public void setRanksInTabList(boolean ranksInTabList) {
+        this.ranksInTabList = ranksInTabList;
     }
 
 }

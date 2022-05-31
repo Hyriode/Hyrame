@@ -28,6 +28,7 @@ import java.util.*;
  * Created by AstFaster
  * on 24/05/2022 at 16:57
  */
+@SuppressWarnings("ALL")
 public class VoidPlayer implements Player {
 
     private String displayName;

@@ -10,8 +10,6 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Project: Hyrame
@@ -31,6 +29,21 @@ public class HyriScoreboardTeamHandler {
     public HyriScoreboardTeamHandler() {
         this.teams = new ArrayList<>();
         this.receivers = new ArrayList<>();
+    }
+
+    /**
+     * Destroy the team handler
+     */
+    public void destroy(boolean full) {
+        for (HyriScoreboardTeam team : this.teams) {
+            this.removeTeam(team.getName());
+        }
+
+        this.teams.clear();
+
+        if (full) {
+            this.receivers.clear();
+        }
     }
 
     /**
@@ -85,6 +98,10 @@ public class HyriScoreboardTeamHandler {
      * @param team - Player's team
      */
     public void addPlayerToTeam(String player, HyriScoreboardTeam team) {
+        if (team == null) {
+            return;
+        }
+
         this.removeFromAllTeams(player);
 
         team.addPlayer(player);
@@ -103,6 +120,10 @@ public class HyriScoreboardTeamHandler {
      * @param team - Player's team
      */
     public void removePlayerFromTeam(String player, HyriScoreboardTeam team) {
+        if (team == null) {
+            return;
+        }
+
         team.removePlayer(player);
 
         for (OfflinePlayer receiver : this.receivers) {
@@ -125,19 +146,25 @@ public class HyriScoreboardTeamHandler {
     /**
      * Add a team
      *
-     * @param team - Team to add
+     * @param team Team to add
+     * @return <code>true</code> if the team has been added
      */
-    public void addTeam(HyriScoreboardTeam team) {
+    public boolean addTeam(HyriScoreboardTeam team) {
+        if (this.getTeamByName(team.getName()) != null) {
+            return false;
+        }
+
         this.teams.add(team);
 
         this.sendTeamToAllPlayers(team);
+        return true;
     }
 
     /**
      * Remove a team
      *
-     * @param name - Team's name
-     * @return - <code>true</code> if it was successful
+     * @param name Team's name
+     * @return <code>true</code> if it was successful
      */
     public boolean removeTeam(String name) {
         final HyriScoreboardTeam team = this.getTeamByName(name);
@@ -306,10 +333,6 @@ public class HyriScoreboardTeamHandler {
 
             if (newPlayers == null) {
                 newPlayers = new ArrayList<>();
-            }
-
-            for (String player : newPlayers) {
-                System.out.println("Adding: " + player);
             }
 
             Reflection.setField("a", packet, team.getRealName());

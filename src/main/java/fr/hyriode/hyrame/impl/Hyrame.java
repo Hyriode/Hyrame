@@ -1,7 +1,6 @@
 package fr.hyriode.hyrame.impl;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.IHyrameConfiguration;
@@ -29,13 +28,13 @@ import fr.hyriode.hyrame.impl.placeholder.handler.PlaceholderRegistry;
 import fr.hyriode.hyrame.impl.scanner.HyriScanner;
 import fr.hyriode.hyrame.impl.scoreboard.HyriScoreboardManager;
 import fr.hyriode.hyrame.impl.tab.HyriTabManager;
+import fr.hyriode.hyrame.impl.tablist.HyriTabListManager;
 import fr.hyriode.hyrame.inventory.IHyriInventoryManager;
 import fr.hyriode.hyrame.item.IHyriItemManager;
 import fr.hyriode.hyrame.item.enchant.HyriEnchant;
 import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.listener.IHyriListenerManager;
 import fr.hyriode.hyrame.npc.NPCManager;
-import fr.hyriode.hyrame.packet.IPacketInterceptor;
 import fr.hyriode.hyrame.placeholder.PlaceholderAPI;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.scanner.IHyriScanner;
@@ -68,6 +67,7 @@ public class Hyrame implements IHyrame {
     private final IHyriInventoryManager inventoryManager;
     private final IHyriGameManager gameManager;
     private final HyriChatManager chatManager;
+    private final HyriTabListManager tabListManager;
     private final PacketInterceptor packetInterceptor;
 
     private final NicknameModule nicknameModule;
@@ -80,7 +80,7 @@ public class Hyrame implements IHyrame {
 
     public Hyrame(HyramePlugin plugin) {
         this.plugin = plugin;
-        this.configuration = new HyrameConfiguration(this);
+        this.configuration = new HyrameConfiguration();
         this.scanner = new HyriScanner();
         this.languageManager = new HyriLanguageManager(this);
         this.listenerManager = new HyriListenerManager(this);
@@ -90,11 +90,13 @@ public class Hyrame implements IHyrame {
         this.inventoryManager = new HyriInventoryManager();
         this.gameManager = new HyriGameManager(this);
         this.chatManager = new HyriChatManager(this);
+        this.tabListManager = new HyriTabListManager(this, plugin);
+        this.tabListManager.enable();
         this.packetInterceptor = new PacketInterceptor();
         this.pluginProviders = new ArrayList<>();
         this.commandBlocker = new HyriCommandBlocker();
-        this.tabManager = new HyriTabManager(this);
-        this.nicknameModule = new NicknameModule(this.tabManager, plugin);
+        this.tabManager = new HyriTabManager();
+        this.nicknameModule = new NicknameModule(this, plugin);
         this.friendModule = new FriendModule();
         this.privateMessageModule = new PrivateMessageModule();
         this.partyModule = new PartyModule();
@@ -199,6 +201,11 @@ public class Hyrame implements IHyrame {
     @Override
     public HyriChatManager getChatManager() {
         return this.chatManager;
+    }
+
+    @Override
+    public HyriTabListManager getTabListManager() {
+        return this.tabListManager;
     }
 
     @Override

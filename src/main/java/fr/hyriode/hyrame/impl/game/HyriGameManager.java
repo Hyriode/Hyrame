@@ -37,7 +37,6 @@ public class HyriGameManager implements IHyriGameManager {
         HyriAPI.get().getEventBus().publishAsync(new HyriGameRegisteredEvent(this.currentGame = gameSupplier.get()));
 
         if (this.currentGame.isUsingGameTabList()) {
-            this.hyrame.getTabManager().disableTabList();
             this.hyrame.getConfiguration().setRanksInTabList(false);
         }
 
@@ -60,7 +59,6 @@ public class HyriGameManager implements IHyriGameManager {
         game.getProtocolManager().disable();
 
         if (this.currentGame.isUsingGameTabList()) {
-            this.hyrame.getTabManager().enableTabList();
             this.hyrame.getConfiguration().setRanksInTabList(true);
         }
 

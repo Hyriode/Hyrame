@@ -6,8 +6,6 @@ import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
-import fr.hyriode.hyrame.game.HyriGamePlayer;
-import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameLeaveEvent;
 import fr.hyriode.hyrame.game.scoreboard.HyriWaitingScoreboard;

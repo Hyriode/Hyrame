@@ -4,7 +4,6 @@ import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.friend.IHyriFriend;
 import fr.hyriode.api.friend.IHyriFriendHandler;
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.api.rank.HyriRank;
 import fr.hyriode.hyrame.command.*;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;

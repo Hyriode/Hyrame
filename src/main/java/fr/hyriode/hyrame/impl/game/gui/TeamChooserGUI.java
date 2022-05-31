@@ -1,6 +1,5 @@
 package fr.hyriode.hyrame.impl.game.gui;
 
-import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
@@ -27,35 +26,7 @@ import java.util.function.Consumer;
  * Created by AstFaster
  * on 17/09/2021 at 19:48
  */
-public class HyriGameTeamChooserGui extends HyriInventory {
-
-    private static final HyriLanguageMessage ALREADY_IN = new HyriLanguageMessage("already.in.team")
-            .addValue(HyriLanguage.FR, "Tu fais déjà partie de cette équipe !")
-            .addValue(HyriLanguage.EN, "You are already in this team!");
-
-    private static final HyriLanguageMessage FULL = new HyriLanguageMessage("team.full")
-            .addValue(HyriLanguage.FR, "Cette équipe est pleine !")
-            .addValue(HyriLanguage.EN, "This team is full!");
-
-    private static final HyriLanguageMessage JOIN = new HyriLanguageMessage("team.join")
-            .addValue(HyriLanguage.FR, "Tu viens de rejoindre l'équipe : ")
-            .addValue(HyriLanguage.EN, "You joined the team: ");
-
-    private static final HyriLanguageMessage JOIN_RANDOM = new HyriLanguageMessage("random.join")
-            .addValue(HyriLanguage.FR, "Tu seras dans une équipe aléatoire.")
-            .addValue(HyriLanguage.EN, "You will be in a random team.");
-
-    private static final HyriLanguageMessage ALREADY_IN_RANDOM = new HyriLanguageMessage("already.in.random")
-            .addValue(HyriLanguage.FR, "Tu es déjà en équipe aléatoire !")
-            .addValue(HyriLanguage.EN, "You are already in random team!");
-
-    private static final HyriLanguageMessage TITLE = new HyriLanguageMessage("choose.team.gui.name")
-            .addValue(HyriLanguage.FR, "Choix de l'équipe")
-            .addValue(HyriLanguage.EN, "Select team");
-
-    private static final HyriLanguageMessage RANDOM_TEAM = new HyriLanguageMessage("random.team")
-            .addValue(HyriLanguage.FR, "Equipe aléatoire")
-            .addValue(HyriLanguage.EN, "Random team");
+public class TeamChooserGUI extends HyriInventory {
 
     private static final String DASH = ChatColor.WHITE + " ⁃ ";
 
@@ -66,8 +37,8 @@ public class HyriGameTeamChooserGui extends HyriInventory {
     private final HyriGame<?> game;
     private final IHyrame hyrame;
 
-    public HyriGameTeamChooserGui(IHyrame hyrame, HyriGame<?> game, Player owner, int slot) {
-        super(owner, TITLE.getForPlayer(owner), dynamicSize(game.getTeams().size()));
+    public TeamChooserGUI(IHyrame hyrame, HyriGame<?> game, Player owner, int slot) {
+        super(owner, HyriLanguageMessage.get("team-chooser.gui.title").getForPlayer(owner), dynamicSize(game.getTeams().size()));
         this.hyrame = hyrame;
         this.game = game;
         this.slot = slot;
@@ -90,7 +61,7 @@ public class HyriGameTeamChooserGui extends HyriInventory {
 
     private void addRandomTeamBarrier() {
         final ItemStack barrier = new ItemBuilder(Material.BARRIER)
-                .withName(ChatColor.GRAY + RANDOM_TEAM.getForPlayer(this.owner))
+                .withName(HyriLanguageMessage.get("team-chooser.gui.random-team").getForPlayer(this.owner))
                 .build();
 
         this.setItem(this.size - 1, barrier, event -> {
@@ -100,17 +71,19 @@ public class HyriGameTeamChooserGui extends HyriInventory {
             if (gamePlayer.hasTeam()) {
                 gamePlayer.removeFromTeam();
 
-                this.game.updateTabList();
+                if (this.game.isUsingGameTabList()) {
+                    this.game.getTabListManager().updatePlayer(gamePlayer);
+                }
 
                 if (this.slot != -1) {
                     this.hyrame.getItemManager().giveItem(this.owner, this.slot, TeamChooserItem.class);
                 }
 
-                player.sendMessage(ChatColor.DARK_AQUA + JOIN_RANDOM.getForPlayer(player));
+                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.join-random").getForPlayer(player));
 
                 this.refresh();
             } else {
-                player.sendMessage(ChatColor.RED + ALREADY_IN_RANDOM.getForPlayer(player));
+                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.already-in-random").getForPlayer(player));
             }
         });
     }
@@ -121,17 +94,19 @@ public class HyriGameTeamChooserGui extends HyriInventory {
             final HyriGamePlayer gamePlayer = this.game.getPlayer(event.getWhoClicked().getUniqueId());
 
             if (gamePlayer.hasTeam() && gamePlayer.isInTeam(team)) {
-                player.sendMessage(ChatColor.RED + ALREADY_IN.getForPlayer(player));
+                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.already-in").getForPlayer(player));
             } else if (team.isFull()) {
-                player.sendMessage(ChatColor.RED + FULL.getForPlayer(player));
+                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.full").getForPlayer(player));
             } else {
                 gamePlayer.removeFromTeam();
 
                 team.addPlayer(gamePlayer);
 
-                this.game.updateTabList();
+                if (this.game.isUsingGameTabList()) {
+                    this.game.getTabListManager().updatePlayer(gamePlayer);
+                }
 
-                player.sendMessage(ChatColor.DARK_AQUA + JOIN.getForPlayer(player) + team.getColor().getChatColor() + team.getDisplayName().getForPlayer(player) + ChatColor.DARK_AQUA + ".");
+                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.join").getForPlayer(player).replace("%team", team.getColor().getChatColor() + team.getDisplayName().getForPlayer(player)));
 
                 if (this.slot != -1) {
                     this.hyrame.getItemManager().giveItem(this.owner, this.slot, TeamChooserItem.class);
@@ -144,7 +119,7 @@ public class HyriGameTeamChooserGui extends HyriInventory {
 
     public void refresh() {
         for (Player player : this.players) {
-            new HyriGameTeamChooserGui(this.hyrame, this.game, player, this.slot).open();
+            new TeamChooserGUI(this.hyrame, this.game, player, this.slot).open();
         }
     }
 

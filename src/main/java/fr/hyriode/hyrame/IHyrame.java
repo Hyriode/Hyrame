@@ -11,6 +11,7 @@ import fr.hyriode.hyrame.packet.IPacketInterceptor;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.scanner.IHyriScanner;
 import fr.hyriode.hyrame.scoreboard.IHyriScoreboardManager;
+import fr.hyriode.hyrame.tablist.ITabListManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
@@ -112,6 +113,13 @@ public interface IHyrame {
      * @return The {@link IHyriChatManager} instance
      */
     IHyriChatManager getChatManager();
+
+    /**
+     * Get the tab list manager instance
+     *
+     * @return The {@link ITabListManager} instance
+     */
+    ITabListManager getTabListManager();
 
     /**
      * Get the packet interceptor instance.<br>

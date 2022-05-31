@@ -13,6 +13,14 @@
   "waiting-room.gui.item.name": "&3Statistiques: &f%game%",
   "waiting-room.gui.item.lore": "&7Regarde et suis tes statistiques\n&7dans ce mini-jeu.",
 
+  "team-chooser.message.already-in": "&cVous faites déjà partie de cette équipe!",
+  "team-chooser.message.full": "&cCette équipe est pleine!",
+  "team-chooser.message.join": "&3Tu viens de rejoindre l'équipe: %team%",
+  "team-chooser.message.join-random": "&3Vous serez dans une équipe aléatoire.",
+  "team-chooser.message.already-in-random": "&cVous êtes déjà dans une équipe aléatoire!",
+  "team-chooser.gui.title": "Choix de l'équipe",
+  "team-chooser.gui.random-team": "&7Equipe aléatoire",
+
   "command.plugin.info": "Informations du serveur",
   "command.plugin.current": "Actuel",
   "team.chat.prefix": "Equipe",

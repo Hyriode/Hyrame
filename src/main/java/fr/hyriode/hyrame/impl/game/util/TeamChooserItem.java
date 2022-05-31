@@ -6,7 +6,7 @@ import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.util.HyriGameItems;
 import fr.hyriode.hyrame.impl.HyramePlugin;
-import fr.hyriode.hyrame.impl.game.gui.HyriGameTeamChooserGui;
+import fr.hyriode.hyrame.impl.game.gui.TeamChooserGUI;
 import fr.hyriode.hyrame.item.HyriItem;
 import fr.hyriode.hyrame.item.ItemNBT;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
@@ -35,7 +35,7 @@ public class TeamChooserItem extends HyriItem<HyramePlugin> {
 
     @Override
     public void onRightClick(IHyrame hyrame, PlayerInteractEvent event) {
-        new HyriGameTeamChooserGui(hyrame, hyrame.getGameManager().getCurrentGame(), event.getPlayer(), new ItemNBT(event.getItem()).getInt(SLOT_NBT_KET)).open();
+        new TeamChooserGUI(hyrame, hyrame.getGameManager().getCurrentGame(), event.getPlayer(), new ItemNBT(event.getItem()).getInt(SLOT_NBT_KET)).open();
     }
 
     @SuppressWarnings("deprecation")

@@ -16,7 +16,7 @@ public class HyriScoreboardTeam {
     private final List<String> players = new CopyOnWriteArrayList<>();
 
     /** Team's name */
-    private final String name;
+    private String name;
     /** Real team's name */
     private String realName;
     /** Team's display */
@@ -79,6 +79,15 @@ public class HyriScoreboardTeam {
      */
     public String getName() {
         return this.name;
+    }
+
+    /**
+     * Set team's name
+     *
+     * @param name The new team's name
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -243,6 +252,11 @@ public class HyriScoreboardTeam {
      */
     public int getSize() {
         return this.players.size();
+    }
+
+    @Override
+    public HyriScoreboardTeam clone() {
+        return new HyriScoreboardTeam(this.name, this.realName, this.display, this.prefix, this.suffix, this.nameTagVisibility);
     }
 
     /**

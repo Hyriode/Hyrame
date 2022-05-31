@@ -1,15 +1,11 @@
 package fr.hyriode.hyrame.impl.tab;
 
-import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.api.settings.HyriLanguage;
-import fr.hyriode.hyrame.IHyrameConfiguration;
-import fr.hyriode.hyrame.impl.Hyrame;
-import fr.hyriode.hyrame.tab.Tab;
 import fr.hyriode.hyrame.utils.ThreadUtil;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -19,11 +15,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class HyriTabManager {
 
-    private final HyriTabHandler handler;
     private final Map<UUID, HyriDefaultTab> tabs;
 
-    public HyriTabManager(Hyrame hyrame) {
-        this.handler = new HyriTabHandler(hyrame);
+    public HyriTabManager() {
         this.tabs = new HashMap<>();
 
         ThreadUtil.EXECUTOR.scheduleAtFixedRate(() -> {
@@ -35,24 +29,10 @@ public class HyriTabManager {
 
     public void onLogin(Player player) {
         this.tabs.put(player.getUniqueId(), new HyriDefaultTab(player));
-        this.handler.onLogin(player);
     }
 
     public void onLogout(Player player) {
         this.tabs.remove(player.getUniqueId());
-        this.handler.onLogout(player);
-    }
-
-    public void enableTabList() {
-        this.handler.enable();
-    }
-
-    public void disableTabList() {
-        this.handler.disable();
-    }
-
-    public HyriTabHandler getHandler() {
-        return this.handler;
     }
 
 }
