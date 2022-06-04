@@ -56,6 +56,7 @@ public interface IHyriScoreboardManager {
      * Get all scoreboards that have the same class. But also with the {@link UUID} of the players that own them
      *
      * @param scoreboardClass The {@link Class} of the scoreboards to look for
+     * @param <T> The type of scoreboards to return
      * @return A map of {@link HyriScoreboard} and {@link UUID}
      */
     <T extends HyriScoreboard> Map<T, UUID> getScoreboardsMap(Class<T> scoreboardClass);

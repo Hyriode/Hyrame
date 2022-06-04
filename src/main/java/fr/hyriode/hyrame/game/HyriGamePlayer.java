@@ -204,6 +204,7 @@ public class HyriGamePlayer {
     /**
      * Set if player is dead
      *
+     * @param reason The reason of the player's death
      * @param killers The list of players that killed the player
      * @return The death event fired
      */

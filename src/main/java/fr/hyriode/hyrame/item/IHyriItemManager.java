@@ -63,6 +63,7 @@ public interface IHyriItemManager {
      *
      * @param player Player
      * @param itemClass Item's class
+     * @return <code>true</code> if an item with the given class has been found
      */
     boolean giveItem(Player player, Class<? extends HyriItem<?>> itemClass);
 
@@ -71,6 +72,7 @@ public interface IHyriItemManager {
      *
      * @param player Player
      * @param name Item's name
+     * @return <code>true</code> if an item with the given name has been found
      */
     boolean giveItem(Player player, String name);
 

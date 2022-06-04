@@ -31,6 +31,9 @@ public class SignGUIManager {
 
     /**
      * Constructor of {@link SignGUIManager}
+     *
+     * @param hyrame The {@link IHyrame} instance
+     * @param plugin A plugin instance
      */
     public SignGUIManager(IHyrame hyrame, JavaPlugin plugin) {
         instance = this;

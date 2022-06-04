@@ -28,6 +28,7 @@ public class HyriGameProtocolManager {
     /**
      * Constructor of {@link HyriGameProtocolManager}
      *
+     * @param plugin A plugin instance
      * @param game The linked {@link HyriGame} instance
      */
     public HyriGameProtocolManager(JavaPlugin plugin, HyriGame<?> game) {
@@ -125,6 +126,7 @@ public class HyriGameProtocolManager {
      * Get a protocol by giving its class
      *
      * @param protocolClass The class of protocol to get
+     * @param <T> The type of the protocol
      * @return A {@link HyriGameProtocol} instance
      */
     public <T extends HyriGameProtocol> T getProtocol(Class<T> protocolClass) {

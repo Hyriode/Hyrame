@@ -48,6 +48,7 @@ public interface IHyriInventoryManager {
      * Get all inventories that have the same class. But also with the {@link UUID} of the players that own them
      *
      * @param inventoryClass The {@link Class} of the inventories to look for
+     * @param <T> The type of inventories to return
      * @return A map of {@link HyriInventory} and {@link UUID}
      */
     <T extends HyriInventory> Map<T, UUID> getInventoriesMap(Class<T> inventoryClass);
@@ -57,6 +58,7 @@ public interface IHyriInventoryManager {
      * Get all inventories that have the same class
      *
      * @param inventoryClass The {@link Class} of the inventories to look for
+     * @param <T> The type of inventories to return
      * @return A list of {@link HyriInventory}
      */
     <T extends HyriInventory> List<T> getInventories(Class<T> inventoryClass);

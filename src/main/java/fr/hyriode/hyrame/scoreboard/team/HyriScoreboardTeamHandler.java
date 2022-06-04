@@ -33,6 +33,8 @@ public class HyriScoreboardTeamHandler {
 
     /**
      * Destroy the team handler
+     *
+     * @param full If <code>true</code> it will remove also receivers
      */
     public void destroy(boolean full) {
         for (HyriScoreboardTeam team : this.teams) {

@@ -40,7 +40,7 @@ public class PaginationManager {
     }
 
     /**
-     * Update the GUI.<br
+     * Update the GUI.<br>
      * If a {@linkplain PaginationArea pagination area} is used, it will refresh it, else it will call {@link PaginatedInventory#updatePagination(int, List)}
      */
     public void updateGUI() {

@@ -20,8 +20,8 @@ public class HyrameLoader {
     /**
      * Load a plugin who wants to use Hyrame by giving its {@link IPluginProvider}
      *
-     * @param pluginProvider - {@link IPluginProvider} to load
-     * @return - {@link IHyrame} instance
+     * @param pluginProvider {@link IPluginProvider} to load
+     * @return {@link IHyrame} instance
      */
     public static IHyrame load(IPluginProvider pluginProvider) {
         if (hyrame == null) {
@@ -40,7 +40,9 @@ public class HyrameLoader {
     /**
      * Register an implementation of Hyrame
      *
-     * @param hyrameSupplier - New {@link IHyrame} implementation
+     * @param hyrameSupplier New {@link IHyrame} implementation
+     * @param <T> The type of the {@link IHyrame} instance to return
+     * @return The registered {@link IHyrame} instance
      */
     public static <T extends IHyrame> T register(Supplier<T> hyrameSupplier) {
         final ChatColor color = ChatColor.DARK_PURPLE;

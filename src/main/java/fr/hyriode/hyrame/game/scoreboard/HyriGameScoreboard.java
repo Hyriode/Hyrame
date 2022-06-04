@@ -93,6 +93,7 @@ public class HyriGameScoreboard<G extends HyriGame<?>> extends HyriScoreboard {
     /**
      * Get the current game time
      *
+     * @param prefix The prefix to add before game time
      * @return A formatted game time
      */
     protected String getFormattedGameTime(String prefix) {

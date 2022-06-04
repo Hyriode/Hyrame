@@ -327,6 +327,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * To call when the game has a winner<br>
      * Override this method to make actions on game win
+     *
+     * @param winner The team that wins the game
      */
     public void win(HyriGameTeam winner) {
         if (winner == null) {
