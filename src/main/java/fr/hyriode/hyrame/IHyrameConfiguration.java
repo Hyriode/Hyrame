@@ -1,27 +1,11 @@
 package fr.hyriode.hyrame;
 
-import fr.hyriode.hyrame.tab.Tab;
-
 /**
  * Project: Hyrame
  * Created by AstFaster
  * on 14/12/2021 at 20:32
  */
 public interface IHyrameConfiguration {
-
-    /**
-     * Get current tab lines (header and footer)
-     *
-     * @return Current {@link Tab}
-     */
-    Tab getTab();
-
-    /**
-     * Set current tab lines (header and footer)
-     *
-     * @param tab New {@link Tab}
-     */
-    void setTab(Tab tab);
 
     /**
      * Are ranks showed in the tab list
@@ -36,5 +20,21 @@ public interface IHyrameConfiguration {
      * @param value New value
      */
     void setRanksInTabList(boolean value);
+
+    /**
+     * Check if Hyrame is in build mode.<br>
+     * If it's in build mode, no more game could be registered.
+     *
+     * @return <code>true</code> if yes
+     */
+    boolean isBuildMode();
+
+    /**
+     * Set whether Hyrame is in build mode or not.<br>
+     * If yes, Hyrame will assume that you will start a configuration creation process and will disable many features like games.
+     *
+     * @param buildMode <code>true</code> to enable build mode
+     */
+    void setBuildMode(boolean buildMode);
 
 }

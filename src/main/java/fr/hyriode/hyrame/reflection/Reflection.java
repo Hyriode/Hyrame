@@ -142,7 +142,7 @@ public class Reflection {
     }
 
     public static Field[] getFieldsOf(Class<?> clazz, Class<?> targetClass) {
-        final Field[] fields = clazz.getDeclaredFields();
+        final Field[] fields = clazz.getFields();
         final List<Field> result = new ArrayList<>();
 
         for (Field field : fields) {

@@ -30,6 +30,10 @@ public class HyriGameManager implements IHyriGameManager {
 
     @Override
     public void registerGame(Supplier<HyriGame<?>> gameSupplier) {
+        if (this.hyrame.getConfiguration().isBuildMode()) {
+            throw new IllegalStateException("No game can be registered if Hyrame is in build mode!");
+        }
+
         if (this.currentGame != null) {
             throw new IllegalStateException("A game is already registered on this server! (" + this.currentGame.getName() + ")");
         }
@@ -50,6 +54,10 @@ public class HyriGameManager implements IHyriGameManager {
 
     @Override
     public void unregisterGame(HyriGame<?> game) {
+        if (this.hyrame.getConfiguration().isBuildMode()) {
+            throw new IllegalStateException("No game can be unregistered if Hyrame is in build mode!");
+        }
+
         if (!this.currentGame.equals(game)) {
             throw new IllegalStateException("The provided game is not registered!");
         }

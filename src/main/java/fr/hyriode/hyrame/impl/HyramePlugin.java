@@ -31,8 +31,13 @@ public class HyramePlugin extends JavaPlugin {
         world.setGameRuleValue("randomTickSpeed", "0");
         world.setTime(4000);
 
+
+        // TODO Remove
+
         HyriAPI.get().getServer().setState(IHyriServer.State.READY);
         HyriAPI.get().getServer().setSlots(1000);
+
+        this.hyrame.getConfiguration().setBuildMode(true);
     }
 
     @Override

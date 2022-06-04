@@ -1,7 +1,6 @@
 package fr.hyriode.hyrame.impl;
 
 import fr.hyriode.hyrame.IHyrameConfiguration;
-import fr.hyriode.hyrame.tab.Tab;
 
 /**
  * Project: Hyrame
@@ -10,21 +9,11 @@ import fr.hyriode.hyrame.tab.Tab;
  */
 public class HyrameConfiguration implements IHyrameConfiguration {
 
-    private Tab tab;
     private boolean ranksInTabList;
+    private boolean buildMode;
 
     public HyrameConfiguration() {
         this.ranksInTabList = true;
-    }
-
-    @Override
-    public Tab getTab() {
-        return this.tab;
-    }
-
-    @Override
-    public void setTab(Tab tab) {
-        this.tab = tab;
     }
 
     @Override
@@ -35,6 +24,16 @@ public class HyrameConfiguration implements IHyrameConfiguration {
     @Override
     public void setRanksInTabList(boolean ranksInTabList) {
         this.ranksInTabList = ranksInTabList;
+    }
+
+    @Override
+    public boolean isBuildMode() {
+        return this.buildMode;
+    }
+
+    @Override
+    public void setBuildMode(boolean buildMode) {
+        this.buildMode = buildMode;
     }
 
 }

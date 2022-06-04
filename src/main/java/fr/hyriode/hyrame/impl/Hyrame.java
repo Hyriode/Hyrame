@@ -6,11 +6,13 @@ import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.IHyrameConfiguration;
 import fr.hyriode.hyrame.bossbar.BossBarManager;
 import fr.hyriode.hyrame.command.IHyriCommandManager;
+import fr.hyriode.hyrame.config.IConfigManager;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.impl.chat.HyriChatManager;
 import fr.hyriode.hyrame.impl.command.HyriCommandBlocker;
 import fr.hyriode.hyrame.impl.command.HyriCommandManager;
+import fr.hyriode.hyrame.impl.config.ConfigManager;
 import fr.hyriode.hyrame.impl.game.HyriGameManager;
 import fr.hyriode.hyrame.impl.inventory.HyriInventoryManager;
 import fr.hyriode.hyrame.impl.item.HyriItemManager;
@@ -68,6 +70,7 @@ public class Hyrame implements IHyrame {
     private final IHyriGameManager gameManager;
     private final HyriChatManager chatManager;
     private final HyriTabListManager tabListManager;
+    private final IConfigManager configManager;
     private final PacketInterceptor packetInterceptor;
 
     private final NicknameModule nicknameModule;
@@ -92,6 +95,7 @@ public class Hyrame implements IHyrame {
         this.chatManager = new HyriChatManager(this);
         this.tabListManager = new HyriTabListManager(this, plugin);
         this.tabListManager.enable();
+        this.configManager = new ConfigManager(this, plugin);
         this.packetInterceptor = new PacketInterceptor();
         this.pluginProviders = new ArrayList<>();
         this.commandBlocker = new HyriCommandBlocker();
@@ -206,6 +210,11 @@ public class Hyrame implements IHyrame {
     @Override
     public HyriTabListManager getTabListManager() {
         return this.tabListManager;
+    }
+
+    @Override
+    public IConfigManager getConfigManager() {
+        return this.configManager;
     }
 
     @Override

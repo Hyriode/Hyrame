@@ -2,6 +2,7 @@ package fr.hyriode.hyrame;
 
 import fr.hyriode.hyrame.chat.IHyriChatManager;
 import fr.hyriode.hyrame.command.IHyriCommandManager;
+import fr.hyriode.hyrame.config.IConfigManager;
 import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.inventory.IHyriInventoryManager;
 import fr.hyriode.hyrame.item.IHyriItemManager;
@@ -120,6 +121,14 @@ public interface IHyrame {
      * @return The {@link ITabListManager} instance
      */
     ITabListManager getTabListManager();
+
+    /**
+     * Get the configuration manager instance.<br>
+     * This class contains all config's creations process-related-methods.
+     *
+     * @return The {@link IConfigManager} instance
+     */
+    IConfigManager getConfigManager();
 
     /**
      * Get the packet interceptor instance.<br>

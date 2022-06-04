@@ -64,7 +64,7 @@ public class HyriGenerator {
     protected HyriGenerator(JavaPlugin plugin, Location location, Header header, ItemStack item, IHyriGeneratorTier defaultTier, IHyriGeneratorAnimation animation, long firstSpawnTime, List<Player> ignoredPlayers) {
         this.plugin = plugin;
         this.header = header;
-        this.item = item;
+        this.item = item.clone();
         this.location = location;
         this.tier = defaultTier;
         this.animation = animation;

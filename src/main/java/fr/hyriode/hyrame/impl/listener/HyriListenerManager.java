@@ -10,7 +10,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.logging.Level;
 
 /**
  * Project: Hyrame
@@ -64,8 +63,6 @@ public class HyriListenerManager implements IHyriListenerManager {
                         this.listeners.put(listener.getClass(), listener);
 
                         HyrameLogger.log("Registered '" + clazz.getName() + "' listener" + formattedPluginProviderName);
-                    } else {
-                        HyrameLogger.log(Level.WARNING, "'" + clazz.getName() + "' listener plugin type is not the same as the provided one in plugin provider!" + formattedPluginProviderName);
                     }
                 }
             }

@@ -207,5 +207,11 @@
   "gui.nickname.random": "&3Aléatoire",
   "gui.nickname.current": "&fActuel: ",
   "gui.nickname.edit": "&3Cliquer pour modifier",
-  "gui.nickname.apply": "&aAppliquer le nick"
+  "gui.nickname.apply": "&aAppliquer le nick",
+
+  "message.config.start": "&8&m%line%\n&7Démarrage de la création d'une &bconfiguration&7...\n&8&m%line%",
+  "message.config.new-value": "&8&m%line%\n&8▪ &7Nouvelle valeur à définir: &b%name% &8(id: %id%)\n&8▪ &7Description: &f%description%\n&8&m%line%",
+
+  "item.config.location.set": "&aDéfinir la location",
+  "item.config.location.eyes": "&bDirection des yeux &8┃ %value%"
 }

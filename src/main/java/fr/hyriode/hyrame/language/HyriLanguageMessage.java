@@ -156,6 +156,16 @@ public class HyriLanguageMessage {
     }
 
     /**
+     * Create a {@link HyriLanguageMessage} from a single string value
+     *
+     * @param value The value
+     * @return The created {@link HyriLanguageMessage}
+     */
+    public static HyriLanguageMessage from(String value) {
+        return new HyriLanguageMessage("").addValue(HyriLanguage.EN, value);
+    }
+
+    /**
      * Create a {@link HyriLanguageMessage} from values
      *
      * @param values Map with all values

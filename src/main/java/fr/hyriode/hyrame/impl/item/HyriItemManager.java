@@ -14,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -83,8 +82,6 @@ public class HyriItemManager implements IHyriItemManager {
                     this.items.put(itemId, item);
 
                     HyrameLogger.log("Registered '" + itemId + "' item" + formattedPluginProviderName);
-                } else {
-                    HyrameLogger.log(Level.WARNING, "'" + itemClass.getName() + "' item plugin type is not the same as the provided one in plugin provider!" + formattedPluginProviderName);
                 }
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

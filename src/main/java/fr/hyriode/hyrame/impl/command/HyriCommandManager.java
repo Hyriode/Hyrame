@@ -81,8 +81,6 @@ public class HyriCommandManager implements IHyriCommandManager {
                         } else {
                             HyrameLogger.log(Level.WARNING, ChatColor.RED + "'" + clazz.getName() + "' command has an empty name! Cannot register it!");
                         }
-                    } else {
-                        HyrameLogger.log(Level.WARNING, ChatColor.RED + "'" + clazz.getName() + "' command plugin type is not the same as the provided one in plugin provider!" + formattedPluginProviderName);
                     }
                 }
             }
