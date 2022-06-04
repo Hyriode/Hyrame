@@ -9,6 +9,7 @@ import fr.hyriode.hyrame.packet.IPacketContainer;
 import fr.hyriode.hyrame.packet.IPacketHandler;
 import fr.hyriode.hyrame.packet.PacketType;
 import fr.hyriode.hyrame.packet.PacketUtil;
+import fr.hyriode.hyrame.utils.ThreadUtil;
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -34,19 +35,22 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
                 final Location location = player.getLocation();
                 final int entityId = container.getIntegers().read(0);
 
-                for (NPC npc : NPCManager.getNPCs().keySet()) {
-                    final NPCInteractCallback callback = npc.getInteractCallback();
+                ThreadUtil.backOnMainThread(plugin, () -> {
+                    for (NPC npc : NPCManager.getNPCs().keySet()) {
+                        final NPCInteractCallback callback = npc.getInteractCallback();
 
-                    if (npc.getId() != entityId || callback == null || location.distance(npc.getLocation()) > 3.0D) {
-                        continue;
+                        if (npc.getId() != entityId || callback == null || location.distance(npc.getLocation()) > 3.0D) {
+                            continue;
+                        }
+
+                        final Object object = container.getValue("action");
+
+                        if (object != null) {
+
+                            npc.getInteractCallback().call(object.toString().equals("INTERACT"), player);
+                        }
                     }
-
-                    final Object object = container.getValue("action");
-
-                    if (object != null) {
-                        npc.getInteractCallback().call(object.toString().equals("INTERACT"), player);
-                    }
-                }
+                });
             }
         });
     }
