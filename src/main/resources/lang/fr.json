@@ -213,5 +213,10 @@
   "message.config.new-value": "&8&m%line%\n&8▪ &7Nouvelle valeur à définir: &b%name% &8(id: %id%)\n&8▪ &7Description: &f%description%\n&8&m%line%",
 
   "item.config.location.set": "&aDéfinir la location",
-  "item.config.location.eyes": "&bDirection des yeux &8┃ %value%"
+  "item.config.location.eyes": "&bDirection des yeux &8┃ %value%",
+
+  "format.duration.days": "%days%j",
+  "format.duration.hours": "%hours%h",
+  "format.duration.minutes": "%minutes%m",
+  "format.duration.seconds": "%seconds%s"
 }

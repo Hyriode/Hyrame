@@ -1,5 +1,10 @@
 package fr.hyriode.hyrame.utils;
 
+import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import org.bukkit.entity.Player;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -58,7 +63,7 @@ public class DurationFormatter {
         return this;
     }
 
-    public String format(long millis) {
+    public String format(HyriLanguage language, long millis) {
         if (millis < 0) {
             throw new IllegalArgumentException("Duration must be greater than zero!");
         }
@@ -89,28 +94,36 @@ public class DurationFormatter {
         if (this.seconds) {
             seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
         }
-        return this.format(days, hours, minutes, seconds);
+        return this.format(language, days, hours, minutes, seconds);
     }
 
-    public String format(long days, long hours, long minutes, long seconds) {
+    public String format(Player player, long millis) {
+        return this.format(IHyriPlayer.get(player.getUniqueId()).getSettings().getLanguage(), millis);
+    }
+
+    public String format(HyriLanguage language, long days, long hours, long minutes, long seconds) {
         final StringBuilder result = new StringBuilder();
 
         if (this.days && days != -1) {
-            result.append(days).append("d ");
+            result.append(HyriLanguageMessage.get("format.duration.days").getValue(language).replace("%days%", String.valueOf(days))).append(" ");
         }
 
         if (this.hours && hours != -1) {
-            result.append(hours).append("h ");
+            result.append(HyriLanguageMessage.get("format.duration.hours").getValue(language).replace("%hours%", String.valueOf(hours))).append(" ");
         }
 
         if (this.minutes && minutes != -1) {
-            result.append(minutes).append("m ");
+            result.append(HyriLanguageMessage.get("format.duration.minutes").getValue(language).replace("%minutes%", String.valueOf(minutes))).append(" ");
         }
 
         if (this.seconds && seconds != -1) {
-            result.append(seconds).append("s");
+            result.append(HyriLanguageMessage.get("format.duration.seconds").getValue(language).replace("%seconds%", String.valueOf(seconds)));
         }
         return result.toString();
+    }
+
+    public String format(Player player, long days, long hours, long minutes, long seconds) {
+        return this.format(IHyriPlayer.get(player.getUniqueId()).getSettings().getLanguage(), days, hours, minutes, seconds);
     }
 
 }
