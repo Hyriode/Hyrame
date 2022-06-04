@@ -1,7 +1,5 @@
 package fr.hyriode.hyrame.impl;
 
-import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.hyrame.HyrameLoader;
 import fr.hyriode.hyrame.IHyrame;
 import org.bukkit.World;
@@ -30,14 +28,6 @@ public class HyramePlugin extends JavaPlugin {
         world.setGameRuleValue("doFireTick", "false");
         world.setGameRuleValue("randomTickSpeed", "0");
         world.setTime(4000);
-
-
-        // TODO Remove
-
-        HyriAPI.get().getServer().setState(IHyriServer.State.READY);
-        HyriAPI.get().getServer().setSlots(1000);
-
-        this.hyrame.getConfiguration().setBuildMode(true);
     }
 
     @Override
