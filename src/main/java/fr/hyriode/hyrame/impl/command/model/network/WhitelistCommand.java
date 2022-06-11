@@ -18,11 +18,11 @@ import org.bukkit.entity.Player;
 public class WhitelistCommand extends HyriCommand<HyramePlugin> {
 
     public WhitelistCommand(HyramePlugin plugin) {
-        super(plugin, new HyriCommandInfo("whitelist")
+        super(plugin, new HyriCommandInfo("hyriwhitelist")
                 .withDescription("Whitelist command")
-                .withAliases("wl")
+                .withAliases("hyriwl")
                 .withType(HyriCommandType.PLAYER)
-                .withUsage("/whitelist add <player>")
+                .withUsage("/hyriwhitelist add <player>")
                 .withPermission(player -> player.getRank().is(HyriStaffRankType.ADMINISTRATOR)));
     }
 

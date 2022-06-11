@@ -75,14 +75,15 @@ public class HyriTabListManager implements ITabListManager {
 
         final HyriScoreboardTeam hiddenTeam = team.clone();
 
-
         hiddenTeam.setNameTagVisibility(HyriScoreboardTeam.NameTagVisibility.NEVER);
         hiddenTeam.getPlayers().clear();
-        hiddenTeam.setRealName((teamName.length() >= 15 ? teamName.substring(0, 14) : teamName) + "-h");
+        hiddenTeam.setName(teamName + "-h");
+        hiddenTeam.setRealName((teamName.length() >= 14 ? teamName.substring(0, 14) : teamName) + "-h");
 
         this.teamHandler.addTeam(team);
         this.teamHandler.addTeam(hiddenTeam);
-        this.teamHandlers.put(team.getName(), new TeamHandler(team, hiddenTeam));
+
+        this.teamHandlers.put(teamName, new TeamHandler(team, hiddenTeam));
     }
 
     @Override
@@ -128,8 +129,7 @@ public class HyriTabListManager implements ITabListManager {
     }
 
     @Override
-    public void hideNameTag(NameTagAction action) {
-        final Player player = action.getPlayer();
+    public void hideNameTag(Player player) {
         final TeamHandler teamHandler = this.getTeamHandler(player);
 
         if (teamHandler == null) {
@@ -140,8 +140,7 @@ public class HyriTabListManager implements ITabListManager {
     }
 
     @Override
-    public void showNameTag(NameTagAction action) {
-        final Player player = action.getPlayer();
+    public void showNameTag(Player player) {
         final TeamHandler teamHandler = this.getTeamHandler(player);
 
         if (teamHandler == null) {

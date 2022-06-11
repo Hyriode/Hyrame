@@ -8,6 +8,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -289,7 +290,9 @@ public class HyriScoreboardTeamHandler {
      */
     public HyriScoreboardTeam getPlayerTeam(Player player) {
         for (HyriScoreboardTeam team : this.teams) {
-            team.contains(player.getName());
+            if (team.contains(player.getName())) {
+                return team;
+            }
         }
         return null;
     }

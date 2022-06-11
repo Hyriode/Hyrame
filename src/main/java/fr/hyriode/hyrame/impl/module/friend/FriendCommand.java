@@ -7,6 +7,7 @@ import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.command.*;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.utils.Pagination;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -152,34 +153,21 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
             return;
         }
 
-        final List<ListedFriend> showingFriends = new ArrayList<>();
+        final Pagination<ListedFriend> showingFriends = new Pagination<>(FRIENDS_LIST_SIZE);
 
-        int start = page != 0 ? FRIENDS_LIST_SIZE * (page - 1) : 0;
+        for (IHyriFriend friend : friends) {
+            final UUID playerId = friend.getUniqueId();
+            final IHyriPlayer cachedAccount = HyriAPI.get().getPlayerManager().getPlayerFromRedis(playerId);
+            final boolean online = cachedAccount != null && cachedAccount.isOnline();
+            final String prefix = HyriAPI.get().getPlayerManager().getPrefix(playerId);
 
-        if (start > friendHandler.getFriends().size()) {
-            start = 0;
-        }
-
-        for (int i = start; i < 10; i++) {
-            if (friends.size() - 1 < i) {
-                break;
-            }
-
-            final IHyriFriend friend = friends.get(i);
-
-            if (friend != null) {
-                final UUID playerId = friend.getUniqueId();
-                final boolean online = HyriAPI.get().getPlayerManager().getPlayerFromRedis(playerId) != null;
-                final String prefix = HyriAPI.get().getPlayerManager().getPrefix(playerId);
-
-                showingFriends.add(new ListedFriend(playerId, online, prefix));
-            }
+            showingFriends.add(new ListedFriend(playerId, online, prefix));
         }
 
         showingFriends.sort(Comparator.comparing(friend -> !friend.isOnline()));
 
         player.spigot().sendMessage(createMessage(builder -> {
-            for (ListedFriend friend : showingFriends) {
+            for (ListedFriend friend : showingFriends.getPageContent(page)) {
                 final UUID uuid = friend.getUniqueId();
 
                 if (friend.isOnline()) {

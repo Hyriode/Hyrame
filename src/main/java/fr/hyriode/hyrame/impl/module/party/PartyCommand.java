@@ -262,8 +262,11 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
                         .append(HyriPartyRank.MEMBER.getDisplay(language) + ": ").color(ChatColor.DARK_AQUA);
 
                 final List<UUID> members = party.getMembers(HyriPartyRank.MEMBER);
-                for (UUID member : members) {
-                    builder.append(playerManager.getPlayer(member).getNameWithRank()).append(" ");
+
+                for (int i = 0; i < members.size(); i++) {
+                    final UUID member = members.get(i);
+
+                    builder.append(playerManager.getPlayer(member).getNameWithRank()).append(members.size() - 1 == i ? "" : ChatColor.DARK_GRAY + " - ");
                 }
             }));
         };
