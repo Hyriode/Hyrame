@@ -20,7 +20,7 @@ import fr.hyriode.hyrame.game.event.team.HyriGameTeamUnregisteredEvent;
 import fr.hyriode.hyrame.game.protocol.HyriGameProtocolManager;
 import fr.hyriode.hyrame.game.protocol.HyriSpectatorProtocol;
 import fr.hyriode.hyrame.game.protocol.HyriWaitingProtocol;
-import fr.hyriode.hyrame.game.protocol.HyriWinProtocol;
+import fr.hyriode.hyrame.game.protocol.*;
 import fr.hyriode.hyrame.game.tablist.HyriGameTabListManager;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.game.timer.HyriGameStartingTimer;
@@ -31,6 +31,7 @@ import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.BroadcastUtil;
 import fr.hyriode.hyrame.utils.PlayerUtil;
+import fr.hyriode.hyrame.game.protocol.HyriWinProtocol;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -66,7 +67,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /** Tab list manager object */
     protected HyriGameTabListManager tabListManager;
 
-    /** The manager of all {@link fr.hyriode.hyrame.game.protocol.HyriGameProtocol} */
+    /** The manager of all {@link HyriGameProtocol} */
     protected final HyriGameProtocolManager protocolManager;
 
     /** Starting timer instance */
@@ -868,7 +869,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
-     * Get the {@link fr.hyriode.hyrame.game.protocol.HyriGameProtocol} manager instance
+     * Get the {@link HyriGameProtocol} manager instance
      *
      * @return The {@link HyriGameProtocolManager} instance
      */

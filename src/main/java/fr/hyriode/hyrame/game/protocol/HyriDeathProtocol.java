@@ -103,6 +103,8 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
 
                 HyriAPI.get().getEventBus().publish(new HyriGameRespawnEvent(this.getGame(), gamePlayer));
 
+                player.setFireTicks(0);
+
                 realCallback.accept(player);
 
                 this.deathTasks.remove(player.getUniqueId()).cancel();
@@ -247,14 +249,11 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
             }
         } else if (this.getGame().getState() != HyriGameState.ENDED) {
             PlayerUtil.resetPlayer(player, true);
-            PlayerUtil.addSpectatorAbilities(player);
 
             player.setAllowFlight(false);
             player.setFlying(false);
 
             player.spigot().setCollidesWithEntities(true);
-
-            PlayerUtil.resetPotionEffects(player);
 
             gamePlayer.show();
             gamePlayer.setSpectator(true);

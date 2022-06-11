@@ -4,7 +4,6 @@ import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.packet.IPacketHandler;
 import fr.hyriode.hyrame.packet.IPacketInterceptor;
 import fr.hyriode.hyrame.packet.PacketType;
-import fr.hyriode.hyrame.utils.ThreadUtil;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -13,7 +12,6 @@ import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;

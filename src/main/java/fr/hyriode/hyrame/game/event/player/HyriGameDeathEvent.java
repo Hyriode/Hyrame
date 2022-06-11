@@ -48,7 +48,7 @@ public class HyriGameDeathEvent extends HyriGamePlayerEvent {
     /**
      * Get the list of killers
      *
-     * @return A list of {@link fr.hyriode.hyrame.game.protocol.HyriLastHitterProtocol.LastHitter}
+     * @return A list of {@link HyriLastHitterProtocol.LastHitter}
      */
     public List<HyriLastHitterProtocol.LastHitter> getKillers() {
         return this.killers;
@@ -57,7 +57,7 @@ public class HyriGameDeathEvent extends HyriGamePlayerEvent {
     /**
      * Get the best killer
      *
-     * @return A {@link fr.hyriode.hyrame.game.protocol.HyriLastHitterProtocol.LastHitter} that represents the killer
+     * @return A {@link HyriLastHitterProtocol.LastHitter} that represents the killer
      */
     public HyriLastHitterProtocol.LastHitter getBestKiller() {
         if (this.killers != null && this.killers.size() > 0) {

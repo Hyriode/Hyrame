@@ -303,7 +303,7 @@ public class HyriGameTeam {
     /**
      * Get the name tag visibility of the team
      *
-     * @return A {@link fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam.NameTagVisibility}
+     * @return A {@link HyriScoreboardTeam.NameTagVisibility}
      */
     public HyriScoreboardTeam.NameTagVisibility getNameTagVisibility() {
         return this.nameTagVisibility;

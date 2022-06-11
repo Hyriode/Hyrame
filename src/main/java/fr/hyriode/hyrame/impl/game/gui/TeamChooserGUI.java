@@ -106,7 +106,7 @@ public class TeamChooserGUI extends HyriInventory {
                     this.game.getTabListManager().updatePlayer(gamePlayer);
                 }
 
-                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.join").getForPlayer(player).replace("%team", team.getColor().getChatColor() + team.getDisplayName().getForPlayer(player)));
+                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.join").getForPlayer(player).replace("%team%", team.getColor().getChatColor() + team.getDisplayName().getForPlayer(player)));
 
                 if (this.slot != -1) {
                     this.hyrame.getItemManager().giveItem(this.owner, this.slot, TeamChooserItem.class);

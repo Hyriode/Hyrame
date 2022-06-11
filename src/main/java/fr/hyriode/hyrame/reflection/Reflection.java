@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Project: Hyrame
@@ -142,16 +143,20 @@ public class Reflection {
     }
 
     public static Field[] getFieldsOf(Class<?> clazz, Class<?> targetClass) {
-        final Field[] fields = clazz.getFields();
         final List<Field> result = new ArrayList<>();
+        final Consumer<Field[]> action = fields -> {
+            for (Field field : fields) {
+                final Class<?> fieldClass = DataType.getReference(field.getType());
 
-        for (Field field : fields) {
-            final Class<?> fieldClass = DataType.getReference(field.getType());
-
-            if (fieldClass == targetClass) {
-                result.add(field);
+                if (fieldClass == targetClass) {
+                    result.add(field);
+                }
             }
-        }
+        };
+
+        action.accept(clazz.getFields());
+        action.accept(clazz.getDeclaredFields());
+
         return result.toArray(new Field[0]);
     }
 

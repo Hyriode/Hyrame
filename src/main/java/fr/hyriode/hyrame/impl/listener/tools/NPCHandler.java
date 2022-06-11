@@ -35,22 +35,21 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
                 final Location location = player.getLocation();
                 final int entityId = container.getIntegers().read(0);
 
-                ThreadUtil.backOnMainThread(plugin, () -> {
-                    for (NPC npc : NPCManager.getNPCs().keySet()) {
-                        final NPCInteractCallback callback = npc.getInteractCallback();
+                for (NPC npc : NPCManager.getNPCs().keySet()) {
+                    final NPCInteractCallback callback = npc.getInteractCallback();
 
-                        if (npc.getId() != entityId || callback == null || location.distance(npc.getLocation()) > 3.0D) {
-                            continue;
-                        }
-
-                        final Object object = container.getValue("action");
-
-                        if (object != null) {
-
-                            npc.getInteractCallback().call(object.toString().equals("INTERACT"), player);
-                        }
+                    if (npc.getId() != entityId || callback == null || location.distance(npc.getLocation()) > 3.0D) {
+                        continue;
                     }
-                });
+
+                    final Object object = container.getValue("action");
+
+                    if (object != null) {
+                        ThreadUtil.backOnMainThread(plugin, () -> {
+                            npc.getInteractCallback().call(object.toString().equals("INTERACT"), player);
+                        });
+                    }
+                }
             }
         });
     }

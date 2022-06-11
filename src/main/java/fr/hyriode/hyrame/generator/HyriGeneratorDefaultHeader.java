@@ -21,7 +21,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.function.Function;
 
-import static fr.hyriode.hyrame.generator.HyriGenerator.Header;
 import static fr.hyriode.hyrame.hologram.Hologram.Builder;
 import static fr.hyriode.hyrame.hologram.Hologram.Line;
 
@@ -30,7 +29,7 @@ import static fr.hyriode.hyrame.hologram.Hologram.Line;
  * Created by AstFaster
  * on 13/01/2022 at 15:57
  */
-class HyriGeneratorDefaultHeader extends Header implements Listener {
+class HyriGeneratorDefaultHeader extends HyriGenerator.Header implements Listener {
 
     private static final HyriLanguageMessage SECONDS = new HyriLanguageMessage("")
             .addValue(HyriLanguage.EN, "Drop in %seconds% seconds")
@@ -121,7 +120,7 @@ class HyriGeneratorDefaultHeader extends Header implements Listener {
     }
 
     private boolean isSameHeader(HyriGenerator generator) {
-        final Header header = generator.getHeader();
+        final HyriGenerator.Header header = generator.getHeader();
 
         if (header != null) {
             return header.getId() == this.id;

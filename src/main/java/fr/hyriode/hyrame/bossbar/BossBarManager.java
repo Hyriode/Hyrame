@@ -1,105 +1,112 @@
 package fr.hyriode.hyrame.bossbar;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Project: Hyrame
  * Created by AstFaster
- * on 12/11/2021 at 15:25
+ * on 06/06/2022 at 13:02
  */
 public class BossBarManager {
 
-    private static final Map<Player, BossBar> BARS = new ConcurrentHashMap<>();
+    /** The {@linkplain Map map} with all {@linkplain BossBar boss bars} linked to players */
+    private static final Map<UUID, BossBar> BARS = new HashMap<>();
 
+    /** The static instance of a {@link JavaPlugin} */
     private static JavaPlugin plugin;
 
+    /**
+     * Init the boss bar manager by starting animation process and providing a {@link JavaPlugin} instance
+     *
+     * @param plugin The {@link JavaPlugin} instance
+     */
     public static void init(JavaPlugin plugin) {
-        BossBarManager.plugin = plugin;
-    }
-
-    public static BossBar getBar(Player player) {
-        return BARS.get(player);
-    }
-
-    public static BossBar setBar(Player player, List<String> titles, int delay, int timeout, boolean updateProgressWithTimeout) {
-        final BossBar bossBar = new BossBar(plugin, player, titles, delay, timeout, updateProgressWithTimeout);
-
-        bossBar.spawn();
-
-        if (hasBar(player)) {
-            removeBar(player);
+        if (BossBarManager.plugin != null) {
+            throw new IllegalStateException("BossBar manager is already initialized!");
         }
 
-        BARS.put(player, bossBar);
+        BossBarManager.plugin = plugin;
+
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            for (BossBar bossBar : BARS.values()) {
+                final BossBarAnimation animation = bossBar.getAnimation();
+
+                if (animation != null) {
+                    animation.onTick();
+                }
+            }
+        }, 0L, 1L);
+    }
+
+    /**
+     * Set the boss bar of a player
+     *
+     * @param player The player
+     * @param text The default text to put on the bar
+     * @param progress The progress of the bar (from 0.0F to 1.0F)
+     * @return The created {@link BossBar}
+     */
+    public static BossBar setBar(Player player, String text, float progress) {
+        removeBar(player);
+
+        final BossBar bossBar = new BossBar(player, plugin, text);
+
+        bossBar.spawn();
+        bossBar.setProgress(progress);
+
+        BARS.put(player.getUniqueId(), bossBar);
 
         return bossBar;
     }
 
-    public static BossBar setBar(Player player, List<String> titles, int timeout, boolean updateProgressWithTimeout) {
-        return setBar(player, titles, 0, timeout, updateProgressWithTimeout);
+    /**
+     * Get the bar of a given player
+     *
+     * @param player The player
+     * @return The {@linkplain BossBar boss bar} of the player; or <code>null</code>
+     */
+    public static BossBar getBar(Player player) {
+        return BARS.get(player.getUniqueId());
     }
 
-    public static BossBar setBar(Player player, List<String> titles, int timeout) {
-        return setBar(player, titles, 0, timeout, false);
-    }
-
-    public static BossBar setBar(Player player, String title, int timeout, boolean updateProgressWithTimeout) {
-        return setBar(player, Collections.singletonList(title), 0, timeout, updateProgressWithTimeout);
-    }
-
-    public static BossBar setBar(Player player, String title, int timeout) {
-        return setBar(player, Collections.singletonList(title), 0, timeout, false);
-    }
-
-    public static BossBar setBar(Player player, String title) {
-        return setBar(player, Collections.singletonList(title), 0, 0, false);
-    }
-
+    /**
+     * Remove the boss bar of a given player
+     *
+     * @param player The player
+     */
     public static void removeBar(Player player) {
-        if (hasBar(player)) {
-            BARS.get(player).destroy();
-            BARS.remove(player);
+        final BossBar bossBar = BARS.remove(player.getUniqueId());
+
+        if (bossBar == null) {
+            return;
         }
+
+        bossBar.destroy();
     }
 
+    /**
+     * Check if a given player has a boss bar
+     *
+     * @param player The player to check
+     * @return <code>true</code> if he has a boss bar
+     */
     public static boolean hasBar(Player player) {
-        return BARS.containsKey(player);
+        return BARS.containsKey(player.getUniqueId());
     }
 
-    public static List<String> getBarTitles(Player player) {
-        if (hasBar(player)) {
-            return getBar(player).getTitles();
-        }
-        throw new NullPointerException();
-    }
-
-    public static void setBarTitles(Player player, List<String> titles) {
-        if (hasBar(player)) {
-            getBar(player).setTitles(titles);
-        }
-    }
-
-    public static void setBarTitle(Player player, String title) {
-        setBarTitles(player, Collections.singletonList(title));
-    }
-
-    public static float getBarProgress(Player player) {
-        if (hasBar(player)) {
-            return getBar(player).getProgress();
-        }
-        throw new NullPointerException();
-    }
-
-    public static void setBarProgress(Player player, float progress) {
-        if (hasBar(player)) {
-            getBar(player).setProgress(progress);
-        }
+    /**
+     * Get all the boss bars
+     *
+     * @return A map of {@link BossBar} related to their owner
+     */
+    public static Map<UUID, BossBar> getBars() {
+        return BARS;
     }
 
 }

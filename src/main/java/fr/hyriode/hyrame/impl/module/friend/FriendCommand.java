@@ -184,10 +184,11 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
 
                 if (friend.isOnline()) {
                     final IHyriPlayer account = IHyriPlayer.get(uuid);
+                    final String server = account.getCurrentServer();
 
                     builder.append(HyriLanguageMessage.get("message.friend.list-player").getForPlayer(player)
                             .replace("%player%", account.getNameWithRank())
-                            .replace("%server%", account.getCurrentServer()));
+                            .replace("%server%", server != null ? server : "?"));
                 } else {
                     builder.append(HyriLanguageMessage.get("message.friend.list-player-offline").getForPlayer(player)
                             .replace("%player%", friend.getPrefix()));

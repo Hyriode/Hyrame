@@ -12,8 +12,6 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-import static fr.hyriode.hyrame.impl.module.party.PartyModule.createMessage;
-
 /**
  * Project: Hyrame
  * Created by AstFaster
@@ -37,7 +35,7 @@ public class PartyChatCommand extends HyriCommand<HyramePlugin> {
         final IHyriParty party = HyriAPI.get().getPartyManager().getPlayerParty(playerId);
 
         if (party == null) {
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-have").getForPlayer(player))));
+            player.spigot().sendMessage(PartyModule.createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-have").getForPlayer(player))));
             return;
         }
 

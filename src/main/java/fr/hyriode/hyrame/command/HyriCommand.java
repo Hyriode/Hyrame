@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.command;
 
 import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
+import fr.hyriode.hyrame.plugin.IPluginProvider;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -23,7 +24,7 @@ import java.util.function.Function;
  */
 public abstract class HyriCommand<T extends JavaPlugin> {
 
-    /** The plugin provided in the {@link fr.hyriode.hyrame.plugin.IPluginProvider} */
+    /** The plugin provided in the {@link IPluginProvider} */
     protected final T plugin;
     /** The information of the command */
     protected final HyriCommandInfo info;

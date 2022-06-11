@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.impl.listener.tools;
 
 import fr.hyriode.hyrame.bossbar.BossBar;
+import fr.hyriode.hyrame.bossbar.BossBarAnimation;
 import fr.hyriode.hyrame.bossbar.BossBarManager;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.listener.HyriListener;
@@ -23,30 +24,20 @@ public class BossBarHandler extends HyriListener<HyramePlugin> {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent event) {
-        final Player player = event.getPlayer();
-
-        if (BossBarManager.hasBar(player)) {
-            BossBarManager.removeBar(event.getPlayer());
-        }
+        BossBarManager.removeBar(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onKick(PlayerKickEvent event) {
-        final Player player = event.getPlayer();
-
-        if (BossBarManager.hasBar(player)) {
-            BossBarManager.removeBar(event.getPlayer());
-        }
+        BossBarManager.removeBar(event.getPlayer());
     }
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        final Player player = event.getPlayer();
+        final BossBar bossBar = BossBarManager.getBar(event.getPlayer());
 
-        if (player.isOnline()) {
-            if (BossBarManager.hasBar(player)) {
-                BossBarManager.getBar(event.getPlayer()).updateMovement();
-            }
+        if (bossBar != null) {
+            bossBar.updateMovement();
         }
     }
 
@@ -61,18 +52,28 @@ public class BossBarHandler extends HyriListener<HyramePlugin> {
     }
 
     private void handleTeleport(Player player) {
-        if (BossBarManager.hasBar(player)) {
-            final BossBar bossBar = BossBarManager.getBar(player);
+        final BossBar bossBar = BossBarManager.getBar(player);
 
-            BossBarManager.removeBar(player);
-
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    BossBarManager.setBar(player, bossBar.getTitles(), bossBar.getDelay(), bossBar.getTimeout(), bossBar.isUpdateProgressWithTimeout());
-                }
-            }.runTaskLater(this.plugin, 2);
+        if (bossBar == null) {
+            return;
         }
+
+        BossBarManager.removeBar(player);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                final BossBar newBar = BossBarManager.setBar(player, bossBar.getText(), bossBar.getProgress());
+                final BossBarAnimation animation = bossBar.getAnimation();
+
+                if (animation != null) {
+                    animation.disable();
+
+                    newBar.applyAnimation(animation);
+                }
+            }
+        }.runTaskLaterAsynchronously(this.plugin, 2L);
+
     }
 
 }
