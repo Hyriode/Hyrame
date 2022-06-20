@@ -9,6 +9,7 @@ import fr.hyriode.hyrame.packet.IPacketContainer;
 import fr.hyriode.hyrame.packet.IPacketHandler;
 import fr.hyriode.hyrame.packet.PacketType;
 import fr.hyriode.hyrame.packet.PacketUtil;
+import fr.hyriode.hyrame.reflection.entity.EntityUseAction;
 import fr.hyriode.hyrame.utils.ThreadUtil;
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.Location;
@@ -45,9 +46,7 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
                     final Object object = container.getValue("action");
 
                     if (object != null) {
-                        ThreadUtil.backOnMainThread(plugin, () -> {
-                            npc.getInteractCallback().call(object.toString().equals("INTERACT"), player);
-                        });
+                        ThreadUtil.backOnMainThread(plugin, () -> callback.call(object.toString().equals(EntityUseAction.INTERACT.name()), player));
                     }
                 }
             }

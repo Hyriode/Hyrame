@@ -26,8 +26,13 @@ import java.util.function.Supplier;
  */
 public class Hologram {
 
+    /** The set with all holograms */
+    private static final Set<Hologram> HOLOGRAMS = new HashSet<>();
+
     /** The maximum range a player can see the hologram */
     private static final double RANGE_VIEW = 32.0D;
+
+    private final BukkitTask linesTask;
 
     /** All the players that receive the hologram */
     private final Map<Player, Boolean> receivers;
@@ -44,6 +49,9 @@ public class Hologram {
     /** All the lines used for the hologram */
     private final Map<Integer, Line> lines;
 
+    /** The interaction callback ran when the hologram is right-clicked by a player */
+    private final Consumer<Player> interactionCallback;
+
     /**
      * Constructor of {@link  Hologram}
      *
@@ -51,24 +59,30 @@ public class Hologram {
      * @param location The hologram location
      * @param linesDistance The distance between each line
      * @param lines The lines used for the hologram
+     * @param interactionCallback The interaction callback
      */
-    protected Hologram(JavaPlugin plugin, Location location, double linesDistance, Map<Integer, Line> lines) {
+    protected Hologram(JavaPlugin plugin, Location location, double linesDistance, Map<Integer, Line> lines, Consumer<Player> interactionCallback) {
         this.plugin = plugin;
         this.location = location;
         this.linesDistance = linesDistance;
         this.lines = lines;
+        this.interactionCallback = interactionCallback;
         this.receivers = new HashMap<>();
         this.entities = new HashMap<>();
 
         this.startUpdates();
 
-        Bukkit.getScheduler().runTaskTimer(plugin, this::sendLines, 10L, 10L);
+        this.linesTask = Bukkit.getScheduler().runTaskTimer(plugin, this::sendLines, 10L, 10L);
+
+        HOLOGRAMS.add(this);
     }
 
     /**
      * Destroy the hologram
      */
     public void destroy() {
+        this.linesTask.cancel();
+
         for (Line line : this.lines.values()) {
             line.cancelUpdate();
         }
@@ -78,6 +92,8 @@ public class Hologram {
         this.lines.clear();
         this.entities.clear();
         this.receivers.clear();
+
+        HOLOGRAMS.remove(this);
     }
 
     /**
@@ -237,8 +253,17 @@ public class Hologram {
 
                 entity.setCustomName(line.getValue(player));
 
-                this.sendMetadata(entity);
+                this.sendMetadata(player, entity);
             }
+        }
+    }
+
+    /**
+     * Update all the existing lines of the hologram
+     */
+    public void updateLines() {
+        for (int slot : this.lines.keySet()) {
+            this.updateLine(slot);
         }
     }
 
@@ -305,7 +330,7 @@ public class Hologram {
         armorStand.setInvisible(true);
         armorStand.setGravity(false);
         armorStand.setCustomName(text);
-        armorStand.n(true);
+        // armorStand.n(true); It removes collision, but doesn't handle interaction
         armorStand.setBasePlate(false);
         armorStand.setCustomNameVisible(true);
         armorStand.setLocation(location.getX(), location.getY(), location.getZ(), 0, 0);
@@ -438,6 +463,61 @@ public class Hologram {
     }
 
     /**
+     * Get the interaction callback to trigger when a player right click
+     *
+     * @return A consumer of {@link Player}
+     */
+    public Consumer<Player> getInteractionCallback() {
+        return this.interactionCallback;
+    }
+
+    /**
+     * Check if the hologram contains a given entity
+     *
+     * @param entityId The identifier of the entity
+     * @return <code>true</code> if it contains the entity
+     */
+    public boolean containsEntity(int entityId) {
+        for (Map<Integer, EntityArmorStand> map : this.entities.values()) {
+            for (Map.Entry<Integer, EntityArmorStand> entry : map.entrySet()) {
+                if (entry.getValue().getId() == entityId) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if the hologram is distance from a given location in a custom range
+     *
+     * @param location The location
+     * @param range The maximum range
+     * @return <code>true</code> if the location is correctly distanced
+     */
+    public boolean isDistancedFrom(Location location, double range) {
+        for (Map<Integer, EntityArmorStand> map : this.entities.values()) {
+            for (Map.Entry<Integer, EntityArmorStand> entry : map.entrySet()) {
+                final EntityArmorStand entity = entry.getValue();
+
+                if (new Location(entity.world.getWorld(), entity.locX, entity.locY, entity.locZ).distance(location) <= range) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get all the created holograms
+     *
+     * @return A set of {@link Hologram}
+     */
+    public static Set<Hologram> getAll() {
+        return HOLOGRAMS;
+    }
+
+    /**
      * The class that represents a line for the hologram
      */
     public static class Line {
@@ -551,6 +631,8 @@ public class Hologram {
         private double linesDistance = 0.35D;
         private Map<Integer, Line> lines = new HashMap<>();
 
+        private Consumer<Player> interactionCallback = player -> {};
+
         public Builder(JavaPlugin plugin) {
             this.plugin = plugin;
         }
@@ -631,13 +713,18 @@ public class Hologram {
             return this.withLine(this.lines.size(), Line.from(line));
         }
 
+        public Builder withInteractionCallback(Consumer<Player> interactionCallback) {
+            this.interactionCallback = interactionCallback;
+            return this;
+        }
+
         public Hologram build() {
             if (this.plugin != null && this.lines != null) {
                 for (Map.Entry<Integer, Line> entry : this.lines.entrySet()) {
                     entry.getValue().setPosition(entry.getKey());
                 }
 
-                return new Hologram(this.plugin, this.location, this.linesDistance, this.lines);
+                return new Hologram(this.plugin, this.location, this.linesDistance, this.lines, this.interactionCallback);
             }
             throw new RuntimeException("Couldn't set a null value to a hologram builder field!");
         }

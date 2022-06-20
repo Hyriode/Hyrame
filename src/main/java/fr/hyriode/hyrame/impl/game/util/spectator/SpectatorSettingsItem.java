@@ -37,14 +37,14 @@ public class SpectatorSettingsItem extends HyriItem<HyramePlugin> {
             // Speed items part
             this.setItem(11, new ItemBuilder(Material.LEATHER_BOOTS).withName(ChatColor.GREEN + "Speed 0").build(),
                     e -> this.getOwner().removePotionEffect(PotionEffectType.SPEED));
-            this.setItem(12, new ItemBuilder(Material.CHAINMAIL_BOOTS).withName(ChatColor.BLUE +"Speed I").build(),
+            this.setItem(12, new ItemBuilder(Material.CHAINMAIL_BOOTS).withName(ChatColor.BLUE + "Speed I").build(),
+                    e -> this.addEffect(0));
+            this.setItem(13, new ItemBuilder(Material.IRON_BOOTS).withName(ChatColor.YELLOW + "Speed II").build(),
                     e -> this.addEffect(1));
-            this.setItem(13, new ItemBuilder(Material.IRON_BOOTS).withName(ChatColor.YELLOW +"Speed II").build(),
+            this.setItem(14, new ItemBuilder(Material.GOLD_BOOTS).withName(ChatColor.GOLD + "Speed III").build(),
                     e -> this.addEffect(2));
-            this.setItem(14, new ItemBuilder(Material.GOLD_BOOTS).withName(ChatColor.GOLD +"Speed III").build(),
+            this.setItem(15, new ItemBuilder(Material.DIAMOND_BOOTS).withName(ChatColor.RED + "Speed IV").build(),
                     e -> this.addEffect(3));
-            this.setItem(15, new ItemBuilder(Material.DIAMOND_BOOTS).withName(ChatColor.RED +"Speed IV").build(),
-                    e -> this.addEffect(4));
         }
 
         private void addEffect(int amplifier) {

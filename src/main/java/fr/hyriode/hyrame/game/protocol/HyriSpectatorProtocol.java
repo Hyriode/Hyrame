@@ -11,6 +11,8 @@ import fr.hyriode.hyrame.utils.PlayerUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import static fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent.*;
+
 /**
  * Project: Hyrame
  * Created by AstFaster
@@ -46,17 +48,25 @@ public class HyriSpectatorProtocol extends HyriGameProtocol implements Listener 
         final HyriGamePlayer gamePlayer = event.getGamePlayer();
         final Player player = gamePlayer.getPlayer();
 
-        PlayerUtil.resetPlayer(player, true);
-        PlayerUtil.addSpectatorAbilities(player);
+        if (event.getAction() == Action.ADD) {
+            PlayerUtil.resetPlayer(player, true);
+            PlayerUtil.addSpectatorAbilities(player);
 
-        gamePlayer.hide();
+            gamePlayer.hide();
 
-        player.spigot().setCollidesWithEntities(false);
+            player.spigot().setCollidesWithEntities(false);
 
-        HyriGameItems.SPECTATOR_TELEPORTER.give(this.hyrame, player, 0);
-        HyriGameItems.SPECTATOR_SETTINGS.give(this.hyrame, player, 1);
-        HyriGameItems.RESTART_GAME.give(this.hyrame, player, 4);
-        HyriGameItems.LEAVE.give(this.hyrame, player, 8);
+            HyriGameItems.SPECTATOR_TELEPORTER.give(this.hyrame, player, 0);
+            HyriGameItems.SPECTATOR_SETTINGS.give(this.hyrame, player, 1);
+            HyriGameItems.RESTART_GAME.give(this.hyrame, player, 4);
+            HyriGameItems.LEAVE.give(this.hyrame, player, 8);
+        } else {
+            PlayerUtil.resetPlayer(player, true);
+
+            gamePlayer.show();
+
+            player.spigot().setCollidesWithEntities(true);
+        }
     }
 
 

@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.placeholder;
 
+import fr.hyriode.hyrame.HyrameLogger;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -49,14 +50,14 @@ public abstract class PlaceholderAPI {
      *
      * @param instance The instance of {@link PlaceholderAPI}
      */
-    public static void registerInstance(PlaceholderAPI instance) {
+    public static void register(PlaceholderAPI instance) {
         if (instance == null) {
             throw new IllegalStateException("PlaceholderAPI instance is already registered!");
         }
 
         PlaceholderAPI.instance = instance;
 
-        //HyrameLogger.log("Registered '" + instance.getClass().getName() + "' as PlaceholderAPI implementation.");
+        HyrameLogger.log("Registered '" + instance.getClass().getName() + "' as PlaceholderAPI implementation.");
     }
 
     /**

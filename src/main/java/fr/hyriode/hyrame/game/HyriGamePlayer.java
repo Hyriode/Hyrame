@@ -16,6 +16,9 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.UUID;
 
+import static fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent.*;
+import static fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent.Action.*;
+
 /**
  * Project: Hyrame
  * Created by AstFaster
@@ -242,9 +245,7 @@ public class HyriGamePlayer {
     public void setSpectator(boolean spectator) {
         this.spectator = spectator;
 
-        if (spectator) {
-            HyriAPI.get().getEventBus().publish(new HyriGameSpectatorEvent(this.game, this));
-        }
+        HyriAPI.get().getEventBus().publish(new HyriGameSpectatorEvent(this.game, this, spectator ? ADD : REMOVE));
     }
 
     /**

@@ -288,7 +288,7 @@ public class HyriWaitingRoom {
     /**
      * The handler class with listeners of the waiting room
      */
-    public class Handler implements Listener {
+    private class Handler implements Listener {
 
         @HyriEventHandler
         public void onJoin(HyriGameJoinEvent event) {

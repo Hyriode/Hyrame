@@ -14,6 +14,7 @@ import fr.hyriode.hyrame.impl.command.HyriCommandBlocker;
 import fr.hyriode.hyrame.impl.command.HyriCommandManager;
 import fr.hyriode.hyrame.impl.config.ConfigManager;
 import fr.hyriode.hyrame.impl.game.HyriGameManager;
+import fr.hyriode.hyrame.impl.hologram.HologramHandler;
 import fr.hyriode.hyrame.impl.inventory.HyriInventoryManager;
 import fr.hyriode.hyrame.impl.item.HyriItemManager;
 import fr.hyriode.hyrame.impl.join.HyriJoinHandler;
@@ -106,11 +107,11 @@ public class Hyrame implements IHyrame {
         this.partyModule = new PartyModule();
         this.levelingModule = new LevelingModule();
 
-        IHyriLanguageManager.Provider.registerInstance(() -> this.languageManager);
-        PlaceholderAPI.registerInstance(new PlaceholderImpl());
+        IHyriLanguageManager.Provider.register(() -> this.languageManager);
+        PlaceholderAPI.register(new PlaceholderImpl());
         PlaceholderRegistry.registerPlaceholders(this);
         HyriEnchant.register();
-
+        HologramHandler.init(plugin, this);
         BossBarManager.init(this.plugin);
         NPCManager.init(this.plugin, "npcs:");
         new SignGUIManager(this, this.plugin);

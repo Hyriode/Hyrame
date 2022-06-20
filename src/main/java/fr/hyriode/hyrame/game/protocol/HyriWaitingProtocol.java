@@ -84,8 +84,6 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
 
         if (game.getPlayers().size() >= game.getMaxPlayers() && server.isAccessible()) {
             server.setAccessible(false);
-        } else if (!server.isAccessible()){
-            server.setAccessible(true);
         }
 
         PlayerUtil.resetPlayer(player, true);
@@ -111,8 +109,13 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
         final Player player = event.getGamePlayer().getPlayer();
         final HyriGame<?> game = this.getGame();
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
+        final IHyriServer server = HyriAPI.get().getServer();
 
         this.updateScoreboards();
+
+        if (game.getPlayers().size() < game.getMaxPlayers() && !server.isAccessible()) {
+            server.setAccessible(true);
+        }
 
         final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + game.getMaxPlayers() + ")";
 

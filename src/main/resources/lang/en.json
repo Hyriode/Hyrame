@@ -218,5 +218,10 @@
   "format.duration.days": "%days%d",
   "format.duration.hours": "%hours%h",
   "format.duration.minutes": "%minutes%m",
-  "format.duration.seconds": "%seconds%s"
+  "format.duration.seconds": "%seconds%s",
+
+  "leaderboard.scope.total": "Lifetime",
+  "leaderboard.scope.monthly": "Monthly",
+  "leaderboard.scope.weekly": "Weekly",
+  "leaderboard.scope.daily": "Daily"
 }

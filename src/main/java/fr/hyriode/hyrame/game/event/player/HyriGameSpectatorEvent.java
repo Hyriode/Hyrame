@@ -10,14 +10,26 @@ import fr.hyriode.hyrame.game.HyriGamePlayer;
  */
 public class HyriGameSpectatorEvent extends HyriGamePlayerEvent {
 
+    private final Action action;
+
     /**
      * Constructor of {@link HyriGamePlayerEvent}
      *
      * @param game       The {@link HyriGame} instance
      * @param gamePlayer The concerned {@link HyriGamePlayer}
+     * @param action The action done on the event
      */
-    public HyriGameSpectatorEvent(HyriGame<?> game, HyriGamePlayer gamePlayer) {
+    public HyriGameSpectatorEvent(HyriGame<?> game, HyriGamePlayer gamePlayer, Action action) {
         super(game, gamePlayer);
+        this.action = action;
+    }
+
+    public Action getAction() {
+        return this.action;
+    }
+
+    public enum Action {
+        ADD, REMOVE
     }
 
 }

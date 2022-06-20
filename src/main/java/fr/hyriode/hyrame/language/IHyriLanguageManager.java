@@ -32,7 +32,7 @@ public interface IHyriLanguageManager {
          *
          * @param instanceSupplier The {@link Supplier} of the instance to set
          */
-        public static void registerInstance(Supplier<IHyriLanguageManager> instanceSupplier) {
+        public static void register(Supplier<IHyriLanguageManager> instanceSupplier) {
             if (instance == null) {
                 instance = instanceSupplier.get();
             } else {

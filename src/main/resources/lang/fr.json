@@ -218,5 +218,10 @@
   "format.duration.days": "%days%j",
   "format.duration.hours": "%hours%h",
   "format.duration.minutes": "%minutes%m",
-  "format.duration.seconds": "%seconds%s"
+  "format.duration.seconds": "%seconds%s",
+
+  "leaderboard.scope.total": "Toujours",
+  "leaderboard.scope.monthly": "Mensuel",
+  "leaderboard.scope.weekly": "Hebdomadaire",
+  "leaderboard.scope.daily": "Journalier"
 }

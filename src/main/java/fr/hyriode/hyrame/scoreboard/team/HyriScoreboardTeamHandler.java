@@ -7,10 +7,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Project: Hyrame
@@ -20,7 +17,7 @@ import java.util.List;
 public class HyriScoreboardTeamHandler {
 
     /** Teams */
-    private final List<HyriScoreboardTeam> teams;
+    private final Set<HyriScoreboardTeam> teams;
     /** Receivers */
     private final List<OfflinePlayer> receivers;
 
@@ -28,7 +25,7 @@ public class HyriScoreboardTeamHandler {
      * Constructor of {@link HyriScoreboardTeamHandler}
      */
     public HyriScoreboardTeamHandler() {
-        this.teams = new ArrayList<>();
+        this.teams = new HashSet<>();
         this.receivers = new ArrayList<>();
     }
 
@@ -230,9 +227,12 @@ public class HyriScoreboardTeamHandler {
         this.removeFromAllTeams(player.getName());
     }
 
-    private void sendTeam(Player player, HyriScoreboardTeam team) {
-        ScoreboardTeamPacket.createTeam(player, team);
-        ScoreboardTeamPacket.sendTeam(player, team);
+    private void sendTeam(Player target, HyriScoreboardTeam team) {
+        ScoreboardTeamPacket.createTeam(target, team);
+
+        for (String player : team.getPlayers()) {
+            ScoreboardTeamPacket.addPlayerToTeam(target, team, player);
+        }
     }
 
     private void removeTeam(Player player, HyriScoreboardTeam team) {
@@ -311,12 +311,8 @@ public class HyriScoreboardTeamHandler {
             PacketUtil.sendPacket(player, getPacket(team, 2));
         }
 
-        public static void sendTeam(Player player, HyriScoreboardTeam team) {
-            PacketUtil.sendPacket(player, getPacket(team, 3));
-        }
-
         public static void addPlayerToTeam(Player receiver, HyriScoreboardTeam team, String player) {
-            PacketUtil.sendPacket(receiver, getPacket(team, Collections.singletonList(player), 3));
+            PacketUtil.sendPacket(receiver, getPacket(team, Collections.singleton(player), 3));
         }
 
         public static void addPlayerToTeam(Player receiver, HyriScoreboardTeam team, Player player) {
@@ -325,7 +321,7 @@ public class HyriScoreboardTeamHandler {
 
         public static void removePlayerFromTeam(Player receiver, HyriScoreboardTeam team, String player) {
             if (team.getPlayers().contains(player)) {
-                PacketUtil.sendPacket(receiver, getPacket(team, Collections.singletonList(player), 4));
+                PacketUtil.sendPacket(receiver, getPacket(team, Collections.singleton(player), 4));
             }
         }
 
@@ -333,22 +329,25 @@ public class HyriScoreboardTeamHandler {
             removePlayerFromTeam(receiver, team, player.getName());
         }
 
-        private static Packet<?> getPacket(HyriScoreboardTeam team, List<String> newPlayers, int mode) {
+        private static Packet<?> getPacket(HyriScoreboardTeam team, Set<String> newPlayers, int mode) {
             final PacketPlayOutScoreboardTeam packet = new PacketPlayOutScoreboardTeam();
 
             if (newPlayers == null) {
-                newPlayers = new ArrayList<>();
+                newPlayers = new HashSet<>();
+            }
+
+            if (mode != 3) {
+                Reflection.setField("b", packet, "");
+                Reflection.setField("c", packet, team.getPrefix());
+                Reflection.setField("d", packet, team.getSuffix());
+                Reflection.setField("e", packet, team.getNameTagVisibility().toString());
+                Reflection.setField("f", packet, 0);
+                Reflection.setField("i", packet, 0);
             }
 
             Reflection.setField("a", packet, team.getRealName());
-            Reflection.setField("b", packet, team.getDisplay());
-            Reflection.setField("c", packet, team.getPrefix());
-            Reflection.setField("d", packet, team.getSuffix());
-            Reflection.setField("e", packet, team.getNameTagVisibility().toString());
-            Reflection.setField("f", packet, newPlayers.size());
             Reflection.setField("g", packet, newPlayers);
             Reflection.setField("h", packet, mode);
-            Reflection.setField("i", packet, 0);
 
             return packet;
         }

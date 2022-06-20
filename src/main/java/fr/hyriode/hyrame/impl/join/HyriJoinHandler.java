@@ -86,8 +86,6 @@ public class HyriJoinHandler implements IHyriJoinHandler {
 
         final HyriGameReconnectEvent event = new HyriGameReconnectEvent(game, gamePlayer);
 
-        System.out.println("Reconnecting " + player.toString());
-
         HyriAPI.get().getEventBus().publish(event);
 
         return event.isAllowed() ? HyriJoinResponse.ALLOW : HyriJoinResponse.DENY_OTHER;

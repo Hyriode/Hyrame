@@ -9,7 +9,7 @@ apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 group = 'fr.hyriode'
-version = '1.2.6'
+version = '1.2.7'
 archivesBaseName = 'Hyrame'
 
 java {
@@ -104,7 +104,7 @@ publishing {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    shade 'fr.hyriode:hyriapi:1.2.1'
+    shade 'fr.hyriode:hyriapi:1.2.2'
     shade 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
 }
 
