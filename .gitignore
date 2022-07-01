@@ -121,4 +121,5 @@ run/
 # Avoid ignoring Spigot jar file
 !spigot-1.8.8-R0.1-SNAPSHOT-latest.jar
 
+Basketball.java
 todo/
