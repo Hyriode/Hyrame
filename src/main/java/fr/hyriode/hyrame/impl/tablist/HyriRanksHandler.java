@@ -49,7 +49,6 @@ public class HyriRanksHandler {
             final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(playerId);
             final IHyriNickname nickname = account.getNickname();
             final HyriRank rank = account.getRank();
-            final IHyriRankType rankType = rank.getType();
 
             final HyriScoreboardTeam team;
             if (nickname != null) {
@@ -60,7 +59,7 @@ public class HyriRanksHandler {
                 if (oldTeam == null) {
                     final String display = rank.withSeparator() ? ChatColor.translateAlternateColorCodes('&', account.getPrefix()) + HyriRank.SEPARATOR + rank.getMainColor() : rank.getMainColor().toString();
 
-                    team = new HyriScoreboardTeam(playerId.toString(), this.getAlphabetLetter(8) + teamPlayerName, display, display, "");
+                    team = new HyriScoreboardTeam(playerId.toString(), this.getAlphabetLetter(account.getTabListPriority()) + teamPlayerName, display, display, "");
 
                     this.tabListManager.registerTeam(team);
                 } else {
@@ -75,7 +74,7 @@ public class HyriRanksHandler {
                     final String prefix = account.getPrefix();
                     final String display = ChatColor.translateAlternateColorCodes('&', prefix) + HyriRank.SEPARATOR + rank.getMainColor();
 
-                    team = new HyriScoreboardTeam(playerId.toString(), this.getAlphabetLetter(rankType.getPriority()) + teamPlayerName, display, display, "");
+                    team = new HyriScoreboardTeam(playerId.toString(), this.getAlphabetLetter(account.getTabListPriority()) + teamPlayerName, display, display, "");
 
                     this.tabListManager.registerTeam(team);
                 } else {

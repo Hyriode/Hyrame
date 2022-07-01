@@ -56,7 +56,9 @@ public abstract class HyriCommand<T extends JavaPlugin> {
      * @param callback Callback to fire after
      */
     protected void handleArgument(HyriCommandContext ctx, String expected, Function<CommandSender, BaseComponent[]> usage, Consumer<HyriCommandOutput> callback) {
-        if (ctx.getResult() == null || ctx.getResult().getType() == HyriCommandResult.Type.ERROR) {
+        final HyriCommandResult result = ctx.getResult();
+
+        if (result == null || result.getType() == HyriCommandResult.Type.ERROR) {
             final String[] expectedArgs = expected.toLowerCase(Locale.ROOT).split(" ");
             final String[] args = ctx.getArgs();
 
@@ -94,9 +96,8 @@ public abstract class HyriCommand<T extends JavaPlugin> {
                     }
 
                     final boolean continueProcess = check.runAction(ctx, output, arg);
-                    final HyriCommandResult result = ctx.getResult();
 
-                    if (result.getType() == HyriCommandResult.Type.ERROR) {
+                    if (ctx.getResult().getType() == HyriCommandResult.Type.ERROR) {
                         return;
                     }
 

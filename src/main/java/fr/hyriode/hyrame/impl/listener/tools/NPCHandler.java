@@ -115,7 +115,7 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
                 continue;
             }
 
-            final Location location = npc.getLocation();
+            final Location location = npc.getLocation().clone();
 
             if (location.distance(player.getLocation()) > 4.0D) {
                 continue;
@@ -124,8 +124,6 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
             final Vector direction = player.getLocation().toVector().subtract(npc.getLocation().toVector());
 
             location.setDirection(direction);
-
-            npc.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 
             PacketUtil.sendPacket(player, npc.getTeleportPacket());
 

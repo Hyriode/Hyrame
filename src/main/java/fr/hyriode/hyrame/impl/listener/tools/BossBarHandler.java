@@ -8,7 +8,10 @@ import fr.hyriode.hyrame.listener.HyriListener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 /**
@@ -24,11 +27,6 @@ public class BossBarHandler extends HyriListener<HyramePlugin> {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent event) {
-        BossBarManager.removeBar(event.getPlayer());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onKick(PlayerKickEvent event) {
         BossBarManager.removeBar(event.getPlayer());
     }
 

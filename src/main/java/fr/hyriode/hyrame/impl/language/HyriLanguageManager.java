@@ -31,10 +31,7 @@ public class HyriLanguageManager implements IHyriLanguageManager {
 
     private final Set<HyriLanguageMessage> messages;
 
-    private final Hyrame hyrame;
-
-    public HyriLanguageManager(Hyrame hyrame) {
-        this.hyrame = hyrame;
+    public HyriLanguageManager() {
         this.messages = ConcurrentHashMap.newKeySet();
     }
 
@@ -86,10 +83,10 @@ public class HyriLanguageManager implements IHyriLanguageManager {
 
     @Override
     public void updatePlayerLanguage(Player player) {
-        final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
+        final IHyriPlayer account = IHyriPlayer.get(player.getUniqueId());
         final HyriLanguageUpdatedEvent event = new HyriLanguageUpdatedEvent(player, account.getSettings().getLanguage());
 
-        HyriAPI.get().getEventBus().publishAsync(event);
+        HyriAPI.get().getEventBus().publish(event);
     }
 
     @Override

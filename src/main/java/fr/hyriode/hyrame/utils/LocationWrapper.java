@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.utils;
 
+import com.google.gson.annotations.Expose;
 import fr.hyriode.hyrame.IHyrame;
 import org.bukkit.Location;
 
@@ -11,6 +12,9 @@ import java.util.UUID;
  * on 20/04/2022 at 17:47
  */
 public class LocationWrapper {
+
+    @Expose(serialize = false, deserialize = false)
+    private Location location;
 
     private UUID worldId;
     private double x;
@@ -85,7 +89,7 @@ public class LocationWrapper {
     }
 
     public Location asBukkit() {
-        return new Location(IHyrame.WORLD.get(), this.x, this.y, this.z, this.yaw, this.pitch);
+        return this.location == null ? this.location = new Location(IHyrame.WORLD.get(), this.x, this.y, this.z, this.yaw, this.pitch) : this.location;
     }
 
     public static LocationWrapper from(Location location) {

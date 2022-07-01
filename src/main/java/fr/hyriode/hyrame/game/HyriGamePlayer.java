@@ -16,8 +16,8 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.UUID;
 
-import static fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent.*;
-import static fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent.Action.*;
+import static fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent.Action.ADD;
+import static fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent.Action.REMOVE;
 
 /**
  * Project: Hyrame

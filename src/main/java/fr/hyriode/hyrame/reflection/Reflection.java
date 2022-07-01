@@ -34,7 +34,7 @@ public class Reflection {
 
     public static Field getField(Class<?> objectClass, String fieldName) {
         try {
-            final Field field = objectClass.getDeclaredField(fieldName);
+            Field field = objectClass.getDeclaredField(fieldName);
 
             field.setAccessible(true);
 

@@ -2,8 +2,7 @@ package fr.hyriode.hyrame.impl.module.chat.message;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.api.settings.HyriPrivateMessagesLevel;
-import fr.hyriode.api.settings.IHyriPlayerSettings;
+import fr.hyriode.api.settings.HyriSettingsLevel;
 import fr.hyriode.api.sound.HyriSound;
 import fr.hyriode.api.sound.HyriSoundPacket;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
@@ -12,6 +11,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -52,39 +52,30 @@ public class PrivateMessageModule {
             return;
         }
 
-        final IHyriPlayerSettings settings = target.getSettings();
-        final HyriPrivateMessagesLevel level = settings.getPrivateMessagesLevel();
-
-        if (!senderAccount.getRank().isStaff()) {
-            if (level == HyriPrivateMessagesLevel.NONE) {
-                sender.sendMessage(HyriLanguageMessage.get("message.private.doesnt-accept").getForPlayer(sender).replace("%player%", target.getNameWithRank()));
-                return;
-            } else if (level == HyriPrivateMessagesLevel.FRIENDS) {
-                HyriAPI.get().getFriendManager().createHandlerAsync(targetId).whenComplete((friendHandler, throwable) -> {
-                    if (friendHandler.areFriends(senderId)) {
-                        this.sendPrivateMessage0(target, senderAccount, message);
-                        return;
-                    }
-
-                    sender.sendMessage(HyriLanguageMessage.get("message.private.accept-friends").getForPlayer(sender).replace("%player%", target.getNameWithRank()));
-                });
-                return;
-            }
-        }
-
         this.sendPrivateMessage0(target, senderAccount, message);
     }
 
     private void sendPrivateMessage0(IHyriPlayer target, IHyriPlayer sender, String message) {
+        final UUID targetId = target.getUniqueId();
+        final UUID senderId = sender.getUniqueId();
+        final HyriSettingsLevel sendLevel = target.getSettings().getPrivateMessagesLevel();
+        final HyriSettingsLevel soundLevel = target.getSettings().getPrivateMessagesSoundLevel();
+        final boolean areFriends = HyriAPI.get().getFriendManager().createHandler(targetId).areFriends(senderId);
+        final boolean isStaff = sender.getRank().isStaff();
+
         target.setLastPrivateMessagePlayer(sender.getUniqueId());
         target.update();
 
-        if (target.getSettings().isPrivateMessagesSoundEnabled()) {
-            HyriSoundPacket.send(target.getUniqueId(), HyriSound.ORB_PICKUP, 1.0F, 1.5F);
-        }
+        if (sendLevel == HyriSettingsLevel.ALL || (sendLevel == HyriSettingsLevel.FRIENDS && areFriends) || isStaff) {
+            if (soundLevel == HyriSettingsLevel.ALL || (soundLevel == HyriSettingsLevel.FRIENDS && areFriends) || isStaff) {
+                HyriSoundPacket.send(targetId, HyriSound.ORB_PICKUP, 1.0F, 1.5F);
+            }
 
-        PlayerUtil.sendComponent(target.getUniqueId(), this.createReceivedMessage(target, sender, message));
-        PlayerUtil.sendComponent(sender.getUniqueId(), this.createSentMessage(target, sender, message));
+            PlayerUtil.sendComponent(targetId, this.createReceivedMessage(target, sender, message));
+            PlayerUtil.sendComponent(senderId, this.createSentMessage(target, sender, message));
+        } else {
+            Bukkit.getPlayer(senderId).sendMessage(HyriLanguageMessage.get("message.private.doesnt-accept").getForPlayer(sender).replace("%player%", target.getNameWithRank()));
+        }
     }
 
     private TextComponent createReceivedMessage(IHyriPlayer target, IHyriPlayer sender, String message) {

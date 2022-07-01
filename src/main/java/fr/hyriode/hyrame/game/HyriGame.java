@@ -17,9 +17,6 @@ import fr.hyriode.hyrame.game.event.player.HyriGameLeaveEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameReconnectedEvent;
 import fr.hyriode.hyrame.game.event.team.HyriGameTeamRegisteredEvent;
 import fr.hyriode.hyrame.game.event.team.HyriGameTeamUnregisteredEvent;
-import fr.hyriode.hyrame.game.protocol.HyriGameProtocolManager;
-import fr.hyriode.hyrame.game.protocol.HyriSpectatorProtocol;
-import fr.hyriode.hyrame.game.protocol.HyriWaitingProtocol;
 import fr.hyriode.hyrame.game.protocol.*;
 import fr.hyriode.hyrame.game.tablist.HyriGameTabListManager;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
@@ -31,7 +28,6 @@ import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.BroadcastUtil;
 import fr.hyriode.hyrame.utils.PlayerUtil;
-import fr.hyriode.hyrame.game.protocol.HyriWinProtocol;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -257,7 +253,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
         gamePlayer.setOnline(false);
 
-        if (!this.isReconnectionAllowed() || this.state != HyriGameState.PLAYING) {
+        if (!this.isReconnectionAllowed() || this.state != HyriGameState.PLAYING || (gamePlayer.hasTeam() && gamePlayer.getTeam().getPlayersPlaying().size() > 1)) {
             this.players.remove(gamePlayer);
 
             if (gamePlayer.hasTeam()) {

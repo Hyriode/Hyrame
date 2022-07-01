@@ -54,17 +54,28 @@ public class TimeUtil {
     }
 
     /**
+     * Format a given date with a given pattern
+     *
+     * @param date The date to format
+     * @param pattern The pattern used to format the date
+     * @return A formatted date
+     */
+    public static String formatDate(Date date, String pattern) {
+        final SimpleDateFormat format = new SimpleDateFormat(pattern);
+
+        format.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+
+        return format.format(date);
+    }
+
+    /**
      * Format a given date to the default pattern
      *
      * @param date The date to format
      * @return A formatted date
      */
     public static String formatDate(Date date) {
-        final SimpleDateFormat format = new SimpleDateFormat(DEFAULT_PATTERN);
-
-        format.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
-
-        return format.format(date);
+        return formatDate(date, DEFAULT_PATTERN);
     }
 
 }

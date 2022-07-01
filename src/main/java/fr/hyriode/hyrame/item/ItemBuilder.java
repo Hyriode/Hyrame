@@ -133,6 +133,10 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder withHeadTexture(ItemHead head) {
+        return this.withHeadTexture(head.getTexture());
+    }
+
     public ItemBuilder withItemFlags(ItemFlag... itemFlags) {
         this.itemMeta.addItemFlags(itemFlags);
         return this;

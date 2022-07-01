@@ -77,7 +77,6 @@
   "message.private.sent": "&3Sent to %player%&b:",
   "message.private.reply": "&7Reply to %player%",
   "message.private.doesnt-accept": "%player% &cdoesn't accept private messages!",
-  "message.private.accept-friends": "%player% &conly accepts private messages from his friends!",
 
   "message.lobby.already-in": "&cYou are already in the lobby!",
   "message.lobby.sending": "&aYou will be teleported in the lobby.",
@@ -123,6 +122,8 @@
   "message.friend.list-player-offline": "%player% &cis offline",
   "message.friend.no-space": "&cYou already reached the maximum friends limit!",
   "message.friend.full": "&cThis player already reached the maximum friends limit!",
+  "message.friend.joined": "&dFriends &f┃ %player% &ajoined.",
+  "message.friend.left": "&dFriends &f┃ %player% &cleft.",
   "hover.friend.accept": "&aAccept the friend request",
   "hover.friend.deny": "&cDeny the friend request",
 

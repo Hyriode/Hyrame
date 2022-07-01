@@ -86,7 +86,7 @@ public class Hyrame implements IHyrame {
         this.plugin = plugin;
         this.configuration = new HyrameConfiguration();
         this.scanner = new HyriScanner();
-        this.languageManager = new HyriLanguageManager(this);
+        this.languageManager = new HyriLanguageManager();
         this.listenerManager = new HyriListenerManager(this);
         this.commandManager = new HyriCommandManager(this);
         this.itemManager = new HyriItemManager(this);
@@ -117,6 +117,19 @@ public class Hyrame implements IHyrame {
         new SignGUIManager(this, this.plugin);
 
         HyriAPI.get().getServerManager().getJoinManager().registerHandler(10, new HyriJoinHandler(this));
+
+        /*// Basketball TESTS
+        final World world = IHyrame.WORLD.get();
+
+        for (Entity entity : world.getEntities()) {
+            if (entity instanceof Slime) {
+                entity.remove();
+            }
+        }
+
+        final Basketball basketball = new Basketball(this.plugin, new Basketball.Config(new Location(world, -109.5, 100, 63.5), new Area(new Location(world, -123, 116, 70), new Location(world, -96, 95, 55))));
+
+        basketball.start();*/
     }
 
     void disable() {

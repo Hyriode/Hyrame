@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.language;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.hyrame.game.HyriGamePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -110,7 +111,7 @@ public class HyriLanguageMessage {
      * @return - Value
      */
     public String getValue(HyriLanguage language) {
-        return this.values.getOrDefault(language, new ArrayList<>(this.values.entrySet()).get(0).getValue());
+        return this.values.getOrDefault(language, this.values.size() > 0 ? new ArrayList<>(this.values.values()).get(0) : "?");
     }
 
     /**
@@ -131,6 +132,16 @@ public class HyriLanguageMessage {
      */
     public String getForPlayer(Player player) {
         return this.getForPlayer(HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId()));
+    }
+
+    /**
+     * Get the value of the message for a given game player
+     *
+     * @param gamePlayer The game player
+     * @return The found value
+     */
+    public String getForPlayer(HyriGamePlayer gamePlayer) {
+        return this.getForPlayer(HyriAPI.get().getPlayerManager().getPlayer(gamePlayer.getUUID()));
     }
 
     /**

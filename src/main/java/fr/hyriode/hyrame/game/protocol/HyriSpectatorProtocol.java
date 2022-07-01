@@ -11,7 +11,7 @@ import fr.hyriode.hyrame.utils.PlayerUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import static fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent.*;
+import static fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent.Action;
 
 /**
  * Project: Hyrame

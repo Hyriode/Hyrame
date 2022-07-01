@@ -29,6 +29,7 @@ public class FriendModule {
     public FriendModule() {
         this.friendManager = HyriAPI.get().getFriendManager();
 
+        HyriAPI.get().getNetworkManager().getEventBus().register(new FriendListener());
         HyriAPI.get().getPubSub().subscribe(IHyriFriendManager.REDIS_CHANNEL, new FriendReceiver(this));
     }
 

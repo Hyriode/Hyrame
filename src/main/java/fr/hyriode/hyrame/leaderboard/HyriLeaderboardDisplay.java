@@ -17,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -40,33 +41,31 @@ public class HyriLeaderboardDisplay {
     private boolean showing;
 
     protected Map<UUID, HyriLeaderboardScope> currentScopes;
-    protected Map<HyriLeaderboardScope, IHyriLeaderboard> leaderboards;
+    protected IHyriLeaderboard leaderboard;
 
     protected final JavaPlugin plugin;
     protected final String leaderboardType;
     protected final String leaderboardName;
     protected final Function<Player, String> header;
+    protected final BiFunction<Player, Long, String> scoreFormatter;
     /** The time to wait between each update of the leaderboard */
     protected final long updateTime;
     protected final Location location;
 
     protected final List<HyriLeaderboardScope> scopes;
 
-    public HyriLeaderboardDisplay(JavaPlugin plugin, String leaderboardType, String leaderboardName, Function<Player, String> header, long updateTime, Location location, List<HyriLeaderboardScope> scopes) {
+    public HyriLeaderboardDisplay(JavaPlugin plugin, String leaderboardType, String leaderboardName, Function<Player, String> header, BiFunction<Player, Long, String> scoreFormatter, long updateTime, Location location, List<HyriLeaderboardScope> scopes) {
         this.plugin = plugin;
         this.leaderboardType = leaderboardType;
         this.leaderboardName = leaderboardName;
         this.header = header;
+        this.scoreFormatter = scoreFormatter;
         this.updateTime = updateTime;
         this.location = location;
         this.scopes = scopes;
         this.holograms = new HashMap<>();
         this.currentScopes = new HashMap<>();
-        this.leaderboards = new HashMap<>();
-
-        for (HyriLeaderboardScope scope : this.scopes) {
-            this.leaderboards.put(scope, HyriAPI.get().getLeaderboardManager().getLeaderboard(this.leaderboardType, this.leaderboardName, scope));
-        }
+        this.leaderboard = HyriAPI.get().getLeaderboardProvider().getLeaderboard(leaderboardType, leaderboardName);
     }
 
     public void show() {
@@ -86,7 +85,7 @@ public class HyriLeaderboardDisplay {
     public void handleLogin(Player player) {
         final UUID playerId = player.getUniqueId();
 
-        final List<ScopeWrapper> wrappers = this.leaderboards.keySet().stream().map(ScopeWrapper::get).sorted(Comparator.comparingInt(scopeWrapper -> scopeWrapper != null ? scopeWrapper.getIndex() : 0)).collect(Collectors.toList());
+        final List<ScopeWrapper> wrappers = this.scopes.stream().map(ScopeWrapper::get).sorted(Comparator.comparingInt(scopeWrapper -> scopeWrapper != null ? scopeWrapper.getIndex() : 0)).collect(Collectors.toList());
 
         this.currentScopes.put(playerId, wrappers.get(0).getInitial());
 
@@ -116,7 +115,7 @@ public class HyriLeaderboardDisplay {
     }
 
     private Hologram createHologram(Player player) {
-        final Supplier<IHyriLeaderboard> leaderboard = () -> this.leaderboards.get(this.currentScopes.get(player.getUniqueId()));
+        final Supplier<HyriLeaderboardScope> scoreSupplier = () -> this.currentScopes.get(player.getUniqueId());
 
         final Map<Integer, Line> lines = new HashMap<>();
 
@@ -124,7 +123,7 @@ public class HyriLeaderboardDisplay {
             lines.put(0, new Line(this.header));
         }
 
-        final Supplier<List<HyriLeaderboardScore>> scoresSupplier = () -> leaderboard.get().getScores(0, 9);
+        final Supplier<List<HyriLeaderboardScore>> scoresSupplier = () -> this.leaderboard.getScores(scoreSupplier.get(), 0, 9);
 
         for (int i = 1; i <= 10; i++) {
             final int position = i;
@@ -132,24 +131,23 @@ public class HyriLeaderboardDisplay {
                 final List<HyriLeaderboardScore> scores = scoresSupplier.get();
                 final HyriLeaderboardScore score = scores.size() > position - 1 ? scores.get(position - 1) : null;
 
-                return score == null ? this.createPositionLine(position, "************", 0) : this.createPositionLine(position, HyriAPI.get().getPlayerManager().getPrefix(score.getId()), score.getValue());
+                return score == null ? this.createPositionLine(position, "************", this.scoreFormatter.apply(player, 0L)) : this.createPositionLine(position, HyriAPI.get().getPlayerManager().getPrefix(score.getId()), this.scoreFormatter.apply(player, score.getValue()));
             });
 
             lines.put(i, line);
         }
 
         lines.put(11, new Line(target -> {
+            final HyriLeaderboardScope scope = scoreSupplier.get();
             final UUID targetId = target.getUniqueId();
-            final long position = leaderboard.get().getPosition(targetId);
+            final long position = this.leaderboard.getPosition(scope, targetId);
 
-            return ChatColor.DARK_GRAY + "▶ " + this.createPositionLine(position == -1 ? position : position + 1, HyriAPI.get().getPlayerManager().getPrefix(targetId), leaderboard.get().getScore(targetId)) + ChatColor.DARK_GRAY + " ◀";
+            return ChatColor.DARK_GRAY + "▶ " + this.createPositionLine(position == -1 ? position : position + 1, HyriAPI.get().getPlayerManager().getPrefix(targetId), this.scoreFormatter.apply(target, this.leaderboard.getScore(scope, targetId))) + ChatColor.DARK_GRAY + " ◀";
         }));
 
         if (this.scopes.size() != 1) {
-            final List<ScopeWrapper> wrappers = this.leaderboards.keySet().stream().map(ScopeWrapper::get).sorted(Comparator.comparingInt(scopeWrapper -> scopeWrapper != null ? scopeWrapper.getIndex() : 0)).collect(Collectors.toList());
+            final List<ScopeWrapper> wrappers = this.scopes.stream().map(ScopeWrapper::get).sorted(Comparator.comparingInt(scopeWrapper -> scopeWrapper != null ? scopeWrapper.getIndex() : 0)).collect(Collectors.toList());
             final Pagination<ScopeWrapper> pagination = new Pagination<>(3, wrappers);
-
-            System.out.println(wrappers.size());
 
             int line = 13;
             for (int i = 0; i < pagination.totalPages(); i++) {
@@ -187,7 +185,7 @@ public class HyriLeaderboardDisplay {
                     }
 
                     ScopeWrapper nextScope = wrapper.next();
-                    while (!this.leaderboards.containsKey(nextScope.getInitial())) {
+                    while (!this.scopes.contains(nextScope.getInitial())) {
                         nextScope = nextScope.next();
                     }
 
@@ -200,11 +198,11 @@ public class HyriLeaderboardDisplay {
                 .build();
     }
 
-    private String createPositionLine(long position, String prefix, long score) {
+    private String createPositionLine(long position, String prefix, String score) {
         return LINE_FORMAT
                 .replace("%position%", position <= 0 ? "?" : String.valueOf(position))
                 .replace("%prefix%", prefix)
-                .replace("%score%", String.valueOf(score));
+                .replace("%score%", score);
     }
 
     public void hide() {
@@ -313,6 +311,7 @@ public class HyriLeaderboardDisplay {
         private Location location;
 
         private Function<Player, String> header;
+        private BiFunction<Player, Long, String> scoreFormatter = (target, score) -> String.valueOf(score);
 
         private long updateTime = -1;
 
@@ -373,6 +372,15 @@ public class HyriLeaderboardDisplay {
             return this;
         }
 
+        public BiFunction<Player, Long, String> getScoreFormatter() {
+            return this.scoreFormatter;
+        }
+
+        public Builder withScoreFormatter(BiFunction<Player, Long, String> scoreFormatter) {
+            this.scoreFormatter = scoreFormatter;
+            return this;
+        }
+
         public long getUpdateTime() {
             return this.updateTime;
         }
@@ -383,7 +391,7 @@ public class HyriLeaderboardDisplay {
         }
 
         public HyriLeaderboardDisplay build() {
-            return new HyriLeaderboardDisplay(this.plugin, this.leaderboardType, this.leaderboardName, this.header, this.updateTime, this.location, this.scopes);
+            return new HyriLeaderboardDisplay(this.plugin, this.leaderboardType, this.leaderboardName, this.header, scoreFormatter, this.updateTime, this.location, this.scopes);
         }
 
     }

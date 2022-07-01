@@ -48,7 +48,15 @@ class HyriGameHandler implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onClick(InventoryClickEvent event) {
-        this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING || game.getPlayer((Player) event.getWhoClicked()).isSpectator());
+        this.runActionOnGame(game -> event.setCancelled(true), game -> {
+            final HyriGamePlayer gamePlayer = game.getPlayer((Player) event.getWhoClicked());
+
+            if (gamePlayer == null) {
+                return false;
+            }
+
+            return game.getState() != HyriGameState.PLAYING || gamePlayer.isSpectator();
+        });
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -91,7 +99,15 @@ class HyriGameHandler implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
-            this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING || game.getPlayer(event.getEntity().getUniqueId()).isDead() || game.getPlayer(event.getEntity().getUniqueId()).isSpectator());
+            this.runActionOnGame(game -> event.setCancelled(true), game -> {
+                final HyriGamePlayer gamePlayer = game.getPlayer(event.getEntity().getUniqueId());
+
+                if (gamePlayer == null) {
+                    return false;
+                }
+
+                return game.getState() != HyriGameState.PLAYING || gamePlayer.isDead() ||gamePlayer.isSpectator();
+            });
         }
     }
 
@@ -111,7 +127,15 @@ class HyriGameHandler implements Listener {
                     }
                 }
             }
-        }, game -> game.getState() == HyriGameState.PLAYING);
+        }, game -> {
+            final HyriGamePlayer gamePlayer = game.getPlayer(event.getEntity().getUniqueId());
+
+            if (gamePlayer == null) {
+                return false;
+            }
+
+            return game.getState() == HyriGameState.PLAYING;
+        });
     }
 
     private boolean cancelDamages(Player player, Player target) {

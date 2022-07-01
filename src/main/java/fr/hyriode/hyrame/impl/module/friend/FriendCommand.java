@@ -15,7 +15,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -49,8 +48,6 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
         final UUID playerId = player.getUniqueId();
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(playerId);
         final IHyriFriendHandler friendHandler = HyriAPI.get().getFriendManager().createHandler(playerId);
-
-        this.handleArgument(ctx, "add %player%", this.addFriend(player, friendHandler));
 
         this.handleArgument(ctx, "accept %player%", output -> {
             final IHyriPlayer sender = output.get(IHyriPlayer.class);
@@ -104,6 +101,7 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
         this.handleArgument(ctx, "list", output -> listFriends(0, player, friendHandler));
         this.handleArgument(ctx, "help", output -> player.spigot().sendMessage(getHelp(player)));
         this.handleArgument(ctx, "%player_online%", this.addFriend(player, friendHandler));
+        this.handleArgument(ctx, "add %player_online%", this.addFriend(player, friendHandler));
     }
 
     private Consumer<HyriCommandOutput> addFriend(Player player, IHyriFriendHandler friendHandler) {

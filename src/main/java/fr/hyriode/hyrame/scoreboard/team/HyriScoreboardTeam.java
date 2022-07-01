@@ -2,12 +2,8 @@ package fr.hyriode.hyrame.scoreboard.team;
 
 import org.bukkit.OfflinePlayer;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Project: Hyrame

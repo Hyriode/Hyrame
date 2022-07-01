@@ -192,6 +192,17 @@ public class Hologram {
     }
 
     /**
+     * Set the value of a given line
+     *
+     * @param index The index of the line
+     * @param line The new line
+     */
+    public void setLine(int index, Line line) {
+        this.lines.put(index, line);
+        this.updateLine(index);
+    }
+
+    /**
      * Remove all lines from players
      */
     public void removeLines() {
@@ -298,7 +309,7 @@ public class Hologram {
      */
     private void generateEntities(Player player) {
         final Map<Integer, EntityArmorStand> entities = this.entities.containsKey(player) ? this.entities.get(player) : new HashMap<>();
-        final Location first = this.location.clone().add(0, ((float) this.lines.size() / 2) * this.linesDistance, 0);
+        final Location first = this.location.clone().add(0, this.lines.size() * (this.linesDistance + 0.05D), 0);
 
         for (int i = 0; i <= ListUtil.getMaxValue(new ArrayList<>(this.lines.keySet())); i++) {
             final Line line = this.lines.get(i);
@@ -311,7 +322,7 @@ public class Hologram {
                 }
             }
 
-            first.subtract(0, this.linesDistance, 0);
+            first.subtract(0, this.linesDistance + 0.05D, 0);
         }
 
         this.entities.put(player, entities);
@@ -330,7 +341,11 @@ public class Hologram {
         armorStand.setInvisible(true);
         armorStand.setGravity(false);
         armorStand.setCustomName(text);
-        // armorStand.n(true); It removes collision, but doesn't handle interaction
+
+        if (this.interactionCallback == null) {
+            armorStand.n(true);
+        }
+
         armorStand.setBasePlate(false);
         armorStand.setCustomNameVisible(true);
         armorStand.setLocation(location.getX(), location.getY(), location.getZ(), 0, 0);
@@ -558,8 +573,7 @@ public class Hologram {
         }
 
         public Line withValueFromString(Supplier<String> value) {
-            this.withValue(target -> value.get());
-            return this;
+            return this.withValue(target -> value.get());
         }
 
         public Update getUpdate() {
@@ -628,10 +642,10 @@ public class Hologram {
 
         private Location location;
 
-        private double linesDistance = 0.35D;
+        private double linesDistance = 0.30D;
         private Map<Integer, Line> lines = new HashMap<>();
 
-        private Consumer<Player> interactionCallback = player -> {};
+        private Consumer<Player> interactionCallback;
 
         public Builder(JavaPlugin plugin) {
             this.plugin = plugin;

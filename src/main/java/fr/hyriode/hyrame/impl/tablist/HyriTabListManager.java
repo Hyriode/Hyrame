@@ -158,7 +158,7 @@ public class HyriTabListManager implements ITabListManager {
     private TeamHandler getTeamHandler(Player player) {
         final HyriScoreboardTeam team = this.getPlayerTeam(player);
 
-        return team == null ? null : this.teamHandlers.get(team.getName());
+        return team == null ? null : this.teamHandlers.get(team.getName().replace("-h", ""));
     }
 
     public HyriRanksHandler getRanksHandler() {

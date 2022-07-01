@@ -155,7 +155,7 @@ public class NPCManager {
         sendMetadataNPC(npc);
 
         if (hologramLines != null) {
-            final Hologram hologram = new Hologram.Builder(plugin, npc.getLocation().clone().add(0.0D, 1.8D, 0.0D))
+            final Hologram hologram = new Hologram.Builder(plugin, npc.getLocation().clone().add(0.0D, 1.5D, 0.0D))
                     .withLinesAsString(Arrays.asList(hologramLines))
                     .build();
 

@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
@@ -29,11 +28,6 @@ public class TabListener extends HyriListener<HyramePlugin> {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onQuit(PlayerQuitEvent event) {
-        this.plugin.getHyrame().getTabManager().onLogout(event.getPlayer());
-    }
-
-    @EventHandler(priority = EventPriority.LOW)
-    public void onKick(PlayerKickEvent event) {
         this.plugin.getHyrame().getTabManager().onLogout(event.getPlayer());
     }
 

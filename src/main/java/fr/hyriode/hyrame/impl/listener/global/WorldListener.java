@@ -35,6 +35,10 @@ public class WorldListener extends HyriListener<HyramePlugin> {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM) {
+            return;
+        }
+
         event.setCancelled(true);
     }
 

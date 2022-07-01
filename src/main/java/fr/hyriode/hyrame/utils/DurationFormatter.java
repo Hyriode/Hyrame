@@ -104,19 +104,19 @@ public class DurationFormatter {
     public String format(HyriLanguage language, long days, long hours, long minutes, long seconds) {
         final StringBuilder result = new StringBuilder();
 
-        if (this.days && days != -1) {
+        if (this.days && days > 0) {
             result.append(HyriLanguageMessage.get("format.duration.days").getValue(language).replace("%days%", String.valueOf(days))).append(" ");
         }
 
-        if (this.hours && hours != -1) {
+        if (this.hours && hours > 0) {
             result.append(HyriLanguageMessage.get("format.duration.hours").getValue(language).replace("%hours%", String.valueOf(hours))).append(" ");
         }
 
-        if (this.minutes && minutes != -1) {
+        if (this.minutes && minutes > 0) {
             result.append(HyriLanguageMessage.get("format.duration.minutes").getValue(language).replace("%minutes%", String.valueOf(minutes))).append(" ");
         }
 
-        if (this.seconds && seconds != -1) {
+        if (this.seconds && seconds > 0) {
             result.append(HyriLanguageMessage.get("format.duration.seconds").getValue(language).replace("%seconds%", String.valueOf(seconds)));
         }
         return result.toString();

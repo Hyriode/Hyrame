@@ -288,7 +288,7 @@ public class HyriWaitingRoom {
     /**
      * The handler class with listeners of the waiting room
      */
-    private class Handler implements Listener {
+    public class Handler implements Listener {
 
         @HyriEventHandler
         public void onJoin(HyriGameJoinEvent event) {
@@ -296,6 +296,8 @@ public class HyriWaitingRoom {
             final Player player = gamePlayer.getPlayer();
             final UUID playerId = gamePlayer.getUUID();
             final NPC npc = npcs.getOrDefault(playerId, createNPC(player));
+
+            player.teleport(config.getSpawn().asBukkit());
 
             NPCManager.sendNPC(player, npc);
         }

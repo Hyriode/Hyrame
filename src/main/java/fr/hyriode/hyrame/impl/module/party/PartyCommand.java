@@ -9,6 +9,7 @@ import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.player.IHyriPlayerManager;
 import fr.hyriode.api.rank.type.HyriPlayerRankType;
 import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.api.settings.HyriSettingsLevel;
 import fr.hyriode.hyrame.command.*;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
@@ -188,9 +189,6 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
             return;
         }
 
-        this.handleArgument(ctx, "invite %player%", this.invitePlayer(player, account));
-        this.handleArgument(ctx, "add %player%", this.invitePlayer(player, account));
-
         this.handleArgument(ctx, "accept %player_online%", this.joinParty(player, account));
         this.handleArgument(ctx, "join %player_online%", this.joinParty(player, account));
 
@@ -221,6 +219,8 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
 
         this.handleArgument(ctx, "help", output -> player.spigot().sendMessage(getHelp(player)));
         this.handleArgument(ctx, "%player_online%", this.invitePlayer(player, account));
+        this.handleArgument(ctx, "invite %player%", this.invitePlayer(player, account));
+        this.handleArgument(ctx, "add %player%", this.invitePlayer(player, account));
     }
 
     private Consumer<HyriCommandOutput> partyOutput(HyriCommandContext ctx, IHyriParty party, Consumer<HyriCommandOutput> action) {
@@ -339,7 +339,9 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
                 return;
             }
 
-            if (!target.getSettings().isPartyRequestsEnabled() && !account.getRank().isStaff()) {
+            final HyriSettingsLevel level = target.getSettings().getPartyRequestsLevel();
+
+            if ((level == HyriSettingsLevel.NONE || (level == HyriSettingsLevel.FRIENDS && !HyriAPI.get().getFriendManager().createHandler(targetId).areFriends(playerId))) && !account.getRank().isStaff()) {
                 player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-accept").getForPlayer(account).replace("%player%", target.getNameWithRank()))));
                 return;
             }
@@ -366,6 +368,10 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
             final IHyriPlayer requester = output.get(IHyriPlayer.class);
             final UUID partyId = requester.getParty();
             final IHyriParty party = this.partyManager.getParty(partyId);
+
+            if (account.isInModerationMode()) {
+                return;
+            }
 
             if (HyriAPI.get().getPartyManager().getParty(account.getParty()) != null) {
                 player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.already-in-other").getForPlayer(account))));

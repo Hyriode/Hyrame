@@ -74,16 +74,20 @@ public class HyriAntiSpawnKillProtocol extends HyriGameProtocol {
         if (entity instanceof Player && damager instanceof Player) {
             final Player player = (Player) entity;
             final Player hitter = (Player) damager;
+            final UUID hitterId = hitter.getUniqueId();
 
-            if (this.tasks.containsKey(hitter.getUniqueId())) {
+            if (this.tasks.containsKey(player.getUniqueId())) {
                 event.setCancelled(true);
                 return;
             }
 
-            final BukkitTask task = this.tasks.remove(player.getUniqueId());
+            final BukkitTask task = this.tasks.get(hitterId);
 
-            if (task != null) {
+            if (task != null && this.options.isHitReset()) {
                 task.cancel();
+                this.tasks.remove(hitterId);
+            } else if (task != null){
+                event.setCancelled(true);
             }
         }
     }
@@ -96,7 +100,7 @@ public class HyriAntiSpawnKillProtocol extends HyriGameProtocol {
 
         /** The time before allowing other players to hit the player */
         private int time;
-        /** If true, other players will be able to hit the player if the players hits another player*/
+        /** If true, other players will be able to hit the player if the players hits another player */
         private boolean hitReset;
 
         public Options(int time, boolean hitReset) {
