@@ -92,9 +92,9 @@
   "message.vanish.unset": "&fYour &3vanish &fis now &cdisabled&f!.",
   "message.vanish.game": "&You can't vanish yourself while being in a game!",
 
-  "message.discord": "&bDiscord server: ",
-  "message.website": "&bWebsite: ",
-  "message.store-website": "&bStore: ",
+  "message.discord": " &8▪ &7Discord: &b%discord%",
+  "message.website": "&8▪ &7Website: &b%website%",
+  "message.store-website": "&8▪ &7Store: &b%store%",
 
   "message.help.discord": "Discord link",
   "message.help.website": "Website link",

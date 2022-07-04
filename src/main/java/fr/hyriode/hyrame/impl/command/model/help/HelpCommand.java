@@ -48,7 +48,7 @@ public class HelpCommand extends HyriCommand<HyramePlugin> {
     }
 
     private String getCommandLine(Player player, String command) {
-        return ChatColor.AQUA + " /" + command + " - " + ChatColor.WHITE + HyriLanguageMessage.get("message.help." + command).getForPlayer(player) + "\n";
+        return ChatColor.AQUA + " /" + command + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + HyriLanguageMessage.get("message.help." + command).getForPlayer(player) + "\n";
     }
 
 }

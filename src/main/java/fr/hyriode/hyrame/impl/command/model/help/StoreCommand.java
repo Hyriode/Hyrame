@@ -31,9 +31,7 @@ public class StoreCommand extends HyriCommand<HyramePlugin> {
     public void handle(HyriCommandContext ctx) {
         final Player player = (Player) ctx.getSender();
 
-        player.spigot().sendMessage(new ComponentBuilder(HyriLanguageMessage.get("message.store-website").getForPlayer(player))
-                .append(HyriConstants.STORE_WEBSITE_URL)
-                .color(ChatColor.WHITE)
+        player.spigot().sendMessage(new ComponentBuilder(HyriLanguageMessage.get("message.store-website").getForPlayer(player).replace("%store%", HyriConstants.STORE_WEBSITE_URL))
                 .event(new ClickEvent(ClickEvent.Action.OPEN_URL, HyriConstants.STORE_WEBSITE_URL))
                 .create());
     }

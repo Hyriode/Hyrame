@@ -90,9 +90,9 @@
   "message.vanish.unset": "&fVotre &3vanish &fêtes désormais &cdésactivé&f!.",
   "message.vanish.game": "&cVous ne pouvez pas vous vanish pendant une partie!",
 
-  "message.discord": "&bLe serveur Discord: ",
-  "message.website": "&bLe site: ",
-  "message.store-website": "&bLa boutique: ",
+  "message.discord": " &8▪ &7Discord: &b%discord%",
+  "message.website": "&8▪ &7Site: &b%website%",
+  "message.store-website": "&8▪ &7Boutique: &b%store%",
 
   "message.help.discord": "Lien vers le Discord",
   "message.help.website": "Lien vers le site",

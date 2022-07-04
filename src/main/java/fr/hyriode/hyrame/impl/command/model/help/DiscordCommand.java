@@ -7,6 +7,7 @@ import fr.hyriode.hyrame.command.HyriCommandInfo;
 import fr.hyriode.hyrame.command.HyriCommandType;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.utils.Symbols;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -30,9 +31,7 @@ public class DiscordCommand extends HyriCommand<HyramePlugin> {
     public void handle(HyriCommandContext ctx) {
         final Player player = (Player) ctx.getSender();
 
-        player.spigot().sendMessage(new ComponentBuilder(HyriLanguageMessage.get("message.discord").getForPlayer(player))
-                .append(HyriConstants.DISCORD_URL)
-                .color(ChatColor.WHITE)
+        player.spigot().sendMessage(new ComponentBuilder(HyriLanguageMessage.get("message.discord").getForPlayer(player).replace("%discord%", HyriConstants.DISCORD_URL))
                 .event(new ClickEvent(ClickEvent.Action.OPEN_URL, HyriConstants.DISCORD_URL))
                 .create());
     }

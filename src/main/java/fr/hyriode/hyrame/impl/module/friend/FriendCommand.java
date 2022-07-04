@@ -69,7 +69,7 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
 
             PlayerUtil.sendComponent(sender.getUniqueId(), createMessage(builder -> builder.append(accept.getForPlayer(sender).replace("%player%", account.getNameWithRank()))));
 
-            player.spigot().sendMessage(createMessage(builder -> builder.append(accept.getForPlayer(sender).replace("%player%", sender.getNameWithRank()))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(accept.getForPlayer(account).replace("%player%", sender.getNameWithRank()))));
         });
 
         this.handleArgument(ctx, "deny %player%", output -> {
@@ -82,7 +82,7 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
             HyriAPI.get().getFriendManager().removeRequest(playerId, sender.getUniqueId());
 
             PlayerUtil.sendComponent(sender.getUniqueId(), createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.deny-sender").getForPlayer(sender).replace("%player%", account.getNameWithRank()))));
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.deny-target").getForPlayer(sender).replace("%player%", sender.getNameWithRank()))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.deny-target").getForPlayer(account).replace("%player%", sender.getNameWithRank()))));
         });
 
         this.handleArgument(ctx, "remove %player%", output -> {
@@ -92,7 +92,7 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
                 return;
             }
 
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.no-longer").getForPlayer(player).replace("%player%", target.getNameWithRank()))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.no-longer").getForPlayer(account).replace("%player%", target.getNameWithRank()))));
 
             friendHandler.removeFriend(target.getUniqueId());
         });

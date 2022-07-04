@@ -47,14 +47,14 @@ public class HyriLeaderboardDisplay {
     protected final String leaderboardType;
     protected final String leaderboardName;
     protected final Function<Player, String> header;
-    protected final BiFunction<Player, Long, String> scoreFormatter;
+    protected final BiFunction<Player, Double, String> scoreFormatter;
     /** The time to wait between each update of the leaderboard */
     protected final long updateTime;
     protected final Location location;
 
     protected final List<HyriLeaderboardScope> scopes;
 
-    public HyriLeaderboardDisplay(JavaPlugin plugin, String leaderboardType, String leaderboardName, Function<Player, String> header, BiFunction<Player, Long, String> scoreFormatter, long updateTime, Location location, List<HyriLeaderboardScope> scopes) {
+    public HyriLeaderboardDisplay(JavaPlugin plugin, String leaderboardType, String leaderboardName, Function<Player, String> header, BiFunction<Player, Double, String> scoreFormatter, long updateTime, Location location, List<HyriLeaderboardScope> scopes) {
         this.plugin = plugin;
         this.leaderboardType = leaderboardType;
         this.leaderboardName = leaderboardName;
@@ -131,7 +131,7 @@ public class HyriLeaderboardDisplay {
                 final List<HyriLeaderboardScore> scores = scoresSupplier.get();
                 final HyriLeaderboardScore score = scores.size() > position - 1 ? scores.get(position - 1) : null;
 
-                return score == null ? this.createPositionLine(position, "************", this.scoreFormatter.apply(player, 0L)) : this.createPositionLine(position, HyriAPI.get().getPlayerManager().getPrefix(score.getId()), this.scoreFormatter.apply(player, score.getValue()));
+                return score == null ? this.createPositionLine(position, "************", this.scoreFormatter.apply(player, 0.0D)) : this.createPositionLine(position, HyriAPI.get().getPlayerManager().getPrefix(score.getId()), this.scoreFormatter.apply(player, score.getValue()));
             });
 
             lines.put(i, line);
@@ -311,7 +311,7 @@ public class HyriLeaderboardDisplay {
         private Location location;
 
         private Function<Player, String> header;
-        private BiFunction<Player, Long, String> scoreFormatter = (target, score) -> String.valueOf(score);
+        private BiFunction<Player, Double, String> scoreFormatter = (target, score) -> String.valueOf(score).split("\\.")[0];
 
         private long updateTime = -1;
 
@@ -372,11 +372,11 @@ public class HyriLeaderboardDisplay {
             return this;
         }
 
-        public BiFunction<Player, Long, String> getScoreFormatter() {
+        public BiFunction<Player, Double, String> getScoreFormatter() {
             return this.scoreFormatter;
         }
 
-        public Builder withScoreFormatter(BiFunction<Player, Long, String> scoreFormatter) {
+        public Builder withScoreFormatter(BiFunction<Player, Double, String> scoreFormatter) {
             this.scoreFormatter = scoreFormatter;
             return this;
         }
@@ -391,7 +391,7 @@ public class HyriLeaderboardDisplay {
         }
 
         public HyriLeaderboardDisplay build() {
-            return new HyriLeaderboardDisplay(this.plugin, this.leaderboardType, this.leaderboardName, this.header, scoreFormatter, this.updateTime, this.location, this.scopes);
+            return new HyriLeaderboardDisplay(this.plugin, this.leaderboardType, this.leaderboardName, this.header, this.scoreFormatter, this.updateTime, this.location, this.scopes);
         }
 
     }

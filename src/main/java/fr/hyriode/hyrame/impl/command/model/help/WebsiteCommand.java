@@ -31,9 +31,7 @@ public class WebsiteCommand extends HyriCommand<HyramePlugin> {
     public void handle(HyriCommandContext ctx) {
         final Player player = (Player) ctx.getSender();
 
-        player.spigot().sendMessage(new ComponentBuilder(HyriLanguageMessage.get("message.website").getForPlayer(player))
-                .append(HyriConstants.WEBSITE_URL)
-                .color(ChatColor.WHITE)
+        player.spigot().sendMessage(new ComponentBuilder(HyriLanguageMessage.get("message.website").getForPlayer(player).replace("%website%", HyriConstants.WEBSITE_URL))
                 .event(new ClickEvent(ClickEvent.Action.OPEN_URL, HyriConstants.WEBSITE_URL))
                 .create());
     }
