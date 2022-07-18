@@ -1,12 +1,13 @@
 package fr.hyriode.hyrame.impl.command.model;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.api.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
 import fr.hyriode.hyrame.impl.HyramePlugin;
-import fr.hyriode.hyrame.language.IHyriLanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -33,10 +34,8 @@ public class PluginCommand extends HyriCommand<HyramePlugin> {
     @Override
     public void handle(HyriCommandContext ctx) {
         final CommandSender sender = ctx.getSender();
-        final IHyriLanguageManager languageManager = this.plugin.getHyrame().getLanguageManager();
-        final boolean player = sender instanceof Player;
-        final String serverInformation = player ? languageManager.getValue((Player) sender, SERVER_INFORMATION_KEY) : languageManager.getValue(HyriLanguage.EN, SERVER_INFORMATION_KEY);
-        final String current = player ? languageManager.getValue((Player) sender, CURRENT_KEY) : languageManager.getValue(HyriLanguage.EN, CURRENT_KEY);
+        final String serverInformation = HyriLanguageMessage.get(SERVER_INFORMATION_KEY).getValue(sender);
+        final String current = HyriLanguageMessage.get(CURRENT_KEY).getValue(sender);
         final String barLine = ChatColor.DARK_AQUA + "" + ChatColor.STRIKETHROUGH + "-------------------------------------------";
 
         sender.sendMessage(barLine);

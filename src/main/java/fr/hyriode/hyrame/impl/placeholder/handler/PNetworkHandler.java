@@ -25,7 +25,7 @@ public class PNetworkHandler extends PlaceholderPrefixHandler {
 
         switch (placeholder) {
             case "player_count":
-                return String.valueOf(network.getPlayerCount().getPlayers());
+                return String.valueOf(network.getPlayerCounter().getPlayers());
             case "slots":
                 return String.valueOf(network.getSlots());
             case "maintenance_reason":

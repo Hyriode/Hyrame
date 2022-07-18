@@ -1,11 +1,11 @@
 package fr.hyriode.hyrame.game.team;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.event.team.HyriGamePlayerJoinTeamEvent;
 import fr.hyriode.hyrame.game.event.team.HyriGamePlayerLeaveTeamEvent;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam;
 import fr.hyriode.hyrame.title.Title;
 import org.bukkit.Location;
@@ -131,7 +131,7 @@ public class HyriGameTeam {
      * @return - Game player object
      */
     public HyriGamePlayer getPlayer(UUID uuid) {
-        return this.players.stream().filter(player -> player.getUUID().equals(uuid)).findFirst().orElse(null);
+        return this.players.stream().filter(player -> player.getUniqueId().equals(uuid)).findFirst().orElse(null);
     }
 
     /**
@@ -149,7 +149,7 @@ public class HyriGameTeam {
      * @param message Message to send
      */
     public void sendMessage(HyriLanguageMessage message) {
-        this.sendMessage(message::getForPlayer);
+        this.sendMessage(target -> message.getValue(target));
     }
 
     /**
@@ -176,7 +176,7 @@ public class HyriGameTeam {
      * @return - <code>true</code> if yes
      */
     public boolean contains(UUID uuid) {
-        return this.players.stream().anyMatch(player -> player.getUUID().equals(uuid));
+        return this.players.stream().anyMatch(player -> player.getUniqueId().equals(uuid));
     }
 
     /**
@@ -186,7 +186,7 @@ public class HyriGameTeam {
      * @return - <code>true</code> if yes
      */
     public boolean contains(HyriGamePlayer player) {
-        return this.contains(player.getUUID());
+        return this.contains(player.getUniqueId());
     }
 
     /**
@@ -270,7 +270,7 @@ public class HyriGameTeam {
      * @return A formatted message
      */
     public String getFormattedDisplayName(Player target) {
-        return this.color.getChatColor() + this.displayName.getForPlayer(target);
+        return this.color.getChatColor() + this.displayName.getValue(target);
     }
 
     /**

@@ -1,10 +1,10 @@
 package fr.hyriode.hyrame.impl.module.nickname;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.rank.type.HyriPlayerRankType;
 import fr.hyriode.hyrame.inventory.HyriInventory;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.signgui.SignGUI;
 import fr.hyriode.hyrame.utils.Symbols;
 import fr.hyriode.hyrame.utils.ThreadUtil;
@@ -27,7 +27,7 @@ public class NicknameGUI extends HyriInventory {
 
     private static final String DICE_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzg4MWNjMjc0N2JhNzJjYmNiMDZjM2NjMzMxNzQyY2Q5ZGUyNzFhNWJiZmZkMGVjYjE0ZjFjNmE4YjY5YmM5ZSJ9fX0=";
     private static final Function<Player, ItemStack> DICE = player -> ItemBuilder.asHead()
-            .withName(HyriLanguageMessage.get("gui.nickname.random").getForPlayer(player))
+            .withName(HyriLanguageMessage.get("gui.nickname.random").getValue(player))
             .withHeadTexture(DICE_TEXTURE)
             .build();
 
@@ -52,7 +52,7 @@ public class NicknameGUI extends HyriInventory {
         this.currentRank = currentRank;
         this.randomSkin = this.currentSkin == null;
         this.rankIndex = NicknameModule.AVAILABLE_RANKS.indexOf(this.currentRank);
-        this.edit = HyriLanguageMessage.get("gui.nickname.edit").getForPlayer(this.owner);
+        this.edit = HyriLanguageMessage.get("gui.nickname.edit").getValue(this.owner);
 
         final ItemStack fill = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, 9).withName("").build();
 
@@ -92,7 +92,7 @@ public class NicknameGUI extends HyriInventory {
     private void addNameItems() {
         final ItemStack paper = new ItemBuilder(Material.PAPER)
                 .withName(ChatColor.AQUA + "Nickname")
-                .withLore(HyriLanguageMessage.get("gui.nickname.current").getForPlayer(this.owner) + ChatColor.WHITE + this.currentNickname, "", this.edit)
+                .withLore(HyriLanguageMessage.get("gui.nickname.current").getValue(this.owner) + ChatColor.WHITE + this.currentNickname, "", this.edit)
                 .build();
         this.setItem(20, paper, event -> this.openNameGUI());
 
@@ -117,7 +117,7 @@ public class NicknameGUI extends HyriInventory {
                     this.owner.sendMessage(result.getMessage(this.owner));
                 }
             } else {
-                player.sendMessage(ChatColor.RED + HyriCommonMessages.INVALID_INPUT.getForPlayer(this.owner));
+                player.sendMessage(ChatColor.RED + HyriCommonMessages.INVALID_INPUT.getValue(this.owner));
             }
 
             this.open();
@@ -127,7 +127,7 @@ public class NicknameGUI extends HyriInventory {
     private void addSkinItems() {
         final ItemStack paper = new ItemBuilder(Material.PAPER)
                 .withName(ChatColor.AQUA + "Skin")
-                .withLore(HyriLanguageMessage.get("gui.nickname.current").getForPlayer(this.owner) + ChatColor.WHITE + (this.currentSkin != null ? this.currentSkin : ChatColor.RED + Symbols.CROSS_STYLIZED_BOLD), "", this.edit)
+                .withLore(HyriLanguageMessage.get("gui.nickname.current").getValue(this.owner) + ChatColor.WHITE + (this.currentSkin != null ? this.currentSkin : ChatColor.RED + Symbols.CROSS_STYLIZED_BOLD), "", this.edit)
                 .build();
         this.setItem(22, paper, event -> this.openSkinGUI());
 
@@ -150,7 +150,7 @@ public class NicknameGUI extends HyriInventory {
 
                 this.addSkinItems();
             } else {
-                player.sendMessage(ChatColor.RED + HyriCommonMessages.INVALID_INPUT.getForPlayer(this.owner));
+                player.sendMessage(ChatColor.RED + HyriCommonMessages.INVALID_INPUT.getValue(this.owner));
             }
 
             this.open();

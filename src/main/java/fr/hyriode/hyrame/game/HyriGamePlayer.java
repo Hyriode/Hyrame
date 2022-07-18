@@ -38,6 +38,8 @@ public class HyriGamePlayer {
     /** Is player online or no */
     private boolean online = true;
 
+    /** The unique id of the player */
+    protected final UUID uniqueId;
     /** Player object */
     protected Player player;
 
@@ -53,6 +55,7 @@ public class HyriGamePlayer {
     public HyriGamePlayer(HyriGame<?> game, Player player) {
         this.game = game;
         this.player = player;
+        this.uniqueId = this.player.getUniqueId();
     }
 
     /**
@@ -130,7 +133,7 @@ public class HyriGamePlayer {
      * @return The {@link IHyriPlayer} linked to the game player
      */
     public IHyriPlayer asHyriPlayer() {
-        return IHyriPlayer.get(this.player.getUniqueId());
+        return IHyriPlayer.get(this.uniqueId);
     }
 
     /**
@@ -138,8 +141,8 @@ public class HyriGamePlayer {
      *
      * @return Player {@link UUID}
      */
-    public UUID getUUID() {
-        return this.player.getUniqueId();
+    public UUID getUniqueId() {
+        return this.uniqueId;
     }
 
     /**
@@ -197,11 +200,11 @@ public class HyriGamePlayer {
         this.online = online;
 
         if (online) {
-            this.player = Bukkit.getPlayer(this.player.getUniqueId());
+            this.player = Bukkit.getPlayer(this.uniqueId);
             return;
         }
 
-        this.player = new VoidPlayer(this.player.getDisplayName(), this.player.getName(), this.player.getUniqueId());
+        this.player = new VoidPlayer(this.player.getDisplayName(), this.player.getName(), this.uniqueId);
     }
 
     /**

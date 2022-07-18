@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.impl.module.nickname;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.player.nickname.IHyriNickname;
 import fr.hyriode.api.rank.HyriRank;
@@ -12,7 +13,6 @@ import fr.hyriode.hyrame.command.HyriCommandType;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.utils.ThreadUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -42,7 +42,7 @@ public class NicknameCommand extends HyriCommand<HyramePlugin> {
         final HyriGame<?> currentGame = this.plugin.getHyrame().getGameManager().getCurrentGame();
 
         if (currentGame != null) {
-            player.sendMessage(HyriLanguageMessage.get("message.nickname.game").getForPlayer(player));
+            player.sendMessage(HyriLanguageMessage.get("message.nickname.game").getValue(player));
             return;
         }
 
@@ -63,16 +63,16 @@ public class NicknameCommand extends HyriCommand<HyramePlugin> {
                     new NicknameGUI(player, this.nicknameModule, null, HyriPlayerRankType.PLAYER).open();
                 }
             } else {
-                player.sendMessage(ChatColor.RED + HyriCommonMessages.DONT_HAVE_PERMISSION.getForSender(player));
+                player.sendMessage(ChatColor.RED + HyriCommonMessages.DONT_HAVE_PERMISSION.getValue(player));
             }
         });
         this.handleArgument(ctx, "reset", output -> {
             if (currentNickname != null) {
                 this.nicknameModule.resetNickname(player);
 
-                player.sendMessage(HyriLanguageMessage.get("message.nickname.remove-nick").getForPlayer(player));
+                player.sendMessage(HyriLanguageMessage.get("message.nickname.remove-nick").getValue(player));
             } else {
-                player.sendMessage(HyriLanguageMessage.get("message.nickname.not-nick").getForPlayer(player));
+                player.sendMessage(HyriLanguageMessage.get("message.nickname.not-nick").getValue(player));
             }
         });
     }

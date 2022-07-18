@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.impl.join;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.party.IHyriParty;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.server.IHyriServer;
@@ -11,7 +12,6 @@ import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.event.player.HyriGameReconnectEvent;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -28,7 +28,7 @@ import java.util.function.BiFunction;
 public class HyriJoinHandler implements IHyriJoinHandler {
 
     private static final String RESPONSE_KEY = "message.join.deny";
-    private static final BiFunction<IHyriPlayer, String, String> RESPONSE = (player, key) -> HyriLanguageMessage.get(RESPONSE_KEY + "." + key).getForPlayer(player);
+    private static final BiFunction<IHyriPlayer, String, String> RESPONSE = (player, key) -> HyriLanguageMessage.get(RESPONSE_KEY + "." + key).getValue(player);
 
     private final IHyrame hyrame;
 
@@ -156,7 +156,7 @@ public class HyriJoinHandler implements IHyriJoinHandler {
             reason = RESPONSE.apply(account, "state");;
         }
 
-        return ChatColor.RED + HyriLanguageMessage.get(RESPONSE_KEY).getForPlayer(account)
+        return ChatColor.RED + HyriLanguageMessage.get(RESPONSE_KEY).getValue(account)
                 .replace("%server%", HyriAPI.get().getServer().getName())
                 .replace("%reason%", reason == null ? "" : "(" + reason + ")");
     }

@@ -1,12 +1,12 @@
 package fr.hyriode.hyrame.leaderboard;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.leaderboard.HyriLeaderboardScope;
 import fr.hyriode.api.leaderboard.HyriLeaderboardScore;
 import fr.hyriode.api.leaderboard.IHyriLeaderboard;
 import fr.hyriode.hyrame.hologram.Hologram;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyrame.language.IHyriLanguageManager;
+import fr.hyriode.hyrame.language.ILanguageLoader;
 import fr.hyriode.hyrame.utils.Pagination;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -83,6 +83,10 @@ public class HyriLeaderboardDisplay {
     }
 
     public void handleLogin(Player player) {
+        if (!this.showing) {
+            return;
+        }
+
         final UUID playerId = player.getUniqueId();
 
         final List<ScopeWrapper> wrappers = this.scopes.stream().map(ScopeWrapper::get).sorted(Comparator.comparingInt(scopeWrapper -> scopeWrapper != null ? scopeWrapper.getIndex() : 0)).collect(Collectors.toList());
@@ -101,6 +105,10 @@ public class HyriLeaderboardDisplay {
     }
 
     public void handleLogout(Player player) {
+        if (!this.showing) {
+            return;
+        }
+
         final UUID playerId = player.getUniqueId();
         final Hologram hologram = this.holograms.remove(playerId);
 
@@ -160,7 +168,7 @@ public class HyriLeaderboardDisplay {
                         final HyriLeaderboardScope scope = wrapper.getInitial();
 
                         builder.append(this.currentScopes.get(target.getUniqueId()) == scope ? ChatColor.AQUA + "" + ChatColor.BOLD : ChatColor.GRAY)
-                                .append(wrapper.getDisplay().getForPlayer(target))
+                                .append(wrapper.getDisplay().getValue(target.getUniqueId()))
                                 .append(ChatColor.RESET)
                                 .append(wrapper.isLast() ? "" : " ");
                     }
@@ -219,12 +227,20 @@ public class HyriLeaderboardDisplay {
     }
 
     public void update() {
+        if (!this.showing) {
+            return;
+        }
+
         for (Hologram hologram : this.holograms.values()) {
             hologram.updateLines();
         }
     }
 
     public void update(Player player) {
+        if (!this.showing) {
+            return;
+        }
+
         final Hologram hologram = this.holograms.get(player.getUniqueId());
 
         if (hologram == null) {
@@ -252,7 +268,7 @@ public class HyriLeaderboardDisplay {
         ScopeWrapper(HyriLeaderboardScope initial, int index, String languageKey) {
             this.initial = initial;
             this.index = index;
-            this.display = () -> IHyriLanguageManager.Provider.get().getMessage("leaderboard.scope." + languageKey);
+            this.display = () -> HyriLanguageMessage.get("leaderboard.scope." + languageKey);
         }
 
         public HyriLeaderboardScope getInitial() {
@@ -314,6 +330,7 @@ public class HyriLeaderboardDisplay {
         private BiFunction<Player, Double, String> scoreFormatter = (target, score) -> String.valueOf(score).split("\\.")[0];
 
         private long updateTime = -1;
+        private boolean reversion;
 
         public Builder(JavaPlugin plugin, String leaderboardType, String leaderboardName, Location location) {
             this.plugin = plugin;
@@ -387,6 +404,15 @@ public class HyriLeaderboardDisplay {
 
         public Builder withUpdateTime(long updateTime) {
             this.updateTime = updateTime;
+            return this;
+        }
+
+        public boolean isReversion() {
+            return this.reversion;
+        }
+
+        public Builder withReversion(boolean reversion) {
+            this.reversion = reversion;
             return this;
         }
 

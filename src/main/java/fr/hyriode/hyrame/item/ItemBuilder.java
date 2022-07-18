@@ -2,8 +2,9 @@ package fr.hyriode.hyrame.item;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.item.enchant.HyriEnchant;
-import fr.hyriode.hyrame.language.IHyriLanguageManager;
+import fr.hyriode.hyrame.language.ILanguageLoader;
 import fr.hyriode.hyrame.reflection.Reflection;
 import fr.hyriode.hyrame.utils.ProfileLoader;
 import org.bukkit.Color;
@@ -72,7 +73,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder withName(Player player, String key) {
-        this.itemMeta.setDisplayName(IHyriLanguageManager.Provider.get().getValue(player, key));
+        this.itemMeta.setDisplayName(HyriLanguageMessage.get(key).getValue(player));
         return this;
     }
 

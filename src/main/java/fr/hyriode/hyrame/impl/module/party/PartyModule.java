@@ -1,12 +1,12 @@
 package fr.hyriode.hyrame.impl.module.party;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.party.HyriPartyInvitation;
 import fr.hyriode.api.party.IHyriParty;
 import fr.hyriode.api.party.IHyriPartyManager;
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.hyrame.chat.HyriMessageEvent;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.chat.event.MessageEvent;
 import fr.hyriode.hyrame.utils.Symbols;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
@@ -30,7 +30,7 @@ public class PartyModule {
 
     public void sendPartyMessage(IHyriParty party, Player player, String message) {
         final UUID playerId = player.getUniqueId();
-        final HyriMessageEvent event = new HyriMessageEvent(playerId, message);
+        final MessageEvent event = new MessageEvent(playerId, message);
 
         HyriAPI.get().getEventBus().publish(event);
 
@@ -38,7 +38,7 @@ public class PartyModule {
             if (party.isChatEnabled() || party.getRank(playerId).canMute()) {
                 party.sendMessage(playerId, message);
             } else {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.chat-muted").getForPlayer(player))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.chat-muted").getValue(player))));
             }
         }
     }
@@ -52,14 +52,14 @@ public class PartyModule {
 
         final IHyriPlayer sender = HyriAPI.get().getPlayerManager().getPlayer(invitation.getSender());
 
-        receiver.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.invitation-received").getForPlayer(receiver).replace("%player%", sender.getNameWithRank()))
+        receiver.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.invitation-received").getValue(receiver).replace("%player%", sender.getNameWithRank()))
                 .append("\n")
-                .append("[" + HyriLanguageMessage.get("button.accept").getForPlayer(receiver) + "]").color(ChatColor.GREEN)
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(HyriLanguageMessage.get("hover.party.accept").getForPlayer(receiver))))
+                .append("[" + HyriLanguageMessage.get("button.accept").getValue(receiver) + "]").color(ChatColor.GREEN)
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(HyriLanguageMessage.get("hover.party.accept").getValue(receiver))))
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/p join " + sender.getName()))
                 .append(" ")
-                .append("[" + HyriLanguageMessage.get("button.deny").getForPlayer(receiver) + "]").color(ChatColor.RED)
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(HyriLanguageMessage.get("hover.party.deny").getForPlayer(receiver))))
+                .append("[" + HyriLanguageMessage.get("button.deny").getValue(receiver) + "]").color(ChatColor.RED)
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(HyriLanguageMessage.get("hover.party.deny").getValue(receiver))))
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/p deny " + sender.getName()))));
     }
 

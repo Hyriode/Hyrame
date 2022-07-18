@@ -6,7 +6,7 @@ import fr.hyriode.hyrame.config.IConfigManager;
 import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.inventory.IHyriInventoryManager;
 import fr.hyriode.hyrame.item.IHyriItemManager;
-import fr.hyriode.hyrame.language.IHyriLanguageManager;
+import fr.hyriode.hyrame.language.ILanguageLoader;
 import fr.hyriode.hyrame.listener.IHyriListenerManager;
 import fr.hyriode.hyrame.packet.IPacketInterceptor;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
@@ -60,11 +60,11 @@ public interface IHyrame {
     IHyriScanner getScanner();
 
     /**
-     * Get Hyrame {@link IHyriLanguageManager} instance
+     * Get Hyrame {@link ILanguageLoader} instance
      *
-     * @return {@link IHyriLanguageManager} instance
+     * @return {@link ILanguageLoader} instance
      */
-    IHyriLanguageManager getLanguageManager();
+    ILanguageLoader getLanguageLoader();
 
     /**
      * Get Hyrame {@link IHyriListenerManager} instance

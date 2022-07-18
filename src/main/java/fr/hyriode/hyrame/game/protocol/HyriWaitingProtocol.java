@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.game.protocol;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.hyrame.IHyrame;
@@ -101,7 +102,7 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
 
         this.updateScoreboards();
 
-        BroadcastUtil.broadcast(target -> hyrame.getLanguageManager().getValue(target, "message.game.join").replace("%player%", account.getNameWithRank(true)) + playerCounter);
+        BroadcastUtil.broadcast(target -> HyriLanguageMessage.get("message.game.join").getValue(target).replace("%player%", account.getNameWithRank(true)) + playerCounter);
     }
 
     @HyriEventHandler
@@ -119,7 +120,7 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
 
         final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + game.getMaxPlayers() + ")";
 
-        BroadcastUtil.broadcast(target -> ChatColor.GRAY + hyrame.getLanguageManager().getValue(target, "message.game.left").replace("%player%", account.getNameWithRank(true)) + playerCounter);
+        BroadcastUtil.broadcast(target -> ChatColor.GRAY + HyriLanguageMessage.get("message.game.left").getValue(target).replace("%player%", account.getNameWithRank(true)) + playerCounter);
     }
 
     private void updateScoreboards() {

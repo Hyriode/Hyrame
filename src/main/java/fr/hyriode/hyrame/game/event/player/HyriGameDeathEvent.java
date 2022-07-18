@@ -1,9 +1,9 @@
 package fr.hyriode.hyrame.game.event.player;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.protocol.HyriLastHitterProtocol;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 
 import java.util.ArrayList;
 import java.util.List;

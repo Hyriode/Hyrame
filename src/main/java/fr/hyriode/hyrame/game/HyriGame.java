@@ -2,12 +2,10 @@ package fr.hyriode.hyrame.game;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.game.IHyriGameInfo;
-import fr.hyriode.api.network.HyriNetworkCount;
-import fr.hyriode.api.network.HyriPlayerCount;
-import fr.hyriode.api.network.IHyriNetwork;
+import fr.hyriode.api.language.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.server.IHyriServer;
-import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.event.HyriGameStateChangedEvent;
@@ -24,7 +22,6 @@ import fr.hyriode.hyrame.game.timer.HyriGameStartingTimer;
 import fr.hyriode.hyrame.game.timer.HyriGameTimer;
 import fr.hyriode.hyrame.game.util.HyriGameMessages;
 import fr.hyriode.hyrame.game.waitingroom.HyriWaitingRoom;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.BroadcastUtil;
 import fr.hyriode.hyrame.utils.PlayerUtil;
@@ -222,8 +219,6 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
                     HyriAPI.get().getServer().addPlayerPlaying(p.getUniqueId());
                     HyriAPI.get().getServerManager().getReconnectionHandler().remove(p.getUniqueId());
 
-                    this.updatePlayerCount(false);
-
                     HyriAPI.get().getEventBus().publish(new HyriGameJoinEvent(this, player));
 
                     if (this.usingGameTabList) {
@@ -265,11 +260,9 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
         if (this.state == HyriGameState.PLAYING) {
             if (!gamePlayer.isSpectator()) {
-                BroadcastUtil.broadcast(target ->  hyrame.getLanguageManager().getValue(target, this.isReconnectionAllowed() ? "message.game.disconnected" : "message.game.left").replace("%player%", gamePlayer.formatNameWithTeam()));
+                BroadcastUtil.broadcast(target -> HyriLanguageMessage.get(this.isReconnectionAllowed() ? "message.game.disconnected" : "message.game.left").getValue(target).replace("%player%", gamePlayer.formatNameWithTeam()));
             }
         }
-
-        this.updatePlayerCount(true);
 
         HyriAPI.get().getEventBus().publish(new HyriGameLeaveEvent(this, gamePlayer));
     }
@@ -287,8 +280,6 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
         gamePlayer.setOnline(true);
 
-        this.updatePlayerCount(false);
-
         if (this.usingGameTabList) {
             this.tabListManager.handleReconnection(gamePlayer);
         }
@@ -297,28 +288,9 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
         if (this.state == HyriGameState.PLAYING) {
             if (!gamePlayer.isSpectator()) {
-                BroadcastUtil.broadcast(target -> hyrame.getLanguageManager().getValue(target, "message.game.reconnected").replace("%player%", gamePlayer.formatNameWithTeam()));
+                BroadcastUtil.broadcast(target -> HyriLanguageMessage.get("message.game.reconnected").getValue(target).replace("%player%", gamePlayer.formatNameWithTeam()));
             }
         }
-    }
-
-    /**
-     * Update the player counter
-     *
-     * @param remove Is the method when removing
-     */
-    private void updatePlayerCount(boolean remove) {
-        final IHyriNetwork network = HyriAPI.get().getNetworkManager().getNetwork();
-        final HyriNetworkCount networkCount = network.getPlayerCount();
-        final HyriPlayerCount count = networkCount.getCategory(this.getName());
-        final int currentPlayers = count.getType(this.type.getName());
-
-        if (currentPlayers <= 0 && remove) {
-            return;
-        }
-
-        count.setType(this.type.getName(), currentPlayers + (remove ? -1 : 1));
-        network.update();
     }
 
     /**
@@ -348,12 +320,12 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
             for (HyriGamePlayer gamePlayer : this.players) {
-                final UUID playerId = gamePlayer.getUUID();
+                final UUID playerId = gamePlayer.getUniqueId();
                 final IHyriPlayer account = gamePlayer.asHyriPlayer();
                 final boolean autoQueue = account.getSettings().isAutoQueueEnabled();
 
                 if (autoQueue) {
-                    HyriAPI.get().getQueueManager().addPlayerInQueueWithPartyCheck(playerId, this.info.getName(), this.type.getName());
+                    HyriAPI.get().getQueueManager().addPlayerInQueue(playerId, this.info.getName(), this.type.getName(), null, true);
                 }
             }
         }, 10 * 30);
@@ -427,8 +399,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
                 this.tabListManager.updatePlayer(player);
             } else {
-                HyriAPI.get().getPlayerManager().sendMessage(player.getUUID(), ChatColor.RED + "An error occurred while giving your team! Sending you back to lobby...");
-                HyriAPI.get().getServerManager().sendPlayerToLobby(player.getUUID());
+                HyriAPI.get().getPlayerManager().sendMessage(player.getUniqueId(), ChatColor.RED + "An error occurred while giving your team! Sending you back to lobby...");
+                HyriAPI.get().getServerManager().sendPlayerToLobby(player.getUniqueId());
             }
         }
     }
@@ -479,7 +451,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @param condition The condition to send the message
      */
     public void sendMessageToAll(HyriLanguageMessage message, Predicate<HyriGamePlayer> condition) {
-        this.sendMessageToAll(message.toFunction(), condition);
+        this.sendMessageToAll(target -> message.getValue(target), condition);
     }
 
     /**
@@ -505,7 +477,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
                 return;
             }
 
-            final String formattedMessage = ChatColor.GRAY + (withPrefix ? SPECTATORS_CHAT_PREFIX.getForSender(player) : "") + message.apply(player);
+            final String formattedMessage = ChatColor.GRAY + (withPrefix ? SPECTATORS_CHAT_PREFIX.getValue(player) : "") + message.apply(player);
 
             if (gamePlayer == null) {
                 player.sendMessage(formattedMessage);
@@ -522,7 +494,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @param withPrefix If <code>true</code>, a prefix will be added before the message
      */
     public void sendMessageToSpectators(HyriLanguageMessage message, boolean withPrefix) {
-        this.sendMessageToSpectators(message::getForPlayer, withPrefix);
+        this.sendMessageToSpectators(target -> message.getValue(target), withPrefix);
     }
 
     /**
@@ -575,7 +547,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @return Game player object
      */
     public P getPlayer(UUID uuid) {
-        return this.players.stream().filter(player -> player.getUUID().equals(uuid)).findFirst().orElse(null);
+        return this.players.stream().filter(player -> player.getUniqueId().equals(uuid)).findFirst().orElse(null);
     }
 
     /**

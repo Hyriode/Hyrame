@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.chat;
+package fr.hyriode.hyrame.chat.event;
 
 import fr.hyriode.api.event.HyriCancellableEvent;
 
@@ -9,12 +9,12 @@ import java.util.UUID;
  * Created by AstFaster
  * on 30/04/2022 at 18:28
  */
-public class HyriMessageEvent extends HyriCancellableEvent {
+public class MessageEvent extends HyriCancellableEvent {
 
     private final UUID player;
     private final String message;
 
-    public HyriMessageEvent(UUID player, String message) {
+    public MessageEvent(UUID player, String message) {
         this.player = player;
         this.message = message;
     }

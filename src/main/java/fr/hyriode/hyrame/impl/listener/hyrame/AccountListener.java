@@ -2,10 +2,12 @@ package fr.hyriode.hyrame.impl.listener.hyrame;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
+import fr.hyriode.api.language.HyriLanguageUpdatedEvent;
+import fr.hyriode.api.rank.HyriRankUpdatedEvent;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.impl.tab.HyriTabManager;
-import fr.hyriode.hyrame.language.HyriLanguageUpdatedEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
@@ -24,8 +26,13 @@ public class AccountListener {
     }
 
     @HyriEventHandler
-    public void onLanguagesUpdated(HyriLanguageUpdatedEvent event) {
-        final Player player = event.getPlayer();
+    public void onRankUpdated(HyriRankUpdatedEvent event) {
+        final Player player = Bukkit.getPlayer(event.getPlayerId());
+
+        if (player == null) {
+            return;
+        }
+
         final Hyrame hyrame = this.plugin.getHyrame();
         final HyriTabManager tabManager = hyrame.getTabManager();
 

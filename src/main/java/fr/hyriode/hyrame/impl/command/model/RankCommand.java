@@ -50,7 +50,7 @@ public class RankCommand extends HyriCommand<HyramePlugin> {
                 target.getRank().setPlayerType(rankType);
 
                 playerManager.savePrefix(targetId, target.getNameWithRank());
-                playerManager.sendPlayerToHydrion(target);
+                playerManager.updatePlayer(target);
 
                 target.update();
 
@@ -71,7 +71,7 @@ public class RankCommand extends HyriCommand<HyramePlugin> {
             target.getRank().setStaffType(null);
 
             playerManager.savePrefix(targetId, target.getNameWithRank());
-            playerManager.sendPlayerToHydrion(target);
+            playerManager.updatePlayer(target);
 
             target.update();
 
@@ -89,7 +89,7 @@ public class RankCommand extends HyriCommand<HyramePlugin> {
 
             if (rankType != null) {
                 target.getRank().setStaffType(rankType);
-                playerManager.sendPlayerToHydrion(target);
+                playerManager.updatePlayer(target);
                 target.update();
 
                 player.sendMessage(ChatColor.GREEN + "Grade staff modifié!");
@@ -109,7 +109,7 @@ public class RankCommand extends HyriCommand<HyramePlugin> {
             target.getRank().setPlayerType(null);
 
             playerManager.savePrefix(targetId, target.getNameWithRank());
-            playerManager.sendPlayerToHydrion(target);
+            playerManager.updatePlayer(target);
 
             target.update();
 

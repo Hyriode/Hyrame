@@ -1,12 +1,12 @@
 package fr.hyriode.hyrame.impl.game.util.spectator;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.util.HyriGameItems;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.item.HyriItem;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -29,8 +29,8 @@ public class RestartGameItem extends HyriItem<HyramePlugin> {
         if (game != null) {
             final Player player = event.getPlayer();
 
-            if (!HyriAPI.get().getQueueManager().addPlayerInQueueWithPartyCheck(player.getUniqueId(), game.getName(), game.getType().getName())) {
-                player.sendMessage(HyriLanguageMessage.get("message.queue.not-leader").getForPlayer(player));
+            if (!HyriAPI.get().getQueueManager().addPlayerInQueue(player.getUniqueId(), game.getName(), game.getType().getName(), null, true)) {
+                player.sendMessage(HyriLanguageMessage.get("message.queue.not-leader").getValue(player));
             }
         }
 

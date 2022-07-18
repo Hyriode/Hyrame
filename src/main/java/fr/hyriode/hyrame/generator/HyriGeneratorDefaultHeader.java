@@ -1,12 +1,12 @@
 package fr.hyriode.hyrame.generator;
 
-import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorCreatedEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorDropEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorRemovedEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorUpgradedEvent;
 import fr.hyriode.hyrame.hologram.Hologram;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.utils.Symbols;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -61,7 +61,7 @@ class HyriGeneratorDefaultHeader extends HyriGenerator.Header implements Listene
     private Hologram createHologram() {
         final Function<Player, String> timerLine = target -> {
             final String sparkles = ChatColor.DARK_AQUA + Symbols.SPARKLES;
-            final String result = sparkles + " " + SECONDS.getForPlayer(target).replace("%seconds%", ChatColor.WHITE + "" + this.timer + ChatColor.DARK_AQUA);
+            final String result = sparkles + " " + SECONDS.getValue(target).replace("%seconds%", ChatColor.WHITE + "" + this.timer + ChatColor.DARK_AQUA);
 
             return this.timer == 1 ? result.substring(0, result.length() - 1) + ChatColor.DARK_AQUA + " " + sparkles : result + ChatColor.DARK_AQUA + " " + sparkles;
         };

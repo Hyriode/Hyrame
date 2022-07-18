@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.game.waitingroom;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.game.HyriGame;
@@ -10,7 +11,6 @@ import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameLeaveEvent;
 import fr.hyriode.hyrame.inventory.HyriInventory;
 import fr.hyriode.hyrame.item.ItemBuilder;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.npc.NPC;
 import fr.hyriode.hyrame.npc.NPCManager;
 import fr.hyriode.hyrame.utils.LocationWrapper;
@@ -105,7 +105,7 @@ public class HyriWaitingRoom {
 
     private NPC createNPC(Player player) {
         final IHyriPlayer account = IHyriPlayer.get(player.getUniqueId());
-        final List<String> headerLines = Arrays.asList(HyriLanguageMessage.get("waiting-room.npc.statistics").getForPlayer(account).replace("%game%", this.game.getDisplayName()), HyriLanguageMessage.get("waiting-room.npc.statistics-click").getForPlayer(account));
+        final List<String> headerLines = Arrays.asList(HyriLanguageMessage.get("waiting-room.npc.statistics").getValue(account).replace("%game%", this.game.getDisplayName()), HyriLanguageMessage.get("waiting-room.npc.statistics-click").getValue(account));
         final NPC npc = NPCManager.createNPC(this.config.getNPCLocation().asBukkit(), account.getName(), headerLines)
                 .addPlayer(player)
                 .setShowingToAll(false)
@@ -255,8 +255,8 @@ public class HyriWaitingRoom {
             this.setHorizontalLine(36, 44, new ItemBuilder(Material.STAINED_GLASS_PANE, 1, 9).withName(" ").build());
 
             this.setItem(4, new ItemBuilder(item)
-                    .withName(HyriLanguageMessage.get("waiting-room.gui.item.name").getForPlayer(account).replace("%game%", game.getDisplayName()))
-                    .withLore(HyriLanguageMessage.get("waiting-room.gui.item.lore").getForPlayer(account))
+                    .withName(HyriLanguageMessage.get("waiting-room.gui.item.name").getValue(account).replace("%game%", game.getDisplayName()))
+                    .withLore(HyriLanguageMessage.get("waiting-room.gui.item.lore").getValue(account))
                     .build());
 
             for (Map.Entry<Integer, NPCCategory> entry : npcCategories.entrySet()) {
@@ -268,14 +268,14 @@ public class HyriWaitingRoom {
                     final Function<IHyriPlayer, String> value = data.getValue();
 
                     if (prefix != null && value != null) {
-                        lore.add(ChatColor.WHITE + data.getPrefix().getForPlayer(account) + ": " + ChatColor.AQUA + data.getValue().apply(account));
+                        lore.add(ChatColor.WHITE + data.getPrefix().getValue(account) + ": " + ChatColor.AQUA + data.getValue().apply(account));
                     } else {
                         lore.add("");
                     }
                 }
 
                 final ItemStack item = new ItemBuilder(Material.PAPER)
-                        .withName(HyriLanguageMessage.get("waiting-room.gui.item.name").getForPlayer(account).replace("%game%", category.getName().getForPlayer(account)))
+                        .withName(HyriLanguageMessage.get("waiting-room.gui.item.name").getValue(account).replace("%game%", category.getName().getValue(account)))
                         .withLore(lore)
                         .build();
 
@@ -294,7 +294,7 @@ public class HyriWaitingRoom {
         public void onJoin(HyriGameJoinEvent event) {
             final HyriGamePlayer gamePlayer = event.getGamePlayer();
             final Player player = gamePlayer.getPlayer();
-            final UUID playerId = gamePlayer.getUUID();
+            final UUID playerId = gamePlayer.getUniqueId();
             final NPC npc = npcs.getOrDefault(playerId, createNPC(player));
 
             player.teleport(config.getSpawn().asBukkit());
@@ -305,7 +305,7 @@ public class HyriWaitingRoom {
         @HyriEventHandler
         public void onLeave(HyriGameLeaveEvent event) {
             final HyriGamePlayer gamePlayer = event.getGamePlayer();
-            final NPC npc = npcs.remove(gamePlayer.getUUID());
+            final NPC npc = npcs.remove(gamePlayer.getUniqueId());
 
             if (npc != null) {
                 NPCManager.removeNPC(gamePlayer.getPlayer(), npc);

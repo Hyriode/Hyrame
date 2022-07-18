@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl.config.item.bool;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.config.ConfigContext;
 import fr.hyriode.hyrame.config.ConfigProcess;
@@ -7,7 +8,6 @@ import fr.hyriode.hyrame.config.handler.CBooleanHandler;
 import fr.hyriode.hyrame.config.handler.ConfigOptionHandler;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.item.HyriItem;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.Material;
 import org.bukkit.event.player.PlayerInteractEvent;
 

@@ -34,15 +34,15 @@ public enum HyriCommandCheck {
         return false;
     }),
     /** Handle a player name as an input, but it will check from players accounts */
-    PLAYER("%player%", IHyriPlayer.class, arg -> HyriAPI.get().getPlayerManager().getPlayer(arg), (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getForSender(ctx.getSender()) + arg + "."),
+    PLAYER("%player%", IHyriPlayer.class, arg -> HyriAPI.get().getPlayerManager().getPlayer(arg), (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getValue((Player) ctx.getSender()) + arg + "."),
     /** Handle a player name as an input, but it will check from players accounts */
     PLAYER_ONLINE("%player_online%", IHyriPlayer.class, arg -> {
-        final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayerFromRedis(arg);
+        final IHyriPlayer account = HyriAPI.get().getPlayerManager().getCachedPlayer(arg);
 
         return account!= null && account.isOnline() ? account : null;
-    }, (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getForSender(ctx.getSender()) + arg + "."),
+    }, (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getValue((Player) ctx.getSender()) + arg + "."),
     /** Handle a player name as an input, but it will check from players on current server */
-    PLAYER_ON_SERVER("%player_server%", Player.class, PlayerUtil::getPlayer, (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getForSender(ctx.getSender()) + arg + "."),
+    PLAYER_ON_SERVER("%player_server%", Player.class, PlayerUtil::getPlayer, (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getValue((Player) ctx.getSender()) + arg + "."),
     /** Handle a short number */
     SHORT("%short%", PrimitiveType.SHORT),
     /** Handle an integer number */
@@ -140,7 +140,7 @@ public enum HyriCommandCheck {
      * @param type Primitive type of the check
      */
     HyriCommandCheck(String sequence, PrimitiveType<?> type) {
-        this(sequence, arg -> type.isValid(arg) ? type.parse(arg) : null, (ctx, arg) -> ChatColor.RED + (type == PrimitiveType.BOOLEAN ? HyriCommonMessages.INVALID_ARGUMENT : HyriCommonMessages.INVALID_NUMBER).getForSender(ctx.getSender()) + arg + ".");
+        this(sequence, arg -> type.isValid(arg) ? type.parse(arg) : null, (ctx, arg) -> ChatColor.RED + (type == PrimitiveType.BOOLEAN ? HyriCommonMessages.INVALID_ARGUMENT : HyriCommonMessages.INVALID_NUMBER).getValue((Player) ctx.getSender()) + arg + ".");
     }
 
     /**

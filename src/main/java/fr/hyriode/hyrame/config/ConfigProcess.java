@@ -1,8 +1,9 @@
 package fr.hyriode.hyrame.config;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.config.handler.ConfigOptionHandler;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.Symbols;
 import fr.hyriode.hystia.api.config.IConfig;
@@ -66,10 +67,9 @@ public class ConfigProcess<T extends IConfig> {
         }
 
         this.started = true;
-
         this.initialSize = this.contexts.size();
 
-        this.player.sendMessage(HyriLanguageMessage.get("message.config.start").getForPlayer(this.player).replaceAll("%line%", Symbols.HYPHENS_LINE));
+        this.player.sendMessage(HyriLanguageMessage.get("message.config.start").getValue(this.player).replaceAll("%line%", Symbols.HYPHENS_LINE));
 
         this.next();
     }
@@ -87,10 +87,12 @@ public class ConfigProcess<T extends IConfig> {
 
                 constructor.setAccessible(true);
 
-                this.player.sendMessage(HyriLanguageMessage.get("message.config.new-value").getForPlayer(player)
-                        .replace("%name%", HyriLanguageMessage.get(configOption.displayNameKey()).getForPlayer(this.player))
+                final IHyriPlayer account = IHyriPlayer.get(this.player.getUniqueId());
+
+                this.player.sendMessage(HyriLanguageMessage.get("message.config.new-value").getValue(account)
+                        .replace("%name%", HyriLanguageMessage.get(configOption.displayNameKey()).getValue(account))
                         .replace("%id%", configOption.id())
-                        .replace("%description%", HyriLanguageMessage.get(configOption.descriptionKey()).getForPlayer(this.player))
+                        .replace("%description%", HyriLanguageMessage.get(configOption.descriptionKey()).getValue(account))
                         .replaceAll("%line%", Symbols.HYPHENS_LINE));
 
                 final ConfigOptionHandler<?> handler = constructor.newInstance(this.hyrame, this);

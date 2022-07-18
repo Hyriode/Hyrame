@@ -1,11 +1,11 @@
 package fr.hyriode.hyrame.impl.command.model.help;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
 import fr.hyriode.hyrame.command.HyriCommandType;
 import fr.hyriode.hyrame.impl.HyramePlugin;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.utils.Symbols;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -48,7 +48,7 @@ public class HelpCommand extends HyriCommand<HyramePlugin> {
     }
 
     private String getCommandLine(Player player, String command) {
-        return ChatColor.AQUA + " /" + command + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + HyriLanguageMessage.get("message.help." + command).getForPlayer(player) + "\n";
+        return ChatColor.AQUA + " /" + command + ChatColor.DARK_GRAY + " - " + ChatColor.WHITE + HyriLanguageMessage.get("message.help." + command).getValue(player) + "\n";
     }
 
 }

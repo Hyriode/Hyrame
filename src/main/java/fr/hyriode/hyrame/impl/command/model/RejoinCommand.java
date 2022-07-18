@@ -1,13 +1,13 @@
 package fr.hyriode.hyrame.impl.command.model;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.server.reconnection.IHyriReconnectionData;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
 import fr.hyriode.hyrame.command.HyriCommandType;
 import fr.hyriode.hyrame.impl.HyramePlugin;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.entity.Player;
 
 /**
@@ -30,11 +30,11 @@ public class RejoinCommand extends HyriCommand<HyramePlugin> {
         final IHyriReconnectionData reconnectionData = HyriAPI.get().getServerManager().getReconnectionHandler().get(player.getUniqueId());
 
         if (reconnectionData != null) {
-            player.sendMessage(HyriLanguageMessage.get("message.rejoin.processing").getForPlayer(player));
+            player.sendMessage(HyriLanguageMessage.get("message.rejoin.processing").getValue(player));
 
             reconnectionData.reconnect();
         } else {
-            player.sendMessage(HyriLanguageMessage.get("message.rejoin.cancel").getForPlayer(player));
+            player.sendMessage(HyriLanguageMessage.get("message.rejoin.cancel").getValue(player));
         }
     }
 

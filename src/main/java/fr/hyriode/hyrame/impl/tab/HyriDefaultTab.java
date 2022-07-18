@@ -2,8 +2,8 @@ package fr.hyriode.hyrame.impl.tab;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.HyriConstants;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyrame.language.IHyriLanguageManager;
+import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.language.ILanguageLoader;
 import fr.hyriode.hyrame.tab.Tab;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -36,7 +36,7 @@ public class HyriDefaultTab extends Tab {
     private void addHeaderLines() {
         final int ping = HyriAPI.get().getPlayerManager().getPing(this.player.getUniqueId());
         final String server = HyriAPI.get().getServer().getName();
-        final int players = HyriAPI.get().getNetworkManager().getNetwork().getPlayerCount().getPlayers();
+        final int players = HyriAPI.get().getNetworkManager().getNetwork().getPlayerCounter().getPlayers();
         double tps = HyriAPI.get().getServer().getTPS();
 
         if (tps > 20) {
@@ -44,7 +44,7 @@ public class HyriDefaultTab extends Tab {
         }
 
         final String formattedTps = String.format("%.2f", tps).replace(",", ".");
-        final String informationLine = HyriLanguageMessage.get("tab.information-line").getForPlayer(this.player)
+        final String informationLine = HyriLanguageMessage.get("tab.information-line").getValue(this.player)
                 .replace("%tps%", formattedTps)
                 .replace("%ping%", String.valueOf(ping))
                 .replace("%server%", server)
@@ -58,10 +58,9 @@ public class HyriDefaultTab extends Tab {
     }
 
     private void addFooterLines() {
-        final IHyriLanguageManager languageManager = IHyriLanguageManager.Provider.get();
-        final String websiteAndForum = languageManager.getValue(this.player, "tab.website.and.forum");
-        final String store = languageManager.getValue(this.player, "tab.store");
-        final String discord = languageManager.getValue(this.player, "tab.discord");
+        final String websiteAndForum = HyriLanguageMessage.get("tab.website.and.forum").getValue(this.player);
+        final String store = HyriLanguageMessage.get("tab.store").getValue(this.player);
+        final String discord = HyriLanguageMessage.get("tab.discord").getValue(this.player);
 
         this.setBlankFooterLine(0);
         this.setFooterLine(1, this.createFooterLine(websiteAndForum, HyriConstants.WEBSITE_URL));

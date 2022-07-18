@@ -35,7 +35,7 @@ public class HyriGameCommand extends HyriCommand<HyramePlugin> {
         final Player player = (Player) ctx.getSender();
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
 
-        if (!HyriAPI.get().getConfiguration().isDevEnvironment() && !account.getRank().is(HyriStaffRankType.ADMINISTRATOR)) {
+        if (!HyriAPI.get().getConfig().isDevEnvironment() && !account.getRank().is(HyriStaffRankType.ADMINISTRATOR)) {
             return;
         }
 

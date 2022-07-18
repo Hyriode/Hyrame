@@ -1,13 +1,13 @@
 package fr.hyriode.hyrame.impl.module.party;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.party.IHyriParty;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
 import fr.hyriode.hyrame.command.HyriCommandType;
 import fr.hyriode.hyrame.impl.HyramePlugin;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -35,7 +35,7 @@ public class PartyChatCommand extends HyriCommand<HyramePlugin> {
         final IHyriParty party = HyriAPI.get().getPartyManager().getPlayerParty(playerId);
 
         if (party == null) {
-            player.spigot().sendMessage(PartyModule.createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-have").getForPlayer(player))));
+            player.spigot().sendMessage(PartyModule.createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-have").getValue(player))));
             return;
         }
 

@@ -2,13 +2,13 @@ package fr.hyriode.hyrame.game.protocol;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
-import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.event.HyriGameWinEvent;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import fr.hyriode.hyrame.utils.Symbols;
 import org.bukkit.ChatColor;
@@ -71,11 +71,11 @@ public class HyriWinProtocol extends HyriGameProtocol implements Listener {
 
         for (HyriGameTeam team : this.game.getTeams()) {
             if (team != winner) {
-                team.sendTitle(target -> ChatColor.RED + GAME_OVER.getForPlayer(target), target -> "", 0, 60, 5);
+                team.sendTitle(target -> ChatColor.RED + GAME_OVER.getValue(target), target -> "", 0, 60, 5);
             }
         }
 
-        winner.sendTitle(target -> ChatColor.GOLD + Symbols.SPARKLES + " " + ChatColor.BOLD + VICTORY.getForPlayer(target) + ChatColor.RESET + ChatColor.GOLD + " " + Symbols.SPARKLES, target -> "", 0, 20 * 8, 5);
+        winner.sendTitle(target -> ChatColor.GOLD + Symbols.SPARKLES + " " + ChatColor.BOLD + VICTORY.getValue(target) + ChatColor.RESET + ChatColor.GOLD + " " + Symbols.SPARKLES, target -> "", 0, 20 * 8, 5);
     }
 
 

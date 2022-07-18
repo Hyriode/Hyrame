@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.impl.module.nickname;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.player.nickname.IHyriNickname;
 import fr.hyriode.api.player.nickname.IHyriNicknameManager;
@@ -10,7 +11,6 @@ import fr.hyriode.api.rank.type.HyriPlayerRankType;
 import fr.hyriode.api.util.Skin;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.impl.Hyrame;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import fr.hyriode.hyrame.utils.ProfileLoader;
 import fr.hyriode.hyrame.utils.ThreadUtil;
@@ -247,7 +247,7 @@ public class NicknameModule {
         }
 
         public String getMessage(Player player) {
-            return this.message.getForPlayer(player);
+            return this.message.getValue(player);
         }
 
     }

@@ -50,4 +50,11 @@ public interface IHyriCommandManager {
      */
     List<HyriCommand<?>> getCommands();
 
+    /**
+     * Get the instance of the command blocker
+     *
+     * @return The {@link ICommandBlocker} instance
+     */
+    ICommandBlocker getCommandBlocker();
+
 }

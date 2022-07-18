@@ -1,6 +1,6 @@
 package fr.hyriode.hyrame.command;
 
-import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguage;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -128,7 +128,7 @@ public abstract class HyriCommand<T extends JavaPlugin> {
 
         if (this.info.isInvalidMessage()) {
             if (sender instanceof Player) {
-                message += HyriCommonMessages.INVALID_COMMAND.getForPlayer((Player) sender);
+                message += HyriCommonMessages.INVALID_COMMAND.getValue((Player) sender);
             } else {
                 message += HyriCommonMessages.INVALID_COMMAND.getValue(HyriLanguage.EN);
             }

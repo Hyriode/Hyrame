@@ -82,7 +82,7 @@ class HyriGameHandler implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
-        if (HyriAPI.get().getConfiguration().isDevEnvironment()) {
+        if (HyriAPI.get().getConfig().isDevEnvironment()) {
             this.runActionOnGame(game -> {
                 if (!game.getState().isAccessible()) {
                     event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ChatColor.RED + "Partie en cours.");

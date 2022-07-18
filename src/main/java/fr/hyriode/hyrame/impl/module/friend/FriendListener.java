@@ -2,10 +2,10 @@ package fr.hyriode.hyrame.impl.module.friend;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.player.event.PlayerJoinNetworkEvent;
 import fr.hyriode.api.player.event.PlayerQuitNetworkEvent;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -33,7 +33,7 @@ public class FriendListener {
                     final IHyriPlayer target = IHyriPlayer.get(player.getUniqueId());
 
                     if (target.getSettings().isFriendConnectionNotificationEnabled()) {
-                        player.sendMessage(message.getForPlayer(target).replace("%player%", ChatColor.LIGHT_PURPLE + account.getName()));
+                        player.sendMessage(message.getValue(target).replace("%player%", ChatColor.LIGHT_PURPLE + account.getName()));
                     }
                 }
             });

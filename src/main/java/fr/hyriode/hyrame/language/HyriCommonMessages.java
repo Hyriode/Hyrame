@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.language;
 
-import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguageMessage;
 
 /**
  * Project: Hyrame
@@ -8,11 +9,6 @@ import fr.hyriode.api.settings.HyriLanguage;
  * on 22/12/2021 at 21:53
  */
 public class HyriCommonMessages {
-
-    /** Sentence is empty */
-    public static final HyriLanguageMessage EMPTY_SENTENCE = new HyriLanguageMessage("sentence.empty")
-            .addValue(HyriLanguage.EN, "The sentence is empty !")
-            .addValue(HyriLanguage.FR, "La phrase est vide !");
 
     /** Player was not found */
     public static final HyriLanguageMessage PLAYER_NOT_FOUND = new HyriLanguageMessage("player.not.found")

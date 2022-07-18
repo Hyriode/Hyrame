@@ -44,7 +44,7 @@ public interface HyriGameType {
      */
     static HyriGameType getFromData(HyriGameType[] values) {
         for (HyriGameType type : values) {
-            if (type.getName().equals(HyriAPI.get().getServer().getGameType())) {
+            if (type.getName().equals(HyriAPI.get().getServer().getSubType())) {
                 return type;
             }
         }

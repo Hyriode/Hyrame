@@ -1,10 +1,10 @@
 package fr.hyriode.hyrame.game.timer;
 
-import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -85,7 +85,7 @@ public class HyriGameStartingTimer implements Runnable {
 
                 this.game.setState(HyriGameState.WAITING);
 
-                this.sendTitle(CANCEL_MESSAGE::getForPlayer);
+                this.sendTitle(CANCEL_MESSAGE::getValue);
                 this.sendSound();
             }
         }

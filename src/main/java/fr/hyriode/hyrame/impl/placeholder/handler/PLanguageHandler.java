@@ -1,6 +1,6 @@
 package fr.hyriode.hyrame.impl.placeholder.handler;
 
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.placeholder.PlaceholderPrefixHandler;
 import org.bukkit.entity.Player;
 
@@ -20,7 +20,7 @@ class PLanguageHandler extends PlaceholderPrefixHandler {
         if (player == null) {
             return null;
         }
-        return HyriLanguageMessage.get(placeholder).getForPlayer(player);
+        return HyriLanguageMessage.get(placeholder).getValue(player);
     }
 
 }

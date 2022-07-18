@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl.game.gui;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
@@ -7,7 +8,6 @@ import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.impl.game.util.TeamChooserItem;
 import fr.hyriode.hyrame.inventory.HyriInventory;
 import fr.hyriode.hyrame.item.ItemBuilder;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -38,7 +38,7 @@ public class TeamChooserGUI extends HyriInventory {
     private final IHyrame hyrame;
 
     public TeamChooserGUI(IHyrame hyrame, HyriGame<?> game, Player owner, int slot) {
-        super(owner, HyriLanguageMessage.get("team-chooser.gui.title").getForPlayer(owner), dynamicSize(game.getTeams().size()));
+        super(owner, HyriLanguageMessage.get("team-chooser.gui.title").getValue(owner), dynamicSize(game.getTeams().size()));
         this.hyrame = hyrame;
         this.game = game;
         this.slot = slot;
@@ -51,7 +51,7 @@ public class TeamChooserGUI extends HyriInventory {
     private void addTeamsWools() {
         for (HyriGameTeam team : this.game.getTeams()) {
             final ItemStack wool = new ItemBuilder(Material.WOOL, 1, team.getColor().getDyeColor().getWoolData())
-                    .withName(team.getColor().getChatColor() + team.getDisplayName().getForPlayer(this.owner) + ChatColor.GRAY + " [" + team.getPlayers().size() + "/" + team.getTeamSize() + "]")
+                    .withName(team.getColor().getChatColor() + team.getDisplayName().getValue(this.owner) + ChatColor.GRAY + " [" + team.getPlayers().size() + "/" + team.getTeamSize() + "]")
                     .withLore(this.getWoolLore(team))
                     .build();
 
@@ -61,7 +61,7 @@ public class TeamChooserGUI extends HyriInventory {
 
     private void addRandomTeamBarrier() {
         final ItemStack barrier = new ItemBuilder(Material.BARRIER)
-                .withName(HyriLanguageMessage.get("team-chooser.gui.random-team").getForPlayer(this.owner))
+                .withName(HyriLanguageMessage.get("team-chooser.gui.random-team").getValue(this.owner))
                 .build();
 
         this.setItem(this.size - 1, barrier, event -> {
@@ -79,11 +79,11 @@ public class TeamChooserGUI extends HyriInventory {
                     this.hyrame.getItemManager().giveItem(this.owner, this.slot, TeamChooserItem.class);
                 }
 
-                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.join-random").getForPlayer(player));
+                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.join-random").getValue(player));
 
                 this.refresh();
             } else {
-                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.already-in-random").getForPlayer(player));
+                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.already-in-random").getValue(player));
             }
         });
     }
@@ -94,9 +94,9 @@ public class TeamChooserGUI extends HyriInventory {
             final HyriGamePlayer gamePlayer = this.game.getPlayer(event.getWhoClicked().getUniqueId());
 
             if (gamePlayer.hasTeam() && gamePlayer.isInTeam(team)) {
-                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.already-in").getForPlayer(player));
+                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.already-in").getValue(player));
             } else if (team.isFull()) {
-                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.full").getForPlayer(player));
+                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.full").getValue(player));
             } else {
                 gamePlayer.removeFromTeam();
 
@@ -106,7 +106,7 @@ public class TeamChooserGUI extends HyriInventory {
                     this.game.getTabListManager().updatePlayer(gamePlayer);
                 }
 
-                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.join").getForPlayer(player).replace("%team%", team.getColor().getChatColor() + team.getDisplayName().getForPlayer(player)));
+                player.sendMessage(HyriLanguageMessage.get("team-chooser.message.join").getValue(player).replace("%team%", team.getColor().getChatColor() + team.getDisplayName().getValue(player)));
 
                 if (this.slot != -1) {
                     this.hyrame.getItemManager().giveItem(this.owner, this.slot, TeamChooserItem.class);

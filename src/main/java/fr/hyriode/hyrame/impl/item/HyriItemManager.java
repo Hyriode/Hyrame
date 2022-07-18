@@ -1,11 +1,11 @@
 package fr.hyriode.hyrame.impl.item;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.item.HyriItem;
 import fr.hyriode.hyrame.item.IHyriItemManager;
 import fr.hyriode.hyrame.item.ItemBuilder;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.reflection.Reflection;
 import fr.hyriode.hyrame.utils.ItemUtil;
@@ -148,14 +148,14 @@ public class HyriItemManager implements IHyriItemManager {
 
     private ItemStack toItemStack(Player player, HyriItem<?> item) {
         return new ItemBuilder(item.getMaterial(), 1, item.getData())
-                .withName(item.getDisplayName().get().getForPlayer(player))
+                .withName(item.getDisplayName().get().getValue(player.getUniqueId()))
                 .withLore(this.getLore(player, item.getDescription().get()))
                 .nbt().setString(ITEM_NBT_KEY, item.getName())
                 .build();
     }
 
     private List<String> getLore(Player player, List<HyriLanguageMessage> description) {
-        return description.stream().map(line -> line.getForPlayer(player)).collect(Collectors.toList());
+        return description.stream().map(line -> line.getValue(player.getUniqueId())).collect(Collectors.toList());
     }
 
     private boolean isItemExisting(String name) {

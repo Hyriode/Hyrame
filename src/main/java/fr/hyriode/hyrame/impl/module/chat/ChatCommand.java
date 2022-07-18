@@ -2,14 +2,14 @@ package fr.hyriode.hyrame.impl.module.chat;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.chat.channel.IHyriChatChannelManager;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.hyrame.chat.HyriMessageEvent;
+import fr.hyriode.hyrame.chat.event.MessageEvent;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
 import fr.hyriode.hyrame.command.HyriCommandType;
 import fr.hyriode.hyrame.impl.HyramePlugin;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -18,7 +18,7 @@ import java.util.function.BiFunction;
 
 public class ChatCommand extends HyriCommand<HyramePlugin> {
 
-    public static final BiFunction<Player, String, String> MESSAGE = (player, key) -> HyriLanguageMessage.get("message.chat." + key).getForPlayer(player);
+    public static final BiFunction<Player, String, String> MESSAGE = (player, key) -> HyriLanguageMessage.get("message.chat." + key).getValue(player);
 
     public ChatCommand(HyramePlugin plugin) {
         super(plugin, new HyriCommandInfo("chat")
@@ -70,7 +70,7 @@ public class ChatCommand extends HyriCommand<HyramePlugin> {
 
             final String message = output.get(1, String.class);
 
-            final HyriMessageEvent event = new HyriMessageEvent(playerId, message);
+            final MessageEvent event = new MessageEvent(playerId, message);
 
             HyriAPI.get().getEventBus().publish(event);
 

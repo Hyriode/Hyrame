@@ -1,12 +1,12 @@
 package fr.hyriode.hyrame.impl.command.model;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
 import fr.hyriode.hyrame.command.HyriCommandType;
 import fr.hyriode.hyrame.impl.HyramePlugin;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.entity.Player;
 
 /**
@@ -28,7 +28,7 @@ public class PingCommand extends HyriCommand<HyramePlugin> {
     public void handle(HyriCommandContext ctx) {
         final Player player = (Player) ctx.getSender();
 
-        player.sendMessage(HyriLanguageMessage.get("message.ping").getForPlayer(player).replace("%ping%", String.valueOf(HyriAPI.get().getPlayerManager().getPing(player.getUniqueId()))));
+        player.sendMessage(HyriLanguageMessage.get("message.ping").getValue(player).replace("%ping%", String.valueOf(HyriAPI.get().getPlayerManager().getPing(player.getUniqueId()))));
     }
 
 }

@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.impl.game.chat;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.chat.channel.HyriChatChannel;
 import fr.hyriode.api.chat.channel.IHyriChatChannelManager;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.rank.type.HyriPlayerRankType;
 import fr.hyriode.hyrame.chat.IHyriChatHandler;
@@ -11,8 +12,7 @@ import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.impl.Hyrame;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyrame.language.IHyriLanguageManager;
+import fr.hyriode.hyrame.language.ILanguageLoader;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -51,7 +51,6 @@ public class GameChatHandler implements IHyriChatHandler {
 
         final String message = event.getMessage();
         final Player player = event.getPlayer();
-        final IHyriLanguageManager languageManager = this.hyrame.getLanguageManager();
         final UUID uuid = player.getUniqueId();
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(uuid);
         final HyriGamePlayer gamePlayer = game.getPlayer(player.getUniqueId());
@@ -61,11 +60,11 @@ public class GameChatHandler implements IHyriChatHandler {
         }
 
         final HyriGameTeam team = gamePlayer.getTeam();
-        final HyriLanguageMessage teamChatPrefix = languageManager.getMessage("team.chat.prefix");
+        final HyriLanguageMessage teamChatPrefix = HyriLanguageMessage.get("team.chat.prefix");
         final String channel = account.getSettings().getChatChannel();
 
         if (!IHyriChatChannelManager.canPlayerAccessChannel(channel, account)) {
-            player.sendMessage(ChatColor.RED + HyriLanguageMessage.get("message.error.chat.cant-talk").getForPlayer(player));
+            player.sendMessage(ChatColor.RED + HyriLanguageMessage.get("message.error.chat.cant-talk").getValue(player));
             account.getSettings().setChatChannel(HyriChatChannel.GLOBAL.getChannel());
             account.update();
         }
@@ -77,13 +76,13 @@ public class GameChatHandler implements IHyriChatHandler {
                 if (gamePlayer.isSpectator()) {
                     game.sendMessageToSpectators(target -> String.format(this.format(), account.getNameWithRank(true), message), true);
                 } else if (gamePlayer.isDead()) {
-                    player.sendMessage(ChatColor.RED + languageManager.getValue(player, "error.chat.dead"));
+                    player.sendMessage(ChatColor.RED + HyriLanguageMessage.get("error.chat.dead").getValue(player));
                 } else if (gamePlayer.getTeam().getTeamSize() == 1) {
-                    game.sendMessageToAll(target -> String.format(this.format(), color + "[" + team.getDisplayName().getForPlayer(target) + color + "] " + account.getNameWithRank(true), message));
+                    game.sendMessageToAll(target -> String.format(this.format(), color + "[" + team.getDisplayName().getValue(target) + color + "] " + account.getNameWithRank(true), message));
                 } else if (message.startsWith("!")) {
-                    game.sendMessageToAll(target -> String.format(this.format(), ChatColor.DARK_AQUA + "[Global] " + color + "[" + team.getDisplayName().getForPlayer(target) + color + "] " + account.getNameWithRank(true), message.substring(1)));
+                    game.sendMessageToAll(target -> String.format(this.format(), ChatColor.DARK_AQUA + "[Global] " + color + "[" + team.getDisplayName().getValue(target) + color + "] " + account.getNameWithRank(true), message.substring(1)));
                 } else {
-                    team.sendMessage(target -> String.format(this.format(), ChatColor.DARK_AQUA + "[" + teamChatPrefix.getForPlayer(target) + "] " + account.getNameWithRank(true), message));
+                    team.sendMessage(target -> String.format(this.format(), ChatColor.DARK_AQUA + "[" + teamChatPrefix.getValue(target) + "] " + account.getNameWithRank(true), message));
                 }
             } else {
                 if (game.getState() == HyriGameState.ENDED && message.equalsIgnoreCase("gg") && !this.saidGG.contains(uuid)) {
@@ -107,7 +106,7 @@ public class GameChatHandler implements IHyriChatHandler {
                     if (team != null) {
                         final ChatColor color = team.getColor().getChatColor();
 
-                        messageStart = color + "[" + team.getDisplayName().getForPlayer(target) + color + "] ";
+                        messageStart = color + "[" + team.getDisplayName().getValue(target) + color + "] ";
                     }
 
                     messageStart += account.getNameWithRank(true);

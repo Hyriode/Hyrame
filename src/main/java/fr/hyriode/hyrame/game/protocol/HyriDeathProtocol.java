@@ -1,7 +1,8 @@
 package fr.hyriode.hyrame.game.protocol;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.settings.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
@@ -10,7 +11,6 @@ import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent.Reason;
 import fr.hyriode.hyrame.game.event.player.HyriGameRespawnEvent;
 import fr.hyriode.hyrame.game.util.HyriGameMessages;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import fr.hyriode.hyrame.utils.ThreadUtil;
@@ -227,7 +227,7 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
                 final StringBuilder builder = new StringBuilder(HyriGameMessages.createDeathMessage(gamePlayer, target, reason, lastHitters)).append(" ");
 
                 for (HyriLanguageMessage message : event.getMessagesToAdd()) {
-                    builder.append(message.getForPlayer(target)).append(" ");
+                    builder.append(message.getValue(target)).append(" ");
                 }
 
                 return builder.toString();
@@ -412,9 +412,10 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
 
 
             private void sendRespawnTitle(HyriLanguageMessage message, int stayTime) {
-                final String title = ChatColor.RED + DEAD.getForPlayer(this.player);
+                final UUID playerId = this.player.getUniqueId();
+                final String title = ChatColor.RED + DEAD.getValue(playerId);
 
-                Title.sendTitle(this.player, title, ChatColor.RED + RESPAWN.getForPlayer(this.player) + ChatColor.WHITE + " " + this.currentTime + ChatColor.RED + " " + message.getForPlayer(this.player), 0, stayTime, 0);
+                Title.sendTitle(this.player, title, ChatColor.RED + RESPAWN.getValue(playerId) + ChatColor.WHITE + " " + this.currentTime + ChatColor.RED + " " + message.getValue(playerId), 0, stayTime, 0);
             }
 
         }

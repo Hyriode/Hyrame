@@ -1,11 +1,12 @@
 package fr.hyriode.hyrame.impl.module.chat.message;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.settings.HyriSettingsLevel;
 import fr.hyriode.api.sound.HyriSound;
 import fr.hyriode.api.sound.HyriSoundPacket;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.chat.event.PrivateMessageEvent;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -23,14 +24,12 @@ import java.util.UUID;
  */
 public class PrivateMessageModule {
 
-    private static final String REDIS_CHANNEL = "private-messages";
-
     public void replyToMessage(Player player, String message) {
         final IHyriPlayer senderAccount = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
         final UUID lastMessagePlayer = senderAccount.getLastPrivateMessagePlayer();
 
         if (lastMessagePlayer == null) {
-            player.sendMessage(HyriLanguageMessage.get("message.private.no-player-to-reply").getForPlayer(player));
+            player.sendMessage(HyriLanguageMessage.get("message.private.no-player-to-reply").getValue(player));
             return;
         }
 
@@ -43,12 +42,12 @@ public class PrivateMessageModule {
         final UUID targetId = target.getUniqueId();
 
         if (!target.isOnline()) {
-            sender.sendMessage(HyriLanguageMessage.get("message.private.not-online").getForPlayer(sender).replace("%player%", target.getNameWithRank()));
+            sender.sendMessage(HyriLanguageMessage.get("message.private.not-online").getValue(sender).replace("%player%", target.getNameWithRank()));
             return;
         }
 
         if (targetId.equals(senderId)) {
-            sender.sendMessage(HyriLanguageMessage.get("message.private.cant-send-message-to-you").getForPlayer(sender));
+            sender.sendMessage(HyriLanguageMessage.get("message.private.cant-send-message-to-you").getValue(sender));
             return;
         }
 
@@ -56,8 +55,16 @@ public class PrivateMessageModule {
     }
 
     private void sendPrivateMessage0(IHyriPlayer target, IHyriPlayer sender, String message) {
-        final UUID targetId = target.getUniqueId();
         final UUID senderId = sender.getUniqueId();
+        final UUID targetId = target.getUniqueId();
+        final PrivateMessageEvent event = new PrivateMessageEvent(senderId, targetId);
+
+        HyriAPI.get().getEventBus().publish(event);
+
+        if (event.isCancelled()) {
+            return;
+        }
+
         final HyriSettingsLevel sendLevel = target.getSettings().getPrivateMessagesLevel();
         final HyriSettingsLevel soundLevel = target.getSettings().getPrivateMessagesSoundLevel();
         final boolean areFriends = HyriAPI.get().getFriendManager().createHandler(targetId).areFriends(senderId);
@@ -74,14 +81,14 @@ public class PrivateMessageModule {
             PlayerUtil.sendComponent(targetId, this.createReceivedMessage(target, sender, message));
             PlayerUtil.sendComponent(senderId, this.createSentMessage(target, sender, message));
         } else {
-            Bukkit.getPlayer(senderId).sendMessage(HyriLanguageMessage.get("message.private.doesnt-accept").getForPlayer(sender).replace("%player%", target.getNameWithRank()));
+            Bukkit.getPlayer(senderId).sendMessage(HyriLanguageMessage.get("message.private.doesnt-accept").getValue(sender).replace("%player%", target.getNameWithRank()));
         }
     }
 
     private TextComponent createReceivedMessage(IHyriPlayer target, IHyriPlayer sender, String message) {
-        final String reply = HyriLanguageMessage.get("message.private.reply").getForPlayer(target).replace("%player%", sender.getNameWithRank());
+        final String reply = HyriLanguageMessage.get("message.private.reply").getValue(target).replace("%player%", sender.getNameWithRank());
 
-        final ComponentBuilder builder = new ComponentBuilder(HyriLanguageMessage.get("message.private.received").getForPlayer(target).replace("%player%", sender.getNameWithRank()))
+        final ComponentBuilder builder = new ComponentBuilder(HyriLanguageMessage.get("message.private.received").getValue(target).replace("%player%", sender.getNameWithRank()))
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(reply))).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/r "))
                 .append(" " + message).color(net.md_5.bungee.api.ChatColor.AQUA)
                 .event((HoverEvent) null).event((ClickEvent) null);
@@ -90,7 +97,7 @@ public class PrivateMessageModule {
     }
 
     private TextComponent createSentMessage(IHyriPlayer target, IHyriPlayer sender, String message) {
-        final ComponentBuilder builder = new ComponentBuilder(HyriLanguageMessage.get("message.private.sent").getForPlayer(sender).replace("%player%", target.getNameWithRank()))
+        final ComponentBuilder builder = new ComponentBuilder(HyriLanguageMessage.get("message.private.sent").getValue(sender).replace("%player%", target.getNameWithRank()))
                 .append(" " + message).color(net.md_5.bungee.api.ChatColor.AQUA);
 
         return new TextComponent(builder.create());

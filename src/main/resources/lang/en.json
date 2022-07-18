@@ -1,5 +1,5 @@
 {
-  "command.not.enabled": "&cThis command is not enabled on this server!",
+  "message.command.not-enabled": "&cThis command is not enabled on the server!",
   "dont.have.permissions": "&cYou don't have the required permissions to perform this action!",
 
   "tab.information-line": "    &fTPS: &b%tps%   &fPing: &b%ping%   &fServer: &b%server%   &fPlayers: &b%players%    ",

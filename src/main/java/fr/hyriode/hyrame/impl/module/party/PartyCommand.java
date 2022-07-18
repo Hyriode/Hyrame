@@ -1,6 +1,8 @@
 package fr.hyriode.hyrame.impl.module.party;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.language.HyriLanguage;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.party.HyriPartyDisbandReason;
 import fr.hyriode.api.party.HyriPartyRank;
 import fr.hyriode.api.party.IHyriParty;
@@ -8,12 +10,10 @@ import fr.hyriode.api.party.IHyriPartyManager;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.player.IHyriPlayerManager;
 import fr.hyriode.api.rank.type.HyriPlayerRankType;
-import fr.hyriode.api.settings.HyriLanguage;
 import fr.hyriode.api.settings.HyriSettingsLevel;
 import fr.hyriode.hyrame.command.*;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import fr.hyriode.hyrame.utils.TimeUtil;
 import net.md_5.bungee.api.ChatColor;
@@ -56,7 +56,7 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
 
         this.handleArgument(ctx, "leave", this.partyOutput(ctx, party, output -> {
             if (party.isLeader(playerId)) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.cant-leave-leader").getForPlayer(account))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.cant-leave-leader").getValue(account))));
                 return;
             }
 
@@ -88,7 +88,7 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
             }
 
             if (party.getRank(targetId).isSuperior(playerRank)) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.cant-kick").getForPlayer(account))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.cant-kick").getValue(account))));
                 return;
             }
 
@@ -117,7 +117,7 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
 
             if (this.editRank(player, party, target)) {
                 if (party.promoteMember(targetId) != null) {
-                    player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.cant-promote").getForPlayer(player).replace("%target%", target.getNameWithRank()))));
+                    player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.cant-promote").getValue(player.getUniqueId()).replace("%target%", target.getNameWithRank()))));
                 }
             }
         }));
@@ -128,7 +128,7 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
 
             if (this.editRank(player, party, target)) {
                 if (party.demoteMember(targetId) != null) {
-                    player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.cant-demote").getForPlayer(player).replace("%player%", target.getNameWithRank()))));
+                    player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.cant-demote").getValue(player.getUniqueId()).replace("%player%", target.getNameWithRank()))));
                 }
             }
         }));
@@ -139,19 +139,19 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
             final String mutedInput = output.get(String.class);
 
             if (!mutedInput.equalsIgnoreCase("on") && !mutedInput.equalsIgnoreCase("off")) {
-                player.sendMessage(HyriCommonMessages.INVALID_INPUT.getForPlayer(account));
+                player.sendMessage(HyriCommonMessages.INVALID_INPUT.getValue(account));
                 return;
             }
 
             final boolean muted = mutedInput.equalsIgnoreCase("on");
 
             if (muted == party.isChatEnabled() && muted) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.chat-already-enabled").getForPlayer(player))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.chat-already-enabled").getValue(player.getUniqueId()))));
                 return;
             }
 
             if (muted == party.isChatEnabled() && !muted) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.chat-already-disabled").getForPlayer(player))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.chat-already-disabled").getValue(player.getUniqueId()))));
                 return;
             }
 
@@ -165,7 +165,7 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
             }
 
             if (!account.getRank().isSuperior(HyriPlayerRankType.PARTNER)) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.partner-feature").getForPlayer(account).replace("%rank%", HyriPlayerRankType.PARTNER.getDefaultPrefix()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.partner-feature").getValue(account).replace("%rank%", HyriPlayerRankType.PARTNER.getDefaultPrefix()))));
                 return;
             }
 
@@ -199,21 +199,21 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
             this.partyManager.removeInvitation(partyId, playerId);
 
             if (party == null) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-have-target").getForPlayer(account).replace("%player%", requester.getNameWithRank()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-have-target").getValue(account).replace("%player%", requester.getNameWithRank()))));
                 return;
             }
 
             if (!this.partyManager.hasInvitation(partyId, playerId)) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.no-invitation").getForPlayer(account).replace("%player%", requester.getNameWithRank()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.no-invitation").getValue(account).replace("%player%", requester.getNameWithRank()))));
                 return;
             }
 
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.deny-target").getForPlayer(account).replace("%player%", requester.getNameWithRank()))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.deny-target").getValue(account).replace("%player%", requester.getNameWithRank()))));
 
             final HyriLanguageMessage message = HyriLanguageMessage.get("message.party.deny-sender");
 
             for (UUID member : party.getMembers().keySet()) {
-                PlayerUtil.sendComponent(member, createMessage(builder -> builder.append(message.getForPlayer(HyriAPI.get().getPlayerManager().getPlayer(member)).replace("%player%", account.getNameWithRank()))));
+                PlayerUtil.sendComponent(member, createMessage(builder -> builder.append(message.getValue(HyriAPI.get().getPlayerManager().getPlayer(member)).replace("%player%", account.getNameWithRank()))));
             }
         });
 
@@ -231,7 +231,7 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
                 action.accept(output);
             } else {
                 ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.SUCCESS));
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-have").getForPlayer(player))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-have").getValue(player.getUniqueId()))));
             }
         };
     }
@@ -290,14 +290,14 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
 
     private boolean isSameParty(Player player, IHyriParty party, IHyriPlayer target) {
         if (!target.getParty().equals(party.getId())) {
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.not-in-party").getForPlayer(player).replace("%player%", target.getNameWithRank()))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.not-in-party").getValue(player.getUniqueId()).replace("%player%", target.getNameWithRank()))));
             return false;
         }
         return true;
     }
 
     private void dontHavePermission(Player player) {
-        player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.no-permission").getForPlayer(player))));
+        player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.no-permission").getValue(player.getUniqueId()))));
     }
 
     private Consumer<HyriCommandOutput> invitePlayer(Player player, IHyriPlayer account) {
@@ -307,7 +307,7 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
             final UUID targetId = target.getUniqueId();
 
             if (!target.isOnline()) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.not-online").getForPlayer(account).replace("%player%", target.getNameWithRank()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.not-online").getValue(account).replace("%player%", target.getNameWithRank()))));
                 return;
             }
 
@@ -320,29 +320,29 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
             }
 
             if (playerId.equals(targetId)) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.yourself").getForPlayer(account))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.yourself").getValue(account))));
                 return;
             }
 
             if (HyriAPI.get().getPartyManager().hasInvitation(party.getId(), targetId)) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.already-invited").getForPlayer(account).replace("%player%", target.getNameWithRank()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.already-invited").getValue(account).replace("%player%", target.getNameWithRank()))));
                 return;
             }
 
             if (party.hasMember(targetId)) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.already-in").getForPlayer(account).replace("%player%", target.getNameWithRank()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.already-in").getValue(account).replace("%player%", target.getNameWithRank()))));
                 return;
             }
 
             if (target.hasNickname() && !account.getRank().isStaff()) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-accept").getForPlayer(account).replace("%player%", target.getNickname().getName()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-accept").getValue(account).replace("%player%", target.getNickname().getName()))));
                 return;
             }
 
             final HyriSettingsLevel level = target.getSettings().getPartyRequestsLevel();
 
             if ((level == HyriSettingsLevel.NONE || (level == HyriSettingsLevel.FRIENDS && !HyriAPI.get().getFriendManager().createHandler(targetId).areFriends(playerId))) && !account.getRank().isStaff()) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-accept").getForPlayer(account).replace("%player%", target.getNameWithRank()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-accept").getValue(account).replace("%player%", target.getNameWithRank()))));
                 return;
             }
 
@@ -352,13 +352,13 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
             }
 
             if (party.getMembers().size() >= PartyLimit.getMaxSlots(account)) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.no-space").getForPlayer(account))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.no-space").getValue(account))));
                 return;
             }
 
             this.partyManager.sendInvitation(party.getId(), playerId, targetId);
 
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.invitation-sent").getForPlayer(account).replace("%player%", target.getNameWithRank()))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.invitation-sent").getValue(account).replace("%player%", target.getNameWithRank()))));
         };
     }
 
@@ -374,25 +374,25 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
             }
 
             if (HyriAPI.get().getPartyManager().getParty(account.getParty()) != null) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.already-in-other").getForPlayer(account))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.already-in-other").getValue(account))));
                 this.partyManager.removeInvitation(partyId, playerId);
                 return;
             }
 
             if (party == null) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-have-target").getForPlayer(account).replace("%player%", requester.getNameWithRank()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.doesnt-have-target").getValue(account).replace("%player%", requester.getNameWithRank()))));
                 this.partyManager.removeInvitation(partyId, playerId);
                 return;
             }
 
             if (!this.partyManager.hasInvitation(partyId, playerId) && party.isPrivate()) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.no-invitation").getForPlayer(account).replace("%player%", requester.getNameWithRank()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.no-invitation").getValue(account).replace("%player%", requester.getNameWithRank()))));
                 this.partyManager.removeInvitation(partyId, playerId);
                 return;
             }
 
             if (party.getMembers().size() >= PartyLimit.getMaxSlots(account)) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.no-space").getForPlayer(account))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.no-space").getValue(account))));
                 this.partyManager.removeInvitation(partyId, playerId);
                 return;
             }
@@ -426,7 +426,7 @@ public class PartyCommand extends HyriCommand<HyramePlugin> {
     private static void addCommandLine(ComponentBuilder builder, IHyriPlayer player, String suggest, String arguments, boolean newLine) {
         builder.append("/p " + arguments).color(ChatColor.DARK_AQUA).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/p " + suggest + " "))
                 .append(" - ").color(ChatColor.GRAY).event((ClickEvent) null)
-                .append(HyriLanguageMessage.get("message.party.command." + suggest).getForPlayer(player)).color(ChatColor.AQUA)
+                .append(HyriLanguageMessage.get("message.party.command." + suggest).getValue(player)).color(ChatColor.AQUA)
                 .append(newLine ? "\n" : "");
     }
 

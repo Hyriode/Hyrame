@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.impl;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.language.HyriLanguage;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.IHyrameConfiguration;
@@ -8,9 +9,10 @@ import fr.hyriode.hyrame.bossbar.BossBarManager;
 import fr.hyriode.hyrame.command.IHyriCommandManager;
 import fr.hyriode.hyrame.config.IConfigManager;
 import fr.hyriode.hyrame.game.HyriGame;
+import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.impl.chat.HyriChatManager;
-import fr.hyriode.hyrame.impl.command.HyriCommandBlocker;
+import fr.hyriode.hyrame.impl.command.CommandBlocker;
 import fr.hyriode.hyrame.impl.command.HyriCommandManager;
 import fr.hyriode.hyrame.impl.config.ConfigManager;
 import fr.hyriode.hyrame.impl.game.HyriGameManager;
@@ -18,7 +20,7 @@ import fr.hyriode.hyrame.impl.hologram.HologramHandler;
 import fr.hyriode.hyrame.impl.inventory.HyriInventoryManager;
 import fr.hyriode.hyrame.impl.item.HyriItemManager;
 import fr.hyriode.hyrame.impl.join.HyriJoinHandler;
-import fr.hyriode.hyrame.impl.language.HyriLanguageManager;
+import fr.hyriode.hyrame.impl.language.LanguageLoader;
 import fr.hyriode.hyrame.impl.listener.HyriListenerManager;
 import fr.hyriode.hyrame.impl.module.chat.message.PrivateMessageModule;
 import fr.hyriode.hyrame.impl.module.friend.FriendModule;
@@ -35,7 +37,7 @@ import fr.hyriode.hyrame.impl.tablist.HyriTabListManager;
 import fr.hyriode.hyrame.inventory.IHyriInventoryManager;
 import fr.hyriode.hyrame.item.IHyriItemManager;
 import fr.hyriode.hyrame.item.enchant.HyriEnchant;
-import fr.hyriode.hyrame.language.IHyriLanguageManager;
+import fr.hyriode.hyrame.language.ILanguageLoader;
 import fr.hyriode.hyrame.listener.IHyriListenerManager;
 import fr.hyriode.hyrame.npc.NPCManager;
 import fr.hyriode.hyrame.placeholder.PlaceholderAPI;
@@ -44,6 +46,7 @@ import fr.hyriode.hyrame.scanner.IHyriScanner;
 import fr.hyriode.hyrame.scoreboard.IHyriScoreboardManager;
 import fr.hyriode.hyrame.signgui.SignGUIManager;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,13 +59,12 @@ import java.util.List;
 public class Hyrame implements IHyrame {
 
     private final HyriTabManager tabManager;
-    private final HyriCommandBlocker commandBlocker;
 
     private final List<IPluginProvider> pluginProviders;
 
     private final IHyrameConfiguration configuration;
     private final IHyriScanner scanner;
-    private final IHyriLanguageManager languageManager;
+    private final ILanguageLoader languageLoader;
     private final IHyriListenerManager listenerManager;
     private final IHyriCommandManager commandManager;
     private final IHyriItemManager itemManager;
@@ -86,7 +88,7 @@ public class Hyrame implements IHyrame {
         this.plugin = plugin;
         this.configuration = new HyrameConfiguration();
         this.scanner = new HyriScanner();
-        this.languageManager = new HyriLanguageManager();
+        this.languageLoader = new LanguageLoader();
         this.listenerManager = new HyriListenerManager(this);
         this.commandManager = new HyriCommandManager(this);
         this.itemManager = new HyriItemManager(this);
@@ -99,7 +101,6 @@ public class Hyrame implements IHyrame {
         this.configManager = new ConfigManager(this, plugin);
         this.packetInterceptor = new PacketInterceptor();
         this.pluginProviders = new ArrayList<>();
-        this.commandBlocker = new HyriCommandBlocker();
         this.tabManager = new HyriTabManager();
         this.nicknameModule = new NicknameModule(this, plugin);
         this.friendModule = new FriendModule();
@@ -107,7 +108,6 @@ public class Hyrame implements IHyrame {
         this.partyModule = new PartyModule();
         this.levelingModule = new LevelingModule();
 
-        IHyriLanguageManager.Provider.register(() -> this.languageManager);
         PlaceholderAPI.register(new PlaceholderImpl());
         PlaceholderRegistry.registerPlaceholders(this);
         HyriEnchant.register();
@@ -116,20 +116,10 @@ public class Hyrame implements IHyrame {
         NPCManager.init(this.plugin, "npcs:");
         new SignGUIManager(this, this.plugin);
 
+        HyriAPI.get().getLanguageManager().registerAdapter(HyriGamePlayer.class, (message, gamePlayer) -> message.getValue(gamePlayer.getUniqueId()));
+        HyriAPI.get().getLanguageManager().registerAdapter(CommandSender.class, (message, sender) -> message.getValue(HyriLanguage.EN));
+
         HyriAPI.get().getServerManager().getJoinManager().registerHandler(10, new HyriJoinHandler(this));
-
-        /*// Basketball TESTS
-        final World world = IHyrame.WORLD.get();
-
-        for (Entity entity : world.getEntities()) {
-            if (entity instanceof Slime) {
-                entity.remove();
-            }
-        }
-
-        final Basketball basketball = new Basketball(this.plugin, new Basketball.Config(new Location(world, -109.5, 100, 63.5), new Area(new Location(world, -123, 116, 70), new Location(world, -96, 95, 55))));
-
-        basketball.start();*/
     }
 
     void disable() {
@@ -149,7 +139,7 @@ public class Hyrame implements IHyrame {
         this.pluginProviders.add(pluginProvider);
 
         this.itemManager.registerItems(pluginProvider);
-        this.languageManager.loadLanguagesMessages(pluginProvider);
+        this.languageLoader.loadLanguages(pluginProvider);
         this.listenerManager.registerListeners(pluginProvider);
         this.commandManager.registerCommands(pluginProvider);
     }
@@ -168,10 +158,6 @@ public class Hyrame implements IHyrame {
         return this.configuration;
     }
 
-    public HyriCommandBlocker getCommandBlocker() {
-        return this.commandBlocker;
-    }
-
     public HyriTabManager getTabManager() {
         return this.tabManager;
     }
@@ -182,8 +168,8 @@ public class Hyrame implements IHyrame {
     }
 
     @Override
-    public IHyriLanguageManager getLanguageManager() {
-        return this.languageManager;
+    public ILanguageLoader getLanguageLoader() {
+        return this.languageLoader;
     }
 
     @Override

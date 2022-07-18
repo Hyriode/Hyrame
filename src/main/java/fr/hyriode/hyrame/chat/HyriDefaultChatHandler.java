@@ -3,8 +3,8 @@ package fr.hyriode.hyrame.chat;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.chat.channel.HyriChatChannel;
 import fr.hyriode.api.chat.channel.IHyriChatChannelManager;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -34,7 +34,7 @@ public class HyriDefaultChatHandler implements IHyriChatHandler {
         final String channel = account.getSettings().getChatChannel();
 
         if (!IHyriChatChannelManager.canPlayerAccessChannel(channel, account)) {
-            player.sendMessage(ChatColor.RED + HyriLanguageMessage.get("message.error.chat.cant-talk").getForPlayer(player));
+            player.sendMessage(ChatColor.RED + HyriLanguageMessage.get("message.error.chat.cant-talk").getValue(account));
             account.getSettings().setChatChannel(HyriChatChannel.GLOBAL.getChannel());
             account.update();
         }

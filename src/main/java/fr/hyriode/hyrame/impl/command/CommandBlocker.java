@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.impl.command;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.HyrameLogger;
+import fr.hyriode.hyrame.command.ICommandBlocker;
 import fr.hyriode.hyrame.reflection.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -18,7 +19,7 @@ import java.util.Map;
  * Created by AstFaster
  * on 12/11/2021 at 15:25
  */
-public class HyriCommandBlocker {
+public class CommandBlocker implements ICommandBlocker {
 
     private static final String MINECRAFT_PREFIX = "minecraft";
     private static final String BUKKIT_PREFIX = "bukkit";
@@ -28,7 +29,7 @@ public class HyriCommandBlocker {
 
     private final CommandMap commandMap;
 
-    public HyriCommandBlocker() {
+    public CommandBlocker() {
         this.commandMap = this.getCommandMap();
         this.blockedCommands = new ArrayList<>();
 
@@ -43,28 +44,29 @@ public class HyriCommandBlocker {
         HyrameLogger.log("Removing default Spigot and Minecraft commands...");
 
         // Minecraft
-        this.addBlockedCommand(MINECRAFT_PREFIX, "me", "trigger");
-        this.removeCommand(MINECRAFT_PREFIX, "tell");
+        this.addBlockedCommands(MINECRAFT_PREFIX, "me", "trigger");
+        this.removeCommands(MINECRAFT_PREFIX, "tell");
 
-        if (!HyriAPI.get().getConfiguration().isDevEnvironment()) {
-            this.removeCommand(MINECRAFT_PREFIX, "whitelist");
+        if (!HyriAPI.get().getConfig().isDevEnvironment()) {
+            this.removeCommands(MINECRAFT_PREFIX, "whitelist");
         }
 
         // Bukkit
-        this.removeCommand(BUKKIT_PREFIX, "about", "version", "ver", "icanhasbukkit");
-        this.removeCommand(BUKKIT_PREFIX, "save-all", "save-off", "save-on");
-        this.removeCommand(BUKKIT_PREFIX, "reload", "rl");
-        this.removeCommand(BUKKIT_PREFIX, "timings");
-        this.removeCommand(BUKKIT_PREFIX, "plugins", "pl");
-        this.removeCommand(BUKKIT_PREFIX, "help", "?");
-        this.removeCommand(BUKKIT_PREFIX, "me");
-        this.removeCommand(BUKKIT_PREFIX, "trigger");
+        this.removeCommands(BUKKIT_PREFIX, "about", "version", "ver", "icanhasbukkit");
+        this.removeCommands(BUKKIT_PREFIX, "save-all", "save-off", "save-on");
+        this.removeCommands(BUKKIT_PREFIX, "reload", "rl");
+        this.removeCommands(BUKKIT_PREFIX, "timings");
+        this.removeCommands(BUKKIT_PREFIX, "plugins", "pl");
+        this.removeCommands(BUKKIT_PREFIX, "help", "?");
+        this.removeCommands(BUKKIT_PREFIX, "me");
+        this.removeCommands(BUKKIT_PREFIX, "trigger");
 
         // Spigot
-        this.removeCommand(SPIGOT_PREFIX, "restart", "tps");
+        this.removeCommands(SPIGOT_PREFIX, "restart", "tps");
     }
 
-    private void addBlockedCommand(String prefix, String... commands) {
+    @Override
+    public void addBlockedCommands(String prefix, String... commands) {
         for (String command : commands) {
             this.blockedCommands.add(command);
             this.blockedCommands.add(prefix + ":" + command);
@@ -72,7 +74,8 @@ public class HyriCommandBlocker {
     }
 
     @SuppressWarnings("unchecked")
-    private void removeCommand(String prefix, String... commands) {
+    @Override
+    public void removeCommands(String prefix, String... commands) {
         final SimpleCommandMap simpleCommandMap = (SimpleCommandMap) this.commandMap;
         final Map<String, Command> knownCommands = (Map<String, Command>) Reflection.invokeField(simpleCommandMap, "knownCommands");
 
@@ -96,6 +99,7 @@ public class HyriCommandBlocker {
         }
     }
 
+    @Override
     public List<String> getBlockedCommands() {
         return this.blockedCommands;
     }

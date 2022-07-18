@@ -2,10 +2,10 @@ package fr.hyriode.hyrame.impl.module.party;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.party.IHyriParty;
 import fr.hyriode.api.party.event.*;
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -41,9 +41,9 @@ public class PartyListener {
 
             BaseComponent[] message;
             if (member.equals(newMember)) {
-                message = createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.join-new-member").getForPlayer(player).replace("%player%", HyriAPI.get().getPlayerManager().getPlayer(party.getLeader()).getNameWithRank())));
+                message = createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.join-new-member").getValue(player).replace("%player%", HyriAPI.get().getPlayerManager().getPlayer(party.getLeader()).getNameWithRank())));
             } else {
-                message = createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.join-member").getForPlayer(player).replace("%player%", account.getNameWithRank())));
+                message = createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.join-member").getValue(player).replace("%player%", account.getNameWithRank())));
             }
 
             player.spigot().sendMessage(message);
@@ -63,7 +63,7 @@ public class PartyListener {
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(oldMemberId);
 
         if (oldMember != null) {
-            oldMember.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.left-old-member").getForPlayer(oldMember).replace("%player%", HyriAPI.get().getPlayerManager().getPlayer(party.getLeader()).getNameWithRank()))));
+            oldMember.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.left-old-member").getValue(oldMember).replace("%player%", HyriAPI.get().getPlayerManager().getPlayer(party.getLeader()).getNameWithRank()))));
         }
 
         for (UUID member : party.getMembers().keySet()) {
@@ -73,7 +73,7 @@ public class PartyListener {
                 continue;
             }
 
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.left-member").getForPlayer(player).replace("%player%", account.getNameWithRank()))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.left-member").getValue(player).replace("%player%", account.getNameWithRank()))));
         }
     }
 
@@ -93,7 +93,7 @@ public class PartyListener {
             final Player player = Bukkit.getPlayer(member);
 
             if (player != null) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.kick-member").getForPlayer(player)
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.kick-member").getValue(player)
                         .replace("%player%", kicker.getNameWithRank())
                         .replace("%kicked%", kickedAccount.getNameWithRank()))));
             }
@@ -104,7 +104,7 @@ public class PartyListener {
         if (player != null) {
             final IHyriPlayer leader = HyriAPI.get().getPlayerManager().getPlayer(party.getLeader());
 
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.kick-kicked").getForPlayer(player).replace("%player%", leader.getNameWithRank()))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.kick-kicked").getValue(player).replace("%player%", leader.getNameWithRank()))));
         }
     }
 
@@ -123,7 +123,7 @@ public class PartyListener {
             final Player player = Bukkit.getPlayer(member);
 
             if (player != null) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.lead-transfer").getForPlayer(player)
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.lead-transfer").getValue(player)
                         .replace("%old_leader%", oldLeader.getNameWithRank())
                         .replace("%new_leader%", newLeader.getNameWithRank()))));
             }
@@ -146,9 +146,9 @@ public class PartyListener {
 
             if (player != null) {
                 if (player.getUniqueId().equals(leaderId)) {
-                    player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.disband-leader").getForPlayer(player))));
+                    player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.disband-leader").getValue(player))));
                 } else {
-                    player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.disband-member").getForPlayer(player).replace("%player%", leader.getNameWithRank()))));
+                    player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.disband-member").getValue(player).replace("%player%", leader.getNameWithRank()))));
                 }
             }
         }
@@ -170,7 +170,7 @@ public class PartyListener {
             final Player player = Bukkit.getPlayer(member);
 
             if (player != null) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.promote-player").getForPlayer(player).replace("%target%", account.getNameWithRank()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.promote-player").getValue(player).replace("%target%", account.getNameWithRank()))));
             }
         }
     }
@@ -189,7 +189,7 @@ public class PartyListener {
             final Player player = Bukkit.getPlayer(member);
 
             if (player != null) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.demote-player").getForPlayer(player).replace("%player%", account.getNameWithRank()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.demote-player").getValue(player).replace("%player%", account.getNameWithRank()))));
             }
         }
     }
@@ -208,7 +208,7 @@ public class PartyListener {
             final Player player = Bukkit.getPlayer(member);
 
             if (player != null) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.chat-" + (action == HyriPartyChatEvent.Action.ENABLED ? "enabled" : "disabled")).getForPlayer(player))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.chat-" + (action == HyriPartyChatEvent.Action.ENABLED ? "enabled" : "disabled")).getValue(player))));
             }
         }
     }
@@ -225,7 +225,7 @@ public class PartyListener {
             final Player player = Bukkit.getPlayer(member);
 
             if (player != null) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.access-" + (party.isPrivate() ? "private" : "public")).getForPlayer(player))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.access-" + (party.isPrivate() ? "private" : "public")).getValue(player))));
             }
         }
     }
@@ -244,7 +244,7 @@ public class PartyListener {
             final Player player = Bukkit.getPlayer(member);
 
             if (player != null) {
-                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.warp-members").getForPlayer(player).replace("%player%", leader.getNameWithRank()))));
+                player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.party.warp-members").getValue(player).replace("%player%", leader.getNameWithRank()))));
             }
         }
     }

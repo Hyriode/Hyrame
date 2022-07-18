@@ -1,8 +1,8 @@
 package fr.hyriode.hyrame.item;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.IHyrame;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
-import fr.hyriode.hyrame.language.IHyriLanguageManager;
+import fr.hyriode.hyrame.language.ILanguageLoader;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -92,7 +92,7 @@ public abstract class HyriItem<T extends JavaPlugin> {
     }
 
     public static Supplier<HyriLanguageMessage> displayName(String key) {
-        return () -> IHyriLanguageManager.Provider.get().getMessage(key);
+        return () -> HyriLanguageMessage.get(key);
     }
 
     /**

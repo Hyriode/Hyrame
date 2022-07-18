@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.inventory;
 
-import fr.hyriode.hyrame.language.IHyriLanguageManager;
+import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.language.ILanguageLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -64,7 +65,7 @@ public abstract class HyriInventory implements InventoryHolder {
      * @return The inventory name
      */
     protected static String name(Player player, String key) {
-        return IHyriLanguageManager.Provider.get().getValue(player, key);
+        return HyriLanguageMessage.get(key).getValue(player);
     }
 
     /**

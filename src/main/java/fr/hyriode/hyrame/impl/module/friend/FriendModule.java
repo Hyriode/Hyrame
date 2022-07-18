@@ -4,8 +4,8 @@ import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.friend.HyriFriendRequest;
 import fr.hyriode.api.friend.IHyriFriendHandler;
 import fr.hyriode.api.friend.IHyriFriendManager;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.utils.Symbols;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
@@ -38,13 +38,13 @@ public class FriendModule {
         final UUID targetId = target.getUniqueId();
 
         if (this.friendManager.hasRequest(targetId, playerId)) {
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.request-already").getForPlayer(player).replace("%player%", target.getNameWithRank()))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.request-already").getValue(player).replace("%player%", target.getNameWithRank()))));
             return;
         }
 
         HyriAPI.get().getFriendManager().sendRequest(player.getUniqueId(), target.getUniqueId());
 
-        player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.request-sent").getForPlayer(player).replace("%player%", target.getNameWithRank()))));
+        player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.request-sent").getValue(player).replace("%player%", target.getNameWithRank()))));
     }
 
     public void onRequest(HyriFriendRequest request) {
@@ -53,21 +53,21 @@ public class FriendModule {
         if (player != null) {
             final IHyriPlayer sender = HyriAPI.get().getPlayerManager().getPlayer(request.getSender());
 
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.request-received").getForPlayer(player).replace("%player%", sender.getNameWithRank()))
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.request-received").getValue(player).replace("%player%", sender.getNameWithRank()))
                     .append("\n")
-                    .append("[" + HyriLanguageMessage.get("button.accept").getForPlayer(player) + "]").color(ChatColor.GREEN)
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(HyriLanguageMessage.get("hover.friend.accept").getForPlayer(player))))
+                    .append("[" + HyriLanguageMessage.get("button.accept").getValue(player) + "]").color(ChatColor.GREEN)
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(HyriLanguageMessage.get("hover.friend.accept").getValue(player))))
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/f accept " + sender.getName()))
                     .append(" ")
-                    .append("[" + HyriLanguageMessage.get("button.deny").getForPlayer(player) + "]").color(ChatColor.RED)
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(HyriLanguageMessage.get("hover.friend.deny").getForPlayer(player))))
+                    .append("[" + HyriLanguageMessage.get("button.deny").getValue(player) + "]").color(ChatColor.RED)
+                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(HyriLanguageMessage.get("hover.friend.deny").getValue(player))))
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/f deny " + sender.getName()))));
         }
     }
 
     public boolean checkRequest(Player player, IHyriPlayer sender) {
         if (!HyriAPI.get().getFriendManager().hasRequest(player.getUniqueId(), sender.getUniqueId())) {
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.no-request").getForPlayer(player).replace("%player%", sender.getNameWithRank()))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.no-request").getValue(player).replace("%player%", sender.getNameWithRank()))));
             return false;
         }
         return true;
@@ -75,7 +75,7 @@ public class FriendModule {
 
     public boolean checkAreFriends(IHyriFriendHandler friendHandler, Player player, IHyriPlayer target) {
         if (friendHandler.areFriends(target.getUniqueId())) {
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.already").getForPlayer(player).replace("%player%", target.getNameWithRank()))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.already").getValue(player).replace("%player%", target.getNameWithRank()))));
             return true;
         }
         return false;
@@ -83,7 +83,7 @@ public class FriendModule {
 
     public boolean checkAreNotFriends(IHyriFriendHandler friendHandler, Player player, IHyriPlayer target) {
         if (!friendHandler.areFriends(target.getUniqueId())) {
-            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.not-already").getForPlayer(player).replace("%player%", target.getNameWithRank()))));
+            player.spigot().sendMessage(createMessage(builder -> builder.append(HyriLanguageMessage.get("message.friend.not-already").getValue(player).replace("%player%", target.getNameWithRank()))));
             return true;
         }
         return false;

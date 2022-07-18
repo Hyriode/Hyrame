@@ -32,6 +32,7 @@ public class HyriCommandManager implements IHyriCommandManager {
     private final Map<Class<?>, HyriCommand<?>> commands;
 
     private final CommandMap commandMap;
+    private final ICommandBlocker commandBlocker;
 
     private final Hyrame hyrame;
 
@@ -39,6 +40,7 @@ public class HyriCommandManager implements IHyriCommandManager {
         this.hyrame = hyrame;
         this.commandMap = (CommandMap) Reflection.invokeField(Bukkit.getServer(), "commandMap");
         this.commands = new HashMap<>();
+        this.commandBlocker = new CommandBlocker();
     }
 
     @Override
@@ -114,7 +116,7 @@ public class HyriCommandManager implements IHyriCommandManager {
                             final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(((Player) sender).getUniqueId());
 
                             if (!permission.test(account)) {
-                                sender.sendMessage(ChatColor.RED + HyriCommonMessages.DONT_HAVE_PERMISSION.getForSender(sender));
+                                sender.sendMessage(ChatColor.RED + HyriCommonMessages.DONT_HAVE_PERMISSION.getValue(sender));
                                 return true;
                             }
                         }
@@ -150,6 +152,11 @@ public class HyriCommandManager implements IHyriCommandManager {
                 }
             }
         }
+    }
+
+    @Override
+    public ICommandBlocker getCommandBlocker() {
+        return this.commandBlocker;
     }
 
 }

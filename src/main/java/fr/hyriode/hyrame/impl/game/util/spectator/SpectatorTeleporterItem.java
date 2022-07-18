@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl.game.util.spectator;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.util.HyriGameItems;
@@ -45,7 +46,7 @@ public class SpectatorTeleporterItem extends HyriItem<HyramePlugin> {
                 final ItemStack itemStack = new ItemBuilder(Material.SKULL_ITEM, 1, 3)
                         .withPlayerHead(player.getUniqueId())
                         .withName(gamePlayer.formatNameWithTeam())
-                        .withLore(hyrame.getLanguageManager().getValue(this.owner, "gui.spectator.teleporter.lore"))
+                        .withLore(HyriLanguageMessage.get("gui.spectator.teleporter.lore").getValue(this.owner))
                         .build();
 
                 this.setItem(currentSlot, itemStack, event -> {

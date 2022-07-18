@@ -1,7 +1,7 @@
 package fr.hyriode.hyrame.impl.module.leveling;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.hyrame.language.HyriLanguageMessage;
+import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.utils.Symbols;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -22,7 +22,7 @@ public class LevelingModule {
     public void onLevelUp(Player player, int oldLevel, int newLevel) {
         final ComponentBuilder builder = new ComponentBuilder(Symbols.HYPHENS_LINE).color(ChatColor.DARK_AQUA).strikethrough(true).append("\n").reset();
         final String levelUpLine = "LEVEL UP";
-        final String messageLine = HyriLanguageMessage.get("message.leveling.new").getForPlayer(player)
+        final String messageLine = HyriLanguageMessage.get("message.leveling.new").getValue(player)
                 .replace("%old_level%", String.valueOf(oldLevel))
                 .replace("%new_level%", String.valueOf(newLevel));
 
