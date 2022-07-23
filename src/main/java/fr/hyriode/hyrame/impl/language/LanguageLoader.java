@@ -28,7 +28,7 @@ public class LanguageLoader implements ILanguageLoader {
         final String formattedPluginProviderName = Hyrame.formatPluginProviderName(pluginProvider);
         final File langFolder = new File(pluginProvider.getPlugin().getDataFolder(), "lang");
 
-        if (!langFolder.exists() && !langFolder.mkdir()) {
+        if (!langFolder.exists() && !langFolder.mkdirs()) {
             return null;
         }
 

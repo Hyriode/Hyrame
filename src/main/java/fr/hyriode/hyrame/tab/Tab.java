@@ -14,7 +14,6 @@ public class Tab {
 
     /** Lines on the top */
     protected Map<Integer, String> headerLines;
-
     /** Lines on the bottom */
     protected Map<Integer, String> footerLines;
 
