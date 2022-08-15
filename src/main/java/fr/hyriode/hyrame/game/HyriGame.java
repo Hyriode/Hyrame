@@ -822,7 +822,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     /**
      * Check if teams system is used or not
      *
-     * @return <cdoe>true</cdoe> if teams are used
+     * @return <code>true</code> if teams are used
      */
     public boolean isUsingTeams() {
         return this.usingTeams;

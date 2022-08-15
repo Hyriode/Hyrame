@@ -66,6 +66,7 @@ public interface IHyriScoreboardManager {
      * Get all scoreboards that have the same class
      *
      * @param scoreboardClass The {@link Class} of the scoreboards to look for
+     * @param <T> The type of the scoreboards to get
      * @return A list of {@link HyriScoreboard}
      */
     <T extends HyriScoreboard> List<T> getScoreboards(Class<T> scoreboardClass);

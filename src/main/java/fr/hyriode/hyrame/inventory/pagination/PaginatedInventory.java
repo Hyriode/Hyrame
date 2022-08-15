@@ -35,7 +35,10 @@ public abstract class PaginatedInventory extends HyriInventory {
     }
 
     /**
-     * Add some default pages items
+     * Add default page items
+     *
+     * @param backSlot The slot of the 'back' item
+     * @param nextSlot The slot of the "next' item
      */
     protected void addDefaultPagesItems(int backSlot, int nextSlot) {
         if (this.paginationManager == null) {
