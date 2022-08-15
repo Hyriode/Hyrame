@@ -2,7 +2,6 @@ package fr.hyriode.hyrame.impl.listener.hyrame;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
-import fr.hyriode.api.language.HyriLanguageUpdatedEvent;
 import fr.hyriode.api.rank.HyriRankUpdatedEvent;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.impl.HyramePlugin;
@@ -22,7 +21,7 @@ public class AccountListener {
     public AccountListener(HyramePlugin plugin) {
         this.plugin = plugin;
 
-        HyriAPI.get().getEventBus().register(this);
+        HyriAPI.get().getNetworkManager().getEventBus().register(this);
     }
 
     @HyriEventHandler

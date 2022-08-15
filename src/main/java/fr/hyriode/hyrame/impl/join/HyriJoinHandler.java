@@ -55,7 +55,7 @@ public class HyriJoinHandler implements IHyriJoinHandler {
         } else if (game != null){
             if (!game.getState().isAccessible()) {
                 return HyriJoinResponse.DENY_STATE;
-            } else if (game.getPlayers().size() + joinManager.getExpectedPlayers().size() >= game.getMaxPlayers()) {
+            } else if (game.getPlayers().size() + joinManager.getExpectedPlayers().size() >= server.getSlots()) {
                 return HyriJoinResponse.DENY_FULL;
             }
         } else if (server.getPlayers().size() + joinManager.getExpectedPlayers().size() >= slots && slots != -1) {
@@ -70,18 +70,22 @@ public class HyriJoinHandler implements IHyriJoinHandler {
         final IHyriServer.State state = server.getState();
         final HyriGame<?> game = this.hyrame.getGameManager().getCurrentGame();
 
-        if (state != IHyriServer.State.PLAYING) {
-            return HyriJoinResponse.DENY_STATE;
-        }
-
-        if (game == null || !game.isReconnectionAllowed()) {
-            return HyriJoinResponse.DENY_OTHER;
+        if (game == null) {
+            return this.requestJoin(player, currentResponse);
         }
 
         final HyriGamePlayer gamePlayer = game.getPlayer(player);
 
         if (gamePlayer == null) {
+            return this.requestJoin(player, currentResponse);
+        }
+
+        if (!game.isReconnectionAllowed()) {
             return HyriJoinResponse.DENY_OTHER;
+        }
+
+        if (state != IHyriServer.State.PLAYING) {
+            return HyriJoinResponse.DENY_STATE;
         }
 
         final HyriGameReconnectEvent event = new HyriGameReconnectEvent(game, gamePlayer);
@@ -115,7 +119,7 @@ public class HyriJoinHandler implements IHyriJoinHandler {
 
         if (game != null){
             final int totalPlayers = game.getPlayers().size() + joinManager.getExpectedPlayers().size();
-            final int maxPlayers = game.getMaxPlayers();
+            final int maxPlayers = server.getSlots();
 
             if (!game.getState().isAccessible()) {
                 return HyriJoinResponse.DENY_STATE;

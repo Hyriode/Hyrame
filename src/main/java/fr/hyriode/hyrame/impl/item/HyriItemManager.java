@@ -126,7 +126,7 @@ public class HyriItemManager implements IHyriItemManager {
             final HyriItem<?> item = this.items.get(this.getFullItemId(name));
             final ItemStack itemStack = item.onPreGive(this.hyrame, player, -1, this.toItemStack(player, item));
 
-            return ItemUtil.addItemInPlayerInventory(itemStack, player, 1);
+            return ItemUtil.addItemInPlayerInventory(itemStack, player);
         }
         return false;
     }

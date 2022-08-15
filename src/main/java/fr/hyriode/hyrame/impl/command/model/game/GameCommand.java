@@ -1,7 +1,5 @@
-package fr.hyriode.hyrame.impl.game.util;
+package fr.hyriode.hyrame.impl.command.model.game;
 
-import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.rank.type.HyriStaffRankType;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
@@ -12,19 +10,18 @@ import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 /**
  * Project: Hyrame
  * Created by AstFaster
  * on 01/01/2022 at 21:04
  */
-public class HyriGameCommand extends HyriCommand<HyramePlugin> {
+public class GameCommand extends HyriCommand<HyramePlugin> {
 
-    public HyriGameCommand(HyramePlugin plugin) {
-        super(plugin, new HyriCommandInfo("hyrigame")
+    public GameCommand(HyramePlugin plugin) {
+        super(plugin, new HyriCommandInfo("game")
                 .withType(HyriCommandType.ALL)
-                .withUsage("/hyrigame start|end")
+                .withUsage("/game start|end")
                 .withPermission(player -> player.getRank().isSuperior(HyriStaffRankType.DEVELOPER))
                 .withDescription("Command used to start or end a running game.")
                 .withType(HyriCommandType.PLAYER));
@@ -32,20 +29,13 @@ public class HyriGameCommand extends HyriCommand<HyramePlugin> {
 
     @Override
     public void handle(HyriCommandContext ctx) {
-        final Player player = (Player) ctx.getSender();
-        final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
-
-        if (!HyriAPI.get().getConfig().isDevEnvironment() && !account.getRank().is(HyriStaffRankType.ADMINISTRATOR)) {
-            return;
-        }
-
         final CommandSender sender = ctx.getSender();
         final HyriGame<?> game = this.plugin.getHyrame().getGameManager().getCurrentGame();
 
         if (game != null) {
             this.handleArgument(ctx, "start", output -> {
                 if (game.getState() == HyriGameState.WAITING || game.getState() == HyriGameState.READY) {
-                    sender.sendMessage(ChatColor.RED + "Game start forced! Warning: it can cause many problems!");
+                    sender.sendMessage(ChatColor.RED + "Game start forced! Warning: it can cause many issues!");
                     game.start();
                 } else {
                     sender.sendMessage(ChatColor.RED + "This game is already playing!");
@@ -54,7 +44,7 @@ public class HyriGameCommand extends HyriCommand<HyramePlugin> {
 
             this.handleArgument(ctx, "end", output -> {
                 if (game.getState() == HyriGameState.PLAYING) {
-                    sender.sendMessage(ChatColor.RED + "Game end forced! Warning: it can cause many problems!");
+                    sender.sendMessage(ChatColor.RED + "Game end forced! Warning: it can cause many issues!");
                     game.end();
                 } else {
                     sender.sendMessage(ChatColor.RED + "This game is not playing!");

@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.utils;
+package fr.hyriode.hyrame.utils.player;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

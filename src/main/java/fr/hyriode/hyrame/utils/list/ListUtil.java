@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.utils;
+package fr.hyriode.hyrame.utils.list;
 
 import java.util.List;
 

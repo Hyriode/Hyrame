@@ -38,6 +38,19 @@ public class HyrameLoader {
     }
 
     /**
+     * Get the current registered {@link IHyrame} instance
+     *
+     * @return A {@link IHyrame} instance; or <code>null</code> if no implementation has been registered
+     */
+    public static IHyrame getHyrame() {
+        if (hyrame == null) {
+            throw new HyrameNotRegisteredException();
+        }
+
+        return hyrame;
+    }
+
+    /**
      * Register an implementation of Hyrame
      *
      * @param hyrameSupplier New {@link IHyrame} implementation

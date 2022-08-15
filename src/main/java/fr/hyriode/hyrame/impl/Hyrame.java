@@ -1,22 +1,23 @@
 package fr.hyriode.hyrame.impl;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.language.HyriLanguage;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.IHyrameConfiguration;
 import fr.hyriode.hyrame.bossbar.BossBarManager;
 import fr.hyriode.hyrame.command.IHyriCommandManager;
 import fr.hyriode.hyrame.config.IConfigManager;
+import fr.hyriode.hyrame.enchantment.HyriEnchant;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.IHyriGameManager;
+import fr.hyriode.hyrame.host.IHostController;
 import fr.hyriode.hyrame.impl.chat.HyriChatManager;
-import fr.hyriode.hyrame.impl.command.CommandBlocker;
 import fr.hyriode.hyrame.impl.command.HyriCommandManager;
 import fr.hyriode.hyrame.impl.config.ConfigManager;
 import fr.hyriode.hyrame.impl.game.HyriGameManager;
 import fr.hyriode.hyrame.impl.hologram.HologramHandler;
+import fr.hyriode.hyrame.impl.host.HostController;
 import fr.hyriode.hyrame.impl.inventory.HyriInventoryManager;
 import fr.hyriode.hyrame.impl.item.HyriItemManager;
 import fr.hyriode.hyrame.impl.join.HyriJoinHandler;
@@ -34,9 +35,9 @@ import fr.hyriode.hyrame.impl.scanner.HyriScanner;
 import fr.hyriode.hyrame.impl.scoreboard.HyriScoreboardManager;
 import fr.hyriode.hyrame.impl.tab.HyriTabManager;
 import fr.hyriode.hyrame.impl.tablist.HyriTabListManager;
+import fr.hyriode.hyrame.impl.world.WorldProvider;
 import fr.hyriode.hyrame.inventory.IHyriInventoryManager;
 import fr.hyriode.hyrame.item.IHyriItemManager;
-import fr.hyriode.hyrame.item.enchant.HyriEnchant;
 import fr.hyriode.hyrame.language.ILanguageLoader;
 import fr.hyriode.hyrame.listener.IHyriListenerManager;
 import fr.hyriode.hyrame.npc.NPCManager;
@@ -45,8 +46,8 @@ import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.scanner.IHyriScanner;
 import fr.hyriode.hyrame.scoreboard.IHyriScoreboardManager;
 import fr.hyriode.hyrame.signgui.SignGUIManager;
+import fr.hyriode.hyrame.world.IWorldProvider;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +76,8 @@ public class Hyrame implements IHyrame {
     private final HyriTabListManager tabListManager;
     private final IConfigManager configManager;
     private final PacketInterceptor packetInterceptor;
+    private final IHostController hostController;
+    private final IWorldProvider worldProvider;
 
     private final NicknameModule nicknameModule;
     private final FriendModule friendModule;
@@ -100,6 +103,8 @@ public class Hyrame implements IHyrame {
         this.tabListManager.enable();
         this.configManager = new ConfigManager(this, plugin);
         this.packetInterceptor = new PacketInterceptor();
+        this.hostController = new HostController(this);
+        this.worldProvider = new WorldProvider();
         this.pluginProviders = new ArrayList<>();
         this.tabManager = new HyriTabManager();
         this.nicknameModule = new NicknameModule(this, plugin);
@@ -117,8 +122,6 @@ public class Hyrame implements IHyrame {
         new SignGUIManager(this, this.plugin);
 
         HyriAPI.get().getLanguageManager().registerAdapter(HyriGamePlayer.class, (message, gamePlayer) -> message.getValue(gamePlayer.getUniqueId()));
-        HyriAPI.get().getLanguageManager().registerAdapter(CommandSender.class, (message, sender) -> message.getValue(HyriLanguage.EN));
-
         HyriAPI.get().getServerManager().getJoinManager().registerHandler(10, new HyriJoinHandler(this));
     }
 
@@ -138,8 +141,8 @@ public class Hyrame implements IHyrame {
     public void load(IPluginProvider pluginProvider) {
         this.pluginProviders.add(pluginProvider);
 
-        this.itemManager.registerItems(pluginProvider);
         this.languageLoader.loadLanguages(pluginProvider);
+        this.itemManager.registerItems(pluginProvider);
         this.listenerManager.registerListeners(pluginProvider);
         this.commandManager.registerCommands(pluginProvider);
     }
@@ -151,6 +154,11 @@ public class Hyrame implements IHyrame {
 
     public static String formatPluginProviderName(IPluginProvider pluginProvider) {
         return " | " + ChatColor.DARK_PURPLE + pluginProvider.getClass().getSimpleName();
+    }
+
+    @Override
+    public HyramePlugin getPlugin() {
+        return this.plugin;
     }
 
     @Override
@@ -222,8 +230,14 @@ public class Hyrame implements IHyrame {
         return this.packetInterceptor;
     }
 
-    public HyramePlugin getPlugin() {
-        return this.plugin;
+    @Override
+    public IHostController getHostController() {
+        return this.hostController;
+    }
+
+    @Override
+    public IWorldProvider getWorldProvider() {
+        return this.worldProvider;
     }
 
     public List<IPluginProvider> getPluginProviders() {

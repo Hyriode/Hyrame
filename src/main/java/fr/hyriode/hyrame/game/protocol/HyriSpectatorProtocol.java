@@ -58,8 +58,11 @@ public class HyriSpectatorProtocol extends HyriGameProtocol implements Listener 
 
             HyriGameItems.SPECTATOR_TELEPORTER.give(this.hyrame, player, 0);
             HyriGameItems.SPECTATOR_SETTINGS.give(this.hyrame, player, 1);
-            HyriGameItems.RESTART_GAME.give(this.hyrame, player, 4);
             HyriGameItems.LEAVE.give(this.hyrame, player, 8);
+
+            if (!HyriAPI.get().getServer().isHost()) {
+                HyriGameItems.RESTART_GAME.give(this.hyrame, player, 4);
+            }
         } else {
             PlayerUtil.resetPlayer(player, true);
 

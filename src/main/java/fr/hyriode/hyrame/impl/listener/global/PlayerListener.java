@@ -2,7 +2,8 @@ package fr.hyriode.hyrame.impl.listener.global;
 
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.listener.HyriListener;
-import fr.hyriode.hyrame.utils.ProfileLoader;
+import fr.hyriode.hyrame.utils.player.PlayerHeadAPI;
+import fr.hyriode.hyrame.utils.player.ProfileLoader;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,6 +27,7 @@ public class PlayerListener extends HyriListener<HyramePlugin> {
         final Player player = event.getPlayer();
 
         ProfileLoader.savePlayerProfile(player);
+        PlayerHeadAPI.savePlayerHead(player);
 
         this.plugin.getHyrame().getPacketInterceptor().injectChannel(player);
     }

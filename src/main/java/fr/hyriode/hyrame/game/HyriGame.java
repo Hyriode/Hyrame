@@ -54,8 +54,6 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
     /** Minimum of players to start */
     protected final int minPlayers;
-    /** Maximum of players */
-    protected final int maxPlayers;
 
     /** Tab list manager object */
     protected HyriGameTabListManager tabListManager;
@@ -71,6 +69,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     protected boolean defaultStarting = true;
     /** Is game tab list used */
     protected boolean usingGameTabList = true;
+    /** Are teams used */
+    protected boolean usingTeams = true;
 
     /** Max reconnection time for a player (if -1, reconnection will not be enabled) */
     protected int reconnectionTime;
@@ -125,13 +125,12 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         this.teams = new ArrayList<>();
         this.protocolManager = new HyriGameProtocolManager(this.plugin, this);
         this.minPlayers = type.getMinPlayers();
-        this.maxPlayers = type.getMaxPlayers();
 
         if (this.usingGameTabList) {
             this.tabListManager = new HyriGameTabListManager(this, this.hyrame.getTabListManager());
         }
 
-        HyriAPI.get().getServer().setSlots(this.maxPlayers);
+        HyriAPI.get().getServer().setSlots(type.getMaxPlayers());
     }
 
     /**
@@ -203,32 +202,42 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
-     * Called on player login
+     * Called on player login.<br>
      * Override this method to make actions on login
      *
-     * @param p Logged player
+     * @param player Logged player
      */
-    public void handleLogin(Player p) {
+    public void handleLogin(Player player) {
         try {
             if (this.state == HyriGameState.WAITING || this.state == HyriGameState.READY) {
                 if (!this.isFull()) {
-                    final P player = this.playerClass.getConstructor(HyriGame.class, Player.class).newInstance(this, p);
+                    final UUID playerId = player.getUniqueId();
+                    final P gamePlayer = this.playerClass.getConstructor(HyriGame.class, Player.class).newInstance(this, player);
+                    final IHyriServer server = HyriAPI.get().getServer();
 
-                    this.players.add(player);
+                    this.players.add(gamePlayer);
 
-                    HyriAPI.get().getServer().addPlayerPlaying(p.getUniqueId());
-                    HyriAPI.get().getServerManager().getReconnectionHandler().remove(p.getUniqueId());
+                    server.addPlayerPlaying(playerId);
 
-                    HyriAPI.get().getEventBus().publish(new HyriGameJoinEvent(this, player));
+                    HyriAPI.get().getServerManager().getReconnectionHandler().remove(playerId);
+                    HyriAPI.get().getEventBus().publish(new HyriGameJoinEvent(this, gamePlayer));
+
+                    if (!this.usingTeams) {
+                        final HyriGameTeam team = new HyriGameTeam(this, player.getName(), null, null, 1);
+
+                        this.registerTeam(team);
+
+                        team.addPlayer(gamePlayer);
+                    }
 
                     if (this.usingGameTabList) {
-                        this.tabListManager.handleLogin(p);
+                        this.tabListManager.handleLogin(player);
                     }
                 }
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            p.sendMessage(ChatColor.RED + "An error occurred while joining game! Sending you back to lobby...");
-            HyriAPI.get().getServerManager().sendPlayerToLobby(p.getUniqueId());
+            player.sendMessage(ChatColor.RED + "An error occurred while joining game! Sending you back to lobby...");
+            HyriAPI.get().getServerManager().sendPlayerToLobby(player.getUniqueId());
             e.printStackTrace();
         }
     }
@@ -318,17 +327,19 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
         this.timerTask.cancel();
 
-        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-            for (HyriGamePlayer gamePlayer : this.players) {
-                final UUID playerId = gamePlayer.getUniqueId();
-                final IHyriPlayer account = gamePlayer.asHyriPlayer();
-                final boolean autoQueue = account.getSettings().isAutoQueueEnabled();
+        if (!HyriAPI.get().getServer().isHost()) {
+            Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+                for (HyriGamePlayer gamePlayer : this.players) {
+                    final UUID playerId = gamePlayer.getUniqueId();
+                    final IHyriPlayer account = gamePlayer.asHyriPlayer();
+                    final boolean autoQueue = account.getSettings().isAutoQueueEnabled();
 
-                if (autoQueue) {
-                    HyriAPI.get().getQueueManager().addPlayerInQueue(playerId, this.info.getName(), this.type.getName(), null, true);
+                    if (autoQueue) {
+                        HyriAPI.get().getQueueManager().addPlayerInQueue(playerId, this.info.getName(), this.type.getName(), null, true);
+                    }
                 }
-            }
-        }, 10 * 30);
+            }, 20 * 15);
+        }
 
         Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -451,7 +462,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @param condition The condition to send the message
      */
     public void sendMessageToAll(HyriLanguageMessage message, Predicate<HyriGamePlayer> condition) {
-        this.sendMessageToAll(target -> message.getValue(target), condition);
+        this.sendMessageToAll(message::getValue, condition);
     }
 
     /**
@@ -809,6 +820,15 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
+     * Check if teams system is used or not
+     *
+     * @return <cdoe>true</cdoe> if teams are used
+     */
+    public boolean isUsingTeams() {
+        return this.usingTeams;
+    }
+
+    /**
      * Get the reconnection time for a player
      *
      * @return The game reconnection time
@@ -846,15 +866,6 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
-     * Get maximum of game players
-     *
-     * @return Maximum of game players
-     */
-    public int getMaxPlayers() {
-        return this.maxPlayers;
-    }
-
-    /**
      * Get minimum of game players
      *
      * @return Minimum of game players
@@ -869,7 +880,9 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @return <code>true</code> if yes
      */
     public boolean canStart() {
-        return this.players.size() >= this.minPlayers;
+        final int slots = HyriAPI.get().getServer().getSlots();
+
+        return slots < this.minPlayers ? this.players.size() >= slots : this.players.size() >= this.minPlayers;
     }
 
     /**
@@ -878,7 +891,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @return <code>true</code> if yes
      */
     public boolean isFull() {
-        return this.players.size() >= this.maxPlayers;
+        return this.players.size() >= HyriAPI.get().getServer().getSlots();
     }
 
 }

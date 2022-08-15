@@ -6,6 +6,7 @@ import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam;
 import fr.hyriode.hyrame.tablist.ITabListManager;
 import fr.hyriode.hyrame.utils.Symbols;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -36,6 +37,18 @@ public class HyriGameTabListManager {
 
     public void addTeam(HyriGameTeam team) {
         this.tabListManager.registerTeam(new HyriScoreboardTeam(team.getName(), team.getName(), team.getColor().getChatColor() + "", team.getColor().getChatColor() + "",  "", team.getNameTagVisibility()));
+    }
+
+    public void updateTeam(HyriGameTeam team) {
+        final String teamName = team.getName();
+        final HyriScoreboardTeam scoreboardTeam = this.tabListManager.getTeam(teamName);
+        final String display = String.valueOf(team.getColor().getChatColor());
+
+        scoreboardTeam.setDisplay(display);
+        scoreboardTeam.setPrefix(display);
+        scoreboardTeam.setNameTagVisibility(team.getNameTagVisibility());
+
+        this.tabListManager.updateTeam(teamName);
     }
 
     public void removeTeam(HyriGameTeam team) {

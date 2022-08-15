@@ -44,12 +44,15 @@ public class HyriGameManager implements IHyriGameManager {
             this.hyrame.getConfiguration().setRanksInTabList(false);
         }
 
-
         this.gameHandler = new HyriGameHandler(this.hyrame);
 
         this.currentGame.postRegistration();
 
         HyrameLogger.log("Registered '" + this.currentGame.getName() + "' game.");
+
+        if (HyriAPI.get().getServer().isHost()) {
+            this.hyrame.getHostController().enable();
+        }
     }
 
     @Override

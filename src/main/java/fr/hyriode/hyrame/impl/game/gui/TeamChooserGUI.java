@@ -12,13 +12,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 /**
@@ -30,9 +27,7 @@ public class TeamChooserGUI extends HyriInventory {
 
     private static final String DASH = ChatColor.WHITE + " ⁃ ";
 
-    private final List<Player> players = new CopyOnWriteArrayList<>();
-
-    private final int slot;
+    private static int slot;
 
     private final HyriGame<?> game;
     private final IHyrame hyrame;
@@ -41,7 +36,7 @@ public class TeamChooserGUI extends HyriInventory {
         super(owner, HyriLanguageMessage.get("team-chooser.gui.title").getValue(owner), dynamicSize(game.getTeams().size()));
         this.hyrame = hyrame;
         this.game = game;
-        this.slot = slot;
+        TeamChooserGUI.slot = slot;
 
         this.addTeamsWools();
         this.addRandomTeamBarrier();
@@ -75,13 +70,13 @@ public class TeamChooserGUI extends HyriInventory {
                     this.game.getTabListManager().updatePlayer(gamePlayer);
                 }
 
-                if (this.slot != -1) {
-                    this.hyrame.getItemManager().giveItem(this.owner, this.slot, TeamChooserItem.class);
+                if (slot != -1) {
+                    this.hyrame.getItemManager().giveItem(this.owner, slot, TeamChooserItem.class);
                 }
 
                 player.sendMessage(HyriLanguageMessage.get("team-chooser.message.join-random").getValue(player));
 
-                this.refresh();
+                refresh(this.hyrame);
             } else {
                 player.sendMessage(HyriLanguageMessage.get("team-chooser.message.already-in-random").getValue(player));
             }
@@ -108,19 +103,13 @@ public class TeamChooserGUI extends HyriInventory {
 
                 player.sendMessage(HyriLanguageMessage.get("team-chooser.message.join").getValue(player).replace("%team%", team.getColor().getChatColor() + team.getDisplayName().getValue(player)));
 
-                if (this.slot != -1) {
-                    this.hyrame.getItemManager().giveItem(this.owner, this.slot, TeamChooserItem.class);
+                if (slot != -1) {
+                    this.hyrame.getItemManager().giveItem(this.owner, slot, TeamChooserItem.class);
                 }
 
-                this.refresh();
+                refresh(this.hyrame);
             }
         };
-    }
-
-    public void refresh() {
-        for (Player player : this.players) {
-            new TeamChooserGUI(this.hyrame, this.game, player, this.slot).open();
-        }
     }
 
     private List<String> getWoolLore(HyriGameTeam team) {
@@ -134,13 +123,25 @@ public class TeamChooserGUI extends HyriInventory {
     }
 
     @Override
-    public void onOpen(InventoryOpenEvent event) {
-        this.players.add((Player) event.getPlayer());
+    public void update() {
+        this.inventory.clear();
+
+        this.addTeamsWools();
+        this.addRandomTeamBarrier();
     }
 
-    @Override
-    public void onClose(InventoryCloseEvent event) {
-        this.players.remove((Player) event.getPlayer());
+    public static void refresh(IHyrame hyrame) {
+        for (TeamChooserGUI gui : hyrame.getInventoryManager().getInventories(TeamChooserGUI.class)) {
+            gui.update();
+        }
+
+        for (HyriGamePlayer gamePlayer : hyrame.getGameManager().getCurrentGame().getPlayers()) {
+            if (!gamePlayer.isOnline()) {
+                continue;
+            }
+
+            hyrame.getItemManager().giveItem(gamePlayer.getPlayer(), slot, TeamChooserItem.class);
+        }
     }
 
 }

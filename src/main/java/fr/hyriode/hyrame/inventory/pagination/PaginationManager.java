@@ -49,18 +49,21 @@ public class PaginationManager {
         if (this.area != null) {
             final int start = this.area.getStart();
             final int end = this.area.getEnd();
-            final boolean normal = start < end;
 
             int index = 0;
-            for (int slot = (normal ? start : end); slot < (normal ? end : start); slot++) {
-                if (items.size() > index) {
-                    final PaginatedItem item = items.get(index);
+            for (int y = start / 9; y <= end / 9; y++) {
+                for (int x = start % 9; x <= end % 9; x++) {
+                    final int slot = y * 9 + x;
 
-                    this.gui.setItem(slot, item.asBukkit(), item.getEventConsumer());
-                } else {
-                    this.gui.setItem(slot, null);
+                    if (items.size() > index) {
+                        final PaginatedItem item = items.get(index);
+
+                        this.gui.setItem(slot, item.asBukkit(), item.getEventConsumer());
+                    } else {
+                        this.gui.setItem(slot, null);
+                    }
+                    index++;
                 }
-                index++;
             }
         }
 

@@ -153,11 +153,21 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
      * @return The blocks in the Cuboid
      */
     public List<Block> getBlocks() {
-        Iterator<Block> blockI = this.iterator();
-        List<Block> copy = new ArrayList<Block>();
-        while (blockI.hasNext())
-            copy.add(blockI.next());
-        return copy;
+        final List<Block> blocks = new ArrayList<>();
+        final World world = Bukkit.getWorld(this.worldName);
+
+        if (world == null) {
+            return blocks;
+        }
+
+        for (int x = this.x1; x <= this.x2; x++) {
+            for (int y = this.y1; y <= this.y2; y++) {
+                for (int z = this.z1; z <= this.z2; z++) {
+                    blocks.add(world.getBlockAt(x, y, z));
+                }
+            }
+        }
+        return blocks;
     }
 
     /**

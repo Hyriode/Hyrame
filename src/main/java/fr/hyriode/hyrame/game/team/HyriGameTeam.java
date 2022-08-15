@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.game.team;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.HyrameLoader;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.event.team.HyriGamePlayerJoinTeamEvent;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -35,16 +37,16 @@ public class HyriGameTeam {
     /** Team's display name */
     protected final HyriLanguageMessage displayName;
     /** Team's color */
-    protected final HyriGameTeamColor color;
+    protected HyriGameTeamColor color;
     /** Can members of the team attack theme */
     protected boolean friendlyFire;
     /*** The name tag visibility of the team */
     protected HyriScoreboardTeam.NameTagVisibility nameTagVisibility;
     /** Team's size */
-    protected final int teamSize;
+    protected int teamSize;
 
     /** The game that handles the team */
-    protected final HyriGame<?> game;
+    protected final Supplier<HyriGame<?>> game;
 
     /**
      * Constructor of {@link HyriGameTeam}
@@ -58,7 +60,7 @@ public class HyriGameTeam {
      * @param teamSize Team's size
      */
     public HyriGameTeam(HyriGame<?> game, String name, HyriLanguageMessage displayName, HyriGameTeamColor color, boolean friendlyFire, HyriScoreboardTeam.NameTagVisibility nameTagVisibility, int teamSize) {
-        this.game = game;
+        this.game = () -> game == null ? HyrameLoader.getHyrame().getGameManager().getCurrentGame() : game;
         this.name = name;
         this.displayName = displayName;
         this.color = color;
@@ -212,7 +214,7 @@ public class HyriGameTeam {
 
                     player.setTeam(this);
 
-                    HyriAPI.get().getEventBus().publishAsync(new HyriGamePlayerJoinTeamEvent(this.game, this, player));
+                    HyriAPI.get().getEventBus().publishAsync(new HyriGamePlayerJoinTeamEvent(this.game.get(), this, player));
 
                     return null;
                 }
@@ -236,13 +238,26 @@ public class HyriGameTeam {
 
                 player.setTeam(null);
 
-                HyriAPI.get().getEventBus().publishAsync(new HyriGamePlayerLeaveTeamEvent(this.game, this, player));
+                HyriAPI.get().getEventBus().publishAsync(new HyriGamePlayerLeaveTeamEvent(this.game.get(), this, player));
 
                 return null;
             }
             return CancelLeaveReason.NOT_HIS_TEAM;
         }
         return CancelLeaveReason.NO_TEAM;
+    }
+
+    /**
+     * Clear all players that are in the team
+     */
+    public void clearPlayers() {
+        for (HyriGamePlayer gamePlayer : this.players) {
+            this.removePlayer(gamePlayer);
+
+            if (this.game.get().isUsingGameTabList()) {
+                this.game.get().getTabListManager().updateTabList();
+            }
+        }
     }
 
     /**
@@ -283,6 +298,19 @@ public class HyriGameTeam {
     }
 
     /**
+     * Set team's color
+     *
+     * @param color The new color of the team
+     */
+    public void setColor(HyriGameTeamColor color) {
+        this.color = color;
+
+        if (this.game.get().isUsingGameTabList()) {
+            this.game.get().getTabListManager().updateTeam(this);
+        }
+    }
+
+    /**
      * Check if friendly fire is enabled for this team
      *
      * @return <code>true</code> if yes
@@ -309,17 +337,35 @@ public class HyriGameTeam {
         return this.nameTagVisibility;
     }
 
+    /**
+     * Set the name tag visibility of the team
+     *
+     * @param nameTagVisibility The new {@link fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam.NameTagVisibility}
+     */
     public void setNameTagVisibility(HyriScoreboardTeam.NameTagVisibility nameTagVisibility) {
         this.nameTagVisibility = nameTagVisibility;
+
+        if (this.game.get().isUsingGameTabList()) {
+            this.game.get().getTabListManager().updateTeam(this);
+        }
     }
 
     /**
      * Get team's size
      *
-     * @return - Team's size
+     * @return The current team's size
      */
     public int getTeamSize() {
         return this.teamSize;
+    }
+
+    /**
+     * Set the team's size
+     *
+     * @param teamSize The new team size
+     */
+    public void setTeamSize(int teamSize) {
+        this.teamSize = teamSize;
     }
 
     /**

@@ -1,6 +1,9 @@
 package fr.hyriode.hyrame.inventory.pagination;
 
 import fr.hyriode.hyrame.inventory.HyriInventory;
+import fr.hyriode.hyrame.item.ItemBuilder;
+import fr.hyriode.hyrame.language.HyrameMessage;
+import fr.hyriode.hyrame.utils.HyrameHead;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -29,6 +32,32 @@ public abstract class PaginatedInventory extends HyriInventory {
     public PaginatedInventory(Player owner, String name, int size) {
         super(owner, name, size);
         this.paginationManager = new PaginationManager(this);
+    }
+
+    /**
+     * Add some default pages items
+     */
+    protected void addDefaultPagesItems(int backSlot, int nextSlot) {
+        if (this.paginationManager == null) {
+            return;
+        }
+
+        final int currentPage = this.paginationManager.currentPage() + 1;
+        int totalPages = this.paginationManager.getPagination().totalPages();
+
+        if (totalPages == 0) {
+            totalPages = 1;
+        }
+
+        this.setItem(backSlot, ItemBuilder.asHead(HyrameHead.MONITOR_BACKWARD)
+                .withName(HyrameMessage.PAGINATION_PREVIOUS_PAGE_ITEM_NAME.asString(this.owner).replace("%current_page%", String.valueOf(currentPage)).replace("%total_pages%", String.valueOf(totalPages)))
+                .withLore(HyrameMessage.PAGINATION_PREVIOUS_PAGE_ITEM_LORE.asList(this.owner))
+                .build(), event -> this.paginationManager.previousPage());
+
+        this.setItem(nextSlot, ItemBuilder.asHead(HyrameHead.MONITOR_FORWARD)
+                .withName(HyrameMessage.PAGINATION_NEXT_PAGE_ITEM_NAME.asString(this.owner).replace("%current_page%", String.valueOf(currentPage)).replace("%total_pages%", String.valueOf(totalPages)))
+                .withLore(HyrameMessage.PAGINATION_NEXT_PAGE_ITEM_LORE.asList(this.owner))
+                .build(), event -> this.paginationManager.nextPage());
     }
 
     /**

@@ -6,7 +6,6 @@ import fr.hyriode.api.leaderboard.HyriLeaderboardScope;
 import fr.hyriode.api.leaderboard.HyriLeaderboardScore;
 import fr.hyriode.api.leaderboard.IHyriLeaderboard;
 import fr.hyriode.hyrame.hologram.Hologram;
-import fr.hyriode.hyrame.language.ILanguageLoader;
 import fr.hyriode.hyrame.utils.Pagination;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

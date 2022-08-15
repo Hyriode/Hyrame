@@ -69,7 +69,8 @@ public class BookGUI {
             final List<IChatBaseComponent> pages = (List<IChatBaseComponent>) CraftMetaBook.class.getDeclaredField("pages").get(bookMeta);
             final IChatBaseComponent page = IChatBaseComponent.ChatSerializer.a(SerializerUtil.serializeComponent(this.components.toArray(new BaseComponent[0])));
             final Inventory inventory = this.owner.getInventory();
-            final ItemStack oldItemStack = inventory.getItem(0);
+            final int heldSlot = this.owner.getInventory().getHeldItemSlot();
+            final ItemStack oldItemStack = inventory.getItem(heldSlot);
 
             pages.add(page);
 
@@ -78,7 +79,7 @@ public class BookGUI {
 
             book.setItemMeta(bookMeta);
 
-            inventory.setItem(0, book);
+            inventory.setItem(heldSlot, book);
 
             ((CraftPlayer) this.owner).getHandle().openBook(CraftItemStack.asNMSCopy(book));
 

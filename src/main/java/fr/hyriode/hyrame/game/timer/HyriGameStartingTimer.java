@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.game.timer;
 
+import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.language.HyriLanguage;
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.game.HyriGame;
@@ -30,6 +31,7 @@ public class HyriGameStartingTimer implements Runnable {
     private Consumer<Integer> timeChanged;
 
     private boolean running;
+    private boolean forceStarting;
 
     private int time = 30;
 
@@ -43,54 +45,70 @@ public class HyriGameStartingTimer implements Runnable {
 
     @Override
     public void run() {
-        final int players = this.game.getPlayers().size();
-
-        if (this.game.canStart()) {
-            this.game.setState(HyriGameState.READY);
-
-            if (!this.running) {
-                this.running = true;
-            }
-
-            if (players == this.game.getMaxPlayers() && this.time > 15) {
-                this.time = 15;
-            }
-
-            this.runActionOnPlayers(gamePlayer -> gamePlayer.getPlayer().setLevel(this.time));
-            this.onTimeChanged(this.time);
-
-            if (this.time <= 0) {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        game.start();
-                    }
-                }.runTask(this.plugin);
-            } else if (this.time <= 3) {
-                this.sendTitle(target -> ChatColor.AQUA + "" + this.time);
-            } else if (this.time == 30 || this.time == 20 || this.time == 10){
-                this.sendTitle(target -> ChatColor.DARK_AQUA + "" + this.time);
-            }
-
-            this.sendSound();
-
-            this.time--;
+        if ((this.game.canStart() && !HyriAPI.get().getServer().isHost()) || this.forceStarting) {
+            this.start();
         } else {
-            if (this.running) {
-                this.running = false;
-                this.time = 30;
+            this.runActionOnPlayers(gamePlayer -> gamePlayer.getPlayer().setLevel(0));
 
-                this.runActionOnPlayers(gamePlayer -> gamePlayer.getPlayer().setLevel(0));
-                this.onTimeChanged(-1);
-
-                this.game.setState(HyriGameState.WAITING);
-
-                this.sendTitle(CANCEL_MESSAGE::getValue);
-                this.sendSound();
-            }
+            this.cancel(false);
         }
     }
 
+    private void start() {
+        this.game.setState(HyriGameState.READY);
+
+        if (!this.running) {
+            this.running = true;
+        }
+
+        if (this.game.getPlayers().size() == HyriAPI.get().getServer().getSlots() && this.time > 15) {
+            this.time = 15;
+        }
+
+        this.runActionOnPlayers(gamePlayer -> gamePlayer.getPlayer().setLevel(this.time));
+        this.onTimeChanged(this.time);
+
+        if (this.time <= 0) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    game.start();
+                }
+            }.runTask(this.plugin);
+        } else if (this.time <= 3) {
+            this.sendTitle(target -> ChatColor.AQUA + "" + this.time);
+        } else if (this.time == 30 || this.time == 20 || this.time == 10){
+            this.sendTitle(target -> ChatColor.DARK_AQUA + "" + this.time);
+        }
+
+        this.sendSound();
+
+        this.time--;
+    }
+
+    public void forceStarting() {
+        this.time = 10;
+        this.forceStarting = true;
+
+        this.start();
+    }
+
+    public void cancel(boolean force) {
+        if (this.running && (!HyriAPI.get().getServer().isHost()) || force) {
+            this.forceStarting = false;
+            this.running = false;
+            this.time = -1;
+
+            this.onTimeChanged(-1);
+
+            this.game.setState(HyriGameState.WAITING);
+
+            this.sendTitle(CANCEL_MESSAGE::getValue);
+            this.sendSound();
+
+            this.runActionOnPlayers(gamePlayer -> gamePlayer.getPlayer().setLevel(0));
+        }
+    }
 
     private void runActionOnPlayers(Consumer<HyriGamePlayer> action) {
         this.game.getPlayers().forEach(action);
@@ -128,6 +146,10 @@ public class HyriGameStartingTimer implements Runnable {
 
     public void setOnTimeChanged(Consumer<Integer> timeChanged) {
         this.timeChanged = timeChanged;
+    }
+
+    public boolean isRunning() {
+        return this.running;
     }
 
 }

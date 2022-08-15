@@ -2,7 +2,6 @@ package fr.hyriode.hyrame.item;
 
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.IHyrame;
-import fr.hyriode.hyrame.language.ILanguageLoader;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

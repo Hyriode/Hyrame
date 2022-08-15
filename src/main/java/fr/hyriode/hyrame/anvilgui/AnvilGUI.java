@@ -200,28 +200,38 @@ public class AnvilGUI {
         @EventHandler
         public void onInventoryClick(InventoryClickEvent event) {
             final Player clicker = (Player) event.getWhoClicked();
+
             if (event.getInventory().equals(inventory) && (event.getRawSlot() < 3 || event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY))) {
 
                 event.setCancelled(true);
 
                 if (event.getRawSlot() == Slot.OUTPUT.get()) {
                     final ItemStack clicked = inventory.getItem(Slot.OUTPUT.get());
-                    if (clicked == null || clicked.getType() == Material.AIR) return;
 
-                    final Response response = completeFunction.apply(clicker, clicked.hasItemMeta() ? clicked.getItemMeta().getDisplayName() : "");
+                    if (clicked == null || clicked.getType() == Material.AIR || !clicked.hasItemMeta()) return;
 
-                    if (response.getText() != null) {
-                        final ItemMeta meta = clicked.getItemMeta();
+                    final String displayName = clicked.getItemMeta().getDisplayName();
 
-                        meta.setDisplayName(response.getText());
+                    if (displayName == null || displayName.isEmpty()) {
+                        return;
+                    }
 
-                        clicked.setItemMeta(meta);
+                    final Response response = completeFunction.apply(clicker, displayName);
 
-                        inventory.setItem(Slot.INPUT_LEFT.get(), clicked);
-                    } else if (response.getInventoryToOpen() != null) {
-                        clicker.openInventory(response.getInventoryToOpen());
-                    } else {
-                        close();
+                    if (response != null) {
+                        if (response.getText() != null) {
+                            final ItemMeta meta = clicked.getItemMeta();
+
+                            meta.setDisplayName(response.getText());
+
+                            clicked.setItemMeta(meta);
+
+                            inventory.setItem(Slot.INPUT_LEFT.get(), clicked);
+                        } else if (response.getInventoryToOpen() != null) {
+                            clicker.openInventory(response.getInventoryToOpen());
+                        } else {
+                            close();
+                        }
                     }
                 } else if (event.getRawSlot() == Slot.INPUT_LEFT.get()) {
                     if (inputLeftClickConsumer != null) {

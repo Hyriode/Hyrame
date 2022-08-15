@@ -3,7 +3,6 @@ package fr.hyriode.hyrame.impl.tab;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.HyriConstants;
 import fr.hyriode.api.language.HyriLanguageMessage;
-import fr.hyriode.hyrame.language.ILanguageLoader;
 import fr.hyriode.hyrame.tab.Tab;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

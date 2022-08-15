@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.item.enchant;
+package fr.hyriode.hyrame.enchantment;
 
 import fr.hyriode.hyrame.reflection.Reflection;
 import org.bukkit.enchantments.Enchantment;

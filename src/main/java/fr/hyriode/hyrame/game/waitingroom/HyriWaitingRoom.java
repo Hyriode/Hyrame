@@ -11,10 +11,13 @@ import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameLeaveEvent;
 import fr.hyriode.hyrame.inventory.HyriInventory;
 import fr.hyriode.hyrame.item.ItemBuilder;
+import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.npc.NPC;
 import fr.hyriode.hyrame.npc.NPCManager;
 import fr.hyriode.hyrame.utils.LocationWrapper;
+import fr.hyriode.hyrame.utils.Symbols;
 import fr.hyriode.hyrame.utils.block.Cuboid;
+import fr.hyriode.hyrame.utils.list.ListReplacer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -38,7 +41,11 @@ public class HyriWaitingRoom {
     private static final int MIN_SLOT = 9;
     private static final int MAX_SLOT = 35;
 
+    protected int inventorySize = 5 * 9;
+
     protected boolean setup;
+
+    protected boolean clearBlocks = true;
 
     protected final Map<UUID, NPC> npcs;
     protected final Map<Integer, NPCCategory> npcCategories;
@@ -91,10 +98,12 @@ public class HyriWaitingRoom {
             NPCManager.removeNPC(npc);
         }
 
-        final Cuboid cuboid = new Cuboid(this.config.getFirstPos().asBukkit(), this.config.getSecondPos().asBukkit());
+        if (this.clearBlocks) {
+            final Cuboid cuboid = new Cuboid(this.config.getFirstPos().asBukkit(), this.config.getSecondPos().asBukkit());
 
-        for (Block block : cuboid.getBlocks()) {
-            block.setType(Material.AIR);
+            for (Block block : cuboid.getBlocks()) {
+                block.setType(Material.AIR);
+            }
         }
 
         HandlerList.unregisterAll(this.handler);
@@ -103,9 +112,15 @@ public class HyriWaitingRoom {
         this.setup = false;
     }
 
+    public void teleportPlayers() {
+        for (HyriGamePlayer gamePlayer : this.game.getPlayers()) {
+            gamePlayer.getPlayer().teleport(this.config.getSpawn().asBukkit());
+        }
+    }
+
     private NPC createNPC(Player player) {
         final IHyriPlayer account = IHyriPlayer.get(player.getUniqueId());
-        final List<String> headerLines = Arrays.asList(HyriLanguageMessage.get("waiting-room.npc.statistics").getValue(account).replace("%game%", this.game.getDisplayName()), HyriLanguageMessage.get("waiting-room.npc.statistics-click").getValue(account));
+        final List<String> headerLines = ListReplacer.replace(HyrameMessage.WAITING_ROOM_NPC_DISPLAY.asList(player), "%game%", this.game.getDisplayName()).list();
         final NPC npc = NPCManager.createNPC(this.config.getNPCLocation().asBukkit(), account.getName(), headerLines)
                 .addPlayer(player)
                 .setShowingToAll(false)
@@ -147,12 +162,23 @@ public class HyriWaitingRoom {
      */
     public static class NPCCategory {
 
+        private ItemStack icon = new ItemStack(Material.PAPER);
+
         private final HyriLanguageMessage name;
         private final List<NPCData> data;
 
         public NPCCategory(HyriLanguageMessage name) {
             this.name = name;
             this.data = new ArrayList<>();
+        }
+
+        public NPCCategory withIcon(ItemStack icon) {
+            this.icon = icon;
+            return this;
+        }
+
+        public ItemStack getIcon() {
+            return this.icon;
         }
 
         public HyriLanguageMessage getName() {
@@ -247,12 +273,12 @@ public class HyriWaitingRoom {
     private class GUI extends HyriInventory {
 
         public GUI(Player owner) {
-            super(owner, name(owner, "waiting-room.gui.name"), 5 * 9);
+            super(owner, name(owner, "waiting-room.gui.name"), inventorySize);
 
             final IHyriPlayer account = IHyriPlayer.get(this.owner.getUniqueId());
 
             this.setHorizontalLine(0, 8, new ItemBuilder(Material.STAINED_GLASS_PANE, 1, 9).withName(" ").build());
-            this.setHorizontalLine(36, 44, new ItemBuilder(Material.STAINED_GLASS_PANE, 1, 9).withName(" ").build());
+            this.setHorizontalLine(this.getSize() - 9, this.getSize() - 1, new ItemBuilder(Material.STAINED_GLASS_PANE, 1, 9).withName(" ").build());
 
             this.setItem(4, new ItemBuilder(item)
                     .withName(HyriLanguageMessage.get("waiting-room.gui.item.name").getValue(account).replace("%game%", game.getDisplayName()))
@@ -268,13 +294,13 @@ public class HyriWaitingRoom {
                     final Function<IHyriPlayer, String> value = data.getValue();
 
                     if (prefix != null && value != null) {
-                        lore.add(ChatColor.WHITE + data.getPrefix().getValue(account) + ": " + ChatColor.AQUA + data.getValue().apply(account));
+                        lore.add(ChatColor.DARK_GRAY + Symbols.DOT_BOLD + " " + ChatColor.GRAY + data.getPrefix().getValue(account) + ": " + ChatColor.AQUA + data.getValue().apply(account));
                     } else {
                         lore.add("");
                     }
                 }
 
-                final ItemStack item = new ItemBuilder(Material.PAPER)
+                final ItemStack item = new ItemBuilder(category.getIcon())
                         .withName(HyriLanguageMessage.get("waiting-room.gui.item.name").getValue(account).replace("%game%", category.getName().getValue(account)))
                         .withLore(lore)
                         .build();

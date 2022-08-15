@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl.placeholder.handler;
 
+import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.placeholder.PlaceholderPrefixHandler;
@@ -32,7 +33,7 @@ public class PGameHandler extends PlaceholderPrefixHandler {
                 case "players":
                     return String.valueOf(game.getPlayers().size());
                 case "max_players":
-                    return String.valueOf(game.getMaxPlayers());
+                    return String.valueOf(HyriAPI.get().getServer().getSlots());
                 case "min_players":
                     return String.valueOf(game.getMinPlayers());
                 case "spectators":

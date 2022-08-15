@@ -1,9 +1,7 @@
 package fr.hyriode.hyrame.impl.command.model;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.language.HyriLanguage;
 import fr.hyriode.api.language.HyriLanguageMessage;
-import fr.hyriode.api.language.IHyriLanguageManager;
 import fr.hyriode.hyrame.command.HyriCommand;
 import fr.hyriode.hyrame.command.HyriCommandContext;
 import fr.hyriode.hyrame.command.HyriCommandInfo;
@@ -11,7 +9,6 @@ import fr.hyriode.hyrame.impl.HyramePlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /**

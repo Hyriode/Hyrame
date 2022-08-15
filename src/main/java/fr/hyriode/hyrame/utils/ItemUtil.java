@@ -115,16 +115,17 @@ public class ItemUtil {
      * Check if a player has enough slots to store an amount of items
      *
      * @param player The concerned {@link Player}
-     * @param value The amount of items
+     * @param item The item to store
      * @return <code>true</code> if the player has enough slots, else it will be <code>false</code>
      */
-    public static boolean hasEnoughSlots(Player player, int value) {
+    public static boolean hasEnoughSlots(Player player, ItemStack item) {
         final PlayerInventory inventory = player.getInventory();
-        final int slotsNeeded = (int) Math.ceil((double) value / 64);
+        final int amount = item.getAmount();
+        final int slotsNeeded = (int) Math.ceil((double) amount / 64);
 
         int count = 0;
         for (ItemStack itemStack : inventory.getContents()) {
-            if (itemStack == null) {
+            if (itemStack == null || (itemStack.equals(item) && itemStack.getAmount() + amount <= 64)) {
                 count++;
             }
         }
@@ -141,16 +142,13 @@ public class ItemUtil {
      *
      * @param itemStack The {@link ItemStack} to add
      * @param player The concerned {@link Player}
-     * @param value The amount of items to add
      * @return <code>true</code> if the items have been given, else it will be <code>false</code> because the player doesn't have enough space
      */
-    public static boolean addItemInPlayerInventory(ItemStack itemStack, Player player, int value) {
+    public static boolean addItemInPlayerInventory(ItemStack itemStack, Player player) {
         final Inventory inventory = player.getInventory();
 
-        if (hasEnoughSlots(player, itemStack.getAmount())) {
-            for (int i = 0; i < value; i++) {
-                inventory.addItem(itemStack);
-            }
+        if (hasEnoughSlots(player, itemStack)) {
+            inventory.addItem(itemStack);
             return true;
         }
         return false;

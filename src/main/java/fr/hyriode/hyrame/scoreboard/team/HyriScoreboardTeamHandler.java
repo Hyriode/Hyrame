@@ -171,7 +171,6 @@ public class HyriScoreboardTeamHandler {
 
         if (team != null) {
             this.removeTeamFromAllPlayers(team);
-
             return true;
         }
         return false;
@@ -295,6 +294,10 @@ public class HyriScoreboardTeamHandler {
             }
         }
         return null;
+    }
+
+    public Set<HyriScoreboardTeam> getTeams() {
+        return this.teams;
     }
 
     private static class ScoreboardTeamPacket {

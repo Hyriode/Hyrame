@@ -96,22 +96,6 @@ public class PlayerUtil {
     }
 
     /**
-     * Method used to get a {@link Player} by its name.<br>
-     * This method is an alternative to {@link Bukkit#getPlayer(String)} as the Bukkit's method returns also assumptions.
-     *
-     * @param name The name of the player to get
-     * @return A {@link Player} or <code>null</code> if a player with the given can't be found
-     */
-    public static Player getPlayer(String name) {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getName().equalsIgnoreCase(name)) {
-                return player;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Reset a {@link Player} (health, food level, experience etc.)
      *
      * @param player The {@link Player} to reset

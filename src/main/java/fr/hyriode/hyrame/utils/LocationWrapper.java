@@ -3,8 +3,7 @@ package fr.hyriode.hyrame.utils;
 import com.google.gson.annotations.Expose;
 import fr.hyriode.hyrame.IHyrame;
 import org.bukkit.Location;
-
-import java.util.UUID;
+import org.bukkit.World;
 
 /**
  * Project: Hyrame
@@ -16,15 +15,13 @@ public class LocationWrapper {
     @Expose(serialize = false, deserialize = false)
     private Location location;
 
-    private UUID worldId;
     private double x;
     private double y;
     private double z;
     private float yaw;
     private float pitch;
 
-    public LocationWrapper(UUID worldId, double x, double y, double z, float yaw, float pitch) {
-        this.worldId = worldId;
+    public LocationWrapper(double x, double y, double z, float yaw, float pitch) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -32,20 +29,12 @@ public class LocationWrapper {
         this.pitch = pitch;
     }
 
-    public LocationWrapper(UUID worldId, double x, double y, double z) {
-        this(worldId, x, y, z, 0.0F, 0.0F);
+    public LocationWrapper(double x, double y, double z) {
+        this(x, y, z, 0.0F, 0.0F);
     }
 
     public LocationWrapper(Location location) {
-        this(location.getWorld().getUID(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-    }
-
-    public UUID getWorldId() {
-        return IHyrame.WORLD.get().getUID();
-    }
-
-    public void setWorldId(UUID worldId) {
-        this.worldId = worldId;
+        this(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
     }
 
     public double getX() {
@@ -89,7 +78,11 @@ public class LocationWrapper {
     }
 
     public Location asBukkit() {
-        return this.location == null ? this.location = new Location(IHyrame.WORLD.get(), this.x, this.y, this.z, this.yaw, this.pitch) : this.location;
+        return this.asBukkit(IHyrame.WORLD.get());
+    }
+
+    public Location asBukkit(World world) {
+        return this.location == null ? this.location = new Location(world, this.x, this.y, this.z, this.yaw, this.pitch) : this.location;
     }
 
     public static LocationWrapper from(Location location) {

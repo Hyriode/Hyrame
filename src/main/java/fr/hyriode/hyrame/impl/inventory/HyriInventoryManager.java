@@ -81,7 +81,7 @@ public class HyriInventoryManager implements IHyriInventoryManager {
         for (Map.Entry<UUID, HyriInventory> entry : this.playersInventories.entrySet()) {
             final HyriInventory inventory = entry.getValue();
 
-            if (inventory.getClass() == inventoryClass) {
+            if (inventoryClass.isAssignableFrom(inventory.getClass())) {
                 inventories.add(inventoryClass.cast(inventory));
             }
         }

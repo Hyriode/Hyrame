@@ -12,7 +12,6 @@ import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.impl.Hyrame;
-import fr.hyriode.hyrame.language.ILanguageLoader;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -71,12 +70,14 @@ public class GameChatHandler implements IHyriChatHandler {
 
         if (channel.equalsIgnoreCase(HyriChatChannel.GLOBAL.getChannel())) {
             if (game.getState() == HyriGameState.PLAYING) {
-                final ChatColor color = team.getColor().getChatColor();
+                final ChatColor color = team.getColor() != null ? team.getColor().getChatColor() : null;
 
                 if (gamePlayer.isSpectator()) {
                     game.sendMessageToSpectators(target -> String.format(this.format(), account.getNameWithRank(true), message), true);
                 } else if (gamePlayer.isDead()) {
                     player.sendMessage(ChatColor.RED + HyriLanguageMessage.get("error.chat.dead").getValue(player));
+                } else if (color == null) {
+                    game.sendMessageToAll(target -> String.format(this.format(), account.getNameWithRank(true), message));
                 } else if (gamePlayer.getTeam().getTeamSize() == 1) {
                     game.sendMessageToAll(target -> String.format(this.format(), color + "[" + team.getDisplayName().getValue(target) + color + "] " + account.getNameWithRank(true), message));
                 } else if (message.startsWith("!")) {
@@ -103,7 +104,7 @@ public class GameChatHandler implements IHyriChatHandler {
                 game.sendMessageToAll(target -> {
                     String messageStart = "";
 
-                    if (team != null) {
+                    if (team != null && team.getColor() != null) {
                         final ChatColor color = team.getColor().getChatColor();
 
                         messageStart = color + "[" + team.getDisplayName().getValue(target) + color + "] ";

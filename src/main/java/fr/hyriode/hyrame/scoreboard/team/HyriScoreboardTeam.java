@@ -1,9 +1,12 @@
 package fr.hyriode.hyrame.scoreboard.team;
 
+import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.language.HyrameMessage;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
  * Project: Hyrame
@@ -264,26 +267,34 @@ public class HyriScoreboardTeam {
      */
     public enum NameTagVisibility {
 
-        ALWAYS("always"),
-        HIDE_FOR_OTHER_TEAMS("hideForOtherTeams"),
-        HIDE_FOR_OWN_TEAM("hideForOwnTeam"),
-        NEVER("never");
+        ALWAYS("always", () -> HyrameMessage.NAME_TAG_VISIBILITY_ALWAYS.asLang()),
+        HIDE_FOR_OTHER_TEAMS("hideForOtherTeams", () -> HyrameMessage.NAME_TAG_VISIBILITY_HIDE_FOR_OTHER_TEAMS.asLang()),
+        HIDE_FOR_OWN_TEAM("hideForOwnTeam", () -> HyrameMessage.NAME_TAG_VISIBILITY_HIDE_FOR_OWN_TEAM.asLang()),
+        NEVER("never", () -> HyrameMessage.NAME_TAG_VISIBILITY_NEVER.asLang());
 
         /** The visibility name to send to clients */
         private final String name;
+        /** The display values for the name tag visibility */
+        private final Supplier<HyriLanguageMessage> display;
 
         /**
          * Constructor of {@link NameTagVisibility}
          *
          * @param name A name
+         * @param display A display
          */
-        NameTagVisibility(String name) {
+        NameTagVisibility(String name, Supplier<HyriLanguageMessage> display) {
             this.name = name;
+            this.display = display;
         }
 
         @Override
         public String toString() {
             return this.name;
+        }
+
+        public Supplier<HyriLanguageMessage> display() {
+            return this.display;
         }
 
     }

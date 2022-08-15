@@ -1,13 +1,11 @@
 package fr.hyriode.hyrame.impl.game;
 
-import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.utils.block.BlockUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -16,11 +14,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
@@ -81,17 +79,6 @@ class HyriGameHandler implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW)
-    public void onPreLogin(AsyncPlayerPreLoginEvent event) {
-        if (HyriAPI.get().getConfig().isDevEnvironment()) {
-            this.runActionOnGame(game -> {
-                if (!game.getState().isAccessible()) {
-                    event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, ChatColor.RED + "Partie en cours.");
-                }
-            });
-        }
-    }
-
-    @EventHandler(priority = EventPriority.LOW)
     public void onDrop(PlayerDropItemEvent event) {
         this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING || game.getPlayer(event.getPlayer()).isSpectator());
     }
@@ -109,6 +96,11 @@ class HyriGameHandler implements Listener {
                 return game.getState() != HyriGameState.PLAYING || gamePlayer.isDead() ||gamePlayer.isSpectator();
             });
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onBlockBreak(BlockBreakEvent event) {
+        this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING);
     }
 
     @EventHandler(priority = EventPriority.LOW)

@@ -31,9 +31,12 @@ public class Symbols {
     public static final String ROTATED_SQUARE = "\u25C6";
 
     public static final String SPARKLES = "\u2726";
+    public static final String STAR = "\u2B50";
 
     public static final String SKULL = "\u2620";
 
     public static final String VERTICAL_LINE = "\uFE31";
+
+    public static final String FILLED_RECTANGLE = "\u2588";
 
 }

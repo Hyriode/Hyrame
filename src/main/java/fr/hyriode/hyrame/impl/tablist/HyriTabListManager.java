@@ -15,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by AstFaster
@@ -126,6 +127,11 @@ public class HyriTabListManager implements ITabListManager {
     @Override
     public HyriScoreboardTeam getPlayerTeam(Player player) {
         return this.teamHandler.getPlayerTeam(player);
+    }
+
+    @Override
+    public Set<HyriScoreboardTeam> getTeams() {
+        return this.teamHandler.getTeams();
     }
 
     @Override

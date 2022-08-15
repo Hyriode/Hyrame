@@ -277,7 +277,7 @@ public class HyriScoreboard {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
 
-        PacketUtil.sendPacket(this.player, this.getObjectivePacket(2, this.displayName));
+        PacketUtil.sendPacket(this.player, this.getObjectivePacket(2, this.name));
     }
 
     /**

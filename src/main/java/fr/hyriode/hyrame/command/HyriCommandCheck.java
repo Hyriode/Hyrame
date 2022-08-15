@@ -3,9 +3,9 @@ package fr.hyriode.hyrame.command;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.language.HyriCommonMessages;
-import fr.hyriode.hyrame.utils.PlayerUtil;
 import fr.hyriode.hyrame.utils.PrimitiveType;
 import fr.hyriode.hyrame.utils.TriPredicate;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -42,7 +42,7 @@ public enum HyriCommandCheck {
         return account!= null && account.isOnline() ? account : null;
     }, (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getValue((Player) ctx.getSender()) + arg + "."),
     /** Handle a player name as an input, but it will check from players on current server */
-    PLAYER_ON_SERVER("%player_server%", Player.class, PlayerUtil::getPlayer, (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getValue((Player) ctx.getSender()) + arg + "."),
+    PLAYER_ON_SERVER("%player_server%", Player.class, Bukkit::getPlayerExact, (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getValue((Player) ctx.getSender()) + arg + "."),
     /** Handle a short number */
     SHORT("%short%", PrimitiveType.SHORT),
     /** Handle an integer number */

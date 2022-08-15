@@ -3,10 +3,9 @@ package fr.hyriode.hyrame.item;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import fr.hyriode.api.language.HyriLanguageMessage;
-import fr.hyriode.hyrame.item.enchant.HyriEnchant;
-import fr.hyriode.hyrame.language.ILanguageLoader;
+import fr.hyriode.hyrame.enchantment.HyriEnchant;
 import fr.hyriode.hyrame.reflection.Reflection;
-import fr.hyriode.hyrame.utils.ProfileLoader;
+import fr.hyriode.hyrame.utils.player.ProfileLoader;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -61,6 +60,10 @@ public class ItemBuilder {
 
     public static ItemBuilder asHead() {
         return new ItemBuilder(Material.SKULL_ITEM, 1, 3);
+    }
+
+    public static ItemBuilder asHead(ItemHead head) {
+        return new ItemBuilder(Material.SKULL_ITEM, 1, 3).withHeadTexture(head);
     }
 
     public ItemBuilder withName(String name) {
@@ -152,6 +155,10 @@ public class ItemBuilder {
     }
 
     public ItemBuilder withEnchant(Enchantment enchant, int level, boolean show) {
+        if (enchant == null) {
+            return this;
+        }
+
         this.itemMeta.addEnchant(enchant, level, show);
         return this;
     }
@@ -188,6 +195,7 @@ public class ItemBuilder {
 
     public ItemNBT nbt() {
         this.itemStack.setItemMeta(this.itemMeta);
+
         return new ItemNBT(this.itemStack);
     }
 

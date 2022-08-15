@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.item.enchant;
+package fr.hyriode.hyrame.enchantment;
 
 public class GlowEnchant extends HyriEnchant {
 

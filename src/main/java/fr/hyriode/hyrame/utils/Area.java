@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.utils;
 
+import fr.hyriode.hyrame.utils.block.Cuboid;
 import org.bukkit.Location;
 
 /**
@@ -8,6 +9,8 @@ import org.bukkit.Location;
  * on 15/01/2022 at 08:51
  */
 public class Area {
+
+    private Cuboid cuboid;
 
     /** The minimum location */
     private final Location min;
@@ -134,6 +137,10 @@ public class Area {
         } else {
             return !(location.getZ() > this.max.getZ() + range) && !(this.min.getZ() - range > location.getZ());
         }
+    }
+
+    public Cuboid toCuboid() {
+        return this.cuboid == null ? this.cuboid = new Cuboid(this.max, this.min) : this.cuboid;
     }
 
 }

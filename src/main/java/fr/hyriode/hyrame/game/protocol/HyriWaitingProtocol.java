@@ -5,6 +5,7 @@ import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.server.IHyriServer;
+import fr.hyriode.hylios.api.host.HostData;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
@@ -80,10 +81,10 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
         final UUID playerId = player.getUniqueId();
         final HyriGame<?> game = this.getGame();
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(playerId);
-        final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + game.getMaxPlayers() + ")";
         final IHyriServer server = HyriAPI.get().getServer();
+        final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + server.getSlots() + ")";
 
-        if (game.getPlayers().size() >= game.getMaxPlayers() && server.isAccessible()) {
+        if (game.getPlayers().size() >= server.getSlots() && server.isAccessible()) {
             server.setAccessible(false);
         }
 
@@ -98,6 +99,15 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
 
         HyriGameItems.LEAVE.give(this.hyrame, player, 8);
 
+        if (server.isHost()) {
+            final HostData hostData = server.getHostData();
+            final UUID hostOwner = hostData.getOwner();
+
+            if (hostOwner.equals(playerId) || hostData.getSecondaryHosts().contains(playerId)) {
+                this.hyrame.getItemManager().giveItem(player, 7, "host_settings");
+            }
+        }
+
         new HyriWaitingScoreboard(game, this.plugin, player).show();
 
         this.updateScoreboards();
@@ -111,14 +121,15 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
         final HyriGame<?> game = this.getGame();
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
         final IHyriServer server = HyriAPI.get().getServer();
+        final int slots = server.getSlots();
 
         this.updateScoreboards();
 
-        if (game.getPlayers().size() < game.getMaxPlayers() && !server.isAccessible()) {
+        if (game.getPlayers().size() < slots && !server.isAccessible()) {
             server.setAccessible(true);
         }
 
-        final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + game.getMaxPlayers() + ")";
+        final String playerCounter = (game.canStart() ? ChatColor.GREEN : ChatColor.RED) + " (" + game.getPlayers().size() + "/" + slots + ")";
 
         BroadcastUtil.broadcast(target -> ChatColor.GRAY + HyriLanguageMessage.get("message.game.left").getValue(target).replace("%player%", account.getNameWithRank(true)) + playerCounter);
     }

@@ -100,6 +100,14 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
     }
 
     private void checkDistance(Player player, Location from, Location to) {
+        if (from == null || to == null) {
+            return;
+        }
+
+        if (!from.getWorld().getUID().equals(to.getWorld().getUID())) {
+            return;
+        }
+
         for (NPC npc : NPCManager.getNPCs().keySet()) {
             final Location location = npc.getLocation();
 
@@ -116,6 +124,10 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
             }
 
             final Location location = npc.getLocation().clone();
+
+            if (player.getLocation().getWorld() != location.getWorld()) {
+                continue;
+            }
 
             if (location.distance(player.getLocation()) > 4.0D) {
                 continue;

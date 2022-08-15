@@ -47,7 +47,6 @@ public class HyriCommandOutput {
         if (objects == null) {
             return null;
         }
-
         return clazz.cast(objects.get(index));
     }
 
@@ -57,7 +56,6 @@ public class HyriCommandOutput {
         if (objects == null) {
             return 0;
         }
-
         return objects.size();
     }
 

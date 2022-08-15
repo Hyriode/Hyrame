@@ -1,7 +1,7 @@
 package fr.hyriode.hyrame.hologram;
 
 import fr.hyriode.hyrame.packet.PacketUtil;
-import fr.hyriode.hyrame.utils.ListUtil;
+import fr.hyriode.hyrame.utils.list.ListUtil;
 import net.minecraft.server.v1_8_R3.EntityArmorStand;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
@@ -180,6 +180,7 @@ public class Hologram {
      */
     public void sendLine(Player player, int line) {
         final Map<Integer, EntityArmorStand> entities = this.entities.get(player);
+
 
         if (entities != null) {
             final EntityArmorStand armorStand = entities.get(line);
