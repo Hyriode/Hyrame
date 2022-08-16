@@ -105,6 +105,17 @@ public abstract class HostOption<T> extends HostDisplay {
     }
 
     /**
+     * Cast the value of the option to a given class
+     *
+     * @param clazz The class used to cast the option's value
+     * @return The cast value
+     * @param <R> The type of the result
+     */
+    public <R> R castValue(Class<R> clazz) {
+        return clazz.cast(this.value);
+    }
+
+    /**
      * Set the value of the option
      *
      * @param value The new value of the option

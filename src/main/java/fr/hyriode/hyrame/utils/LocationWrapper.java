@@ -82,7 +82,7 @@ public class LocationWrapper {
     }
 
     public Location asBukkit(World world) {
-        return this.location == null ? this.location = new Location(world, this.x, this.y, this.z, this.yaw, this.pitch) : this.location;
+        return this.location == null || !this.location.getWorld().getName().equals(world.getName()) ? this.location = new Location(world, this.x, this.y, this.z, this.yaw, this.pitch) : this.location;
     }
 
     public static LocationWrapper from(Location location) {

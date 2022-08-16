@@ -50,6 +50,10 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
         this(hyrame, plugin, true);
     }
 
+    public boolean isTeamSelector() {
+        return this.teamSelector;
+    }
+
     public HyriWaitingProtocol withTeamSelector(boolean teamSelector) {
         this.teamSelector = teamSelector;
         return this;

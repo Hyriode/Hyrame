@@ -40,20 +40,17 @@ public class TeamChooserItem extends HyriItem<HyramePlugin> {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onGive(IHyrame hyrame, Player player, int slot, ItemStack itemStack) {
+    public ItemStack onPreGive(IHyrame hyrame, Player player, int slot, ItemStack itemStack) {
         final HyriGame<?> game = hyrame.getGameManager().getCurrentGame();
 
         if (game != null) {
             final HyriGamePlayer gamePlayer = game.getPlayer(player.getUniqueId());
 
             itemStack.setDurability(gamePlayer.hasTeam() ? gamePlayer.getTeam().getColor().getDyeColor().getWoolData() : (byte) 0);
-
-            player.getInventory().setItem(slot, new ItemNBT(itemStack).setInt(SLOT_NBT_KET, slot).build());
         } else {
-            player.getInventory().setItem(slot, null);
-
             throw new IllegalStateException("Cannot use team chooser if no game exists!");
         }
+        return itemStack;
     }
 
 }

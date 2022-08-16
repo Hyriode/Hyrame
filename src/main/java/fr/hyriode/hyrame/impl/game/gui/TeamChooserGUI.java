@@ -4,6 +4,7 @@ import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
+import fr.hyriode.hyrame.game.protocol.HyriWaitingProtocol;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.impl.game.util.TeamChooserItem;
 import fr.hyriode.hyrame.inventory.HyriInventory;
@@ -135,7 +136,13 @@ public class TeamChooserGUI extends HyriInventory {
             gui.update();
         }
 
-        for (HyriGamePlayer gamePlayer : hyrame.getGameManager().getCurrentGame().getPlayers()) {
+        final HyriGame<?> game = hyrame.getGameManager().getCurrentGame();
+
+        if (!game.getProtocolManager().getProtocol(HyriWaitingProtocol.class).isTeamSelector()) {
+            return;
+        }
+
+        for (HyriGamePlayer gamePlayer : game.getPlayers()) {
             if (!gamePlayer.isOnline()) {
                 continue;
             }
