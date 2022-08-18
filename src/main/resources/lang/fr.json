@@ -375,6 +375,8 @@
 
   "host.click.to-load": "&3Clic-gauche pour charger",
   "host.click.to-edit": "&bClic-droit pour modifier",
+  "host.click.to-increase": "&3Clic-gauche pour augmenter",
+  "host.click.to-decrease": "&bClic-droit pour diminuer",
   "host.click.to-add-to-favorites": "&6Clic-droit pour ajouter aux favoris",
   "host.click.to-remove-from-favorites": "&cClic-droit pour retirer des favoris",
 

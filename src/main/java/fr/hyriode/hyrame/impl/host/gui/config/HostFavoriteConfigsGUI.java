@@ -6,11 +6,11 @@ import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.host.HostCategory;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.language.HyrameMessage;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -69,6 +69,7 @@ public class HostFavoriteConfigsGUI extends HostConfigGUI {
 
         this.addItems().run();
 
+        this.owner.playSound(this.owner.getLocation(), Sound.FIZZ, 0.5F, 1.0F);
         this.owner.sendMessage(HyrameMessage.HOST_CONFIG_FAVORITE_REMOVE_MESSAGE.asString(this.owner));
     }
 

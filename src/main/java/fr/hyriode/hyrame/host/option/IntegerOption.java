@@ -1,9 +1,13 @@
 package fr.hyriode.hyrame.host.option;
 
 import fr.hyriode.hyrame.host.HostDisplay;
+import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.language.HyrameMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 /**
  * Created by AstFaster
@@ -28,6 +32,18 @@ public class IntegerOption extends HostOption<Integer> {
         } else if (event.isRightClick()) {
             this.setValue(this.value - 1);
         }
+    }
+
+    @Override
+    public ItemStack createItem(Player player) {
+        final ItemBuilder builder = new ItemBuilder(super.createItem(player));
+        final List<String> lore = builder.getLore();
+
+        if (this.getClass() == IntegerOption.class) {
+            lore.set(lore.size() - 1, HyrameMessage.HOST_CLICK_TO_INCREASE.asString(player));
+            lore.add(HyrameMessage.HOST_CLICK_TO_DECREASE.asString(player));
+        }
+        return builder.withLore(lore).build();
     }
 
     @Override

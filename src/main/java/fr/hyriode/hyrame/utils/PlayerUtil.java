@@ -111,6 +111,10 @@ public class PlayerUtil {
      * @param hard If <code>true</code> the inventory of the player will also be cleared
      */
     public static void resetPlayer(Player player, boolean hard) {
+        if (!(player instanceof CraftPlayer)) {
+            return;
+        }
+
         player.setFoodLevel(20);
         player.setHealth(20.0D);
         player.setLevel(0);
@@ -135,6 +139,10 @@ public class PlayerUtil {
      * @param player The {@link Player} to reset
      */
     public static void resetPotionEffects(Player player) {
+        if (!(player instanceof CraftPlayer)) {
+            return;
+        }
+
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
     }
 

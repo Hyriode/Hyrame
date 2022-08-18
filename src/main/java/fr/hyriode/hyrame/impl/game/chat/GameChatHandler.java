@@ -9,6 +9,7 @@ import fr.hyriode.api.rank.type.HyriPlayerRankType;
 import fr.hyriode.hyrame.chat.IHyriChatHandler;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
+import fr.hyriode.hyrame.game.HyriGameSpectator;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.impl.Hyrame;
@@ -54,7 +55,19 @@ public class GameChatHandler implements IHyriChatHandler {
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(uuid);
         final HyriGamePlayer gamePlayer = game.getPlayer(player.getUniqueId());
 
-        if (gamePlayer == null || message == null || message.isEmpty()) {
+        if (message == null || message.isEmpty()) {
+            return true;
+        }
+
+        final HyriGameSpectator spectator = game.getOutsideSpectator(uuid);
+
+        if (spectator != null) {
+            System.out.println("Spectator message");
+            game.sendMessageToSpectators(target -> String.format(this.format(), account.getNameWithRank(true), message), true);
+            return false;
+        }
+
+        if (gamePlayer == null) {
             return true;
         }
 

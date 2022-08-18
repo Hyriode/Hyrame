@@ -33,7 +33,7 @@ public class NPC extends EntityPlayer {
     protected Set<Player> players;
 
     /** Is NPC showing to all players */
-    protected  boolean showingToAll;
+    protected boolean showingToAll;
     /** Is NPCs head tracking players */
     protected boolean trackingPlayer;
 

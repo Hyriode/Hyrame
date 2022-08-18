@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.world;
+package fr.hyriode.hyrame.world.generator;
 
 import org.bukkit.World;
 import org.bukkit.WorldType;

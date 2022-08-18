@@ -7,6 +7,7 @@ import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
+import fr.hyriode.hyrame.game.HyriGameSpectator;
 import fr.hyriode.hyrame.game.event.HyriGameWinEvent;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.utils.PlayerUtil;
@@ -14,6 +15,10 @@ import fr.hyriode.hyrame.utils.Symbols;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Project: Hyrame
@@ -54,8 +59,12 @@ public class HyriWinProtocol extends HyriGameProtocol implements Listener {
         this.game.getProtocolManager().disableProtocol(HyriDeathProtocol.class);
 
         final HyriGameTeam winner = event.getWinner();
+        final List<HyriGameSpectator> players = new ArrayList<>();
 
-        for (HyriGamePlayer player : this.game.getPlayers()) {
+        players.addAll(this.game.getPlayers());
+        players.addAll(this.game.getOutsideSpectators());
+
+        for (HyriGameSpectator player : players) {
             final Player target = player.getPlayer();
 
             if (!player.isSpectator()) {

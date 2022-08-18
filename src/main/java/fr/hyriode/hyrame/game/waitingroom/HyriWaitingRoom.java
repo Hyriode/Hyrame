@@ -5,7 +5,6 @@ import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.HyrameLogger;
-import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
@@ -19,6 +18,8 @@ import fr.hyriode.hyrame.utils.LocationWrapper;
 import fr.hyriode.hyrame.utils.Symbols;
 import fr.hyriode.hyrame.utils.block.Cuboid;
 import fr.hyriode.hyrame.utils.list.ListReplacer;
+import fr.hyriode.hyrame.world.WorldChangedEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -336,6 +337,21 @@ public class HyriWaitingRoom {
 
             if (npc != null) {
                 NPCManager.removeNPC(gamePlayer.getPlayer(), npc);
+            }
+        }
+
+        @HyriEventHandler
+        public void onWorldChanged(WorldChangedEvent event) {
+            teleportPlayers();
+
+            for (Map.Entry<UUID, NPC> entry : npcs.entrySet()) {
+                final Player player = Bukkit.getPlayer(entry.getKey());
+
+                NPCManager.removeNPC(entry.getValue());
+
+                final NPC npc = createNPC(player);
+
+                NPCManager.sendNPC(player, npc);
             }
         }
 

@@ -11,6 +11,8 @@ import fr.hyriode.api.server.join.IHyriJoinManager;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
+import fr.hyriode.hyrame.game.HyriGameSpectator;
+import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.event.player.HyriGameReconnectEvent;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import org.bukkit.Bukkit;
@@ -96,6 +98,17 @@ public class HyriJoinHandler implements IHyriJoinHandler {
     }
 
     @Override
+    public HyriJoinResponse requestSpectator(UUID player, HyriJoinResponse currentResponse) {
+        final IHyriServer server = HyriAPI.get().getServer();
+        final IHyriJoinManager joinManager = HyriAPI.get().getServerManager().getJoinManager();
+
+        if (server.getPlayers().size()  - server.getPlayersPlaying().size() + joinManager.getExpectedPlayers().size() >= 75) {
+            return HyriJoinResponse.DENY_FULL;
+        }
+        return HyriJoinResponse.ALLOW;
+    }
+
+    @Override
     public HyriJoinResponse requestPartyJoin(UUID partyId, HyriJoinResponse response) {
         final IHyriServer server = HyriAPI.get().getServer();
         final IHyriServer.State state = server.getState();
@@ -171,7 +184,9 @@ public class HyriJoinHandler implements IHyriJoinHandler {
         final Player player = Bukkit.getPlayer(playerId);
 
         if (game != null) {
-            if (game.getPlayer(playerId) == null) {
+            if (game.getState() == HyriGameState.PLAYING) {
+                game.handleSpectatorLogin(player);
+            } else if (game.getPlayer(playerId) == null) {
                 game.handleLogin(player);
             } else {
                 game.handleReconnection(player);
@@ -200,9 +215,12 @@ public class HyriJoinHandler implements IHyriJoinHandler {
 
         if (game != null) {
             final HyriGamePlayer gamePlayer = game.getPlayer(playerId);
+            final HyriGameSpectator spectator = game.getOutsideSpectator(playerId);
 
             if (gamePlayer != null) {
                 game.handleLogout(gamePlayer.getPlayer());
+            } else if (spectator != null) {
+                game.handleSpectatorLogout(spectator.getPlayer());
             }
         }
     }

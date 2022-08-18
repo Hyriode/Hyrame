@@ -31,7 +31,7 @@ public class HyriGameScoreboard<G extends HyriGame<?>> extends HyriScoreboard {
      * @param name Scoreboard's name
      */
     public HyriGameScoreboard(JavaPlugin plugin, G game, Player player, String name) {
-        super(plugin, player, name, PlaceholderAPI.setPlaceholders(null, ChatColor.DARK_AQUA + "     " + ChatColor.BOLD + "%game_display_name%" + "     "));
+        super(plugin, player, name, ChatColor.DARK_AQUA + "     " + ChatColor.BOLD + (HyriAPI.get().getServer().isHost() ? HyriAPI.get().getServer().getHostData().getName() : game.getDisplayName()) + "     ");
         this.game = game;
     }
 

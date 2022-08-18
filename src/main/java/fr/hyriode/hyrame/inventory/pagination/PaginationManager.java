@@ -48,7 +48,11 @@ public class PaginationManager {
 
         if (this.area != null) {
             final int start = this.area.getStart();
-            final int end = this.area.getEnd();
+            int end = this.area.getEnd();
+
+            if (end % 9 == 0) {
+                end = 9;
+            }
 
             int index = 0;
             for (int y = start / 9; y <= end / 9; y++) {

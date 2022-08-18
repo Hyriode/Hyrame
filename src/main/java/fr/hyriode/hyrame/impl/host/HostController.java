@@ -11,8 +11,8 @@ import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.scoreboard.HyriWaitingScoreboard;
 import fr.hyriode.hyrame.host.HostCategory;
-import fr.hyriode.hyrame.host.gui.HostGUI;
 import fr.hyriode.hyrame.host.IHostController;
+import fr.hyriode.hyrame.host.gui.HostGUI;
 import fr.hyriode.hyrame.host.option.HostOption;
 import fr.hyriode.hyrame.impl.game.gui.TeamChooserGUI;
 import fr.hyriode.hyrame.impl.host.category.HostMainCategory;
@@ -62,21 +62,23 @@ public class HostController implements IHostController {
         this.categories = new HashMap<>();
         this.usedConfigs = new HashSet<>();
 
-        HyrameLogger.log("Loading all maps for host...");
+        if (!HyriAPI.get().getConfig().isDevEnvironment()) {
+            HyrameLogger.log("Loading all maps for host...");
 
-        final IHyriServer server = HyriAPI.get().getServer();
-        final String type = server.getType();
-        final String subType = server.getSubType();
+            final IHyriServer server = HyriAPI.get().getServer();
+            final String type = server.getType();
+            final String subType = server.getSubType();
 
-        for (String map : HyriAPI.get().getGameManager().getMaps(type, subType)) {
-            HyrameLogger.log("Loading '" + map + "' map for host...");
+            for (String map : HyriAPI.get().getGameManager().getMaps(type, subType)) {
+                HyrameLogger.log("Loading '" + map + "' map for host...");
 
-            HyriAPI.get().getHystiaAPI().getWorldManager().loadWorld(new File(map), type, subType, map);
+                HyriAPI.get().getHystiaAPI().getWorldManager().loadWorld(new File(map), type, subType, map);
 
-            new WorldCreator(map).createWorld();
+                new WorldCreator(map).createWorld();
+            }
+
+            this.hyrame.getWorldProvider().setCurrentWorld(server.getMap());
         }
-
-        this.hyrame.getWorldProvider().setCurrentWorld(server.getMap());
 
         this.addCategory(4, new HostMainCategory());
 

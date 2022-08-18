@@ -73,7 +73,7 @@ public class TimeOption extends LongOption {
         private void createItem(int slot, int index, boolean plus, ItemHead head, ChatColor color) {
             final long modifier = modifiers[index];
             final ItemStack itemStack = ItemBuilder.asHead(head)
-                    .withName(color + (plus ? "+" : "-") + modifier)
+                    .withName(color + (plus ? "+" : "-") + TimeUtil.formatTime(modifier))
                     .withLore(ListReplacer.replace(HyrameMessage.HOST_MULTIPLE_MODIFIERS_LORE.asList(this.owner), "%value%", TimeUtil.formatTime(value))
                             .replace("%maximum%", TimeUtil.formatTime(maximum))
                             .replace("%minimum%", TimeUtil.formatTime(minimum))

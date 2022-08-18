@@ -12,6 +12,7 @@ import fr.hyriode.hyrame.utils.HyrameHead;
 import fr.hyriode.hyrame.utils.list.ListReplacer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -60,6 +61,7 @@ public class HostEditConfigGUI extends HyriInventory {
                 .build(),
                 event -> {
                     this.config.delete();
+                    this.owner.playSound(this.owner.getLocation(), Sound.FIZZ, 0.5F, 1.0F);
                     this.owner.sendMessage(HyrameMessage.HOST_CONFIG_DELETED_MESSAGE.asString(this.owner).replace("%name%", this.config.getName()));
 
                     goBack.run();

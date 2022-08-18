@@ -22,9 +22,12 @@ import fr.hyriode.hyrame.game.timer.HyriGameStartingTimer;
 import fr.hyriode.hyrame.game.timer.HyriGameTimer;
 import fr.hyriode.hyrame.game.util.HyriGameMessages;
 import fr.hyriode.hyrame.game.waitingroom.HyriWaitingRoom;
+import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam;
+import fr.hyriode.hyrame.tablist.ITabListManager;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.BroadcastUtil;
 import fr.hyriode.hyrame.utils.PlayerUtil;
+import fr.hyriode.hyrame.utils.Symbols;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -51,6 +54,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     private static final HyriLanguageMessage SPECTATORS_CHAT_PREFIX = new HyriLanguageMessage("")
             .addValue(HyriLanguage.EN, "[Spectators] ")
             .addValue(HyriLanguage.FR, "[Spectateurs] ");
+
+    private static final String SPECTATORS_TEAM = "spectators";
 
     /** Minimum of players to start */
     protected final int minPlayers;
@@ -87,6 +92,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     protected final List<HyriGameTeam> teams;
     /** All game players */
     protected final List<P> players;
+    /** The players spectating the server */
+    protected final List<HyriGameSpectator> outsideSpectators;
     /** Game player class */
     private final Class<P> playerClass;
 
@@ -122,6 +129,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         this.type = type;
         this.setState(HyriGameState.WAITING);
         this.players = new ArrayList<>();
+        this.outsideSpectators = new ArrayList<>();
         this.teams = new ArrayList<>();
         this.protocolManager = new HyriGameProtocolManager(this.plugin, this);
         this.minPlayers = type.getMinPlayers();
@@ -156,12 +164,17 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
 
             this.protocolManager.enableProtocol(new HyriWaitingProtocol(this.hyrame, this.plugin));
         }
+
         this.protocolManager.enableProtocol(new HyriSpectatorProtocol(this.hyrame));
         this.protocolManager.enableProtocol(new HyriWinProtocol(this.hyrame, this));
 
         if (this.waitingRoom != null) {
             this.waitingRoom.setup();
         }
+
+        final String display = ChatColor.GRAY + Symbols.SPARKLES + " ";
+
+        this.hyrame.getTabListManager().registerTeam(new HyriScoreboardTeam(SPECTATORS_TEAM, SPECTATORS_TEAM, display, display, "", HyriScoreboardTeam.NameTagVisibility.NEVER));
     }
 
     /**
@@ -274,6 +287,10 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         }
 
         HyriAPI.get().getEventBus().publish(new HyriGameLeaveEvent(this, gamePlayer));
+
+        if (this.getOnlinePlayers().size() == 0) {
+            this.end();
+        }
     }
 
     /**
@@ -303,6 +320,31 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
     }
 
     /**
+     * Called when a player connects to spectate the game.<br>
+     * Override this method to make actions on spectator.
+     *
+     * @param player The player that spectate
+     */
+    public void handleSpectatorLogin(Player player) {
+        final HyriGameSpectator spectator = new HyriGameSpectator(this, player);
+
+        this.outsideSpectators.add(spectator);
+        this.hyrame.getTabListManager().addPlayerInTeam(player, SPECTATORS_TEAM);
+
+        spectator.setSpectator(true);
+    }
+
+    /**
+     * Called when a spectator logged out from the game.<br>
+     * Override this method to make actions on spectator.
+     *
+     * @param player The player that was spectating
+     */
+    public void handleSpectatorLogout(Player player) {
+        this.outsideSpectators.remove(this.getOutsideSpectator(player.getUniqueId()));
+    }
+
+    /**
      * To call when the game has a winner<br>
      * Override this method to make actions on game win
      *
@@ -312,6 +354,13 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
         if (winner == null) {
             return;
         }
+
+        final ITabListManager tabListManager = this.hyrame.getTabListManager();
+        final HyriScoreboardTeam team = tabListManager.getTeam(SPECTATORS_TEAM);
+
+        team.setNameTagVisibility(HyriScoreboardTeam.NameTagVisibility.ALWAYS);
+
+        tabListManager.updateTeam(team.getName());
 
         HyriAPI.get().getEventBus().publish(new HyriGameWinEvent(this, winner));
 
@@ -482,15 +531,17 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      */
     public void sendMessageToSpectators(Function<Player, String> message, boolean withPrefix) {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            final HyriGamePlayer gamePlayer = this.getPlayer(player.getUniqueId());
+            final UUID playerId = player.getUniqueId();
+            final HyriGamePlayer gamePlayer = this.getPlayer(playerId);
+            final HyriGameSpectator outsideSpectator = this.getOutsideSpectator(playerId);
 
-            if (gamePlayer != null && !gamePlayer.isSpectator()) {
-                return;
+            if (gamePlayer != null && !gamePlayer.isSpectator() && outsideSpectator == null) {
+                continue;
             }
 
             final String formattedMessage = ChatColor.GRAY + (withPrefix ? SPECTATORS_CHAT_PREFIX.getValue(player) : "") + message.apply(player);
 
-            if (gamePlayer == null) {
+            if (gamePlayer == null || outsideSpectator != null) {
                 player.sendMessage(formattedMessage);
             } else if (gamePlayer.isSpectator()) {
                 player.sendMessage(formattedMessage);
@@ -505,7 +556,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      * @param withPrefix If <code>true</code>, a prefix will be added before the message
      */
     public void sendMessageToSpectators(HyriLanguageMessage message, boolean withPrefix) {
-        this.sendMessageToSpectators(target -> message.getValue(target), withPrefix);
+        this.sendMessageToSpectators(message::getValue, withPrefix);
     }
 
     /**
@@ -578,6 +629,30 @@ public abstract class HyriGame<P extends HyriGamePlayer> {
      */
     public List<P> getSpectators() {
         return this.players.stream().filter(HyriGamePlayer::isSpectator).collect(Collectors.toList());
+    }
+
+    /**
+     * Get all outside players in spectator mode
+     *
+     * @return A list of {@link HyriGameSpectator}
+     */
+    public List<HyriGameSpectator> getOutsideSpectators() {
+        return this.outsideSpectators;
+    }
+
+    /**
+     * Get an outside spectator object
+     *
+     * @param uniqueId The unique id of the spectator to get
+     * @return A {@link HyriGameSpectator}; or <code>null</code> if nothing was found
+     */
+    public HyriGameSpectator getOutsideSpectator(UUID uniqueId) {
+        for (HyriGameSpectator spectator : this.outsideSpectators) {
+            if (spectator.getUniqueId().equals(uniqueId)) {
+                return spectator;
+            }
+        }
+        return null;
     }
 
     /**

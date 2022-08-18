@@ -1,7 +1,6 @@
 package fr.hyriode.hyrame.world.generator;
 
 import fr.hyriode.hyrame.HyrameLogger;
-import fr.hyriode.hyrame.world.HyriWorldSettings;
 import net.minecraft.server.v1_8_R3.BiomeBase;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

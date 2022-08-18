@@ -17,13 +17,11 @@ import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.utils.Pagination;
 import fr.hyriode.hyrame.utils.list.ListReplacer;
 import fr.hyriode.hyrame.world.IWorldProvider;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -33,13 +31,12 @@ import java.util.List;
 public class MapOption extends HostOption<String> {
 
     public MapOption(HostDisplay display) {
-        super(display, HyriAPI.get().getServer().getMap());
+        super(display, HyriAPI.get().getConfig().isDevEnvironment() ? "None" : HyriAPI.get().getServer().getMap());
         this.valueFormatter = player -> HyrameMessage.HOST_OPTION_MAP_FORMATTER.asString(player).replace("%map%", this.value);
 
         this.onChanged = map -> {
             final IHyriServer server = HyriAPI.get().getServer();
             final IWorldProvider worldProvider = HyrameLoader.getHyrame().getWorldProvider();
-            final HyriWaitingRoom waitingRoom = HyrameLoader.getHyrame().getGameManager().getCurrentGame().getWaitingRoom();
             final String currentWorld = worldProvider.getCurrentWorldName();
 
             if (map.equals(currentWorld)) {
@@ -48,10 +45,6 @@ public class MapOption extends HostOption<String> {
 
             worldProvider.setCurrentWorld(map);
             server.setMap(map);
-
-            if (waitingRoom != null) {
-                waitingRoom.teleportPlayers();
-            }
 
             HyriWaitingScoreboard.updateAll();
         };

@@ -4,6 +4,7 @@ import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
+import fr.hyriode.hyrame.game.HyriGameSpectator;
 import fr.hyriode.hyrame.game.event.player.HyriGameReconnectedEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent;
 import fr.hyriode.hyrame.game.util.HyriGameItems;
@@ -45,14 +46,14 @@ public class HyriSpectatorProtocol extends HyriGameProtocol implements Listener 
 
     @HyriEventHandler
     public void onSpectator(HyriGameSpectatorEvent event) {
-        final HyriGamePlayer gamePlayer = event.getGamePlayer();
-        final Player player = gamePlayer.getPlayer();
+        final HyriGameSpectator spectator = event.getSpectator();
+        final Player player = spectator.getPlayer();
 
         if (event.getAction() == Action.ADD) {
             PlayerUtil.resetPlayer(player, true);
             PlayerUtil.addSpectatorAbilities(player);
 
-            gamePlayer.hide();
+            spectator.hide();
 
             player.spigot().setCollidesWithEntities(false);
 
@@ -66,7 +67,7 @@ public class HyriSpectatorProtocol extends HyriGameProtocol implements Listener 
         } else {
             PlayerUtil.resetPlayer(player, true);
 
-            gamePlayer.show();
+            spectator.show();
 
             player.spigot().setCollidesWithEntities(true);
         }

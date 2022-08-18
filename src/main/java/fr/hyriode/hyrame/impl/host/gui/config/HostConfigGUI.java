@@ -41,17 +41,30 @@ public abstract class HostConfigGUI extends PaginatedInventory {
         this.setItem(3, ItemBuilder.asHead(HyrameHead.GOLD_CRATE)
                 .withName(HyrameMessage.HOST_CONFIG_FAVORITE_CONFIGS_ITEM_NAME.asString(this.owner))
                 .withLore(HyrameMessage.HOST_CONFIG_FAVORITE_CONFIGS_ITEM_LORE.asList(this.owner))
-                .build(), event -> new HostFavoriteConfigsGUI(this.owner, parentCategory).open());
+                .build(),
+                event -> {
+                    this.owner.playSound(this.owner.getLocation(), Sound.CLICK, 0.5F, 2.0F);
+
+                    new HostFavoriteConfigsGUI(this.owner, parentCategory).open();
+                });
 
         this.setItem(4, ItemBuilder.asHead(HyrameHead.IRON_CRATE)
                 .withName(HyrameMessage.HOST_CONFIG_OWN_CONFIGS_ITEM_NAME.asString(this.owner))
                 .withLore(HyrameMessage.HOST_CONFIG_OWN_CONFIGS_ITEM_LORE.asList(this.owner))
-                .build(), event -> new HostOwnConfigsGUI(this.owner, parentCategory).open());
+                .build(),
+                event -> {
+                    this.owner.playSound(this.owner.getLocation(), Sound.CLICK, 0.5F, 2.0F);
+                    new HostOwnConfigsGUI(this.owner, parentCategory).open();
+                });
 
         this.setItem(5, ItemBuilder.asHead(HyrameHead.JUNGLE_CRATE)
                 .withName(HyrameMessage.HOST_CONFIG_ALL_CONFIGS_ITEM_NAME.asString(this.owner))
                 .withLore(HyrameMessage.HOST_CONFIG_ALL_CONFIGS_ITEM_LORE.asList(this.owner))
-                .build(), event -> new HostAllConfigsGUI(this.owner, parentCategory).open());
+                .build(),
+                event -> {
+                    this.owner.playSound(this.owner.getLocation(), Sound.CLICK, 0.5F, 2.0F);
+                    new HostAllConfigsGUI(this.owner, parentCategory).open();
+                });
 
         this.setItem(18, ItemBuilder.asHead(HyrameHead.MONITOR_PLUS)
                 .withName(HyrameMessage.HOST_CONFIG_CREATE_ITEM_NAME.asString(this.owner))
@@ -72,7 +85,7 @@ public abstract class HostConfigGUI extends PaginatedInventory {
                             this.addItems().run();
 
                             this.owner.sendMessage(HyrameMessage.HOST_CONFIG_RESET_MESSAGE.asString(this.owner));
-                            this.owner.playSound(this.owner.getLocation(), Sound.NOTE_PLING, 1.0F, 1.0F);
+                            this.owner.playSound(this.owner.getLocation(), Sound.CHICKEN_EGG_POP, 1.0F, 1.0F);
                         });
 
         this.setItem(49, new ItemBuilder(Material.ARROW)
@@ -122,6 +135,10 @@ public abstract class HostConfigGUI extends PaginatedInventory {
 
             pagination.add(PaginatedItem.from(itemStack, event -> {
                 if (event.isLeftClick()) {
+                    if (!this.isCompatible(config)) {
+                        return;
+                    }
+
                     final IHostController controller = HyrameLoader.getHyrame().getHostController();
                     final IHostConfig currentConfig = controller.getCurrentConfig();
 
@@ -130,6 +147,7 @@ public abstract class HostConfigGUI extends PaginatedInventory {
 
                         this.addItems().run();
 
+                        this.owner.playSound(this.owner.getLocation(), Sound.ORB_PICKUP, 1.0F, 1.0F);
                         this.owner.sendMessage(HyrameMessage.HOST_CONFIG_LOADED_MESSAGE.asString(this.owner).replace("%name%", config.getName()));
                     }
                 } else if (event.isRightClick()) {

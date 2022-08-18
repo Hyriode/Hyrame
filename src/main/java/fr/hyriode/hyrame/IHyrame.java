@@ -15,7 +15,6 @@ import fr.hyriode.hyrame.scanner.IHyriScanner;
 import fr.hyriode.hyrame.scoreboard.IHyriScoreboardManager;
 import fr.hyriode.hyrame.tablist.ITabListManager;
 import fr.hyriode.hyrame.world.IWorldProvider;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 

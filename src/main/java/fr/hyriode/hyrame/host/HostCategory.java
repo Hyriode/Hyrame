@@ -44,6 +44,7 @@ public class HostCategory extends HostDisplay {
         super(display.getName(), display.getDisplayName(), display.getDescription(), display.getIcon());
         this.options = new HashMap<>();
         this.subCategories = new HashMap<>();
+        this.guiProvider = player -> new HostGUI(player, this.name, this);
     }
 
     /**

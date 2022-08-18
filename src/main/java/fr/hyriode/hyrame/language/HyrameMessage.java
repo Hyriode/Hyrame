@@ -112,6 +112,8 @@ public enum HyrameMessage {
     HOST_CLICK_TO_EDIT("host.click.to-edit"),
     HOST_CLICK_TO_ADD_TO_FAVORITES("host.click.to-add-to-favorites"),
     HOST_CLICK_TO_REMOVE_FROM_FAVORITES("host.click.to-remove-from-favorites"),
+    HOST_CLICK_TO_INCREASE("host.click.to-increase"),
+    HOST_CLICK_TO_DECREASE("host.click.to-decrease"),
 
     PAGINATION_PREVIOUS_PAGE_ITEM_NAME("pagination.previous-page.item.name"),
     PAGINATION_PREVIOUS_PAGE_ITEM_LORE("pagination.previous-page.item.lore"),

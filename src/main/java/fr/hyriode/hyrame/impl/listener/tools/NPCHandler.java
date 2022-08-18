@@ -104,12 +104,20 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
             return;
         }
 
-        if (!from.getWorld().getUID().equals(to.getWorld().getUID())) {
+        final String fromWorld = from.getWorld().getName();
+        final String toWorld = to.getWorld().getName();
+
+        if (!fromWorld.equals(toWorld)) {
             return;
         }
 
         for (NPC npc : NPCManager.getNPCs().keySet()) {
             final Location location = npc.getLocation();
+            final String world = location.getWorld().getName();
+
+            if (!world.equals(fromWorld)) {
+                continue;
+            }
 
             if (from.distanceSquared(location) > 2500 && to.distanceSquared(location) < 2500) {
                 NPCManager.sendNPC(player, npc);

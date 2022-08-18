@@ -8,8 +8,8 @@ import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.timer.HyriGameStartingTimer;
 import fr.hyriode.hyrame.host.HostCategory;
 import fr.hyriode.hyrame.host.IHostController;
-import fr.hyriode.hyrame.host.gui.HostGUI;
 import fr.hyriode.hyrame.host.event.HostAdvertisementEvent;
+import fr.hyriode.hyrame.host.gui.HostGUI;
 import fr.hyriode.hyrame.impl.host.gui.config.HostOwnConfigsGUI;
 import fr.hyriode.hyrame.inventory.HyriInventory;
 import fr.hyriode.hyrame.item.ItemBuilder;
@@ -21,7 +21,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Map;
@@ -138,6 +137,8 @@ public class HostMainGUI extends HostGUI {
                                 HyriAPI.get().getNetworkManager().getEventBus().publish(new HostAdvertisementEvent(hostData));
 
                                 this.getHostController().startAdvertTimer();
+
+                                this.addItem(this.currentInventory, this.slot);
                             });
         }
 

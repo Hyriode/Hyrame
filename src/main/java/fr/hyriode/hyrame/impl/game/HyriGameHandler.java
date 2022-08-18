@@ -75,12 +75,12 @@ class HyriGameHandler implements Listener {
                     event.setCancelled(true);
                 }
             }
-        }, game -> game.getState() != HyriGameState.PLAYING || game.getPlayer(event.getPlayer()).isSpectator());
+        }, game -> game.getState() != HyriGameState.PLAYING || game.getOutsideSpectator(event.getPlayer().getUniqueId()) != null || game.getPlayer(event.getPlayer()).isSpectator());
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onDrop(PlayerDropItemEvent event) {
-        this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING || game.getPlayer(event.getPlayer()).isSpectator());
+        this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING || game.getOutsideSpectator(event.getPlayer().getUniqueId()) != null || game.getPlayer(event.getPlayer()).isSpectator());
     }
 
     @EventHandler(priority = EventPriority.LOW)
