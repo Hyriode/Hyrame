@@ -4,6 +4,7 @@ import fr.hyriode.hyrame.plugin.IPluginProvider;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Project: Hyrame

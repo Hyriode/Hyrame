@@ -47,4 +47,8 @@ public class ValueProvider<T> {
         return this.defaultValue;
     }
 
+    public T getDefaultValue() {
+        return this.defaultValue;
+    }
+
 }

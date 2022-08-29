@@ -1,11 +1,13 @@
 package fr.hyriode.hyrame.impl.item;
 
+import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.item.HyriItem;
 import fr.hyriode.hyrame.item.IHyriItemManager;
 import fr.hyriode.hyrame.item.ItemBuilder;
+import fr.hyriode.hyrame.item.event.HyriItemGiveEvent;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.reflection.Reflection;
 import fr.hyriode.hyrame.utils.ItemUtil;
@@ -102,6 +104,14 @@ public class HyriItemManager implements IHyriItemManager {
     public void giveItem(Player player, int slot, String name) {
         if (this.isItemExisting(name)) {
             final HyriItem<?> item = this.items.get(this.getFullItemId(name));
+            final HyriItemGiveEvent event = new HyriItemGiveEvent(player, item);
+
+            HyriAPI.get().getEventBus().publish(event);
+
+            if (event.isCancelled()) {
+                return;
+            }
+
             final ItemStack itemStack = item.onPreGive(this.hyrame, player, slot, this.toItemStack(player, item));
 
             player.getInventory().setItem(slot, itemStack);
@@ -124,6 +134,14 @@ public class HyriItemManager implements IHyriItemManager {
     public boolean giveItem(Player player, String name) {
         if (this.isItemExisting(name)) {
             final HyriItem<?> item = this.items.get(this.getFullItemId(name));
+            final HyriItemGiveEvent event = new HyriItemGiveEvent(player, item);
+
+            HyriAPI.get().getEventBus().publish(event);
+
+            if (event.isCancelled()) {
+                return false;
+            }
+
             final ItemStack itemStack = item.onPreGive(this.hyrame, player, -1, this.toItemStack(player, item));
 
             return ItemUtil.addItemInPlayerInventory(itemStack, player);

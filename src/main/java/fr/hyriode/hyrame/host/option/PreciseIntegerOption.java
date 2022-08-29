@@ -9,6 +9,7 @@ import fr.hyriode.hyrame.utils.HyrameHead;
 import fr.hyriode.hyrame.utils.list.ListReplacer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -19,7 +20,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class PreciseIntegerOption extends IntegerOption {
 
-    private final int[] modifiers;
+    protected final int[] modifiers;
 
     public PreciseIntegerOption(HostDisplay display, int defaultValue, int minimum, int maximum, int[] modifiers) {
         super(display, defaultValue, minimum, maximum);
@@ -53,9 +54,15 @@ public class PreciseIntegerOption extends IntegerOption {
                         setValue(defaultValue);
 
                         this.addItems();
+                        this.owner.playSound(this.owner.getLocation(), Sound.FIZZ, 0.5F, 1.0F);
                     });
 
             this.addItems();
+            this.addItemStack();
+        }
+
+        private void addItemStack() {
+            this.setItem(22, new ItemBuilder(PreciseIntegerOption.this.createItem(this.owner)).removeLoreLines(2).build());
         }
 
         private void addItems() {
@@ -81,7 +88,10 @@ public class PreciseIntegerOption extends IntegerOption {
             this.setItem(slot, itemStack, event -> {
                 setValue(plus ? value + modifier : value - modifier);
 
+                this.owner.playSound(this.owner.getLocation(), Sound.CLICK, 0.5F, 2.0F);
+
                 this.addItems();
+                this.addItemStack();
             });
         }
 

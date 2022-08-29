@@ -58,4 +58,12 @@ public class LongOption extends HostOption<Long> {
         super.setValue(value);
     }
 
+    public long getMinimum() {
+        return this.minimum;
+    }
+
+    public long getMaximum() {
+        return this.maximum;
+    }
+
 }

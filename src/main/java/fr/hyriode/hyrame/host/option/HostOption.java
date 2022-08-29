@@ -74,6 +74,16 @@ public abstract class HostOption<T> extends HostDisplay {
 
     @Override
     public ItemStack createItem(Player player) {
+        return this.defaultItemCreation(player);
+    }
+
+    /**
+     * Default item creation
+     *
+     * @param player The player used to create the item
+     * @return The created {@link ItemStack}
+     */
+    protected ItemStack defaultItemCreation(Player player) {
         final ItemBuilder builder = new ItemBuilder(super.createItem(player));
         List<String> lore = builder.getLore();
 
@@ -102,6 +112,15 @@ public abstract class HostOption<T> extends HostDisplay {
      */
     public T getValue() {
         return this.value;
+    }
+
+    /**
+     * Get the default value of the option
+     *
+     * @return A value
+     */
+    public T getDefaultValue() {
+        return this.defaultValue;
     }
 
     /**

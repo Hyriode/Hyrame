@@ -7,6 +7,7 @@ import fr.hyriode.hyrame.host.gui.HostGUI;
 import fr.hyriode.hyrame.host.option.HostOption;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.language.HyrameMessage;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -44,7 +45,7 @@ public class HostCategory extends HostDisplay {
         super(display.getName(), display.getDisplayName(), display.getDescription(), display.getIcon());
         this.options = new HashMap<>();
         this.subCategories = new HashMap<>();
-        this.guiProvider = player -> new HostGUI(player, this.name, this);
+        this.guiProvider = player -> new HostGUI(player, ChatColor.stripColor(this.displayName.getValue(player)), this);
     }
 
     /**

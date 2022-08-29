@@ -34,7 +34,7 @@ public class SerializerUtil {
      */
     public static String[] playerInventoryToStringArray(PlayerInventory playerInventory){
         final String content = inventoryToString(playerInventory);
-        String armor = itemStackArrayToString(playerInventory.getArmorContents());
+        final String armor = itemStackArrayToString(playerInventory.getArmorContents());
 
         return new String[] {content, armor};
     }

@@ -108,6 +108,17 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder removeLoreLines(int number) {
+        final List<String> lore = this.itemMeta.getLore();
+
+        for (int i = 0; i < number; i++) {
+            lore.remove(lore.size() - 1);
+        }
+
+        this.itemMeta.setLore(lore);
+        return this;
+    }
+
     public ItemBuilder withPlayerHead(String name) {
         Reflection.setField("profile", this.itemMeta, new ProfileLoader(name, ProfileLoader.REDIS_KEY).loadProfile());
         return this;
@@ -169,6 +180,32 @@ public class ItemBuilder {
 
     public ItemBuilder withEnchant(Enchantment enchant) {
         return this.withEnchant(enchant, 1, true);
+    }
+
+    public ItemBuilder incrementEnchant(Enchantment enchantment, boolean show) {
+        final int level = this.itemMeta.getEnchantLevel(enchantment);
+
+        this.itemMeta.addEnchant(enchantment, level + 1, show);
+        return this;
+    }
+
+    public ItemBuilder incrementEnchant(Enchantment enchantment) {
+        return this.incrementEnchant(enchantment, true);
+    }
+
+    public ItemBuilder decrementEnchant(Enchantment enchantment, boolean show) {
+        final int level = this.itemMeta.getEnchantLevel(enchantment) - 1;
+
+        if (level <= 0) {
+            this.itemMeta.removeEnchant(enchantment);
+        } else {
+            this.itemMeta.addEnchant(enchantment, level, show);
+        }
+        return this;
+    }
+
+    public ItemBuilder decrementEnchant(Enchantment enchantment) {
+        return this.decrementEnchant(enchantment, true);
     }
 
     public ItemBuilder withHidingEnchantments() {

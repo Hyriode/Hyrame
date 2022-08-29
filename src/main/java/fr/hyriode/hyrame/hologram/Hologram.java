@@ -2,10 +2,7 @@ package fr.hyriode.hyrame.hologram;
 
 import fr.hyriode.hyrame.packet.PacketUtil;
 import fr.hyriode.hyrame.utils.list.ListUtil;
-import net.minecraft.server.v1_8_R3.EntityArmorStand;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
-import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntity;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
@@ -349,7 +346,7 @@ public class Hologram {
 
         armorStand.setBasePlate(false);
         armorStand.setCustomNameVisible(true);
-        armorStand.setLocation(location.getX(), location.getY(), location.getZ(), 0, 0);
+        armorStand.setLocation(location.getX(), location.getY(), location.getZ(), 0.0F, 0.0F);
 
         return armorStand;
     }
@@ -439,7 +436,21 @@ public class Hologram {
      * @param location The {@link Location}
      */
     public void setLocation(Location location) {
+        final Location oldLocation = this.location;
+
         this.location = location;
+
+        for (Map.Entry<Player, Map<Integer, EntityArmorStand>> e : this.entities.entrySet()) {
+            final Player player = e.getKey();
+
+            for (Map.Entry<Integer, EntityArmorStand> entry : e.getValue().entrySet()) {
+                final EntityArmorStand armorStand = entry.getValue();
+
+                armorStand.setLocation(location.getX(), location.getY() + armorStand.locY - oldLocation.getY(), location.getZ(), 0.0F, 0.0F);
+
+                PacketUtil.sendPacket(player, new PacketPlayOutEntityTeleport(armorStand));
+            }
+        }
     }
 
     /**

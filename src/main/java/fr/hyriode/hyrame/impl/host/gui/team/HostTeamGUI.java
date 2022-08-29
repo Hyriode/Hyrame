@@ -47,6 +47,9 @@ public class HostTeamGUI extends HostGUI {
                 .replace("%name_tag_visibility%", this.team.getNameTagVisibility().display().get().getValue(this.owner))
                 .list();
 
+        lore.remove(lore.size() - 1);
+        lore.remove(lore.size() - 2);
+
         this.setItem(22, new ItemBuilder(Material.WOOL, 1, this.team.getColor().getDyeColor().getWoolData())
                 .withName(this.team.getFormattedDisplayName(this.owner))
                 .withLore(lore)

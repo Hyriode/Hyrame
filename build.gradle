@@ -9,7 +9,7 @@ apply plugin: 'java-library'
 apply plugin: 'maven-publish'
 
 group = 'fr.hyriode'
-version = '1.3.3'
+version = '1.3.4'
 archivesBaseName = 'Hyrame'
 
 java {

@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static fr.hyriode.hyrame.impl.module.friend.FriendModule.FRIENDS_LIST_SIZE;
 import static fr.hyriode.hyrame.impl.module.friend.FriendModule.createMessage;
@@ -30,6 +31,14 @@ import static fr.hyriode.hyrame.impl.module.friend.FriendModule.createMessage;
  */
 public class FriendCommand extends HyriCommand<HyramePlugin> {
 
+    private static final Function<Player, BaseComponent[]> HELP = player -> new CommandHelpCreator("f", "friend", player)
+            .withMainColor(ChatColor.LIGHT_PURPLE)
+            .withSecondaryColor(ChatColor.DARK_PURPLE)
+            .addArgumentsLine("add", "add <player>")
+            .addArgumentsLine("remove", "remove <player>")
+            .addArgumentsLine("list", "list")
+            .create();
+
     private final FriendModule friendModule;
 
     public FriendCommand(HyramePlugin plugin) {
@@ -37,7 +46,7 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
                 .withAliases("f", "ami", "friends", "amis")
                 .withDescription("The command used to manage friends")
                 .withType(HyriCommandType.PLAYER)
-                .withUsage(sender -> getHelp((Player) sender), false)
+                .withUsage(sender -> HELP.apply((Player) sender), false)
                 .asynchronous());
         this.friendModule = this.plugin.getHyrame().getFriendModule();
     }
@@ -99,7 +108,7 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
 
         this.handleArgument(ctx, "list %integer%", output -> listFriends(output.get(Integer.class), player, friendHandler));
         this.handleArgument(ctx, "list", output -> listFriends(0, player, friendHandler));
-        this.handleArgument(ctx, "help", output -> player.spigot().sendMessage(getHelp(player)));
+        this.handleArgument(ctx, "help", output -> player.spigot().sendMessage(HELP.apply(player)));
         this.handleArgument(ctx, "%player_online%", this.addFriend(player, friendHandler));
         this.handleArgument(ctx, "add %player_online%", this.addFriend(player, friendHandler));
     }
@@ -185,23 +194,6 @@ public class FriendCommand extends HyriCommand<HyramePlugin> {
                 }
             }
         }));
-    }
-
-    private static BaseComponent[] getHelp(Player player) {
-        return createMessage(builder -> {
-            final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
-
-            addCommandLine(builder, account, "add", "add <player>", true);
-            addCommandLine(builder, account, "remove", "remove <player>", true);
-            addCommandLine(builder, account, "list", "list <page>", false);
-        });
-    }
-
-    private static void addCommandLine(ComponentBuilder builder, IHyriPlayer player, String suggest, String arguments, boolean newLine) {
-        builder.append("/f " + arguments).color(ChatColor.DARK_PURPLE).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/f " + suggest + " "))
-                .append(" - ").color(ChatColor.GRAY).event((ClickEvent) null)
-                .append(HyriLanguageMessage.get("message.friend." + suggest).getValue(player)).color(ChatColor.LIGHT_PURPLE)
-                .append(newLine ? "\n" : "");
     }
 
     private static class ListedFriend {

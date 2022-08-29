@@ -34,6 +34,13 @@ public enum HyrameMessage {
 
     HOST_CATEGORY_TEAM_DESCRIPTION("host.category.team.description"),
 
+    HOST_OPTION_INVENTORY_SAVE("host.option.inventory.save"),
+    HOST_OPTION_INVENTORY_CANCEL("host.option.inventory.cancel"),
+    HOST_OPTION_INVENTORY_ENCHANT("host.option.inventory.enchant"),
+    HOST_OPTION_INVENTORY_ENCHANT_LORE("host.option.inventory.enchant.lore"),
+    HOST_OPTION_INVENTORY_ENCHANT_UNBREAKABLE_NAME("host.option.inventory.enchant.unbreakable.name"),
+    HOST_OPTION_INVENTORY_ENCHANT_UNBREAKABLE_LORE("host.option.inventory.enchant.unbreakable.lore"),
+
     HOST_OPTION_BOOLEAN_FORMATTER("host.option.boolean.formatter"),
     HOST_OPTION_STRING_FORMATTER("host.option.string.formatter"),
     HOST_OPTION_NUMBER_FORMATTER("host.option.number.formatter"),
@@ -42,6 +49,8 @@ public enum HyrameMessage {
     HOST_OPTION_NAME_TAG_VISIBILITY_FORMATTER("host.option.name-tag-visibility.formatter"),
     HOST_OPTION_COLOR_FORMATTER("host.option.color.formatter"),
     HOST_OPTION_MAP_FORMATTER("host.option.map.formatter"),
+    HOST_OPTION_BORDER_SPEED_FORMATTER("host.option.border-speed.formatter"),
+    HOST_OPTION_BORDER_SPEED_VALUE_FORMATTER("host.option.border-speed.value-formatter"),
 
     HOST_MAP_ITEM_LORE("host.map-item.lore"),
 

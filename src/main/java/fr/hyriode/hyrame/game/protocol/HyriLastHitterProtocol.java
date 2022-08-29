@@ -59,6 +59,10 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
             final Player hitter = (Player) event.getDamager();
             final HyriGamePlayer gamePlayer = this.getGamePlayer(hitter);
 
+            if (gamePlayer == null) {
+                return;
+            }
+
             if (this.getGame().areInSameTeam(player, hitter) && !gamePlayer.getTeam().isFriendlyFire()) {
                 return;
             }

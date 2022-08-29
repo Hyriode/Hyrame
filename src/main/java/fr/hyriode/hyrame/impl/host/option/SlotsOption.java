@@ -6,8 +6,11 @@ import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.scoreboard.HyriWaitingScoreboard;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.host.HostDisplay;
+import fr.hyriode.hyrame.host.option.HostOption;
 import fr.hyriode.hyrame.host.option.PreciseIntegerOption;
 import fr.hyriode.hyrame.impl.game.gui.TeamChooserGUI;
+import fr.hyriode.hyrame.impl.host.category.HostMainCategory;
+import fr.hyriode.hyrame.impl.host.category.team.HostTeamsCategory;
 
 import java.util.List;
 
@@ -32,11 +35,18 @@ public class SlotsOption extends PreciseIntegerOption {
 
             final IHyrame hyrame = HyrameLoader.getHyrame();
             final List<HyriGameTeam> teams = hyrame.getGameManager().getCurrentGame().getTeams();
+            final int teamSize = (int) Math.ceil((double) slots / teams.size());
 
             for (HyriGameTeam gameTeam : teams) {
                 if (gameTeam.getTeamSize() * teams.size() < slots) {
-                    gameTeam.setTeamSize((int) Math.ceil((double) slots / teams.size()));
+                    gameTeam.setTeamSize(teamSize);
                 }
+            }
+
+            final HostOption<?> option = this.getHostController().findOption(HostTeamsCategory.TEAMS_SIZE_KEY);
+
+            if (option != null) {
+                option.setHardValue(teamSize);
             }
 
             TeamChooserGUI.refresh(hyrame);

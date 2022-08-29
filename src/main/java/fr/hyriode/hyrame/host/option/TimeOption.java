@@ -10,6 +10,7 @@ import fr.hyriode.hyrame.utils.TimeUtil;
 import fr.hyriode.hyrame.utils.list.ListReplacer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -21,7 +22,7 @@ import org.bukkit.inventory.ItemStack;
 public class TimeOption extends LongOption {
 
     /** The multiple modifiers to change the time (for example a modifier of 5 will change the time of 5 seconds) */
-    private final long[] modifiers;
+    protected final long[] modifiers;
 
     public TimeOption(HostDisplay display, long defaultValue, long minimum, long maximum, long[] modifiers) {
         super(display, defaultValue, minimum, maximum);
@@ -38,17 +39,23 @@ public class TimeOption extends LongOption {
         new GUI(player).open();
     }
 
+    @Override
+    public ItemStack createItem(Player player) {
+        return this.defaultItemCreation(player);
+    }
+
     private class GUI extends HyriInventory {
 
         public GUI(Player owner) {
             super(owner, ChatColor.stripColor(displayName.getValue(owner)), 6 * 9);
-
 
             this.setItem(31, ItemBuilder.asHead(HyrameHead.GARBAGE_CAN)
                     .withName(HyrameMessage.HOST_RESET_NAME.asString(this.owner))
                     .withLore(HyrameMessage.HOST_RESET_LORE.asList(this.owner))
                     .build(),
                     event -> {
+                        this.owner.playSound(this.owner.getLocation(), Sound.FIZZ, 0.5F, 1.0F);
+
                         setValue(defaultValue);
 
                         this.addItems();
@@ -60,6 +67,11 @@ public class TimeOption extends LongOption {
                     event -> categoryGUIProvider.apply(this.owner).open());
 
             this.addItems();
+            this.addItemStack();
+        }
+
+        private void addItemStack() {
+            this.setItem(22, new ItemBuilder(TimeOption.this.createItem(this.owner)).removeLoreLines(2).build());
         }
 
         private void addItems() {
@@ -83,7 +95,10 @@ public class TimeOption extends LongOption {
             this.setItem(slot, itemStack, event -> {
                 setValue(plus ? value + modifier : value - modifier);
 
+                this.owner.playSound(this.owner.getLocation(), Sound.CLICK, 0.5F, 2.0F);
+
                 this.addItems();
+                this.addItemStack();
             });
         }
 

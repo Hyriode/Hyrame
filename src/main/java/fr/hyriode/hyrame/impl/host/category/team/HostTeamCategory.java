@@ -36,9 +36,10 @@ public class HostTeamCategory extends HostDefaultCategory {
         this.team = team;
         this.guiProvider = player -> new HostTeamGUI(player, this, this.team);
         this.visibilityOption = new TeamNameTagVisibilityOption(this.createOptionDisplay("team-name-tag-visibility-" + index, "team-name-tag-visibility", Material.NAME_TAG), this.team.getNameTagVisibility());
+        this.friendlyFireOption = new BooleanOption(this.createOptionDisplay("team-friendly-fire-" + index, "team-friendly-fire", Material.IRON_SWORD), this.team.isFriendlyFire());
 
         this.addOption(29, new TeamNameOption(this.createOptionDisplay("team-name-" + index, "team-name", Material.PAPER), this.team));
-        this.addOption(30, this.friendlyFireOption = new BooleanOption(this.createOptionDisplay("team-friendly-fire-" + index, "team-friendly-fire", Material.IRON_SWORD), this.team.isFriendlyFire()));
+        this.addOption(30, this.friendlyFireOption.onChanged(this.team::setFriendlyFire));
         this.addOption(32, this.visibilityOption.onChanged(this.team::setNameTagVisibility));
         this.addOption(33, new TeamColorOption(this.createOptionDisplay("team-color-" + index, "team-color", ItemBuilder.asHead(HyrameHead.COLOR_PICKER).build()), this.team));
     }

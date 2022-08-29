@@ -11,14 +11,14 @@ import java.util.List;
 
 /**
  * Created by AstFaster
- * on 31/07/2022 at 11:15
+ * on 28/08/2022 at 09:33
  */
-public class IntegerOption extends HostOption<Integer> {
+public class DoubleOption extends HostOption<Double> {
 
-    protected final int minimum;
-    protected final int maximum;
+    protected final double minimum;
+    protected final double maximum;
 
-    public IntegerOption(HostDisplay display, int defaultValue, int minimum, int maximum) {
+    public DoubleOption(HostDisplay display, double defaultValue, double minimum, double maximum) {
         super(display, defaultValue);
         this.minimum = minimum;
         this.maximum = maximum;
@@ -39,15 +39,16 @@ public class IntegerOption extends HostOption<Integer> {
         final ItemBuilder builder = new ItemBuilder(super.createItem(player));
         final List<String> lore = builder.getLore();
 
-        if (this.getClass() == IntegerOption.class) {
+        if (this.getClass() == DoubleOption.class) {
             lore.set(lore.size() - 1, HyrameMessage.HOST_CLICK_TO_INCREASE.asString(player));
             lore.add(HyrameMessage.HOST_CLICK_TO_DECREASE.asString(player));
         }
+
         return builder.withLore(lore).build();
     }
 
     @Override
-    public void setValue(Integer value) {
+    public void setValue(Double value) {
         if (value < this.minimum) {
             value = this.minimum;
         }
@@ -59,11 +60,11 @@ public class IntegerOption extends HostOption<Integer> {
         super.setValue(value);
     }
 
-    public int getMaximum() {
+    public double getMaximum() {
         return this.maximum;
     }
 
-    public int getMinimum() {
+    public double getMinimum() {
         return this.minimum;
     }
 
