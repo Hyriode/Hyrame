@@ -104,7 +104,7 @@ public class HyriItemManager implements IHyriItemManager {
     public void giveItem(Player player, int slot, String name) {
         if (this.isItemExisting(name)) {
             final HyriItem<?> item = this.items.get(this.getFullItemId(name));
-            final HyriItemGiveEvent event = new HyriItemGiveEvent(player, item);
+            final HyriItemGiveEvent event = new HyriItemGiveEvent(player.getUniqueId(), item);
 
             HyriAPI.get().getEventBus().publish(event);
 
@@ -134,7 +134,7 @@ public class HyriItemManager implements IHyriItemManager {
     public boolean giveItem(Player player, String name) {
         if (this.isItemExisting(name)) {
             final HyriItem<?> item = this.items.get(this.getFullItemId(name));
-            final HyriItemGiveEvent event = new HyriItemGiveEvent(player, item);
+            final HyriItemGiveEvent event = new HyriItemGiveEvent(player.getUniqueId(), item);
 
             HyriAPI.get().getEventBus().publish(event);
 

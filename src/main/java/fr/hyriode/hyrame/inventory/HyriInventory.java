@@ -1,7 +1,10 @@
 package fr.hyriode.hyrame.inventory;
 
 import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.hyrame.inventory.pagination.PaginatedItem;
+import fr.hyriode.hyrame.item.ItemBuilder;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -138,7 +141,10 @@ public abstract class HyriInventory implements InventoryHolder {
      */
     public void setItem(int slot, ItemStack itemStack, Consumer<InventoryClickEvent> clickConsumer) {
         this.setItem(slot, itemStack);
-        if (clickConsumer != null) this.clickConsumers.put(slot, clickConsumer);
+
+        if (clickConsumer != null) {
+            this.clickConsumers.put(slot, clickConsumer);
+        }
     }
 
     /**
@@ -167,6 +173,50 @@ public abstract class HyriInventory implements InventoryHolder {
     }
 
     /**
+     * Apply a pattern on the inventory
+     *
+     * @param pattern The {@linkplain IPattern pattern} to apply
+     * @param itemStack The {@linkplain ItemStack item} used by the pattern
+     * @param eventConsumer The event triggered when a player clicks it
+     * @param slots The slots asked by the pattern
+     */
+    public void applyPattern(IPattern pattern, ItemStack itemStack, Consumer<InventoryClickEvent> eventConsumer, int... slots) {
+        pattern.apply(this, itemStack, eventConsumer, slots);
+    }
+
+    /**
+     * Apply a pattern on the inventory
+     *
+     * @param pattern The {@linkplain IPattern pattern} to apply
+     * @param itemStack The {@linkplain ItemStack item} used by the pattern
+     * @param slots The slots asked by the pattern
+     */
+    public void applyPattern(IPattern pattern, ItemStack itemStack, int... slots) {
+        pattern.apply(this, itemStack, slots);
+    }
+
+    /**
+     * Apply a design on the inventory
+     *
+     * @param design The {@linkplain IDesign design} to apply
+     * @param data The data of the design
+     * @param <T> The type of the data
+     */
+    public <T> void applyDesign(IDesign<T> design, T data) {
+        design.apply(this, data);
+    }
+
+    /**
+     * Apply a design on the inventory
+     *
+     * @param design The {@linkplain IDesign design} to apply
+     * @param <T> The type of the data
+     */
+    public <T> void applyDesign(IDesign<T> design) {
+        design.apply(this);
+    }
+
+    /**
      * Set a vertical line of an {@link ItemStack}
      *
      * @param startSlot The slot to start
@@ -175,9 +225,7 @@ public abstract class HyriInventory implements InventoryHolder {
      * @param clickConsumer The consumer to accept when the slot is clicked
      */
     public void setVerticalLine(int startSlot, int endSlot, ItemStack itemStack, Consumer<InventoryClickEvent> clickConsumer) {
-        for (int i = startSlot; i <= endSlot; i += 9) {
-            this.setItem(i, itemStack, clickConsumer);
-        }
+        this.applyPattern(Pattern.VERTICAL, itemStack, clickConsumer, startSlot, endSlot);
     }
 
     /**
@@ -200,9 +248,7 @@ public abstract class HyriInventory implements InventoryHolder {
      * @param clickConsumer The consumer to accept when the slot is clicked
      */
     public void setHorizontalLine(int startSlot, int endSlot, ItemStack itemStack, Consumer<InventoryClickEvent> clickConsumer) {
-        for (int i = startSlot; i <= endSlot; i++) {
-            this.setItem(i, itemStack, clickConsumer);
-        }
+        this.applyPattern(Pattern.HORIZONTAL, itemStack, clickConsumer, startSlot, endSlot);
     }
 
     /**
@@ -385,5 +431,142 @@ public abstract class HyriInventory implements InventoryHolder {
 
     }
 
+    /**
+     * A pattern represents a way to display groups of items easily on a {@link HyriInventory}.<br>
+     * For example: a pattern to display items vertically/horizontally, etc.
+     */
+    @FunctionalInterface
+    public interface IPattern {
+
+        void apply(HyriInventory inventory, ItemStack itemStack, Consumer<InventoryClickEvent> eventConsumer, int... slots);
+
+        default void apply(HyriInventory inventory, ItemStack itemStack, int... slots) {
+            this.apply(inventory, itemStack, null, slots);
+        }
+
+    }
+
+    /**
+     * Some default implementation of {@link IPattern}
+     */
+    public static class Pattern {
+
+        /** Pattern used to display items horizontally */
+        public static final IPattern HORIZONTAL = (inventory, itemStack, eventConsumer, slots) -> {
+            if (slots.length != 2) {
+                throw new IllegalArgumentException("Invalid slots number!");
+            }
+
+            for (int i = slots[0]; i <= slots[1]; i++) {
+                inventory.setItem(i, itemStack, eventConsumer);
+            }
+        };
+
+        /** Pattern used to display items vertically */
+        public static final IPattern VERTICAL = (inventory, itemStack, eventConsumer, slots) -> {
+            if (slots.length != 2) {
+                throw new IllegalArgumentException("Invalid slots number!");
+            }
+
+            for (int i = slots[0]; i <= slots[1]; i += 9) {
+                inventory.setItem(i, itemStack, eventConsumer);
+            }
+        };
+
+        /** Pattern used to fill an area of a {@link HyriInventory} with a given item */
+        public static final IPattern FILL = (inventory, itemStack, eventConsumer, slots) -> {
+            if (slots.length != 2) {
+                throw new IllegalArgumentException("Invalid slots number!");
+            }
+
+            final int start = slots[0];
+            final int end = slots[1];
+
+            for (int y = start / 9; y <= end / 9; y++) {
+                for (int x = start % 9; x <= (end % 9 == 0 ? 8 : end % 9); x++) {
+                    final int slot = y * 9 + x;
+
+                    inventory.setItem(slot, itemStack, eventConsumer);
+                }
+            }
+        };
+
+    }
+
+    /**
+     * A design represents a way to display repetitive designs inside multiples {@link HyriInventory}.
+     * It can be helpful to avoid duplicated code used to design {@link HyriInventory}.
+     *
+     * @param <T> The data used by the design
+     */
+    @FunctionalInterface
+    public interface IDesign<T> {
+
+        /**
+         * Apply the design on a given {@linkplain HyriInventory inventory}
+         *
+         * @param inventory The inventory to apply the design
+         * @param data The data needed by the design
+         */
+        void apply(HyriInventory inventory, T data);
+
+        /**
+         * Default method to apply the design on a given {@linkplain HyriInventory inventory} but without any data.
+         *
+         * @param inventory The inventory to apply the design
+         */
+        default void apply(HyriInventory inventory) {
+            this.apply(inventory, null);
+        }
+
+    }
+
+    /**
+     * Default implementations of {@link IDesign}
+     */
+    public static class Design {
+
+        /** A border design. It sets a border of {@link Material#STAINED_GLASS_PANE} around the {@link HyriInventory}. */
+        public static final IDesign<Byte> BORDER = new IDesign<Byte>() {
+
+            private final int[] sixLines = new int[]{0, 1, 2, 6, 7, 8, 9, 17, 36, 44, 45, 46, 47, 51, 52, 53};
+            private final int[] fiveLines = new int[]{0, 1, 2, 6, 7, 8, 36, 37, 38, 42, 43, 44};
+            private final int[] fourLines = new int[]{0, 1, 2, 6, 7, 8, 27, 28, 29, 33, 34, 35};
+
+            @Override
+            public void apply(HyriInventory inventory, Byte color) {
+                if (color == null) {
+                    color = (byte) 9;
+                }
+
+                int[] slots = new int[0];
+                switch (inventory.getSize()) {
+                    case 6 * 9:
+                        slots = sixLines;
+                        break;
+                    case 5 * 9:
+                        slots = fiveLines;
+                        break;
+                    case 4 * 9:
+                        slots = fourLines;
+                        break;
+                }
+
+                if (slots.length == 0) {
+                    return;
+                }
+
+                final ItemStack item = new ItemBuilder(Material.STAINED_GLASS_PANE, 1, color)
+                        .withName(" ")
+                        .withAllItemFlags()
+                        .build();
+
+                for (int slot : slots) {
+                    inventory.setItem(slot, item);
+                }
+            }
+        };
+
+    }
 
 }

@@ -20,23 +20,10 @@ public class LevelingModule {
     }
 
     public void onLevelUp(Player player, int oldLevel, int newLevel) {
-        final ComponentBuilder builder = new ComponentBuilder(Symbols.HYPHENS_LINE).color(ChatColor.DARK_AQUA).strikethrough(true).append("\n").reset();
-        final String levelUpLine = "LEVEL UP";
-        final String messageLine = HyriLanguageMessage.get("message.leveling.new").getValue(player)
-                .replace("%old_level%", String.valueOf(oldLevel))
-                .replace("%new_level%", String.valueOf(newLevel));
-
-        for (int i = 0; i <= (Symbols.HYPHENS_LINE.length() - ChatColor.stripColor(levelUpLine).length()) / 2 ; i++) {
-            builder.append("  ");
-        }
-
-        builder.append(levelUpLine).color(ChatColor.AQUA).bold(true).append("\n").reset()
-                .append(messageLine)
-                .append("\n")
-                .append(Symbols.HYPHENS_LINE).color(ChatColor.DARK_AQUA).strikethrough(true);
-
         player.playSound(player.getLocation(), Sound.LEVEL_UP, 1F, 1F);
-        player.spigot().sendMessage(builder.create());
+        player.sendMessage(HyriLanguageMessage.get("message.leveling.new").getValue(player)
+                .replace("%old_level%", String.valueOf(oldLevel))
+                .replace("%new_level%", String.valueOf(newLevel)));
     }
 
 }

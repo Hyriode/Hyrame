@@ -41,7 +41,9 @@
 
   "message.queue.not-leader": "&cYou need to be the leader of your party to queue for games.",
 
-  "message.leveling.new": "&fYou gain a level ! &3(%old_level%✯ > %new_level%✯)",
+  "message.leveling.new": "&8&m--------------------------------------------------\n                                        &b⬥ &lLEVEL UP &r&b⬥\n                   &fCongratulations, you just pass a level!\n                                   Level &b%old_level%✯ &f→ &b%new_level%✯\n&8&m--------------------------------------------------",
+  "message.booster.game.new": "&8&m--------------------------------------------------\n                                        &b⬥ &lBOOSTER &r&b⬥\n                   %player% &fjust applied a &bbooster&f!\n\n                              &8▪ &b+%multiplier%% &fof &dHyris &fin &b%game%\n                              &8▪ &b/thanks &ffor thanking him\n&8&m--------------------------------------------------",
+  "message.booster.global.new": "&8&m--------------------------------------------------\n                                        &b⬥ &lBOOSTER &r&b⬥\n                   %player% &fjust applied a &bbooster&f!\n\n                              &8▪ &b+%multiplier%% &fof &dHyris &fon the &bserver\n                              &8▪ &b/thanks &ffor thanking him\n&8&m--------------------------------------------------",
 
   "message.death.player": "%player% &7was killed by %killer%&7.",
   "message.death.players": "%player% &7was killed by %killer% &7and %second_killer%&7.",

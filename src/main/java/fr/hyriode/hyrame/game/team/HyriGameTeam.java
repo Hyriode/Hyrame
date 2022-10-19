@@ -26,9 +26,6 @@ import java.util.stream.Collectors;
  */
 public class HyriGameTeam {
 
-    /** Team spawn location */
-    protected Location spawnLocation;
-
     /** Players in team */
     protected final List<HyriGamePlayer> players;
 
@@ -104,13 +101,6 @@ public class HyriGameTeam {
      */
     public void teleport(Location location) {
         this.getPlayers().forEach(player -> player.getPlayer().teleport(location));
-    }
-
-    /**
-     * Teleport all players to team spawn
-     */
-    public void teleportToSpawn() {
-        this.teleport(this.spawnLocation);
     }
 
     /**
@@ -396,21 +386,21 @@ public class HyriGameTeam {
     }
 
     /**
-     * Get team's spawn location
+     * Get all the players online in the team
      *
-     * @return A location
+     * @return A list of {@link HyriGamePlayer}
      */
-    public Location getSpawnLocation() {
-        return this.spawnLocation;
+    public List<HyriGamePlayer> getOnlinePlayers() {
+        return this.players.stream().filter(HyriGamePlayer::isOnline).collect(Collectors.toList());
     }
 
     /**
-     * Set team's spawn location
+     * Check if the team has online players
      *
-     * @param spawnLocation New spawn location
+     * @return <code>true</code> if yes
      */
-    public void setSpawnLocation(Location spawnLocation) {
-        this.spawnLocation = spawnLocation;
+    public boolean hasOnlinePlayers() {
+        return this.getOnlinePlayers().size() > 0;
     }
 
     /**

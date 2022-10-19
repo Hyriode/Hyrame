@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.impl.module.friend;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
+import fr.hyriode.api.friend.IHyriFriendHandler;
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.player.event.PlayerJoinNetworkEvent;
@@ -28,15 +29,15 @@ public class FriendListener {
 
     private void checkNotification(IHyriPlayer account, HyriLanguageMessage message) {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            HyriAPI.get().getFriendManager().createHandlerAsync(player.getUniqueId()).whenComplete((handler, throwable) -> {
-                if (handler.areFriends(account.getUniqueId())) {
-                    final IHyriPlayer target = IHyriPlayer.get(player.getUniqueId());
+            final IHyriFriendHandler friendHandler = HyriAPI.get().getFriendManager().createHandler(player.getUniqueId());
 
-                    if (target.getSettings().isFriendConnectionNotificationEnabled()) {
-                        player.sendMessage(message.getValue(target).replace("%player%", ChatColor.LIGHT_PURPLE + account.getName()));
-                    }
+            if (friendHandler.areFriends(account.getUniqueId())) {
+                final IHyriPlayer target = IHyriPlayer.get(player.getUniqueId());
+
+                if (target.getSettings().isFriendConnectionNotificationEnabled()) {
+                    player.sendMessage(message.getValue(target).replace("%player%", ChatColor.LIGHT_PURPLE + account.getName()));
                 }
-            });
+            }
         }
     }
 

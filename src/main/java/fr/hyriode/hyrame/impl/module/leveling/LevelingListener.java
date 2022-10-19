@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.impl.module.leveling;
 
 import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.api.leveling.event.HyriGainLevelEvent;
+import fr.hyriode.api.rank.HyriRank;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

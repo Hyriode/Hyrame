@@ -41,7 +41,9 @@
 
   "message.queue.not-leader": "&cVous devez être le chef de votre groupe pour rejoindre la queue.",
 
-  "message.leveling.new": "&fVous venez de gagner un niveau ! &3(%old_level%✯ > %new_level%✯)",
+  "message.leveling.new": "&8&m--------------------------------------------------\n                                        &b⬥ &lLEVEL UP &r&b⬥\n                   &fBravo vous venez de gagner un niveau!\n                                   Niveau &b%old_level%✯ &f→ &b%new_level%✯\n&8&m--------------------------------------------------",
+  "message.booster.game.new": "&8&m--------------------------------------------------\n                                        &b⬥ &lBOOSTER &r&b⬥\n             %player% &fvient d'appliquer un &bbooster&f!\n\n                              &8▪ &b+%multiplier%% &fd'&dHyris &fen &b%game%\n                              &8▪ &b/merci &fpour le remercier\n&8&m--------------------------------------------------",
+  "message.booster.global.new": "&8&m--------------------------------------------------\n                                        &b⬥ &lBOOSTER &r&b⬥\n             %player% &fvient d'appliquer un &bbooster&f!\n\n                              &8▪ &b+%multiplier%% &fd'&dHyris &fsur tout le &bserveur\n                              &8▪ &b/merci &fpour le remercier\n&8&m--------------------------------------------------",
 
   "message.death.player": "%player% &7a été tué par %killer%&7.",
   "message.death.players": "%player% &7a été tué par %killer% &7et %second_killer%&7.",

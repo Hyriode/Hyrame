@@ -2,7 +2,10 @@ package fr.hyriode.hyrame.item.event;
 
 import fr.hyriode.api.event.HyriCancellableEvent;
 import fr.hyriode.hyrame.item.HyriItem;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 /**
  * Created by AstFaster
@@ -10,16 +13,16 @@ import org.bukkit.entity.Player;
  */
 public class HyriItemGiveEvent extends HyriCancellableEvent {
 
-    private final Player player;
+    private final UUID player;
     private final HyriItem<?> item;
 
-    public HyriItemGiveEvent(Player player, HyriItem<?> item) {
+    public HyriItemGiveEvent(UUID player, HyriItem<?> item) {
         this.player = player;
         this.item = item;
     }
 
     public Player getPlayer() {
-        return this.player;
+        return Bukkit.getPlayer(this.player);
     }
 
     public HyriItem<?> getItem() {

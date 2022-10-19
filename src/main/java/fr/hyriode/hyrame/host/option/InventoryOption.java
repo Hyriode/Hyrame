@@ -111,7 +111,7 @@ public class InventoryOption extends HostOption<SavablePlayerInventory> {
 
     }
 
-    private class Handler implements Listener {
+    public class Handler implements Listener {
 
         public Handler() {
             HyriAPI.get().getEventBus().register(this);
