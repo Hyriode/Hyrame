@@ -22,6 +22,9 @@ jobs:
         with:
           args: https://cdn.getbukkit.org/spigot/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar --create-dirs -o libs/spigot.jar
 
+      - name: Edit libraries folder permissions
+        run: sudo chmod -R 777 libs/
+
       - name: Build shaded Jar
         run: gradle shadowJar
         env:
