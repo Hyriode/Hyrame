@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.armorstand;
 
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.HyrameLoader;
+import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.hologram.Hologram;
 import fr.hyriode.hyrame.packet.IPacketContainer;
 import fr.hyriode.hyrame.packet.IPacketHandler;
@@ -202,7 +203,7 @@ public class ArmorStandInteraction {
 
             Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
 
-            HyrameLoader.getHyrame().getPacketInterceptor().addHandler(PacketType.Play.Client.USE_ENTITY, this.packetHandler = new IPacketHandler() {
+            IHyrame.get().getPacketInterceptor().addHandler(PacketType.Play.Client.USE_ENTITY, this.packetHandler = new IPacketHandler() {
                 @Override
                 public void onReceive(IPacketContainer container) {
                     final Player player = container.getPlayer();

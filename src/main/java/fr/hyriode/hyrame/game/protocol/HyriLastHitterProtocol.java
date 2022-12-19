@@ -5,6 +5,7 @@ import fr.hyriode.hyrame.game.HyriGamePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -47,7 +48,7 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
         this.lastHitters = null;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onDamage(EntityDamageByEntityEvent event) {
         if (event.isCancelled()) {
             return;
@@ -60,6 +61,10 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
             final HyriGamePlayer gamePlayer = this.getGamePlayer(hitter);
 
             if (gamePlayer == null) {
+                return;
+            }
+
+            if (player == hitter) {
                 return;
             }
 

@@ -54,11 +54,11 @@ public class HyriWaitingRoom {
 
     protected final HyriGame<?> game;
     protected final JavaPlugin plugin;
-    protected final Material item;
+    protected final ItemStack item;
     protected final Config config;
     protected final Handler handler;
 
-    public HyriWaitingRoom(HyriGame<?> game, Material item, Config config) {
+    public HyriWaitingRoom(HyriGame<?> game, ItemStack item, Config config) {
         this.game = game;
         this.plugin = this.game.getPlugin();
         this.item = item;
@@ -66,6 +66,10 @@ public class HyriWaitingRoom {
         this.handler = new Handler();
         this.npcs = new HashMap<>();
         this.npcCategories = new HashMap<>();
+    }
+
+    public HyriWaitingRoom(HyriGame<?> game, Material item, Config config) {
+        this(game, new ItemStack(item), config);
     }
 
     public void setup() {

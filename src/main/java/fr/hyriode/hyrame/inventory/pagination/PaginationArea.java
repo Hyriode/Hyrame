@@ -22,6 +22,12 @@ public class PaginationArea {
      * @param end The end slot
      */
     public PaginationArea(int start, int end) {
+        if (end < start) {
+            this.start = end;
+            this.end = start;
+            return;
+        }
+
         this.start = start;
         this.end = end;
     }
@@ -68,7 +74,10 @@ public class PaginationArea {
      * @return A size
      */
     public int size() {
-        return this.start < this.end ? this.end - this.start : this.start - this.end;
+        final int x = this.end % 9 - this.start % 9 + 1;
+        final int y = this.end / 9 - this.start / 9 + 1;
+
+        return x * y;
     }
 
 }

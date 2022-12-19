@@ -2,11 +2,14 @@ package fr.hyriode.hyrame.game;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.player.IHyriPlayerSession;
+import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent;
 import fr.hyriode.hyrame.game.protocol.HyriLastHitterProtocol;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.packet.PacketUtil;
+import fr.hyriode.hyrame.utils.Cast;
 import fr.hyriode.hyrame.utils.VoidPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import org.bukkit.Bukkit;
@@ -24,13 +27,10 @@ import static fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent.Action.
  * Created by AstFaster
  * on 09/09/2021 at 19:48
  */
-public class HyriGamePlayer extends HyriGameSpectator {
-
-    /** Player team */
-    protected HyriGameTeam team;
+public class HyriGamePlayer extends HyriGameSpectator implements Cast<HyriGamePlayer> {
 
     /** Player is dead */
-    private boolean dead;
+    private boolean dead = false;
     /** The timestamp of the player connection */
     protected long connectionTime = -1;
     /** Is player online or no */
@@ -39,11 +39,10 @@ public class HyriGamePlayer extends HyriGameSpectator {
     /**
      * Constructor of {@link Player}
      *
-     * @param game The running game
      * @param player Spigot player
      */
-    public HyriGamePlayer(HyriGame<?> game, Player player) {
-        super(game, player);
+    public HyriGamePlayer(Player player) {
+        super(player);
     }
 
     /**
@@ -52,19 +51,12 @@ public class HyriGamePlayer extends HyriGameSpectator {
      * @return A formatted player name
      */
     public String formatNameWithTeam() {
-        if (this.team != null) {
-            return this.team.formatPlayerName(this.player);
+        final HyriGameTeam team = this.getTeam();
+
+        if (team != null) {
+            return team.formatPlayerName(this.player);
         }
         return this.player.getName();
-    }
-
-    /**
-     * Send a message to the player
-     *
-     * @param message - Message to send
-     */
-    public void sendMessage(String message) {
-        this.player.sendMessage(message);
     }
 
     /**
@@ -74,6 +66,15 @@ public class HyriGamePlayer extends HyriGameSpectator {
      */
     public IHyriPlayer asHyriPlayer() {
         return IHyriPlayer.get(this.uniqueId);
+    }
+
+    /**
+     * Get the session of the player
+     *
+     * @return A {@link IHyriPlayerSession} instance
+     */
+    public IHyriPlayerSession getSession() {
+        return IHyriPlayerSession.get(this.uniqueId);
     }
 
     /**
@@ -88,16 +89,16 @@ public class HyriGamePlayer extends HyriGameSpectator {
     /**
      * Set the player connection time as the current time
      */
-    public void initConnectionTime() {
+    void initConnectionTime() {
         this.connectionTime = System.currentTimeMillis();
     }
 
     /**
-     * Get the player played time (in millis)
+     * Get the player playtime (in millis)
      *
      * @return A timestamp
      */
-    public long getPlayedTime() {
+    public long getPlayTime() {
         if (this.connectionTime != -1) {
             return System.currentTimeMillis() - this.connectionTime;
         }
@@ -148,7 +149,7 @@ public class HyriGamePlayer extends HyriGameSpectator {
     public HyriGameDeathEvent setDead(HyriGameDeathEvent.Reason reason, List<HyriLastHitterProtocol.LastHitter> killers) {
         this.dead = true;
 
-        final HyriGameDeathEvent event = new HyriGameDeathEvent(this.game, this, reason, killers);
+        final HyriGameDeathEvent event = new HyriGameDeathEvent(IHyrame.get().getGame(), this, reason, killers);
 
         HyriAPI.get().getEventBus().publish(event);
 
@@ -168,25 +169,22 @@ public class HyriGamePlayer extends HyriGameSpectator {
      * @return - Player team
      */
     public HyriGameTeam getTeam() {
-        return this.team;
-    }
-
-    /**
-     * Set player team
-     *
-     * @param team - New team
-     */
-    public void setTeam(HyriGameTeam team) {
-        this.team = team;
+        for (HyriGameTeam team : IHyrame.get().getGame().getTeams()) {
+            if (team.contains(this)) {
+                return team;
+            }
+        }
+        return null;
     }
 
     /**
      * Remove player from his team
      */
     public void removeFromTeam() {
-        if (this.hasTeam()) {
-            this.team.removePlayer(this);
-            this.team = null;
+        final HyriGameTeam team = this.getTeam();
+
+        if (team != null) {
+            team.removePlayer(this);
         }
     }
 
@@ -197,7 +195,7 @@ public class HyriGamePlayer extends HyriGameSpectator {
      * @return - <code>true</code> if player is in one
      */
     public boolean isInTeam(String name) {
-        return this.team.getName().equals(name);
+        return this.getTeam().getName().equals(name);
     }
 
     /**
@@ -216,7 +214,7 @@ public class HyriGamePlayer extends HyriGameSpectator {
      * @return - <code>true</code> if player has one
      */
     public boolean hasTeam() {
-        return this.team != null;
+        return this.getTeam() != null;
     }
 
 }

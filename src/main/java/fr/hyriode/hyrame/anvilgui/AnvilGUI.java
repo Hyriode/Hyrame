@@ -342,21 +342,8 @@ public class AnvilGUI {
      */
     public enum Slot {
 
-        /**
-         * The slot on the left, where the first input is inserted. An {@link ItemStack} is always inserted
-         * here to be renamed
-         */
         INPUT_LEFT(0),
-
-        /**
-         * Not used, but in a real anvil you are able to put the second item you want to combine here
-         */
         INPUT_RIGHT(1),
-
-        /**
-         * The output slot, where an item is put when two items are combined from {@link Slot#INPUT_LEFT} and
-         * {@link Slot#INPUT_RIGHT} or when {{@link Slot#INPUT_LEFT} item is renamed
-         */
         OUTPUT(2);
 
         private final int value;

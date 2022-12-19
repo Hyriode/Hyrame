@@ -116,6 +116,7 @@ public class PlayerUtil {
         }
 
         player.setFoodLevel(20);
+        player.setMaxHealth(20.0D);
         player.setHealth(20.0D);
         player.setLevel(0);
         player.setExp(0.0F);
@@ -126,7 +127,6 @@ public class PlayerUtil {
 
         if (hard) {
             player.closeInventory();
-
             player.setVelocity(new Vector(0.0D, 0.0D, 0.0D));
 
             resetPlayerInventory(player);
@@ -173,7 +173,6 @@ public class PlayerUtil {
         }
 
         player.getInventory().setHeldItemSlot(0);
-        player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false));
         player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1, false, false));
         player.setGameMode(GameMode.ADVENTURE);
         player.setAllowFlight(true);
@@ -232,7 +231,7 @@ public class PlayerUtil {
      * @param components The components to send
      */
     public static void sendComponent(UUID playerId, BaseComponent... components) {
-        ThreadUtil.ASYNC_EXECUTOR.execute(() -> HyriAPI.get().getPlayerManager().sendComponent(playerId, SerializerUtil.serializeComponent(components)));
+        ThreadUtil.ASYNC_EXECUTOR.execute(() -> HyriAPI.get().getPlayerManager().sendMessage(playerId, SerializerUtil.serializeComponent(components), true));
     }
 
     /**

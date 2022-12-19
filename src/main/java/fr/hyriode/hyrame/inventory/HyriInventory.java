@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.inventory;
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.inventory.pagination.PaginatedItem;
 import fr.hyriode.hyrame.item.ItemBuilder;
+import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

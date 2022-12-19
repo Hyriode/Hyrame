@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiFunction;
 
 /**
  * Created by AstFaster
@@ -15,7 +14,31 @@ import java.util.function.BiFunction;
  */
 public enum HyrameMessage {
 
+    COMMAND_NOT_ENABLED("message.command-not-enabled"),
+    COMMAND_INVALID("message.command-invalid"),
+    PERMISSION_ERROR("message.permission-error"),
+    PLAYER_NOT_FOUND("message.player-not-found"),
+    INVALID_ARGUMENT("message.invalid-argument"),
+    INVALID_NUMBER("message.invalid-number"),
+
+    SECOND("message.second"),
+    SECONDS("message.seconds"),
+    SECOND_SECONDS("message.second-seconds"),
+
     AVAILABLE_COMMANDS("command.available-commands.message"),
+
+    GAME_SPECTATORS_CHAT("game.spectators.chat"),
+    GAME_STARTING_CANCELLED("game.starting.cancelled"),
+    GAME_JOIN("game.join"),
+    GAME_LEFT("game.left"),
+    GAME_DISCONNECTED("game.disconnected"),
+    GAME_RECONNECTED("game.reconnected"),
+    GAME_VICTORY("game.victory"),
+    GAME_DEFEAT("game.defeat"),
+    GAME_END_WINNER("game.end.winner"),
+    GAME_END_REWARDS("game.end.rewards"),
+    GAME_GLOBAL_MESSAGE("game.global-message"),
+    GAME_TEAM_MESSAGE("game.team-message"),
 
     WAITING_ROOM_NPC_DISPLAY("waiting-room.npc.display"),
 
@@ -160,20 +183,15 @@ public enum HyrameMessage {
     private HyriLanguageMessage languageMessage;
 
     private final String key;
-    private final BiFunction<IHyriPlayer, String, String> formatter;
-
-    HyrameMessage(String key, BiFunction<IHyriPlayer, String, String> formatter) {
-        this.key = key;
-        this.formatter = formatter;
-    }
+    private final HyrameMessage prefix;
 
     HyrameMessage(String key, HyrameMessage prefix) {
         this.key = key;
-        this.formatter = (target, input) -> prefix.asString(target) + input;
+        this.prefix = prefix;
     }
-
+    
     HyrameMessage(String key) {
-        this(key, (target, input) -> input);
+        this(key, null);
     }
 
     public HyriLanguageMessage asLang() {
@@ -181,11 +199,11 @@ public enum HyrameMessage {
     }
 
     public String asString(IHyriPlayer account) {
-        return this.formatter.apply(account, this.asLang().getValue(account));
+        return (this.prefix != null ? this.prefix.asString(account) : "") + this.asLang().getValue(account);
     }
 
     public String asString(Player player) {
-        return this.asString(IHyriPlayer.get(player.getUniqueId()));
+        return (this.prefix != null ? this.prefix.asString(player) : "") + this.asLang().getValue(player);
     }
 
     public void sendTo(Player player) {
@@ -197,7 +215,7 @@ public enum HyrameMessage {
     }
 
     public List<String> asList(Player player) {
-        return this.asList(IHyriPlayer.get(player.getUniqueId()));
+        return new ArrayList<>(Arrays.asList(this.asString(player).split("\n")));
     }
 
 }

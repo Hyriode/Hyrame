@@ -52,7 +52,7 @@ public class PaginationManager {
 
             int index = 0;
             for (int y = start / 9; y <= end / 9; y++) {
-                for (int x = start % 9; x <= (end % 9 == 0 ? 8 : end % 9); x++) {
+                for (int x = start % 9; x <= end % 9; x++) {
                     final int slot = y * 9 + x;
 
                     if (items.size() > index) {

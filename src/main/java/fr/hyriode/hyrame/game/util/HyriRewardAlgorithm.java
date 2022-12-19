@@ -1,6 +1,8 @@
 package fr.hyriode.hyrame.game.util;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.leveling.IHyriLeveling;
+import fr.hyriode.hyggdrasil.api.server.HyggServer;
 
 /**
  * Project: Hyrame
@@ -9,24 +11,28 @@ import fr.hyriode.api.HyriAPI;
  */
 public class HyriRewardAlgorithm {
 
-    public static long getHyris(int kills, long playedTime, boolean victory) {
-        if (HyriAPI.get().getServer().isHost()) {
-            return 0L;
-        }
-
-        final int playedTimeCoins = (int) ((playedTime / 1000) / 30) * 10;
-
-        return kills * 5L + playedTimeCoins + (victory ? 50 : 0);
+    public static long getPlayedTimeHyris(long playedTime) {
+        return (int) ((playedTime / 1000) / 20);
     }
 
-    public static long getXP(int kills, long playedTime, boolean victory) {
-        if (HyriAPI.get().getServer().isHost()) {
+    public static long getHyris(int kills, long playedTime, boolean victory) {
+        if (HyriAPI.get().getServer().getAccessibility() == HyggServer.Accessibility.HOST) {
             return 0L;
         }
 
-        final int playedTimeXP = (int) ((playedTime / 1000) / 30) * 20;
+        return kills * 15L + getPlayedTimeHyris(playedTime) + (victory ? 50 : 0);
+    }
 
-        return kills * 5L + playedTimeXP + (victory ? 50 : 0);
+    public static double getPlayedTimeXP(long playedTime) {
+        return (double) (playedTime / 1000) / 10;
+    }
+
+    public static double getXP(int kills, long playedTime, boolean victory) {
+        if (HyriAPI.get().getServer().getAccessibility() == HyggServer.Accessibility.HOST) {
+            return 0L;
+        }
+
+        return kills * 15.0D + getPlayedTimeXP(playedTime) + (victory ? 50 : 0);
     }
 
 }

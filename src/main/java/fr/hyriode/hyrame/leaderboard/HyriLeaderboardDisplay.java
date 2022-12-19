@@ -5,6 +5,7 @@ import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.leaderboard.HyriLeaderboardScope;
 import fr.hyriode.api.leaderboard.HyriLeaderboardScore;
 import fr.hyriode.api.leaderboard.IHyriLeaderboard;
+import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.hologram.Hologram;
 import fr.hyriode.hyrame.utils.Pagination;
 import org.bukkit.Bukkit;
@@ -138,7 +139,7 @@ public class HyriLeaderboardDisplay {
                 final List<HyriLeaderboardScore> scores = scoresSupplier.get();
                 final HyriLeaderboardScore score = scores.size() > position - 1 ? scores.get(position - 1) : null;
 
-                return score == null ? this.createPositionLine(position, "************", this.scoreFormatter.apply(player, 0.0D)) : this.createPositionLine(position, HyriAPI.get().getPlayerManager().getPrefix(score.getId()), this.scoreFormatter.apply(player, score.getValue()));
+                return score == null ? this.createPositionLine(position, "************", this.scoreFormatter.apply(player, 0.0D)) : this.createPositionLine(position, IHyriPlayer.get(score.getId()).getNameWithRank(), this.scoreFormatter.apply(player, score.getValue()));
             });
 
             lines.put(i, line);
@@ -149,7 +150,7 @@ public class HyriLeaderboardDisplay {
             final UUID targetId = target.getUniqueId();
             final long position = this.leaderboard.getPosition(scope, targetId);
 
-            return ChatColor.DARK_GRAY + "▶ " + this.createPositionLine(position == -1 ? position : position + 1, HyriAPI.get().getPlayerManager().getPrefix(targetId), this.scoreFormatter.apply(target, this.leaderboard.getScore(scope, targetId))) + ChatColor.DARK_GRAY + " ◀";
+            return ChatColor.DARK_GRAY + "▶ " + this.createPositionLine(position == -1 ? position : position + 1, IHyriPlayer.get(targetId).getNameWithRank(), this.scoreFormatter.apply(target, this.leaderboard.getScore(scope, targetId))) + ChatColor.DARK_GRAY + " ◀";
         }));
 
         if (this.scopes.size() != 1) {

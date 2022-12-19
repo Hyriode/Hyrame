@@ -132,7 +132,6 @@ public class HyriGameMessages {
                 final int space = (Symbols.HYPHENS_LINE.length() - ChatColor.stripColor(stats.get(0)).length()) / 2;
 
                 for (String statistic : stats) {
-
                     for (int i = 0; i <= space; i++) {
                         builder.append("  ");
                     }

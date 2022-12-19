@@ -38,7 +38,6 @@ public class SkinUtil {
         final BufferedImage image = ImageIO.read(new URL(texture.getUrl()));
 
         return image == null ? null : new SkinTexture(image, texture.isSlimModel(), false);
-
     }
 
     public static SkinImage getPlayerSkinFront(Player player, int size) throws IllegalArgumentException, IOException {
@@ -547,7 +546,6 @@ public class SkinUtil {
         private final int slimOffsetX, slimOffsetY;
 
         /**
-         * Equivalent to {@link #PartPosition(SkinPart part, int offsetX, int offsetY, int slimOffsetX, int slimOffsetY)
          * PartPosition(part, offsetX, offsetY, offsetX, offsetY)} Where the same offset values are used for slim skin types.
          * @param part - The SkinPart being positioned
          * @param offsetX - The x offset from [0, 0] of the SkinPosition image for normal skin types

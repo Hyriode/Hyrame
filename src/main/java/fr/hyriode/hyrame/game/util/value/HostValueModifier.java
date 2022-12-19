@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.game.util.value;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.hyggdrasil.api.server.HyggServer;
 import fr.hyriode.hyrame.HyrameLoader;
 
 /**
@@ -10,7 +11,7 @@ import fr.hyriode.hyrame.HyrameLoader;
 public class HostValueModifier<T> extends ValueModifier<T> {
 
     public HostValueModifier(int priority, Class<T> valueClass, String optionName) {
-        super(priority, () -> HyriAPI.get().getServer().isHost(), () -> HyrameLoader.getHyrame().getHostController().findOption(optionName).castValue(valueClass));
+        super(priority, () -> HyriAPI.get().getServer().getAccessibility() == HyggServer.Accessibility.HOST, () -> HyrameLoader.getHyrame().getHostController().findOption(optionName).castValue(valueClass));
     }
 
 }

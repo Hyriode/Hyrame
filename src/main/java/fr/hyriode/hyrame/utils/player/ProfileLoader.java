@@ -8,6 +8,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
+import fr.hyriode.api.player.IHyriPlayerSession;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -145,9 +146,7 @@ public class ProfileLoader {
     }
 
     public static void savePlayerProfile(Player player) {
-        final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(player.getUniqueId());
-
-        if (!account.hasNickname()) {
+        if (!IHyriPlayerSession.get(player.getUniqueId()).hasNickname()) {
             saveProfile(((CraftPlayer) player).getProfile());
         }
     }

@@ -3,18 +3,18 @@ package fr.hyriode.hyrame.game.team;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.HyrameLoader;
+import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.event.team.HyriGamePlayerJoinTeamEvent;
 import fr.hyriode.hyrame.game.event.team.HyriGamePlayerLeaveTeamEvent;
 import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam;
 import fr.hyriode.hyrame.title.Title;
+import fr.hyriode.hyrame.utils.Cast;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
  * Created by AstFaster
  * on 10/09/2021 at 10:45
  */
-public class HyriGameTeam {
+public class HyriGameTeam implements Cast<HyriGameTeam> {
 
     /** Players in team */
-    protected final List<HyriGamePlayer> players;
+    protected final Map<UUID, HyriGamePlayer> players;
 
     /** Team's name */
     protected final String name;
@@ -42,13 +42,9 @@ public class HyriGameTeam {
     /** Team's size */
     protected int teamSize;
 
-    /** The game that handles the team */
-    protected final Supplier<HyriGame<?>> game;
-
     /**
      * Constructor of {@link HyriGameTeam}
      *
-     * @param game The game that handles the team
      * @param name Team's name
      * @param displayName Team's display name
      * @param color Team's color
@@ -56,42 +52,39 @@ public class HyriGameTeam {
      * @param nameTagVisibility Team's name tag visibility
      * @param teamSize Team's size
      */
-    public HyriGameTeam(HyriGame<?> game, String name, HyriLanguageMessage displayName, HyriGameTeamColor color, boolean friendlyFire, HyriScoreboardTeam.NameTagVisibility nameTagVisibility, int teamSize) {
-        this.game = () -> game == null ? HyrameLoader.getHyrame().getGameManager().getCurrentGame() : game;
+    public HyriGameTeam(String name, HyriLanguageMessage displayName, HyriGameTeamColor color, boolean friendlyFire, HyriScoreboardTeam.NameTagVisibility nameTagVisibility, int teamSize) {
         this.name = name;
         this.displayName = displayName;
         this.color = color;
         this.friendlyFire = friendlyFire;
         this.nameTagVisibility = nameTagVisibility;
         this.teamSize = teamSize;
-        this.players = new ArrayList<>();
+        this.players = new HashMap<>();
     }
 
     /**
      * Constructor of {@link HyriGameTeam}
      *
-     * @param game The game that handles the team
      * @param name Team's name
      * @param displayName Team's display name
      * @param color Team's color
      * @param nameTagVisibility Team's name tag visibility
      * @param teamSize Team's size
      */
-    public HyriGameTeam(HyriGame<?> game, String name, HyriLanguageMessage displayName, HyriGameTeamColor color, HyriScoreboardTeam.NameTagVisibility nameTagVisibility, int teamSize) {
-        this(game, name, displayName, color, false, nameTagVisibility, teamSize);
+    public HyriGameTeam(String name, HyriLanguageMessage displayName, HyriGameTeamColor color, HyriScoreboardTeam.NameTagVisibility nameTagVisibility, int teamSize) {
+        this(name, displayName, color, false, nameTagVisibility, teamSize);
     }
 
     /**
      * Constructor of {@link HyriGameTeam}
      *
-     * @param game The game that handles the team
      * @param name Team's name
      * @param displayName Team's display name
      * @param color Team's color
      * @param teamSize Team's size
      */
-    public HyriGameTeam(HyriGame<?> game, String name, HyriLanguageMessage displayName, HyriGameTeamColor color, int teamSize) {
-        this(game, name, displayName, color, HyriScoreboardTeam.NameTagVisibility.ALWAYS, teamSize);
+    public HyriGameTeam(String name, HyriLanguageMessage displayName, HyriGameTeamColor color, int teamSize) {
+        this(name, displayName, color, HyriScoreboardTeam.NameTagVisibility.ALWAYS, teamSize);
     }
 
     /**
@@ -123,7 +116,7 @@ public class HyriGameTeam {
      * @return - Game player object
      */
     public HyriGamePlayer getPlayer(UUID uuid) {
-        return this.players.stream().filter(player -> player.getUniqueId().equals(uuid)).findFirst().orElse(null);
+        return this.players.get(uuid);
     }
 
     /**
@@ -132,7 +125,7 @@ public class HyriGameTeam {
      * @param message Message to send
      */
     public void sendMessage(Function<Player, String> message) {
-        this.players.forEach(target -> target.sendMessage(message.apply(target.getPlayer())));
+        this.players.values().forEach(target -> target.getPlayer().sendMessage(message.apply(target.getPlayer())));
     }
 
     /**
@@ -141,7 +134,7 @@ public class HyriGameTeam {
      * @param message Message to send
      */
     public void sendMessage(HyriLanguageMessage message) {
-        this.sendMessage(target -> message.getValue(target));
+        this.sendMessage(message::getValue);
     }
 
     /**
@@ -154,7 +147,7 @@ public class HyriGameTeam {
      * @param fadeOut The time to disappear
      */
     public void sendTitle(Function<Player, String> title, Function<Player, String> subtitle, int fadeIn, int stay, int fadeOut) {
-        for (HyriGamePlayer gamePlayer : this.players) {
+        for (HyriGamePlayer gamePlayer : this.players.values()) {
             final Player player = gamePlayer.getPlayer();
 
             Title.sendTitle(player, title.apply(player), subtitle.apply(player), fadeIn, stay, fadeOut);
@@ -168,7 +161,7 @@ public class HyriGameTeam {
      * @return - <code>true</code> if yes
      */
     public boolean contains(UUID uuid) {
-        return this.players.stream().anyMatch(player -> player.getUniqueId().equals(uuid));
+        return this.players.containsKey(uuid);
     }
 
     /**
@@ -197,22 +190,23 @@ public class HyriGameTeam {
      * @return - Return a reason if it failed
      */
     public CancelJoinReason addPlayer(HyriGamePlayer player) {
-        if (!player.hasTeam()) {
-            if (!this.contains(player)) {
-                if (this.players.size() < this.teamSize) {
-                    this.players.add(player);
+        if (player.hasTeam()) {
+            return CancelJoinReason.HAS_TEAM;
+        }
 
-                    player.setTeam(this);
-
-                    HyriAPI.get().getEventBus().publishAsync(new HyriGamePlayerJoinTeamEvent(this.game.get(), this, player));
-
-                    return null;
-                }
-                return CancelJoinReason.FULL;
-            }
+        if (this.contains(player)) {
             return CancelJoinReason.ALREADY_IN;
         }
-        return CancelJoinReason.HAS_TEAM;
+
+        if (this.players.size() >= this.teamSize) {
+            return CancelJoinReason.FULL;
+        }
+
+        this.players.put(player.getUniqueId(), player);
+
+        HyriAPI.get().getEventBus().publishAsync(new HyriGamePlayerJoinTeamEvent(IHyrame.get().getGameManager().getCurrentGame(), this, player));
+
+        return null;
     }
 
     /**
@@ -222,30 +216,32 @@ public class HyriGameTeam {
      * @return - Return a reason if it failed
      */
     public CancelLeaveReason removePlayer(HyriGamePlayer player) {
-        if (player.hasTeam()) {
-            if (player.isInTeam(this.name)) {
-                this.players.remove(player);
+        if (!player.hasTeam()) {
+            return CancelLeaveReason.NO_TEAM;
+        }
 
-                player.setTeam(null);
-
-                HyriAPI.get().getEventBus().publishAsync(new HyriGamePlayerLeaveTeamEvent(this.game.get(), this, player));
-
-                return null;
-            }
+        if (!player.isInTeam(this.name)) {
             return CancelLeaveReason.NOT_HIS_TEAM;
         }
-        return CancelLeaveReason.NO_TEAM;
+
+        this.players.remove(player.getUniqueId());
+
+        HyriAPI.get().getEventBus().publishAsync(new HyriGamePlayerLeaveTeamEvent(IHyrame.get().getGameManager().getCurrentGame(), this, player));
+
+        return null;
     }
 
     /**
      * Clear all players that are in the team
      */
     public void clearPlayers() {
-        for (HyriGamePlayer gamePlayer : this.players) {
+        final HyriGame<?> game = IHyrame.get().getGameManager().getCurrentGame();
+
+        for (HyriGamePlayer gamePlayer : this.players.values()) {
             this.removePlayer(gamePlayer);
 
-            if (this.game.get().isUsingGameTabList()) {
-                this.game.get().getTabListManager().updateTabList();
+            if (game.isUsingGameTabList()) {
+                game.getTabListManager().updateTabList();
             }
         }
     }
@@ -295,8 +291,10 @@ public class HyriGameTeam {
     public void setColor(HyriGameTeamColor color) {
         this.color = color;
 
-        if (this.game.get().isUsingGameTabList()) {
-            this.game.get().getTabListManager().updateTeam(this);
+        final HyriGame<?> game = IHyrame.get().getGameManager().getCurrentGame();
+
+        if (game.isUsingGameTabList()) {
+            game.getTabListManager().updateTeam(this);
         }
     }
 
@@ -335,8 +333,10 @@ public class HyriGameTeam {
     public void setNameTagVisibility(HyriScoreboardTeam.NameTagVisibility nameTagVisibility) {
         this.nameTagVisibility = nameTagVisibility;
 
-        if (this.game.get().isUsingGameTabList()) {
-            this.game.get().getTabListManager().updateTeam(this);
+        final HyriGame<?> game = IHyrame.get().getGame();
+
+        if (game.isUsingGameTabList()) {
+            game.getTabListManager().updateTeam(this);
         }
     }
 
@@ -363,8 +363,8 @@ public class HyriGameTeam {
      *
      * @return A list of game players
      */
-    public List<HyriGamePlayer> getPlayers() {
-        return this.players;
+    public Collection<HyriGamePlayer> getPlayers() {
+        return Collections.unmodifiableCollection(this.players.values());
     }
 
     /**
@@ -372,8 +372,8 @@ public class HyriGameTeam {
      *
      * @return A list of game players
      */
-    public List<HyriGamePlayer> getPlayersPlaying() {
-        return this.players.stream().filter(player -> !player.isSpectator()).collect(Collectors.toList());
+    public Set<HyriGamePlayer> getPlayersPlaying() {
+        return this.players.values().stream().filter(player -> !player.isSpectator()).collect(Collectors.toSet());
     }
 
     /**
@@ -390,8 +390,8 @@ public class HyriGameTeam {
      *
      * @return A list of {@link HyriGamePlayer}
      */
-    public List<HyriGamePlayer> getOnlinePlayers() {
-        return this.players.stream().filter(HyriGamePlayer::isOnline).collect(Collectors.toList());
+    public Set<HyriGamePlayer> getOnlinePlayers() {
+        return this.players.values().stream().filter(HyriGamePlayer::isOnline).collect(Collectors.toSet());
     }
 
     /**

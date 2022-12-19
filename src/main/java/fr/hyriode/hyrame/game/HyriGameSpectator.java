@@ -1,9 +1,11 @@
 package fr.hyriode.hyrame.game;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent;
 import fr.hyriode.hyrame.packet.PacketUtil;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -26,17 +28,12 @@ public class HyriGameSpectator {
     /** The unique id of the player */
     protected final UUID uniqueId;
 
-    /** The game instance */
-    protected final HyriGame<?> game;
-
     /**
      * The constructor of a {@link HyriGameSpectator}
      *
-     * @param game The game instance
      * @param player Spigot player
      */
-    public HyriGameSpectator(HyriGame<?> game, Player player) {
-        this.game = game;
+    public HyriGameSpectator(Player player) {
         this.player = player;
         this.uniqueId = this.player.getUniqueId();
     }
@@ -45,7 +42,7 @@ public class HyriGameSpectator {
      * Hide player to other players
      */
     public void hide() {
-        this.hide(true);
+        this.hide(false);
     }
 
     /**
@@ -58,15 +55,17 @@ public class HyriGameSpectator {
             return;
         }
 
-        for (HyriGamePlayer gamePlayer : this.game.getPlayers()) {
-            if (gamePlayer != this) {
-                final Player player = gamePlayer.getPlayer();
+        for (HyriGamePlayer gamePlayer : IHyrame.get().getGame().getPlayers()) {
+            final Player target = gamePlayer.getPlayer();
 
-                player.hidePlayer(this.player);
+            if (target == this.player) {
+                continue;
+            }
 
-                if (!removeFromTabList) {
-                    PacketUtil.sendPacket(player, new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, ((CraftPlayer) this.player).getHandle()));
-                }
+            target.hidePlayer(this.player);
+
+            if (!removeFromTabList) {
+                PacketUtil.sendPacket(target, new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, ((CraftPlayer) this.player).getHandle()));
             }
         }
     }
@@ -75,7 +74,7 @@ public class HyriGameSpectator {
      * Show player to other players
      */
     public void show() {
-        for (HyriGamePlayer gamePlayer : this.game.getPlayers()) {
+        for (HyriGamePlayer gamePlayer : IHyrame.get().getGame().getPlayers()) {
             gamePlayer.getPlayer().showPlayer(this.player);
         }
     }
@@ -115,8 +114,7 @@ public class HyriGameSpectator {
     public void setSpectator(boolean spectator) {
         this.spectator = spectator;
 
-        HyriAPI.get().getEventBus().publish(new HyriGameSpectatorEvent(this.game, this, spectator ? ADD : REMOVE));
+        HyriAPI.get().getEventBus().publish(new HyriGameSpectatorEvent(IHyrame.get().getGame(), this, spectator ? ADD : REMOVE));
     }
-
 
 }

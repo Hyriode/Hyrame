@@ -1,7 +1,7 @@
 package fr.hyriode.hyrame.host;
 
+import fr.hyriode.api.host.HostData;
 import fr.hyriode.api.host.IHostConfig;
-import fr.hyriode.hylios.api.host.HostData;
 import fr.hyriode.hyrame.host.option.HostOption;
 import org.bukkit.entity.Player;
 

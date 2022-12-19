@@ -1,90 +1,79 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.github.johnrengelman.shadow" version "7.1.2" apply false
 }
 
-apply plugin: 'idea'
-apply plugin: 'java-library'
-apply plugin: 'maven-publish'
+allprojects {
+    apply plugin: 'idea'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
 
-group = 'fr.hyriode'
-version = '1.3.4'
-archivesBaseName = 'Hyrame'
+    group = 'fr.hyriode'
+    version = '1.3.5'
 
-java {
-    withSourcesJar()
-    withJavadocJar()
+    java {
+        withSourcesJar()
+        withJavadocJar()
 
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
-    }
-}
-
-compileJava {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    options.encoding = 'UTF-8'
-}
-
-configurations {
-    shade
-    implementation.extendsFrom shade
-}
-
-repositories {
-    mavenCentral()
-
-    maven {
-        name = 'HyriAPI_maven'
-        url = 'https://maven.pkg.github.com/Hyriode/HyriAPI/'
-
-        credentials {
-            username System.getenv('USERNAME')
-            password System.getenv('TOKEN')
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(8)
         }
     }
 
-    maven {
-        name = 'spigotmc-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    compileJava {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        options.encoding = 'UTF-8'
     }
 
-    maven {
-        name = 'sonatype'
-        url = 'https://oss.sonatype.org/content/groups/public/'
+    repositories {
+        mavenCentral()
+
+        maven {
+            name = 'HyriAPI_maven'
+            url = 'https://maven.pkg.github.com/Hyriode/HyriAPI/'
+
+            credentials {
+                username System.getenv('USERNAME')
+                password System.getenv('TOKEN')
+            }
+        }
+
+        maven {
+            name = 'spigotmc-repo'
+            url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        }
+
+        maven {
+            name = 'sonatype'
+            url = 'https://oss.sonatype.org/content/groups/public/'
+        }
     }
+
+    tasks.withType(Javadoc) {
+        options.encoding = 'UTF-8'
+    }
+
 }
 
-shadowJar {
-    configurations = [project.configurations.shade]
-    exclude 'fr/hyriode/hyrame/impl'
-    exclude 'plugin.yml'
-    classifier ''
-}
+archivesBaseName = 'Hyrame'
 
-task implJar(type: ShadowJar) {
-    archiveBaseName.set('Hyrame-Impl')
-    from sourceSets.main.output
-    configurations = [project.configurations.shadow]
-}
-
-tasks.withType(Javadoc) {
-    options.encoding = 'UTF-8'
+dependencies {
+    compileOnly fileTree(include: ['*.jar'], dir: 'libs')
+    api 'fr.hyriode:hyriapi:1.3.7'
+    api 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+    api 'xyz.xenondevs:particle:1.8.1'
 }
 
 publishing {
     publications {
-        maven(MavenPublication) { publication ->
-            project.shadow.component(publication)
-            artifact tasks.sourcesJar
-            artifact tasks.javadocJar
+        maven(MavenPublication) {
+            from components.java
 
             pom {
                 groupId = project.group
                 artifactId = 'hyrame'
                 version = project.version
                 name = 'Hyrame'
-                description = 'Project to create games and plugins easily'
+                description = 'Framework to create games and plugins easily.'
                 url = 'https://github.com/Hyriode/Hyrame'
             }
         }
@@ -99,17 +88,5 @@ publishing {
             name = "Hyrame_maven"
             url = "https://maven.pkg.github.com/Hyriode/Hyrame"
         }
-    }
-}
-
-dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    shade 'fr.hyriode:hyriapi:1.3.4'
-    shade 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
-}
-
-processResources {
-    filter {
-        it.replace('@version@', project.version)
     }
 }

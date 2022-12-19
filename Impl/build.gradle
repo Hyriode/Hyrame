@@ -1,0 +1,53 @@
+plugins {
+    id "com.github.johnrengelman.shadow"
+}
+
+archivesBaseName = 'Hyrame-Impl'
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+}
+
+dependencies {
+    compileOnly fileTree(include: ['*.jar'], dir: '../libs')
+
+    implementation project.parent
+    shadow (project.parent) {
+        exclude module: 'hyriapi'
+        exclude module: 'spigot-api'
+    }
+}
+
+processResources {
+    filter {
+        it.replace('@version@', project.version)
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+
+            pom {
+                groupId = project.group
+                artifactId = 'hyrame-impl'
+                version = project.version
+                name = 'Hyrame-Impl'
+                description = 'Framework to create games and plugins easily. (Impl)'
+                url = 'https://github.com/Hyriode/Hyrame'
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            credentials {
+                username System.getenv('USERNAME')
+                password System.getenv('TOKEN')
+            }
+            name = "Hyrame_maven"
+            url = "https://maven.pkg.github.com/Hyriode/Hyrame"
+        }
+    }
+}

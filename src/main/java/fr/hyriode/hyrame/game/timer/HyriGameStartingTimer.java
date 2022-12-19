@@ -3,9 +3,11 @@ package fr.hyriode.hyrame.game.timer;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.language.HyriLanguage;
 import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.hyggdrasil.api.server.HyggServer;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
+import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,11 +24,7 @@ import java.util.function.Function;
  * Created by AstFaster
  * on 12/09/2021 at 21:06
  */
-public class HyriGameStartingTimer implements Runnable {
-
-    private static final HyriLanguageMessage CANCEL_MESSAGE = new HyriLanguageMessage("game.cancel")
-            .addValue(HyriLanguage.FR, ChatColor.RED + "Annulée")
-            .addValue(HyriLanguage.EN, ChatColor.RED + "Cancelled");
+public class HyriGameStartingTimer extends BukkitRunnable {
 
     private Consumer<Integer> timeChanged;
 
@@ -45,7 +43,7 @@ public class HyriGameStartingTimer implements Runnable {
 
     @Override
     public void run() {
-        if ((this.game.canStart() && !HyriAPI.get().getServer().isHost()) || this.forceStarting) {
+        if ((this.game.canStart() && HyriAPI.get().getServer().getAccessibility() != HyggServer.Accessibility.HOST) || this.forceStarting) {
             this.start();
         } else {
             this.runActionOnPlayers(gamePlayer -> gamePlayer.getPlayer().setLevel(0));
@@ -94,7 +92,7 @@ public class HyriGameStartingTimer implements Runnable {
     }
 
     public void cancel(boolean force) {
-        if (this.running && (!HyriAPI.get().getServer().isHost()) || force) {
+        if (this.running && (HyriAPI.get().getServer().getAccessibility() != HyggServer.Accessibility.HOST) || force) {
             this.forceStarting = false;
             this.running = false;
             this.time = -1;
@@ -103,7 +101,7 @@ public class HyriGameStartingTimer implements Runnable {
 
             this.game.setState(HyriGameState.WAITING);
 
-            this.sendTitle(CANCEL_MESSAGE::getValue);
+            this.sendTitle(HyrameMessage.GAME_STARTING_CANCELLED::asString);
             this.sendSound();
 
             this.runActionOnPlayers(gamePlayer -> gamePlayer.getPlayer().setLevel(0));

@@ -10,6 +10,7 @@ import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameSpectator;
 import fr.hyriode.hyrame.game.event.HyriGameWinEvent;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
+import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import fr.hyriode.hyrame.utils.Symbols;
 import org.bukkit.ChatColor;
@@ -27,21 +28,11 @@ import java.util.List;
  */
 public class HyriWinProtocol extends HyriGameProtocol implements Listener {
 
-    /** The victory title to show */
-    private static final HyriLanguageMessage VICTORY = new HyriLanguageMessage("")
-            .addValue(HyriLanguage.EN, "VICTORY")
-            .addValue(HyriLanguage.FR, "VICTOIRE");
-
-    /** The game over to show */
-    private static final HyriLanguageMessage DEFEAT = new HyriLanguageMessage("")
-            .addValue(HyriLanguage.EN, "DEFEAT")
-            .addValue(HyriLanguage.FR, "DEFAITE");
-
     private final HyriGame<?> game;
 
-    public HyriWinProtocol(IHyrame hyrame, HyriGame<?> game) {
+    public HyriWinProtocol(IHyrame hyrame) {
         super(hyrame, "win");
-        this.game = game;
+        this.game = IHyrame.get().getGame();
     }
 
     @Override
@@ -62,7 +53,7 @@ public class HyriWinProtocol extends HyriGameProtocol implements Listener {
         final List<HyriGameSpectator> players = new ArrayList<>();
 
         players.addAll(this.game.getPlayers());
-        players.addAll(this.game.getOutsideSpectators());
+        players.addAll(this.game.getSpectators());
 
         for (HyriGameSpectator player : players) {
             final Player target = player.getPlayer();
@@ -78,11 +69,11 @@ public class HyriWinProtocol extends HyriGameProtocol implements Listener {
 
         for (HyriGameTeam team : this.game.getTeams()) {
             if (team != winner) {
-                team.sendTitle(target -> ChatColor.RED + DEFEAT.getValue(target), target -> "", 0, 60, 5);
+                team.sendTitle(HyrameMessage.GAME_DEFEAT::asString, target -> "", 0, 60, 5);
             }
         }
 
-        winner.sendTitle(target -> ChatColor.GOLD + Symbols.SPARKLES + " " + ChatColor.BOLD + VICTORY.getValue(target) + ChatColor.RESET + ChatColor.GOLD + " " + Symbols.SPARKLES, target -> "", 0, 20 * 8, 5);
+        winner.sendTitle(HyrameMessage.GAME_VICTORY::asString, target -> "", 0, 20 * 8, 5);
     }
 
 }

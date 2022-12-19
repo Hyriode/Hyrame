@@ -74,7 +74,6 @@ public class InventoryOption extends HostOption<SavablePlayerInventory> {
             interaction.remove();
         };
 
-
         interaction.addData(new ArmorStandInteraction.Data()
                 .withItem(ItemBuilder.asHead(HyrameHead.LIME_GREEN).build())
                 .withText(HyrameMessage.HOST_OPTION_INVENTORY_SAVE.asLang())

@@ -2,11 +2,10 @@ package fr.hyriode.hyrame.command;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.hyrame.language.HyriCommonMessages;
+import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.utils.PrimitiveType;
-import fr.hyriode.hyrame.utils.TriPredicate;
+import fr.hyriode.hyrame.utils.triapi.TriPredicate;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.function.BiFunction;
@@ -34,15 +33,15 @@ public enum HyriCommandCheck {
         return false;
     }),
     /** Handle a player name as an input, but it will check from players accounts */
-    PLAYER("%player%", IHyriPlayer.class, arg -> HyriAPI.get().getPlayerManager().getPlayer(arg), (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getValue((Player) ctx.getSender()) + arg + "."),
+    PLAYER("%player%", IHyriPlayer.class, arg -> HyriAPI.get().getPlayerManager().getPlayer(arg), (ctx, arg) -> HyrameMessage.PLAYER_NOT_FOUND.asString((Player) ctx.getSender()).replace("%player%", arg)),
     /** Handle a player name as an input, but it will check from players accounts */
     PLAYER_ONLINE("%player_online%", IHyriPlayer.class, arg -> {
-        final IHyriPlayer account = HyriAPI.get().getPlayerManager().getCachedPlayer(arg);
+        final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(arg);
 
-        return account!= null && account.isOnline() ? account : null;
-    }, (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getValue((Player) ctx.getSender()) + arg + "."),
+        return account != null && HyriAPI.get().getPlayerManager().isOnline(account.getUniqueId()) ? account : null;
+    }, (ctx, arg) -> HyrameMessage.PLAYER_NOT_FOUND.asString((Player) ctx.getSender()).replace("%player%", arg)),
     /** Handle a player name as an input, but it will check from players on current server */
-    PLAYER_ON_SERVER("%player_server%", Player.class, Bukkit::getPlayerExact, (ctx, arg) -> ChatColor.RED + HyriCommonMessages.PLAYER_NOT_FOUND.getValue((Player) ctx.getSender()) + arg + "."),
+    PLAYER_ON_SERVER("%player_server%", Player.class, Bukkit::getPlayerExact, (ctx, arg) -> HyrameMessage.PLAYER_NOT_FOUND.asString((Player) ctx.getSender()).replace("%player%", arg)),
     /** Handle a short number */
     SHORT("%short%", PrimitiveType.SHORT),
     /** Handle an integer number */
@@ -140,7 +139,7 @@ public enum HyriCommandCheck {
      * @param type Primitive type of the check
      */
     HyriCommandCheck(String sequence, PrimitiveType<?> type) {
-        this(sequence, arg -> type.isValid(arg) ? type.parse(arg) : null, (ctx, arg) -> ChatColor.RED + (type == PrimitiveType.BOOLEAN ? HyriCommonMessages.INVALID_ARGUMENT : HyriCommonMessages.INVALID_NUMBER).getValue((Player) ctx.getSender()) + arg + ".");
+        this(sequence, arg -> type.isValid(arg) ? type.parse(arg) : null, (ctx, arg) -> (type == PrimitiveType.BOOLEAN ? HyrameMessage.INVALID_ARGUMENT : HyrameMessage.INVALID_NUMBER).asString((Player) ctx.getSender()).replace("%arg%", arg));
     }
 
     /**

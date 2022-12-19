@@ -1,4 +1,0 @@
-name: Hyrame
-main: fr.hyriode.hyrame.impl.HyramePlugin
-version: @version@
-depend: [HyriAPI]

@@ -24,74 +24,41 @@ public abstract class HyriItem<T extends JavaPlugin> {
     protected final T plugin;
     /** Item name/id. Example: my_item */
     protected final String name;
-    /** Item's display name */
-    protected Supplier<HyriLanguageMessage> displayName;
-    /** Item's description */
-    protected Supplier<List<HyriLanguageMessage>> description;
-    /** Item's material */
-    protected Material material;
-    /** Item's data */
-    protected byte data;
+    /** The display of the item */
+    protected Supplier<HyriLanguageMessage> display;
+    /** The description of the item */
+    protected Supplier<HyriLanguageMessage> description;
+    /** The bukkit item */
+    protected ItemStack item;
 
     /**
-     * Constructor of {@link HyriItem}
+     * Constructor of a {@link HyriItem}
      *
-     * @param plugin Spigot plugin
-     * @param name Item's name
-     * @param displayName Item's display name
-     * @param description Item's description
-     * @param material Item's material
-     * @param data Item's data
+     * @param plugin The plugin instance
+     * @param name The name of the item
+     * @param display The display of the item
+     * @param description The description of the item
+     * @param item The bukkit item
      */
-    public HyriItem(T plugin, String name, Supplier<HyriLanguageMessage> displayName, Supplier<List<HyriLanguageMessage>> description, Material material, byte data) {
+    public HyriItem(T plugin, String name, Supplier<HyriLanguageMessage> display, Supplier<HyriLanguageMessage> description, ItemStack item) {
         this.plugin = plugin;
         this.name = name;
-        this.displayName = displayName;
+        this.display = display;
         this.description = description;
-        this.material = material;
-        this.data = data;
+        this.item = item;
     }
 
     /**
-     * Constructor of {@link HyriItem}
+     * Constructor of a {@link HyriItem}
      *
-     * @param plugin Spigot plugin
-     * @param name Item's name
-     * @param displayName Item's display name
-     * @param description Item's description
-     * @param material Item's material
+     * @param plugin The plugin instance
+     * @param name The name of the item
+     * @param display The display of the item
+     * @param description The description of the item
+     * @param material The material of the bukkit item
      */
-    public HyriItem(T plugin, String name, Supplier<HyriLanguageMessage> displayName, Supplier<List<HyriLanguageMessage>> description, Material material) {
-        this(plugin, name, displayName, description, material, (byte) 0);
-    }
-
-    /**
-     * Constructor of {@link HyriItem}
-     *
-     * @param plugin Spigot plugin
-     * @param name Item's name
-     * @param displayName Item's display name
-     * @param material Item's material
-     * @param data Item's data
-     */
-    public HyriItem(T plugin, String name, Supplier<HyriLanguageMessage> displayName, Material material, byte data) {
-        this(plugin, name, displayName, ArrayList::new, material, data);
-    }
-
-    /**
-     * Constructor of {@link HyriItem}
-     *
-     * @param plugin Spigot plugin
-     * @param name Item's name
-     * @param displayName Item's display name
-     * @param material Item's material
-     */
-    public HyriItem(T plugin, String name, Supplier<HyriLanguageMessage> displayName, Material material) {
-        this(plugin, name, displayName, ArrayList::new, material, (byte) 0);
-    }
-
-    public static Supplier<HyriLanguageMessage> displayName(String key) {
-        return () -> HyriLanguageMessage.get(key);
+    public HyriItem(T plugin, String name, Supplier<HyriLanguageMessage> display, Supplier<HyriLanguageMessage> description, Material material) {
+        this(plugin, name, display, description, new ItemStack(material));
     }
 
     /**
@@ -142,48 +109,39 @@ public abstract class HyriItem<T extends JavaPlugin> {
     public void onInventoryClick(IHyrame hyrame, InventoryClickEvent event) {}
 
     /**
-     * Get item's name
+     * Get the name of the item
      *
-     * @return Item's name
+     * @return A name
      */
     public String getName() {
         return this.name;
     }
 
     /**
-     * Get item's display name
+     * Get the display of the item
      *
-     * @return Item's display name
+     * @return A supplier of {@link HyriLanguageMessage}
      */
-    public Supplier<HyriLanguageMessage> getDisplayName() {
-        return this.displayName;
+    public Supplier<HyriLanguageMessage> getDisplay() {
+        return this.display;
     }
 
     /**
-     * Get item's description
+     * Get the description of the item
      *
-     * @return - A list of description lines
+     * @return A supplier of {@link HyriLanguageMessage}
      */
-    public Supplier<List<HyriLanguageMessage>> getDescription() {
+    public Supplier<HyriLanguageMessage> getDescription() {
         return this.description;
     }
 
     /**
-     * Get item's material
+     * Get the bukkit item
      *
-     * @return Item's material
+     * @return A, {@link ItemStack}
      */
-    public Material getMaterial() {
-        return this.material;
-    }
-
-    /**
-     * Get item's data
-     *
-     * @return Item's data
-     */
-    public byte getData() {
-        return this.data;
+    public ItemStack getItem() {
+        return this.item;
     }
 
 }

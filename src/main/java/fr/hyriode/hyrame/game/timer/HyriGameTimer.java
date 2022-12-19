@@ -1,5 +1,7 @@
 package fr.hyriode.hyrame.game.timer;
 
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -9,7 +11,7 @@ import java.util.function.Consumer;
  * Created by AstFaster
  * on 05/03/2022 at 08:56
  */
-public class HyriGameTimer implements Runnable {
+public class HyriGameTimer extends BukkitRunnable {
 
     /** The current time of the timer */
     private long currentTime = 0;
@@ -20,7 +22,6 @@ public class HyriGameTimer implements Runnable {
     @Override
     public void run() {
         this.currentTime++;
-
         this.timeChangedActions.forEach(consumer -> consumer.accept(this.currentTime));
     }
 

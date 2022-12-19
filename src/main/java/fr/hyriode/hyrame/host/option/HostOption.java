@@ -1,6 +1,6 @@
 package fr.hyriode.hyrame.host.option;
 
-import fr.hyriode.hylios.api.host.HostData;
+import fr.hyriode.api.host.HostData;
 import fr.hyriode.hyrame.HyrameLoader;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;

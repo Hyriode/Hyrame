@@ -1,7 +1,9 @@
 package fr.hyriode.hyrame.host.event;
 
+import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEvent;
-import fr.hyriode.hylios.api.host.HostData;
+import fr.hyriode.api.host.HostData;
+import fr.hyriode.hyggdrasil.api.server.HyggServer;
 
 /**
  * Created by AstFaster
@@ -9,14 +11,20 @@ import fr.hyriode.hylios.api.host.HostData;
  */
 public class HostAdvertisementEvent extends HyriEvent {
 
-    private final HostData hostData;
+    private final String serverName;
 
-    public HostAdvertisementEvent(HostData hostData) {
-        this.hostData = hostData;
+    public HostAdvertisementEvent(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public String getServerName() {
+        return this.serverName;
     }
 
     public HostData getHostData() {
-        return this.hostData;
+        final HyggServer server = HyriAPI.get().getServerManager().getServer(this.serverName);
+
+        return server == null ? null : HyriAPI.get().getHostManager().getHostData(server);
     }
 
 }

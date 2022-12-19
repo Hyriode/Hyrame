@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.game.scoreboard;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.HyriConstants;
+import fr.hyriode.hyggdrasil.api.server.HyggServer;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.placeholder.PlaceholderAPI;
 import fr.hyriode.hyrame.scoreboard.HyriScoreboard;
@@ -31,7 +32,7 @@ public class HyriGameScoreboard<G extends HyriGame<?>> extends HyriScoreboard {
      * @param name Scoreboard's name
      */
     public HyriGameScoreboard(JavaPlugin plugin, G game, Player player, String name) {
-        super(plugin, player, name, ChatColor.DARK_AQUA + "     " + ChatColor.BOLD + (HyriAPI.get().getServer().isHost() ? HyriAPI.get().getServer().getHostData().getName() : game.getDisplayName()) + "     ");
+        super(plugin, player, name, ChatColor.DARK_AQUA + "     " + ChatColor.BOLD + (HyriAPI.get().getServer().getAccessibility() == HyggServer.Accessibility.HOST ? HyriAPI.get().getServer().getHostData().getName() : game.getDisplayName()) + "     ");
         this.game = game;
     }
 
@@ -39,7 +40,7 @@ public class HyriGameScoreboard<G extends HyriGame<?>> extends HyriScoreboard {
      * Add the hostname line at the bottom of the scoreboard
      */
     protected void addHostnameLine() {
-        this.setLine(this.lines.size(), ChatColor.DARK_AQUA + HyriConstants.SERVER_IP, new HyriScoreboardIpConsumer(HyriConstants.SERVER_IP), 2);
+        this.setLine(this.lines.size(), ChatColor.DARK_AQUA + HyriConstants.SERVER_IP, new IPLine(HyriConstants.SERVER_IP), 2);
     }
 
     /**
@@ -62,7 +63,7 @@ public class HyriGameScoreboard<G extends HyriGame<?>> extends HyriScoreboard {
      * @param total If <code>true</code> it will add the maximum of players next to the current amount of players
      */
     protected void addPlayersLine(int line, String prefix, boolean total) {
-        this.setLine(line, ChatColor.WHITE + prefix + ChatColor.AQUA + (this.game.getOnlinePlayers().size() - this.game.getSpectators().size()) + (total ? ChatColor.AQUA + "/" + HyriAPI.get().getServer().getSlots() : ""));
+        this.setLine(line, ChatColor.WHITE + prefix + ChatColor.AQUA + (this.game.getPlayers().size() - this.game.getDeadPlayers().size()) + (total ? ChatColor.AQUA + "/" + HyriAPI.get().getServer().getSlots() : ""));
     }
 
     /**

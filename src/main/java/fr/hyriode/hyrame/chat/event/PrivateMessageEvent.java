@@ -6,7 +6,7 @@ import java.util.UUID;
 
 /**
  * Created by AstFaster
- * on 18/07/2022 at 18:21
+ * on 18/07/2022 at 18:21.<br>
  *
  * This event is triggered when a player tries to send a private message to another player
  */

@@ -10,8 +10,9 @@ import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent.Reason;
 import fr.hyriode.hyrame.game.event.player.HyriGameRespawnEvent;
 import fr.hyriode.hyrame.game.util.HyriGameMessages;
-import fr.hyriode.hyrame.language.HyriCommonMessages;
+import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.title.Title;
+import fr.hyriode.hyrame.utils.BroadcastUtil;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import fr.hyriode.hyrame.utils.ThreadUtil;
 import org.bukkit.ChatColor;
@@ -96,7 +97,6 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
 
                 player.setAllowFlight(false);
                 player.setFlying(false);
-
                 player.spigot().setCollidesWithEntities(true);
 
                 PlayerUtil.resetPotionEffects(player);
@@ -223,13 +223,12 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
         final HyriGameDeathEvent event = gamePlayer.setDead(reason, lastHitters);
 
         if (this.options.isDeathMessages()) {
-            this.getGame().sendMessageToAll(target -> {
+            BroadcastUtil.broadcast(target -> {
                 final StringBuilder builder = new StringBuilder(HyriGameMessages.createDeathMessage(gamePlayer, target, reason, lastHitters)).append(" ");
 
                 for (HyriLanguageMessage message : event.getMessagesToAdd()) {
                     builder.append(message.getValue(target)).append(" ");
                 }
-
                 return builder.toString();
             });
         }
@@ -402,9 +401,9 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
                     ThreadUtil.backOnMainThread(this.plugin, () -> this.screen.getCallback().accept(this.player));
                 } else {
                     if (this.currentTime == 1) {
-                        this.sendRespawnTitle(HyriCommonMessages.SECOND, 20);
+                        this.sendRespawnTitle(HyrameMessage.SECOND.asLang(), 20);
                     } else {
-                        this.sendRespawnTitle(HyriCommonMessages.SECONDS, 30);
+                        this.sendRespawnTitle(HyrameMessage.SECONDS.asLang(), 30);
                     }
                 }
                 this.currentTime--;
