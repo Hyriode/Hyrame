@@ -12,7 +12,9 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -23,7 +25,7 @@ import java.util.logging.Level;
 public class LanguageLoader implements ILanguageLoader {
 
     @Override
-    public List<HyriLanguageMessage> loadLanguages(IPluginProvider pluginProvider) {
+    public Collection<HyriLanguageMessage> loadLanguages(IPluginProvider pluginProvider) {
         final String formattedPluginProviderName = Hyrame.formatPluginProviderName(pluginProvider);
         final File langFolder = new File(pluginProvider.getPlugin().getDataFolder(), "lang");
 

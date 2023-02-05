@@ -3,7 +3,9 @@ package fr.hyriode.hyrame.language;
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Project: Hyrame
@@ -19,6 +21,6 @@ public interface ILanguageLoader {
      * @param pluginProvider The {@link IPluginProvider} object
      * @return The list of loaded {@link HyriLanguageMessage}
      */
-    List<HyriLanguageMessage> loadLanguages(IPluginProvider pluginProvider);
+    Collection<HyriLanguageMessage> loadLanguages(IPluginProvider pluginProvider);
 
 }

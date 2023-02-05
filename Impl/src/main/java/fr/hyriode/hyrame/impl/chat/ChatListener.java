@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.impl.chat;
 
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.impl.HyramePlugin;
+import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.listener.HyriListener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,7 +32,7 @@ public class ChatListener extends HyriListener<HyramePlugin> {
         final String command = event.getMessage().substring(1);
 
         if (this.isBlockedCommand(command)) {
-            player.sendMessage(HyriLanguageMessage.get("message.command.not-enabled").getValue(player));
+            player.sendMessage(HyrameMessage.COMMAND_NOT_ENABLED.asString(player));
 
             event.setCancelled(true);
         }
@@ -39,7 +40,7 @@ public class ChatListener extends HyriListener<HyramePlugin> {
 
     private boolean isBlockedCommand(String command) {
         for (String blockedCommand : this.plugin.getHyrame().getCommandManager().getCommandBlocker().getBlockedCommands()) {
-            if (command.startsWith(blockedCommand)) {
+            if (command.equalsIgnoreCase(blockedCommand)) {
                 return true;
             }
         }

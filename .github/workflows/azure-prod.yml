@@ -31,6 +31,9 @@ jobs:
           USERNAME: ${{ github.actor }}
           TOKEN: ${{ secrets.TOKEN }}
 
+      - name: Rename Jar
+        run: mv Impl/build/libs/Hyrame-*.jar Impl/build/libs/Hyrame.jar
+
       - name: Upload Jar
         uses: azure/CLI@v1
         env:
