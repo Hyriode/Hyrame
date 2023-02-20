@@ -119,6 +119,11 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder withData(short data) {
+        this.itemStack.setDurability(data);
+        return this;
+    }
+
     public ItemBuilder withPlayerHead(String name) {
         Reflection.setField("profile", this.itemMeta, new ProfileLoader(name, ProfileLoader.REDIS_KEY).loadProfile());
         return this;
