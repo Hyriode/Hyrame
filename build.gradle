@@ -32,8 +32,8 @@ allprojects {
             url = 'https://maven.pkg.github.com/Hyriode/HyriAPI/'
 
             credentials {
-                username System.getenv('USERNAME')
-                password System.getenv('TOKEN')
+                username System.getenv('GITHUB_USERNAME')
+                password System.getenv('GITHUB_TOKEN')
             }
         }
 
@@ -82,8 +82,8 @@ publishing {
     repositories {
         maven {
             credentials {
-                username System.getenv('USERNAME')
-                password System.getenv('TOKEN')
+                username System.getenv('GITHUB_USERNAME')
+                password System.getenv('GITHUB_TOKEN')
             }
             name = "Hyrame_maven"
             url = "https://maven.pkg.github.com/Hyriode/Hyrame"
