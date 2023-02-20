@@ -5,6 +5,7 @@ import fr.hyriode.api.host.HostData;
 import fr.hyriode.api.host.IHostConfig;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.server.IHyriServer;
+import fr.hyriode.api.world.IHyriWorld;
 import fr.hyriode.hyrame.HyrameLoader;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.IHyrame;
@@ -38,6 +39,8 @@ public class HostController implements IHostController {
 
     private long advertTimer = -1;
 
+    private final List<String> maps = new ArrayList<>();
+
     private Map<Integer, HostCategory> categories;
 
     private Set<String> usedConfigs;
@@ -69,12 +72,16 @@ public class HostController implements IHostController {
             final String type = server.getType();
             final String gameType = server.getGameType();
 
-            for (String map : HyriAPI.get().getGameManager().getMaps(type, gameType)) {
-                HyrameLogger.log("Loading '" + map + "' map for host...");
+            for (IHyriWorld map : HyriAPI.get().getWorldManager().getWorlds(type, Objects.requireNonNull(gameType))) {
+                final String mapName = map.getName();
 
-                HyriAPI.get().getHystiaAPI().getWorldManager().loadWorld(new File(map), type, gameType, map);
+                HyrameLogger.log("Loading '" + mapName + "' map for host...");
 
-                new WorldCreator(map).createWorld();
+                map.load(new File(mapName));
+
+                new WorldCreator(mapName).createWorld();
+
+                this.maps.add(mapName);
             }
 
             this.hyrame.getWorldProvider().setCurrentWorld(server.getMap());
@@ -265,6 +272,10 @@ public class HostController implements IHostController {
 
     public HyriGame<?> getGame() {
         return this.hyrame.getGameManager().getCurrentGame();
+    }
+
+    public List<String> getMaps() {
+        return this.maps;
     }
 
 }

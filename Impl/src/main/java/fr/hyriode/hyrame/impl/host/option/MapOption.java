@@ -1,14 +1,15 @@
 package fr.hyriode.hyrame.impl.host.option;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.game.HyriGameType;
 import fr.hyriode.api.game.IHyriGameInfo;
+import fr.hyriode.api.game.IHyriGameType;
 import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.hyrame.HyrameLoader;
+import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.scoreboard.HyriWaitingScoreboard;
-import fr.hyriode.hyrame.game.waitingroom.HyriWaitingRoom;
 import fr.hyriode.hyrame.host.HostDisplay;
 import fr.hyriode.hyrame.host.option.HostOption;
+import fr.hyriode.hyrame.impl.host.HostController;
 import fr.hyriode.hyrame.inventory.pagination.PaginatedInventory;
 import fr.hyriode.hyrame.inventory.pagination.PaginatedItem;
 import fr.hyriode.hyrame.inventory.pagination.PaginationArea;
@@ -78,22 +79,11 @@ public class MapOption extends HostOption<String> {
             final String game = server.getType();
             final String gameType = server.getGameType();
             final IHyriGameInfo gameInfo = HyriAPI.get().getGameManager().getGameInfo(game);
-
-            if (gameInfo == null) {
-                return;
-            }
-
-            final HyriGameType type = gameInfo.getType(gameType);
-
-            if (type == null) {
-                return;
-            }
-
-            final List<String> maps = HyriAPI.get().getGameManager().getMaps(game, gameType);
+            final IHyriGameType type = gameInfo.getType(gameType);
 
             pagination.clear();
 
-            for (String map : maps) {
+            for (String map : ((HostController) IHyrame.get().getHostController()).getMaps()) {
                 final ItemBuilder itemBuilder = new ItemBuilder(Material.MAP)
                         .withAllItemFlags()
                         .withName(ChatColor.AQUA + map)

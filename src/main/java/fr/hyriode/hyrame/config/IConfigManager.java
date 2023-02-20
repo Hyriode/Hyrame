@@ -1,7 +1,7 @@
 package fr.hyriode.hyrame.config;
 
+import fr.hyriode.api.config.IHyriConfig;
 import fr.hyriode.hyrame.config.handler.ConfigOptionHandler;
-import fr.hyriode.hystia.api.config.IConfig;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public interface IConfigManager {
      * @param <T> The type of the configuration
      * @return The initialized {@linkplain ConfigProcess} process
      */
-    <T extends IConfig> ConfigProcess<T> initConfigProcess(Player player, Class<T> configClass);
+    <T extends IHyriConfig> ConfigProcess<T> initConfigProcess(Player player, Class<T> configClass);
 
     /**
      * Register an option handler.<br>

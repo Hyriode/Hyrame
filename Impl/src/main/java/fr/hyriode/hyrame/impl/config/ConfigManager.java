@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl.config;
 
+import fr.hyriode.api.config.IHyriConfig;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.config.ConfigContext;
 import fr.hyriode.hyrame.config.ConfigOption;
@@ -10,7 +11,6 @@ import fr.hyriode.hyrame.config.handler.CLocationHandler;
 import fr.hyriode.hyrame.config.handler.ConfigOptionHandler;
 import fr.hyriode.hyrame.reflection.Reflection;
 import fr.hyriode.hyrame.utils.LocationWrapper;
-import fr.hyriode.hystia.api.config.IConfig;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -47,7 +47,7 @@ public class ConfigManager implements IConfigManager {
     }
 
     @Override
-    public <T extends IConfig> ConfigProcess<T> initConfigProcess(Player player, Class<T> configClass) {
+    public <T extends IHyriConfig> ConfigProcess<T> initConfigProcess(Player player, Class<T> configClass) {
         if (this.getProcess(player.getUniqueId()) != null) {
             throw new RuntimeException(player.getName() + "(" + player.getUniqueId().toString() + ") is already running a process!");
         }

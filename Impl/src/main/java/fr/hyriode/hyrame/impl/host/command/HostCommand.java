@@ -95,12 +95,12 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
                 return;
             }
 
-            if (target.getPlayersBannedFromHost().contains(targetId)) {
+            if (target.getHosts().hasBannedPlayer(targetId)) {
                 player.sendMessage(HyrameMessage.HOST_ALREADY_BANNED_MESSAGE.asString(account).replace("%player%", target.getNameWithRank()));
                 return;
             }
 
-            account.addPlayerBannedFromHost(targetId);
+            account.getHosts().addBannedPlayer(targetId);
             account.update();
 
             player.sendMessage(HyrameMessage.HOST_BAN_MESSAGE.asString(account).replace("%player%", target.getNameWithRank()));
@@ -120,12 +120,12 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
                 return;
             }
 
-            if (!target.getPlayersBannedFromHost().contains(targetId)) {
+            if (!target.getHosts().hasBannedPlayer(targetId)) {
                 player.sendMessage(HyrameMessage.HOST_NOT_BANNED_MESSAGE.asString(account).replace("%player%", target.getNameWithRank()));
                 return;
             }
 
-            account.removePlayerBannedFromHost(targetId);
+            account.getHosts().removeBannedPlayer(targetId);
             account.update();
 
             player.sendMessage(HyrameMessage.HOST_UNBAN_MESSAGE.asString(account).replace("%player%", target.getNameWithRank()));
@@ -142,7 +142,7 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
 
             builder.append(HyrameMessage.HOST_BAN_LIST_MESSAGE.asString(account)).append("\n");
 
-            for (UUID bannedPlayer : account.getPlayersBannedFromHost()) {
+            for (UUID bannedPlayer : account.getHosts().getBannedPlayers()) {
                 builder.append(" ").append(Symbols.DOT_BOLD).color(ChatColor.DARK_GRAY).append(" ").append(IHyriPlayer.get(bannedPlayer).getNameWithRank()).append("\n");
             }
 
