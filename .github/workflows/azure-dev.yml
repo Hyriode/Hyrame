@@ -25,8 +25,11 @@ jobs:
       - name: Edit libraries folder permissions
         run: sudo chmod -R 777 libs/
 
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "SHORT_SHA=`echo ${{ github.sha }} | cut -c1-8`" >> $GITHUB_ENV
+
       - name: Build shaded Jar
-        run: gradle shadowJar
+        run: gradle shadowJar -PbuildNumber=${{ github.run_number }} -PcommitSha=${SHORT_SHA}
         env:
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.TOKEN }}

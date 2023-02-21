@@ -4,6 +4,13 @@ plugins {
 
 archivesBaseName = 'Hyrame-Impl'
 
+jar {
+    manifest {
+        attributes 'Specific-Version': project.version
+        attributes 'Implementation-Version': "${ project.version }-${ commitSha }-${ buildNumber }"
+    }
+}
+
 shadowJar {
     configurations = [project.configurations.shadow]
 }
@@ -20,7 +27,7 @@ dependencies {
 
 processResources {
     filter {
-        it.replace('@version@', project.version)
+        it.replace('@version@', "${ project.version }-${ commitSha }-${ buildNumber }")
     }
 }
 
