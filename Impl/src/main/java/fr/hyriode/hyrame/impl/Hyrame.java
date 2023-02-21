@@ -23,7 +23,6 @@ import fr.hyriode.hyrame.impl.item.ItemManager;
 import fr.hyriode.hyrame.impl.join.HyriJoinHandler;
 import fr.hyriode.hyrame.impl.language.LanguageLoader;
 import fr.hyriode.hyrame.impl.listener.ListenerManager;
-import fr.hyriode.hyrame.impl.listener.hyrame.AccountListener;
 import fr.hyriode.hyrame.impl.packet.PacketInterceptor;
 import fr.hyriode.hyrame.impl.placeholder.PlaceholderImpl;
 import fr.hyriode.hyrame.impl.placeholder.handler.PlaceholderRegistry;
@@ -101,7 +100,6 @@ public class Hyrame implements IHyrame {
         BossBarManager.init(this.plugin);
         NPCManager.init(this.plugin, "npcs:");
         new SignGUIManager(this, this.plugin);
-        new AccountListener(this.plugin);
 
         HyriAPI.get().getLanguageManager().registerAdapter(HyriGamePlayer.class, (message, gamePlayer) -> message.getValue(gamePlayer.getUniqueId()));
         HyriAPI.get().getJoinManager().registerHandler(10, new HyriJoinHandler(this));

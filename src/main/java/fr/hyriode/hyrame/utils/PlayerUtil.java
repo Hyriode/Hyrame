@@ -37,6 +37,7 @@ public class PlayerUtil {
         if (!(player instanceof CraftPlayer)) {
             return;
         }
+
         for (Player target : Bukkit.getOnlinePlayers()) {
             target.hidePlayer(player);
 
