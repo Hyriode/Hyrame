@@ -1,12 +1,12 @@
 package fr.hyriode.hyrame.config;
 
+import fr.hyriode.api.config.IHyriConfig;
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.config.handler.ConfigOptionHandler;
 import fr.hyriode.hyrame.title.Title;
 import fr.hyriode.hyrame.utils.Symbols;
-import fr.hyriode.hystia.api.config.IConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -22,7 +22,7 @@ import java.util.function.Consumer;
  * Created by AstFaster
  * on 01/06/2022 at 13:58
  */
-public class ConfigProcess<T extends IConfig> {
+public class ConfigProcess<T extends IHyriConfig> {
 
     /** The current running context */
     private ConfigContext current;

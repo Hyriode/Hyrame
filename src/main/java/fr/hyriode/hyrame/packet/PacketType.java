@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.packet;
 
 import fr.hyriode.hyrame.HyrameLogger;
+import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
 
 import java.util.ArrayList;
 import java.util.List;

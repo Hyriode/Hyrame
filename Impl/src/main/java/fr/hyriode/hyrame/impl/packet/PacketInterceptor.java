@@ -9,6 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelPromise;
 import net.minecraft.server.v1_8_R3.Packet;
+import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -112,7 +113,9 @@ public class PacketInterceptor implements IPacketInterceptor {
 
     private PacketType getPacketTypeFromPacket(Object packet) {
         for (PacketType packetType : PacketType.values()) {
-            if (packetType.getPacketName().equals(packet.getClass().getSimpleName())) {
+            final String[] splitName = packet.getClass().getName().split("\\.");
+
+            if (packetType.getPacketName().equals(splitName[splitName.length - 1])) {
                 return packetType;
             }
         }

@@ -146,7 +146,7 @@ public class ProfileLoader {
     }
 
     public static void savePlayerProfile(Player player) {
-        if (!IHyriPlayerSession.get(player.getUniqueId()).hasNickname()) {
+        if (!IHyriPlayerSession.get(player.getUniqueId()).getNickname().has()) {
             saveProfile(((CraftPlayer) player).getProfile());
         }
     }

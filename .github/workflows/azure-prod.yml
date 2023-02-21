@@ -28,8 +28,8 @@ jobs:
       - name: Build shaded Jar
         run: gradle shadowJar
         env:
-          USERNAME: ${{ github.actor }}
-          TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
       - name: Rename Jar
         run: mv Impl/build/libs/Hyrame-*.jar Impl/build/libs/Hyrame.jar

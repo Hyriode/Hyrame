@@ -32,8 +32,8 @@ allprojects {
             url = 'https://maven.pkg.github.com/Hyriode/HyriAPI/'
 
             credentials {
-                username System.getenv('USERNAME')
-                password System.getenv('TOKEN')
+                username System.getenv('GITHUB_USERNAME')
+                password System.getenv('GITHUB_TOKEN')
             }
         }
 
@@ -58,7 +58,7 @@ archivesBaseName = 'Hyrame'
 
 dependencies {
     compileOnly fileTree(include: ['*.jar'], dir: 'libs')
-    api 'fr.hyriode:hyriapi:1.4.3'
+    api 'fr.hyriode:hyriapi:1.5.1'
     api 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
     api 'xyz.xenondevs:particle:1.8.1'
 }
@@ -82,8 +82,8 @@ publishing {
     repositories {
         maven {
             credentials {
-                username System.getenv('USERNAME')
-                password System.getenv('TOKEN')
+                username System.getenv('GITHUB_USERNAME')
+                password System.getenv('GITHUB_TOKEN')
             }
             name = "Hyrame_maven"
             url = "https://maven.pkg.github.com/Hyriode/Hyrame"

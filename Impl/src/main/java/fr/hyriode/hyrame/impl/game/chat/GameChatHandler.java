@@ -4,7 +4,7 @@ import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.chat.channel.HyriChatChannel;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.player.IHyriPlayerSession;
-import fr.hyriode.api.rank.type.HyriPlayerRankType;
+import fr.hyriode.api.rank.PlayerRank;
 import fr.hyriode.hyrame.chat.IHyriChatHandler;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
@@ -84,14 +84,14 @@ public class GameChatHandler implements IHyriChatHandler {
                 } else if (color == null) {
                     BroadcastUtil.broadcast(target -> String.format(this.format(), session.getNameWithRank(), message));
                 } else if (gamePlayer.getTeam().getTeamSize() == 1) {
-                    BroadcastUtil.broadcast(target -> String.format(this.format(), color != null ? color + "[" + team.getDisplayName().getValue(target) + color + "] " + session.getNameWithRank() : session.getNameWithRank(), message));
+                    BroadcastUtil.broadcast(target -> String.format(this.format(), color + "[" + team.getDisplayName().getValue(target) + color + "] " + session.getNameWithRank(), message));
                 } else if (message.startsWith("!")) {
-                    BroadcastUtil.broadcast(target -> String.format(this.format(), HyrameMessage.GAME_GLOBAL_MESSAGE.asString(target) + (color != null ? color + "[" + team.getDisplayName().getValue(target) + color + "] " : "") + session.getNameWithRank(), message.substring(1)));
+                    BroadcastUtil.broadcast(target -> String.format(this.format(), HyrameMessage.GAME_GLOBAL_MESSAGE.asString(target) + color + "[" + team.getDisplayName().getValue(target) + color + "] " + session.getNameWithRank(), message.substring(1)));
                 } else {
                     team.sendMessage(target -> String.format(this.format(), HyrameMessage.GAME_TEAM_MESSAGE.asString(target) + session.getNameWithRank(), message));
                 }
             } else {
-                if (game.getState() == HyriGameState.ENDED && message.equalsIgnoreCase("gg") && !this.saidGG.contains(uuid) && account.getRank().isSuperior(HyriPlayerRankType.VIP_PLUS)) {
+                if (game.getState() == HyriGameState.ENDED && message.equalsIgnoreCase("gg") && !this.saidGG.contains(uuid) && account.getRank().isSuperior(PlayerRank.VIP_PLUS)) {
                     account.getHyris().add(5)
                             .withMessage(true)
                             .withReason("Fairplay")
@@ -101,7 +101,7 @@ public class GameChatHandler implements IHyriChatHandler {
 
                     this.saidGG.add(uuid);
 
-                    if (!session.hasNickname()) {
+                    if (!session.getNickname().has()) {
                         event.setMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "GG");
                     }
                 }

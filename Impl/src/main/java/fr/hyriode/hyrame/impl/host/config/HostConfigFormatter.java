@@ -1,8 +1,8 @@
 package fr.hyriode.hyrame.impl.host.config;
 
 import fr.hyriode.api.HyriAPI;
-import fr.hyriode.api.game.HyriGameType;
 import fr.hyriode.api.game.IHyriGameInfo;
+import fr.hyriode.api.game.IHyriGameType;
 import fr.hyriode.api.host.IHostConfig;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.impl.host.category.HostMainCategory;
@@ -27,7 +27,7 @@ public class HostConfigFormatter {
 
     public static ItemStack createItem(Player player, IHostConfig config, boolean loaded, boolean compatible) {
         final IHyriGameInfo gameInfo = HyriAPI.get().getGameManager().getGameInfo(config.getGame());
-        final HyriGameType gameType = gameInfo == null ? null : gameInfo.getType(config.getGameType());
+        final IHyriGameType gameType = gameInfo == null ? null : gameInfo.getType(config.getGameType());
 
         if (gameInfo == null || gameType == null) {
             config.delete();

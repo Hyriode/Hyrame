@@ -2,11 +2,6 @@ package fr.hyriode.hyrame.utils;
 
 import org.bukkit.entity.Player;
 
-/**
- * Project: Hyrame
- * Created by AstFaster
- * on 31/12/2021 at 18:47
- */
 public class ExperienceUtil {
 
     //This method is used to update both the recorded total experience and displayed total experience.

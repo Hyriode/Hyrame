@@ -1,6 +1,5 @@
 package fr.hyriode.hyrame.host.gui;
 
-import fr.hyriode.api.rank.type.HyriPlayerRankType;
 import fr.hyriode.hyrame.HyrameLoader;
 import fr.hyriode.hyrame.host.HostCategory;
 import fr.hyriode.hyrame.host.IHostController;

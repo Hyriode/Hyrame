@@ -28,7 +28,7 @@ public class HostFavoriteConfigsGUI extends HostConfigGUI {
         final IHyriPlayer account = IHyriPlayer.get(this.owner.getUniqueId());
         final List<String> invalidConfigs = new ArrayList<>();
 
-        for (String configId : account.getFavoriteHostConfigs()) {
+        for (String configId : account.getHosts().getFavoriteConfigs()) {
             final IHostConfig config = HyriAPI.get().getHostConfigManager().getConfig(configId);
 
             if (config == null || (config.isPrivate() && !config.getOwner().equals(account.getUniqueId()))) {
@@ -40,7 +40,7 @@ public class HostFavoriteConfigsGUI extends HostConfigGUI {
         }
 
         for (String invalidConfig : invalidConfigs) {
-            account.removeFavoriteHostConfig(invalidConfig);
+            account.getHosts().removeFavoriteConfig(invalidConfig);
         }
 
         account.update();
@@ -64,7 +64,7 @@ public class HostFavoriteConfigsGUI extends HostConfigGUI {
     protected void onConfigRightClick(IHostConfig config) {
         final IHyriPlayer account = IHyriPlayer.get(this.owner.getUniqueId());
 
-        account.removeFavoriteHostConfig(config.getId());
+        account.getHosts().removeFavoriteConfig(config.getId());
         account.update();
 
         this.addItems().run();

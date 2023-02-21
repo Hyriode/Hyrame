@@ -55,7 +55,7 @@ public class HostAllConfigsGUI extends HostConfigGUI {
     @Override
     protected ItemStack createConfigItem(IHostConfig config) {
         final ItemStack original = super.createConfigItem(config);
-        final boolean alreadyFavorite = IHyriPlayer.get(this.owner.getUniqueId()).getFavoriteHostConfigs().contains(config.getId());
+        final boolean alreadyFavorite = IHyriPlayer.get(this.owner.getUniqueId()).getHosts().hasFavoriteConfig(config.getId());
 
         if (original == null) {
             return null;
@@ -97,13 +97,13 @@ public class HostAllConfigsGUI extends HostConfigGUI {
 
     @Override
     protected void onConfigRightClick(IHostConfig config) {
-        if (IHyriPlayer.get(this.owner.getUniqueId()).getFavoriteHostConfigs().contains(config.getId())) {
+        if (IHyriPlayer.get(this.owner.getUniqueId()).getHosts().hasFavoriteConfig(config.getId())) {
             return;
         }
 
         final IHyriPlayer account = IHyriPlayer.get(this.owner.getUniqueId());
 
-        account.addFavoriteHostConfig(config.getId());
+        account.getHosts().addFavoriteConfig(config.getId());
         account.update();
 
         this.addItems().run();
