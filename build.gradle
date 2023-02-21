@@ -8,7 +8,7 @@ allprojects {
     apply plugin: 'maven-publish'
 
     group = 'fr.hyriode'
-    version = '1.3.8'
+    version = '1.3.9-SNAPSHOT'
 
     java {
         withSourcesJar()
@@ -17,6 +17,11 @@ allprojects {
         toolchain {
             languageVersion = JavaLanguageVersion.of(8)
         }
+    }
+
+    configurations.all {
+        // Check for updates every build
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
     }
 
     compileJava {
@@ -58,7 +63,7 @@ archivesBaseName = 'Hyrame'
 
 dependencies {
     compileOnly fileTree(include: ['*.jar'], dir: 'libs')
-    api 'fr.hyriode:hyriapi:1.5.1'
+    api 'fr.hyriode:hyriapi:1.5.2-SNAPSHOT'
     api 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
     api 'xyz.xenondevs:particle:1.8.1'
 }
