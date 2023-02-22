@@ -51,7 +51,9 @@ public class RanksHandler {
     }
 
     public void onLogout(Player player) {
-        this.tabListManager.unregisterTeam(player.getUniqueId().toString());
+        if (this.hyrame.getConfiguration().areRanksInTabList()) {
+            this.tabListManager.unregisterTeam(player.getUniqueId().toString());
+        }
     }
 
     private String getTeamDisplay(IHyriPlayer player, IHyriPlayerSession session) {
@@ -85,6 +87,10 @@ public class RanksHandler {
     @HyriEventHandler
     public void onRankUpdated(RankUpdatedEvent event) {
         final Player player = Bukkit.getPlayer(event.getPlayerId());
+
+        if (player == null) { // An error occurs if the rank is edited before PlayerJoinEvent
+            return;
+        }
 
         this.onLogout(player);
 
