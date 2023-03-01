@@ -6,7 +6,6 @@ import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.IHyrameConfiguration;
 import fr.hyriode.hyrame.bossbar.BossBarManager;
 import fr.hyriode.hyrame.command.ICommandManager;
-import fr.hyriode.hyrame.config.IConfigManager;
 import fr.hyriode.hyrame.enchantment.HyriEnchant;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
@@ -14,7 +13,6 @@ import fr.hyriode.hyrame.game.IHyriGameManager;
 import fr.hyriode.hyrame.host.IHostController;
 import fr.hyriode.hyrame.impl.chat.ChatManager;
 import fr.hyriode.hyrame.impl.command.CommandManager;
-import fr.hyriode.hyrame.impl.config.ConfigManager;
 import fr.hyriode.hyrame.impl.game.HyriGameManager;
 import fr.hyriode.hyrame.impl.hologram.HologramHandler;
 import fr.hyriode.hyrame.impl.host.HostController;
@@ -66,7 +64,6 @@ public class Hyrame implements IHyrame {
     private final IHyriGameManager gameManager;
     private final ChatManager chatManager;
     private final TabListManager tabListManager;
-    private final IConfigManager configManager;
     private final PacketInterceptor packetInterceptor;
     private final IHostController hostController;
     private final IWorldProvider worldProvider;
@@ -87,7 +84,6 @@ public class Hyrame implements IHyrame {
         this.chatManager = new ChatManager(this);
         this.tabListManager = new TabListManager(this, plugin);
         this.tabListManager.enable();
-        this.configManager = new ConfigManager(this, plugin);
         this.packetInterceptor = new PacketInterceptor();
         this.hostController = new HostController(this);
         this.worldProvider = new WorldProvider();
@@ -195,11 +191,6 @@ public class Hyrame implements IHyrame {
     @Override
     public TabListManager getTabListManager() {
         return this.tabListManager;
-    }
-
-    @Override
-    public IConfigManager getConfigManager() {
-        return this.configManager;
     }
 
     @Override

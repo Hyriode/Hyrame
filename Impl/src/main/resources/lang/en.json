@@ -71,12 +71,6 @@
 
   "gui.spectator.teleporter.lore": "&7Click to teleport",
 
-  "message.config.start": "&8&m%line%\n&7Starting a &bconfiguration &7creation process...\n&8&m%line%",
-  "message.config.new-value": "&8&m%line%\n&8▪ &7New value to set: &b%name% &8(id: %id%)\n&8▪ &7description &f%description%\n&8&m%line%",
-
-  "item.config.location.set": "&aSet the location",
-  "item.config.location.eyes": "&bEyes direction &8┃ %value%",
-
   "format.duration.days": "%days%d",
   "format.duration.hours": "%hours%h",
   "format.duration.minutes": "%minutes%m",

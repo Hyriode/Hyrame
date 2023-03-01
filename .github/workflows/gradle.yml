@@ -38,12 +38,3 @@ jobs:
         env:
           GITHUB_USERNAME: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: Hyrame
-          path: | 
-            build/libs/
-            Impl/build/libs/
-          retention-days: 7
