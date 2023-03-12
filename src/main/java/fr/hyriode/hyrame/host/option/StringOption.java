@@ -1,10 +1,12 @@
 package fr.hyriode.hyrame.host.option;
 
 import fr.hyriode.hyrame.HyrameLoader;
+import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.anvilgui.AnvilGUI;
 import fr.hyriode.hyrame.host.HostDisplay;
 import fr.hyriode.hyrame.host.gui.HostGUI;
 import fr.hyriode.hyrame.language.HyrameMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -28,7 +30,7 @@ public class StringOption extends HostOption<String> {
 
     @Override
     public void onClick(Player player, InventoryClickEvent event) {
-        new AnvilGUI(HyrameLoader.getHyrame().getPlugin(), player, this.value, null, false, e -> player.openInventory(event.getInventory()), null, null, (p, input) -> {
+        new AnvilGUI(HyrameLoader.getHyrame().getPlugin(), player, this.value, null, false, e -> Bukkit.getScheduler().runTaskLater(IHyrame.get().getPlugin(), () -> player.openInventory(event.getInventory()), 1L), null, null, (p, input) -> {
             this.setValue(input);
 
             categoryGUIProvider.apply(player).open();

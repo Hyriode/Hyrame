@@ -69,6 +69,7 @@ public class TabListManager implements ITabListManager {
     @Override
     public void registerTeam(HyriScoreboardTeam team) {
         final String teamName = team.getName();
+        final String realName = team.getRealName();
 
         if (this.teamHandlers.containsKey(teamName)) {
             this.unregisterTeam(teamName);
@@ -79,7 +80,7 @@ public class TabListManager implements ITabListManager {
         hiddenTeam.setNameTagVisibility(HyriScoreboardTeam.NameTagVisibility.NEVER);
         hiddenTeam.getPlayers().clear();
         hiddenTeam.setName(teamName + "-h");
-        hiddenTeam.setRealName((teamName.length() >= 14 ? teamName.substring(0, 14) : teamName) + "-h");
+        hiddenTeam.setRealName((realName.length() >= 14 ? realName.substring(0, 14) : realName) + "-h");
 
         this.teamHandler.addTeam(team);
         this.teamHandler.addTeam(hiddenTeam);

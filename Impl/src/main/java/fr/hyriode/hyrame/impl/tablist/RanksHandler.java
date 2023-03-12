@@ -51,9 +51,7 @@ public class RanksHandler {
     }
 
     public void onLogout(Player player) {
-        if (this.hyrame.getConfiguration().areRanksInTabList()) {
-            this.tabListManager.unregisterTeam(player.getUniqueId().toString());
-        }
+        this.tabListManager.unregisterTeam(player.getUniqueId().toString());
     }
 
     private String getTeamDisplay(IHyriPlayer player, IHyriPlayerSession session) {
@@ -69,7 +67,7 @@ public class RanksHandler {
     private String generateTeamName(int priority) {
         final StringBuilder builder = new StringBuilder();
 
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 13; i++) {
             builder.append(CHARS[ThreadLocalRandom.current().nextInt(CHARS.length)]);
         }
         return String.valueOf(CHARS[priority % 24]) + builder;

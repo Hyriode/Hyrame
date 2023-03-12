@@ -5,11 +5,13 @@ import fr.hyriode.api.host.IHostConfig;
 import fr.hyriode.api.host.IHostConfigManager;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.HyrameLoader;
+import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.anvilgui.AnvilGUI;
 import fr.hyriode.hyrame.host.HostCategory;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.utils.Symbols;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -34,7 +36,7 @@ public class HostAllConfigsGUI extends HostConfigGUI {
                 .withName(HyrameMessage.HOST_CONFIG_SEARCH_ITEM_NAME.asString(this.owner))
                 .withLore(HyrameMessage.HOST_CONFIG_SEARCH_ITEM_LORE.asList(this.owner))
                 .build(),
-                event -> new AnvilGUI(HyrameLoader.getHyrame().getPlugin(), this.owner, HyrameMessage.HOST_CONFIG_SEARCH_INPUT.asString(this.owner), null, false, player -> this.open(), null, null, (player, configId) -> {
+                event -> new AnvilGUI(IHyrame.get().getPlugin(), this.owner, HyrameMessage.HOST_CONFIG_SEARCH_INPUT.asString(this.owner), null, false, player -> Bukkit.getScheduler().runTaskLater(IHyrame.get().getPlugin(), this::open, 1L), null, null, (player, configId) -> {
                     configId = configId.replace("#", "");
 
                     final IHostConfig config = HyriAPI.get().getHostConfigManager().getConfig(configId);

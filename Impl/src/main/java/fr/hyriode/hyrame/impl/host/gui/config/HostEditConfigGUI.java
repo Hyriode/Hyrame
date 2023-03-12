@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.impl.host.gui.config;
 
 import fr.hyriode.api.host.IHostConfig;
 import fr.hyriode.hyrame.HyrameLoader;
+import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.anvilgui.AnvilGUI;
 import fr.hyriode.hyrame.host.option.HostOption;
 import fr.hyriode.hyrame.impl.host.config.HostConfigIcon;
@@ -10,6 +11,7 @@ import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.utils.HyrameHead;
 import fr.hyriode.hyrame.utils.list.ListReplacer;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -77,7 +79,7 @@ public class HostEditConfigGUI extends HyriInventory {
                         .withName(HyrameMessage.HOST_CONFIG_CREATION_NAME_ITEM_NAME.asString(this.owner))
                         .withLore(ListReplacer.replace(HyrameMessage.HOST_CONFIG_CREATION_NAME_ITEM_LORE.asList(this.owner), "%current_name%", this.config.getName()).list())
                         .build(),
-                event -> new AnvilGUI(HyrameLoader.getHyrame().getPlugin(), this.owner, this.config.getName(), null, false, player -> this.open(), null, null, (player, name) -> {
+                event -> new AnvilGUI(HyrameLoader.getHyrame().getPlugin(), this.owner, this.config.getName(), null, false, player -> Bukkit.getScheduler().runTaskLater(IHyrame.get().getPlugin(), this::open, 1L), null, null, (player, name) -> {
                     this.config.setName(name);
 
                     this.addNameItem();

@@ -170,6 +170,8 @@ public class HyriScoreboardTeamHandler {
         final HyriScoreboardTeam team = this.getTeamByName(name);
 
         if (team != null) {
+            this.teams.remove(team);
+
             this.removeTeamFromAllPlayers(team);
             return true;
         }
@@ -203,16 +205,14 @@ public class HyriScoreboardTeamHandler {
      */
     private void removeFromAllTeams(String player) {
         for (HyriScoreboardTeam team : this.teams) {
-            for (String p : team.getPlayers()) {
-                if (player.equals(p)) {
-                    for (OfflinePlayer receiver : this.receivers) {
-                        if (receiver.isOnline()) {
-                            ScoreboardTeamPacket.removePlayerFromTeam(receiver.getPlayer(), team, player);
-                        }
+            if (team.contains(player)) {
+                for (OfflinePlayer receiver : this.receivers) {
+                    if (receiver.isOnline()) {
+                        ScoreboardTeamPacket.removePlayerFromTeam(receiver.getPlayer(), team, player);
                     }
-
-                    team.removePlayer(player);
                 }
+
+                team.removePlayer(player);
             }
         }
     }
