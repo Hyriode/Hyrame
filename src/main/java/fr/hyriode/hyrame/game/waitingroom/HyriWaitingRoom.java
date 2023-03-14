@@ -114,8 +114,6 @@ public class HyriWaitingRoom {
             this.createNPC(gamePlayer.getPlayer());
         }
 
-        final String leaderboardType = HyriAPI.get().getServer().getType() + "#" + HyriAPI.get().getServer().getGameType();
-
         for (Leaderboard leaderboard : this.leaderboards) {
             final String leaderboardName = leaderboard.getName();
             final LocationWrapper location = this.config.getLeaderboardsLocation().get(leaderboardName);
@@ -125,7 +123,7 @@ public class HyriWaitingRoom {
                 continue;
             }
 
-            final HyriLeaderboardDisplay display = new HyriLeaderboardDisplay.Builder(this.plugin, leaderboardType, leaderboardName, location.asBukkit())
+            final HyriLeaderboardDisplay display = new HyriLeaderboardDisplay.Builder(this.plugin, HyriAPI.get().getServer().getType(), leaderboardName, location.asBukkit())
                     .withHeader(leaderboard.getDisplay())
                     .withUpdateTime(20L * 60L)
                     .withScoreFormatter(leaderboard.getScoreFormatter())
