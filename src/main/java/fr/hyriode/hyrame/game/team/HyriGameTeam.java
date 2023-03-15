@@ -373,7 +373,7 @@ public class HyriGameTeam implements Cast<HyriGameTeam> {
      * @return A list of game players
      */
     public Set<HyriGamePlayer> getPlayersPlaying() {
-        return this.players.values().stream().filter(player -> !player.isSpectator()).collect(Collectors.toSet());
+        return this.players.values().stream().filter(player -> player.isOnline() && !player.isSpectator()).collect(Collectors.toSet());
     }
 
     /**

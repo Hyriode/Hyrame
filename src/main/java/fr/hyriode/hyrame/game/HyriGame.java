@@ -305,8 +305,10 @@ public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGam
         final IHyriServer server = HyriAPI.get().getServer();
         final IHyriPlayerSession session = gamePlayer.getSession();
 
-        session.setPlaying(false);
-        session.update();
+        if (session != null) {
+            session.setPlaying(false);
+            session.update();
+        }
 
         server.removePlayerPlaying(uuid);
         gamePlayer.setOnline(false);

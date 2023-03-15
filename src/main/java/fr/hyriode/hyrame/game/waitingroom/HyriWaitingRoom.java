@@ -18,16 +18,24 @@ import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.leaderboard.HyriLeaderboardDisplay;
 import fr.hyriode.hyrame.npc.NPC;
 import fr.hyriode.hyrame.npc.NPCManager;
+import fr.hyriode.hyrame.packet.PacketUtil;
+import fr.hyriode.hyrame.reflection.Reflection;
 import fr.hyriode.hyrame.utils.LocationWrapper;
 import fr.hyriode.hyrame.utils.Symbols;
+import fr.hyriode.hyrame.utils.block.BlockUtil;
 import fr.hyriode.hyrame.utils.block.Cuboid;
 import fr.hyriode.hyrame.utils.list.ListReplacer;
 import fr.hyriode.hyrame.world.WorldChangedEvent;
+import net.minecraft.server.v1_8_R3.Chunk;
+import net.minecraft.server.v1_8_R3.ChunkSection;
+import net.minecraft.server.v1_8_R3.IBlockData;
+import net.minecraft.server.v1_8_R3.PacketPlayOutMultiBlockChange;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -156,9 +164,7 @@ public class HyriWaitingRoom {
         if (this.clearBlocks) {
             final Cuboid cuboid = new Cuboid(this.config.getFirstPos().asBukkit(), this.config.getSecondPos().asBukkit());
 
-            for (Block block : cuboid.getBlocks()) {
-                block.setType(Material.AIR);
-            }
+            BlockUtil.setBlocksFaster(cuboid.getBlocks(), 0, 0); // Replace with air
         }
 
         HandlerList.unregisterAll(this.handler);
@@ -362,7 +368,7 @@ public class HyriWaitingRoom {
         private final LocationWrapper npcLocation;
 
         /** The different locations of the leaderboards. E.g. kills -> location of kills leaderboard */
-        private final Map<String, LocationWrapper> leaderboardsLocation = new HashMap<>();
+        private final Map<String, LocationWrapper> leaderboards = new HashMap<>();
 
         public Config(LocationWrapper spawn, LocationWrapper firstPos, LocationWrapper secondPos, LocationWrapper npcLocation) {
             this.spawn = spawn;
@@ -388,11 +394,11 @@ public class HyriWaitingRoom {
         }
 
         public Map<String, LocationWrapper> getLeaderboardsLocation() {
-            return this.leaderboardsLocation;
+            return this.leaderboards;
         }
 
         public void addLeaderboardLocation(String leaderboardName, LocationWrapper location) {
-            this.leaderboardsLocation.put(leaderboardName, location);
+            this.leaderboards.put(leaderboardName, location);
         }
 
     }
