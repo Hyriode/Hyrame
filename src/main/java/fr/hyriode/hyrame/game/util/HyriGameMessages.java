@@ -6,6 +6,7 @@ import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
 import fr.hyriode.hyrame.game.protocol.HyriLastHitterProtocol;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
+import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.utils.Symbols;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -117,7 +118,7 @@ public class HyriGameMessages {
 
     public static BaseComponent[] createWinMessage(HyriGame<?> game, Player target, HyriGameTeam winner, List<String> stats, List<String> rewards) {
         return createFramedMessage(game, builder -> {
-            final String winnerLine = ChatColor.GOLD + HyriLanguageMessage.get("message.game.end.winner").getValue(target) + ChatColor.GRAY + " - " + winner.getFormattedDisplayName(target);
+            final String winnerLine = HyrameMessage.GAME_END_WINNER.asString(target).replace("%winner%", winner.getFormattedDisplayName(target));
 
             for (int i = 0; i <= (Symbols.HYPHENS_LINE.length() - winnerLine.length()) / 2 + 2; i++) {
                 builder.append("  ");
@@ -143,7 +144,7 @@ public class HyriGameMessages {
             if (rewards != null && rewards.size() > 0) {
                 builder.append("\n");
 
-                final String rewardsLine = HyriLanguageMessage.get("message.game.end.rewards").getValue(target);
+                final String rewardsLine = HyrameMessage.GAME_END_REWARDS.asString(target);
                 final int space = (Symbols.HYPHENS_LINE.length() - ChatColor.stripColor(rewardsLine).length()) / 2 - 3;
 
                 for (int i = 0; i <= space; i++) {

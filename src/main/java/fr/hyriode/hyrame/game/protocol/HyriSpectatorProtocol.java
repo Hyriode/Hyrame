@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.game.protocol;
 
+import com.mojang.authlib.GameProfile;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.hyggdrasil.api.server.HyggServer;
@@ -16,14 +17,17 @@ import fr.hyriode.hyrame.reflection.ObjectModifier;
 import fr.hyriode.hyrame.reflection.Reflection;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import fr.hyriode.hyrame.utils.VoidPlayer;
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_8_R3.WorldSettings;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import java.util.List;
-import java.util.UUID;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 import static fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent.Action;
 
@@ -57,12 +61,12 @@ public class HyriSpectatorProtocol extends HyriGameProtocol implements Listener 
                         spectator = getGame().getSpectator(playerId);
                     }
 
-                    if (spectator == null || playerId.equals(receiver.getUniqueId())) {
+                    if (spectator == null) {
                         continue;
                     }
 
                     if (spectator.isSpectator()) {
-                        Reflection.setField("c", data, WorldSettings.EnumGamemode.SPECTATOR);
+                        Reflection.setField("c", data, playerId.equals(receiver.getUniqueId()) ? WorldSettings.EnumGamemode.ADVENTURE : WorldSettings.EnumGamemode.SPECTATOR);
                     }
                 }
             }

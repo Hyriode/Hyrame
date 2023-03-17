@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
  */
 public class HyriGameTabListManager {
 
-    private static final String DEFAULT = ".default";
+    private static final String DEFAULT = "z-default";
 
     private final HyriGame<?> game;
     private final ITabListManager tabListManager;

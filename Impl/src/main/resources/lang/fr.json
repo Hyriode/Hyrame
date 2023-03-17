@@ -20,8 +20,8 @@
   "game.reconnected": "%player% &7s'est reconnecté.",
   "game.victory": "&6✦ &lVICTOIRE &r&6✦",
   "game.defeat": "&cDEFAITE",
-  "game.end.winner": "Vainqueur",
-  "game.end.rewards": "Récompenses:",
+  "game.end.winner": "&6Vainqueur &7 - %winner%",
+  "game.end.rewards": "&eRécompenses:",
   "game.global-message": "&b[Global] ",
   "game.team-message": "&b[Equipe] ",
 

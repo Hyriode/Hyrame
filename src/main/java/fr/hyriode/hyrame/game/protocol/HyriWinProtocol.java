@@ -13,6 +13,7 @@ import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import fr.hyriode.hyrame.utils.Symbols;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -64,7 +65,7 @@ public class HyriWinProtocol extends HyriGameProtocol implements Listener {
 
             PlayerUtil.resetPotionEffects(target);
 
-            player.show();
+            Bukkit.getScheduler().runTaskLater(this.game.getPlugin(), player::show, 1L);
         }
 
         for (HyriGameTeam team : this.game.getTeams()) {

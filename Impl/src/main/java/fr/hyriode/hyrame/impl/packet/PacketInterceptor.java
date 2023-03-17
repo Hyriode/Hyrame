@@ -1,9 +1,11 @@
 package fr.hyriode.hyrame.impl.packet;
 
 import fr.hyriode.hyrame.HyrameLogger;
+import fr.hyriode.hyrame.packet.IPacketContainer;
 import fr.hyriode.hyrame.packet.IPacketHandler;
 import fr.hyriode.hyrame.packet.IPacketInterceptor;
 import fr.hyriode.hyrame.packet.PacketType;
+import fr.hyriode.hyrame.utils.Pair;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -96,19 +98,21 @@ public class PacketInterceptor implements IPacketInterceptor {
         return container.isCancelled();
     }
 
-    boolean onPacketSend(Player player, Object packet) {
+    IPacketContainer onPacketSend(Player player, Object packet) {
         final PacketType packetType = this.getPacketTypeFromPacket(packet);
+        final PacketContainer container = new PacketContainer(packetType, packet, player);
 
         if (packetType == null) {
-            return false;
-        }
+            container.setCancelled(true);
 
-        final PacketContainer container = new PacketContainer(packetType, packet, player);
+            return container;
+        }
 
         for (IPacketHandler handler : this.getHandlers(packetType)) {
             handler.onSend(container);
         }
-        return container.isCancelled();
+
+        return container;
     }
 
     private PacketType getPacketTypeFromPacket(Object packet) {
@@ -166,10 +170,15 @@ public class PacketInterceptor implements IPacketInterceptor {
         @Override
         public void write(ChannelHandlerContext ctx, Object packet, ChannelPromise promise) throws Exception {
             if (Packet.class.isAssignableFrom(packet.getClass())) {
-                if (onPacketSend(this.owner, packet)) {
+                final IPacketContainer container = onPacketSend(this.owner, packet);
+
+                packet = container.getPacket();
+
+                if (container.isCancelled()) {
                     return;
                 }
             }
+
             super.write(ctx, packet, promise);
         }
 
