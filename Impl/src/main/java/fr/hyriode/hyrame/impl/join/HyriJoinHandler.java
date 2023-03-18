@@ -113,15 +113,21 @@ public class HyriJoinHandler implements IHyriJoinHandler {
     public void onJoin(UUID playerId) {
         final HyriGame<?> game = this.hyrame.getGame();
         final Player player = Bukkit.getPlayer(playerId);
+        final IHyriPlayerSession session = IHyriPlayerSession.get(playerId);
 
         this.expectedPlayers.remove(playerId);
 
-        if (game != null) {
-            game.handleLogin(player);
+        if (game != null && !session.isModerating()) {
+            final HyriGameState state = game.getState();
+
+            if (state.isAccessible() || game.getPlayer(player) != null) {
+                game.handleLogin(player);
+            } else if (state == HyriGameState.PLAYING) {
+                game.handleSpectatorLogin(player);
+            }
             return;
         }
 
-        final IHyriPlayerSession session = IHyriPlayerSession.get(playerId);
         final IHyriPlayer account = IHyriPlayer.get(playerId);
 
         if (session.isVanished()) {
@@ -148,7 +154,11 @@ public class HyriJoinHandler implements IHyriJoinHandler {
         final HyriGame<?> game = this.hyrame.getGameManager().getCurrentGame();
 
         if (game != null) {
-            game.handleLogout(Bukkit.getPlayer(playerId));
+            if (game.getPlayer(playerId) != null) {
+                game.handleLogout(Bukkit.getPlayer(playerId));
+            } else {
+                game.handleSpectatorLogout(Bukkit.getPlayer(playerId));
+            }
         }
     }
 

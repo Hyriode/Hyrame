@@ -22,9 +22,6 @@ public class HyriScoreboard {
     /** Scoreboard's lines */
     protected final Map<Integer, HyriScoreboardLine> lines;
 
-    /** Check if the scoreboard is currently updating */
-    private boolean updating;
-
     /** Is showing */
     protected boolean show;
     /** Scoreboard's display name */
@@ -192,20 +189,14 @@ public class HyriScoreboard {
     /**
      * Update scoreboard's lines
      */
-    public void updateLines() {
-        if (!this.updating) {
-            this.updating = true;
+    public synchronized void updateLines() {
+        final String oldName = this.getOldName();
 
-            final String oldName = this.getOldName();
+        this.create();
+        this.sendLines();
+        this.display();
 
-            this.create();
-            this.sendLines();
-            this.display();
-
-            PacketUtil.sendPacket(this.player, this.getObjectivePacket(1, oldName));
-
-            this.updating = false;
-        }
+        PacketUtil.sendPacket(this.player, this.getObjectivePacket(1, oldName));
     }
 
     /**

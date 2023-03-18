@@ -237,17 +237,6 @@ public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGam
                 return;
             }
 
-            // The player doesn't exist but the game is already playing -> spectator
-            if (this.state == HyriGameState.PLAYING) {
-                final HyriGameSpectator spectator = new HyriGameSpectator(player);
-
-                this.spectators.add(spectator);
-                this.hyrame.getTabListManager().addPlayerInTeam(player, SPECTATORS_TEAM);
-
-                spectator.setSpectator(true);
-                return;
-            }
-
             // The player doesn't exist and the game is not playing -> normal
             gamePlayer = this.playerClass.getConstructor(Player.class).newInstance(player);
 
@@ -285,6 +274,34 @@ public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGam
     }
 
     /**
+     * Handle the login of a spectator
+     *
+     * @param player The logged in player
+     */
+    public void handleSpectatorLogin(Player player) {
+        final HyriGameSpectator spectator = new HyriGameSpectator(player);
+
+        this.spectators.add(spectator);
+        this.hyrame.getTabListManager().addPlayerInTeam(player, SPECTATORS_TEAM);
+
+        spectator.setSpectator(true);
+    }
+
+    /**
+     * Handler the logout of a spectator
+     *
+     * @param player The logged out spectator
+     */
+    public void handleSpectatorLogout(Player player) {
+        final HyriGameSpectator spectator = this.getSpectator(player.getUniqueId());
+
+        // The player is a spectator
+        if (spectator != null) {
+            this.spectators.remove(spectator);
+        }
+    }
+
+    /**
      * Called on player logout.<br>
      * Override this method to make actions on logout
      *
@@ -292,15 +309,6 @@ public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGam
      */
     public void handleLogout(Player player) {
         final UUID uuid = player.getUniqueId();
-        final HyriGameSpectator spectator = this.getSpectator(uuid);
-
-        // The player is a spectator
-        if (spectator != null) {
-            this.spectators.remove(spectator);
-            return;
-        }
-
-        // The player plays the game
         final P gamePlayer = this.getPlayer(uuid);
         final IHyriServer server = HyriAPI.get().getServer();
         final IHyriPlayerSession session = gamePlayer.getSession();
@@ -371,6 +379,10 @@ public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGam
         if (HyriAPI.get().getServer().getAccessibility() != HyggServer.Accessibility.HOST) {
             Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
                 for (HyriGamePlayer gamePlayer : this.players) {
+                    if (!gamePlayer.isOnline()) {
+                        continue;
+                    }
+
                     final boolean autoQueue = gamePlayer.asHyriPlayer().getSettings().isAutoQueueEnabled();
 
                     if (autoQueue) {

@@ -21,7 +21,7 @@
   "game.victory": "&6✦ &lVICTORY &r&6✦",
   "game.defeat": "&cDEFEAT",
   "game.end.winner": "&6Winner &7 - %winner%",
-  "game.end.rewards": "&eRewards:",
+  "game.end.rewards": "&aRewards:",
   "game.global-message": "&b[Global] ",
   "game.team-message": "&b[Team] ",
 
