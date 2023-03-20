@@ -43,8 +43,8 @@ import java.util.function.Predicate;
 public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
 
     private static final HyriLanguageMessage DEAD = new HyriLanguageMessage("")
-            .addValue(HyriLanguage.EN, "DEAD")
-            .addValue(HyriLanguage.FR, "MORT");
+            .addValue(HyriLanguage.EN, "§c§lDEAD")
+            .addValue(HyriLanguage.FR, "§c§lMORT");
 
     private static final HyriLanguageMessage RESPAWN = new HyriLanguageMessage("")
             .addValue(HyriLanguage.EN, "Respawn in")
@@ -412,7 +412,7 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
 
             private void sendRespawnTitle(HyriLanguageMessage message, int stayTime) {
                 final UUID playerId = this.player.getUniqueId();
-                final String title = ChatColor.RED + DEAD.getValue(playerId);
+                final String title = DEAD.getValue(playerId);
 
                 Title.sendTitle(this.player, title, ChatColor.RED + RESPAWN.getValue(playerId) + ChatColor.WHITE + " " + this.currentTime + ChatColor.RED + " " + message.getValue(playerId), 0, stayTime, 0);
             }

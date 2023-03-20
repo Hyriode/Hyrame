@@ -130,7 +130,7 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
         this.updateScoreboards();
 
         BroadcastUtil.broadcast(target -> HyrameMessage.GAME_LEFT.asString(target)
-                .replace("%player%", session.getNameWithRank())
+                .replace("%player%", session == null ? event.getGamePlayer().asHyriPlayer().getNameWithRank() : session.getNameWithRank())
                 .replace("%counter_color%", (game.canStart() ? ChatColor.GREEN : ChatColor.RED).toString())
                 .replace("%current_players%", String.valueOf(game.getPlayers().size()))
                 .replace("%max_players%", String.valueOf(server.getSlots())));
