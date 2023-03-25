@@ -73,6 +73,10 @@ public class HostController implements IHostController {
             final String gameType = server.getGameType();
 
             for (IHyriWorld map : HyriAPI.get().getWorldManager().getWorlds(type, Objects.requireNonNull(gameType))) {
+                if (!map.isEnabled()) {
+                    continue;
+                }
+
                 final String mapName = map.getName();
 
                 HyrameLogger.log("Loading '" + mapName + "' map for host...");

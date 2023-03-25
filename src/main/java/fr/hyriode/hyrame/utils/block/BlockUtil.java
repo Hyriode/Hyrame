@@ -5,7 +5,9 @@ import fr.hyriode.hyrame.packet.PacketUtil;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.CraftChunk;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,11 +40,11 @@ public class BlockUtil {
             final HashMap<Chunk, List<Block>> chunksBlocks = new HashMap<>();
             final World world = ((CraftWorld) IHyrame.WORLD.get()).getHandle();
 
-            for (Block b : blocks) {
-                final Chunk chunk = world.getChunkAt(b.getHandle().getX() >> 4, b.getHandle().getZ() >> 4);
+            for (Block block : blocks) {
+                final Chunk chunk = world.getChunkAt(block.getHandle().getX() >> 4, block.getHandle().getZ() >> 4);
                 final List<Block> list = chunksBlocks.getOrDefault(chunk, new ArrayList<>());
 
-                list.add(b);
+                list.add(block);
 
                 chunksBlocks.put(chunk, list);
             }
@@ -50,8 +52,6 @@ public class BlockUtil {
             for (Chunk chunk : chunksBlocks.keySet()) {
                 Bukkit.getScheduler().runTask(IHyrame.get().getPlugin(), () -> {
                     final List<Block> chunkBlocks = chunksBlocks.get(chunk);
-                    final List<org.bukkit.block.Block> bukkitChunkBlocks = chunkBlocks.stream().map(Block::getHandle).collect(Collectors.toList());
-                    final short[] array = blockArrayToShort(bukkitChunkBlocks);
 
                     for (Block block : chunkBlocks) {
                         final org.bukkit.block.Block handle = block.getHandle();
@@ -65,31 +65,29 @@ public class BlockUtil {
                         }
 
                         section.setType(handle.getX() & 15, handle.getY() & 15, handle.getZ() & 15, blockData);
+
+                        chunk.e(new BlockPosition(handle.getX(), handle.getY(), handle.getZ())); // It updates tile entities
                     }
 
-                    PacketUtil.sendPacket(new PacketPlayOutMultiBlockChange(array.length, array, chunk));
-                });
+                    PacketUtil.sendPacket(new PacketPlayOutMapChunk(chunk, true, 65535));
 
+                    chunk.bukkitChunk.unload(true);
+                    chunk.bukkitChunk.load();
+                    chunk.initLighting();
+                });
             }
         });
     }
 
-    private static short[] blockArrayToShort(List<org.bukkit.block.Block> blocks){
-        // This method returns a short array containing data of all blocks in the list
-        final short[] result = new short[blocks.size()];
-
-        for (int i = 0; i < blocks.size(); i++){
-            final org.bukkit.block.Block block = blocks.get(i);
-
-            result[i] = (short)((block.getX() & 15) << 12 | (block.getZ() & 15) << 8 | block.getY());
-        }
-        return result;
-    }
-
+    @SuppressWarnings("deprecation")
     public static void setBlocksFaster(List<org.bukkit.block.Block> blocks, int materialId, int data) {
         final List<Block> converted = new ArrayList<>();
 
         for (org.bukkit.block.Block block : blocks) {
+            if (block.getType().getId() == materialId && block.getData() == data) {
+                continue;
+            }
+
             converted.add(new Block(block, materialId, data));
         }
 
