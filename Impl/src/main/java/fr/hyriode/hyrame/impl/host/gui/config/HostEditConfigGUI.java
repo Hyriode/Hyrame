@@ -5,6 +5,7 @@ import fr.hyriode.hyrame.HyrameLoader;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.anvilgui.AnvilGUI;
 import fr.hyriode.hyrame.host.option.HostOption;
+import fr.hyriode.hyrame.impl.host.HostController;
 import fr.hyriode.hyrame.impl.host.config.HostConfigIcon;
 import fr.hyriode.hyrame.inventory.HyriInventory;
 import fr.hyriode.hyrame.item.ItemBuilder;
@@ -39,29 +40,35 @@ public class HostEditConfigGUI extends HyriInventory {
                 .build(), event -> goBack.run());
 
         this.setItem(49, new ItemBuilder(Material.STAINED_GLASS, 1, 5)
-                        .withName(HyrameMessage.HOST_CONFIG_CREATION_SAVE_ITEM_NAME.asString(this.owner))
-                        .build(),
-                        event -> {
-                            this.config.getValues().clear();
+                .withName(HyrameMessage.HOST_CONFIG_CREATION_SAVE_ITEM_NAME.asString(this.owner))
+                .build(),
+                event -> {
+                    this.config.getValues().clear();
 
-                            for (HostOption<?> option : HyrameLoader.getHyrame().getHostController().getOptions()) {
-                                if (!option.isSavable()) {
-                                    continue;
-                                }
+                    final HostController controller = (HostController) IHyrame.get().getHostController();
 
-                                this.config.addValue(option.getName(), option.getValue());
-                            }
+                    for (HostOption<?> option : controller.getOptions()) {
+                        if (!option.isSavable()) {
+                            continue;
+                        }
 
-                            this.config.save();
-                            this.owner.sendMessage(HyrameMessage.HOST_CONFIG_SAVED_MESSAGE.asString(this.owner).replace("%name%", this.config.getName()));
+                        this.config.addValue(option.getName(), option.getValue());
+                    }
 
-                            goBack.run();
-                        });
+                    controller.addConfig(config);
+
+                    this.config.save();
+                    this.owner.sendMessage(HyrameMessage.HOST_CONFIG_SAVED_MESSAGE.asString(this.owner).replace("%name%", this.config.getName()));
+
+                    goBack.run();
+                });
 
         this.setItem(53, ItemBuilder.asHead(HyrameHead.GARBAGE_CAN)
                 .withName(HyrameMessage.HOST_CONFIG_DELETE_CONFIG_ITEM_NAME.asString(this.owner))
                 .build(),
                 event -> {
+                    ((HostController) IHyrame.get().getHostController()).removeConfig(this.config);
+
                     this.config.delete();
                     this.owner.playSound(this.owner.getLocation(), Sound.FIZZ, 0.5F, 1.0F);
                     this.owner.sendMessage(HyrameMessage.HOST_CONFIG_DELETED_MESSAGE.asString(this.owner).replace("%name%", this.config.getName()));

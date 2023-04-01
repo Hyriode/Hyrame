@@ -8,6 +8,8 @@ import fr.hyriode.hyrame.language.HyrameMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.stream.Collectors;
+
 /**
  * Created by AstFaster
  * on 08/08/2022 at 15:20
@@ -20,7 +22,9 @@ public class HostOwnConfigsGUI extends HostConfigGUI {
 
     @Override
     protected Runnable addItems() {
-        return () -> this.addConfigItems(HyriAPI.get().getHostConfigManager().getPlayerConfigs(this.owner.getUniqueId()));
+        return () -> this.addConfigItems(HyriAPI.get().getHostConfigManager().getPlayerConfigs(this.owner.getUniqueId())
+                .stream()
+                .map(id -> HyriAPI.get().getHostConfigManager().getConfig(id)).collect(Collectors.toList()));
     }
 
     @Override

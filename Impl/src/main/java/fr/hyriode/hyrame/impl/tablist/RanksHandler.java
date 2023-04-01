@@ -8,6 +8,7 @@ import fr.hyriode.api.player.event.NicknameUpdatedEvent;
 import fr.hyriode.api.player.event.RankUpdatedEvent;
 import fr.hyriode.api.player.model.IHyriNickname;
 import fr.hyriode.api.rank.IHyriRank;
+import fr.hyriode.api.rank.PlayerRank;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.scoreboard.team.HyriScoreboardTeam;
 import fr.hyriode.hyrame.tablist.ITabListManager;
@@ -37,10 +38,11 @@ public class RanksHandler {
     }
 
     public void onLogin(Player player) {
-        if (this.hyrame.getConfiguration().areRanksInTabList()) {
+        final IHyriPlayerSession session = IHyriPlayerSession.get(player.getUniqueId());
+
+        if (this.hyrame.getConfiguration().areRanksInTabList() || session.isModerating()) {
             final UUID playerId = player.getUniqueId();
             final IHyriPlayer account = IHyriPlayer.get(playerId);
-            final IHyriPlayerSession session = IHyriPlayerSession.get(playerId);
             final IHyriNickname nickname = session.getNickname();
             final String display = this.getTeamDisplay(account, session);
             final HyriScoreboardTeam team = new HyriScoreboardTeam(playerId.toString(), this.generateTeamName(nickname.has() ? nickname.getRank().getTabListPriority() : account.getTabListPriority()), display, display, "");
@@ -56,7 +58,9 @@ public class RanksHandler {
 
     private String getTeamDisplay(IHyriPlayer player, IHyriPlayerSession session) {
         if (session.getNickname().has()) {
-            return ChatColor.translateAlternateColorCodes('&', session.getNickname().getRank().getDefaultPrefix());
+            final PlayerRank rank = session.getNickname().getRank();
+
+            return ChatColor.translateAlternateColorCodes('&', rank.withSeparator() ? rank.getDefaultPrefix() + IHyriRank.SEPARATOR + player.getRank().getMainColor() : rank.getDefaultPrefix() + player.getRank().getMainColor());
         } else if (player.getRank().withSeparator()) {
             return ChatColor.translateAlternateColorCodes('&', player.getPrefix()) + IHyriRank.SEPARATOR + player.getRank().getMainColor();
         } else {

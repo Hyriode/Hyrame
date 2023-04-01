@@ -22,14 +22,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by AstFaster
  * on 08/08/2022 at 14:54
  */
 public abstract class HostConfigGUI extends PaginatedInventory {
-
-    protected boolean compatibleConfigs = true;
 
     public HostConfigGUI(Player owner, String name, HostCategory parentCategory) {
         super(owner, name(owner, "gui.host.config." + name + ".name"), 6 * 9);
@@ -76,41 +75,23 @@ public abstract class HostConfigGUI extends PaginatedInventory {
                 }).open());
 
         this.setItem(27, ItemBuilder.asHead(HyrameHead.GARBAGE_CAN)
-                        .withName(HyrameMessage.HOST_CONFIG_RESET_ITEM_NAME.asString(this.owner))
-                        .withLore(HyrameMessage.HOST_CONFIG_RESET_ITEM_LORE.asList(this.owner))
-                        .build(),
-                        event -> {
-                            HyrameLoader.getHyrame().getHostController().resetOptions();
-
-                            this.addItems().run();
-
-                            this.owner.sendMessage(HyrameMessage.HOST_CONFIG_RESET_MESSAGE.asString(this.owner));
-                            this.owner.playSound(this.owner.getLocation(), Sound.CHICKEN_EGG_POP, 1.0F, 1.0F);
-                        });
-
-        this.setItem(49, new ItemBuilder(Material.ARROW)
-                        .withName(HyrameMessage.GO_BACK.asString(this.owner))
-                        .build(), event -> parentCategory.getGUIProvider().apply(this.owner).open());
-
-        this.addCompatibleConfigsItem();
-        this.addItems().run();
-    }
-
-    private void addCompatibleConfigsItem() {
-        final List<String> lore = ListReplacer.replace(HyrameMessage.HOST_CONFIG_COMPATIBLE_CONFIGS_ITEM_LORE.asList(this.owner), "%on_color%", String.valueOf(this.compatibleConfigs ? ChatColor.AQUA : ChatColor.GRAY))
-                .replace("%off_color%", String.valueOf(this.compatibleConfigs ? ChatColor.GRAY : ChatColor.AQUA))
-                .list();
-
-        this.setItem(51, new ItemBuilder(Material.HOPPER)
-                .withName(HyrameMessage.HOST_CONFIG_COMPATIBLE_CONFIGS_ITEM_NAME.asString(this.owner))
-                .withLore(lore)
+                .withName(HyrameMessage.HOST_CONFIG_RESET_ITEM_NAME.asString(this.owner))
+                .withLore(HyrameMessage.HOST_CONFIG_RESET_ITEM_LORE.asList(this.owner))
                 .build(),
                 event -> {
-                    this.compatibleConfigs = !this.compatibleConfigs;
+                    HyrameLoader.getHyrame().getHostController().resetOptions();
 
-                    this.addCompatibleConfigsItem();
                     this.addItems().run();
+
+                    this.owner.sendMessage(HyrameMessage.HOST_CONFIG_RESET_MESSAGE.asString(this.owner));
+                    this.owner.playSound(this.owner.getLocation(), Sound.CHICKEN_EGG_POP, 1.0F, 1.0F);
                 });
+
+        this.setItem(49, new ItemBuilder(Material.ARROW)
+                .withName(HyrameMessage.GO_BACK.asString(this.owner))
+                .build(), event -> parentCategory.getGUIProvider().apply(this.owner).open());
+
+        this.addItems().run();
     }
 
     protected abstract Runnable addItems();
@@ -123,22 +104,8 @@ public abstract class HostConfigGUI extends PaginatedInventory {
         pagination.clear();
 
         for (IHostConfig config : configs) {
-            final ItemStack itemStack = this.createConfigItem(config);
-
-            if (itemStack == null) {
-                continue;
-            }
-
-            if (this.compatibleConfigs && !this.isCompatible(config)) {
-                continue;
-            }
-
-            pagination.add(PaginatedItem.from(itemStack, event -> {
+            pagination.add(PaginatedItem.from(this.createConfigItem(config), event -> {
                 if (event.isLeftClick()) {
-                    if (!this.isCompatible(config)) {
-                        return;
-                    }
-
                     final IHostController controller = HyrameLoader.getHyrame().getHostController();
                     final IHostConfig currentConfig = controller.getCurrentConfig();
 
@@ -148,7 +115,7 @@ public abstract class HostConfigGUI extends PaginatedInventory {
                         this.addItems().run();
 
                         this.owner.playSound(this.owner.getLocation(), Sound.ORB_PICKUP, 1.0F, 1.0F);
-                        this.owner.sendMessage(HyrameMessage.HOST_CONFIG_LOADED_MESSAGE.asString(this.owner).replace("%name%", config.getName()));
+                        this.owner.sendMessage(HyrameMessage.HOST_CONFIG_LOADED_MESSAGE.asString(this.owner).replace("%name%", config.getId()));
                     }
                 } else if (event.isRightClick()) {
                     this.onConfigRightClick(config);
@@ -174,7 +141,7 @@ public abstract class HostConfigGUI extends PaginatedInventory {
     protected boolean isCompatible(IHostConfig config) {
         final IHyriServer server = HyriAPI.get().getServer();
 
-        return server.getType().equals(config.getGame()) && server.getGameType().equals(config.getGameType());
+        return server.getType().equals(config.getGame()) && Objects.equals(server.getGameType(), config.getGameType());
     }
 
     @Override

@@ -31,11 +31,11 @@
   "waiting-room.gui.item.name": "&3Statistiques &8┃ &7%game%",
   "waiting-room.gui.item.lore": "&7Regarde et suis tes statistiques\n&7dans ce mini-jeu.",
 
-  "team-chooser.message.already-in": "&fVous faites &cdéjà &fpartie de cette équipe!",
-  "team-chooser.message.full": "&fCette équipe est &cpleine&f!",
-  "team-chooser.message.join": "&fTu viens de &arejoindre &fl'équipe: %team%&f.",
-  "team-chooser.message.join-random": "&fVous serez dans une &béquipe aléatoire&f.",
-  "team-chooser.message.already-in-random": "&fVous êtes &cdéjà &fdans une &béquipe aléatoire&f!",
+  "team-chooser.message.already-in": "&7Vous faites &cdéjà &7partie de cette équipe!",
+  "team-chooser.message.full": "&7Cette équipe est &cpleine&7!",
+  "team-chooser.message.join": "&7Tu viens de &arejoindre &7l'équipe: %team%&7.",
+  "team-chooser.message.join-random": "&7Vous serez dans une &béquipe aléatoire&7.",
+  "team-chooser.message.already-in-random": "&7Vous êtes &cdéjà &7dans une &béquipe aléatoire&7!",
   "team-chooser.gui.title": "&8Choix de l'équipe",
   "team-chooser.gui.random-team": "&7Equipe aléatoire",
 
@@ -203,6 +203,7 @@
   "host.whitelist-list.message": "&3Liste des joueurs dans la whitelist:",
   "host.heal.message": "&fTous les joueurs de la partie ont été &asoignées&f.",
   "host.not-host.message": "&cVous devez être l'hôte principal pour effectuer cette action!",
+  "host.not-enough-players.message": "&cIl n'y pas assez de joueurs pour démarrer la partie!",
 
   "host.config.item.lore": "&8#%id%\n\n&8Informations:\n&8 ▪ &7Propriétaire: %owner%\n&8 ▪ &7Créée le: &b%date%\n&8 ▪ &7Privée: %private%\n&8 ▪ &7Chargée: &b%loadings% fois\n\n&8Configuration:\n&8 ▪ &7Joueurs: &b%players%\n&8 ▪ &7Jeu: &b%game%\n&8 ▪ &7Mode: &b%game_type%\n&8 ▪ &7Taille des équipes: &b%teams_size%",
   "host.config.own-configs.item.name": "&bMes configurations",
@@ -211,8 +212,6 @@
   "host.config.all-configs.item.lore": "&7Affiche et séléctionne des configurations\n&7que d'autres joueurs ont créé.",
   "host.config.favorite-configs.item.name": "&bConfigurations favorites",
   "host.config.favorite-configs.item.lore": "&7Affiche ta séléction de configurations\n&7préférées.",
-  "host.config.compatible-configs.item.name": "&bConfigurations compatibles",
-  "host.config.compatible-configs.item.lore": "&7Affiche uniquement les configurations\n&7compatibles avec l'host actuelle.\n\n&8Statut:\n&8▪ %on_color%Activé\n&8▪ %off_color%Désactivé\n\n&3Cliquer pour changer",
   "host.config.create-item.name": "&bCréer une configuration",
   "host.config.create-item.lore": "&7Crée une configuration à partir\n&7des paramètres actuels.\n\n&3Cliquer pour créer",
   "host.config.reset-item.name": "&cReset",

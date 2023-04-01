@@ -7,7 +7,9 @@ import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.hyrame.HyrameLoader;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.anvilgui.AnvilGUI;
+import fr.hyriode.hyrame.host.IHostController;
 import fr.hyriode.hyrame.host.option.HostOption;
+import fr.hyriode.hyrame.impl.host.HostController;
 import fr.hyriode.hyrame.impl.host.config.HostConfigIcon;
 import fr.hyriode.hyrame.inventory.HyriInventory;
 import fr.hyriode.hyrame.item.ItemBuilder;
@@ -55,10 +57,11 @@ public class HostCreateConfigGUI extends HyriInventory {
                     final IHostConfigManager configManager = HyriAPI.get().getHostConfigManager();
                     final IHyriServer server = HyriAPI.get().getServer();
                     final IHostConfig config = configManager.createConfig(this.owner.getUniqueId(), server.getType(), server.getGameType(), this.currentName, this.currentIcon.getMaterial().name());
+                    final HostController controller = (HostController) IHyrame.get().getHostController();
 
                     config.setPrivate(this.private_);
 
-                    for (HostOption<?> option : HyrameLoader.getHyrame().getHostController().getOptions()) {
+                    for (HostOption<?> option : controller.getOptions()) {
                         if (!option.isSavable()) {
                             continue;
                         }
@@ -66,6 +69,7 @@ public class HostCreateConfigGUI extends HyriInventory {
                         config.addValue(option.getName(), option.getValue());
                     }
 
+                    controller.addConfig(config);
                     config.save();
 
                     this.owner.sendMessage(HyrameMessage.HOST_CONFIG_SAVED_MESSAGE.asString(this.owner).replace("%name%", this.currentName));

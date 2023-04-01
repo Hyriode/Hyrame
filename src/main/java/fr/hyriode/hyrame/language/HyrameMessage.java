@@ -100,6 +100,7 @@ public enum HyrameMessage {
     HOST_WHITELIST_LIST_MESSAGE("host.whitelist-list.message"),
     HOST_HEAL_MESSAGE("host.heal.message", HOST_PREFIX),
     HOST_NOT_HOST_MESSAGE("host.not-host.message", HOST_PREFIX),
+    HOST_NOT_ENOUGH_PLAYERS_MESSAGE("host.not-enough-players.message", HOST_PREFIX),
 
     HOST_CONFIG_ITEM_LORE("host.config.item.lore"),
     HOST_CONFIG_OWN_CONFIGS_ITEM_NAME("host.config.own-configs.item.name"),
@@ -108,8 +109,6 @@ public enum HyrameMessage {
     HOST_CONFIG_ALL_CONFIGS_ITEM_LORE("host.config.all-configs.item.lore"),
     HOST_CONFIG_FAVORITE_CONFIGS_ITEM_NAME("host.config.favorite-configs.item.name"),
     HOST_CONFIG_FAVORITE_CONFIGS_ITEM_LORE("host.config.favorite-configs.item.lore"),
-    HOST_CONFIG_COMPATIBLE_CONFIGS_ITEM_NAME("host.config.compatible-configs.item.name"),
-    HOST_CONFIG_COMPATIBLE_CONFIGS_ITEM_LORE("host.config.compatible-configs.item.lore"),
     HOST_CONFIG_CREATE_ITEM_NAME("host.config.create-item.name"),
     HOST_CONFIG_CREATE_ITEM_LORE("host.config.create-item.lore"),
     HOST_CONFIG_RESET_ITEM_NAME("host.config.reset-item.name"),

@@ -16,6 +16,7 @@ import fr.hyriode.hyrame.inventory.pagination.PaginationArea;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.utils.Pagination;
+import fr.hyriode.hyrame.utils.Symbols;
 import fr.hyriode.hyrame.utils.list.ListReplacer;
 import fr.hyriode.hyrame.world.IWorldProvider;
 import org.bukkit.ChatColor;
@@ -89,7 +90,7 @@ public class MapOption extends HostOption<String> {
                         .withName(ChatColor.AQUA + map)
                         .withLore(ListReplacer.replace(HyrameMessage.HOST_MAP_ITEM_LORE.asList(this.owner), "%game%", gameInfo.getDisplayName())
                                 .replace("%game_type%", type.getDisplayName())
-                                .replace("%rating%", ChatColor.RED + "TODO")
+                                .replace("%rating%", ChatColor.RED + Symbols.CROSS_STYLIZED_BOLD)
                                 .list());
 
                 if (value.equals(map)) {

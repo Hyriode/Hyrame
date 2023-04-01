@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.impl.host;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.host.HostData;
 import fr.hyriode.api.host.IHostConfig;
+import fr.hyriode.api.host.IHostConfigManager;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.api.world.IHyriWorld;
@@ -37,6 +38,8 @@ import java.util.*;
  */
 public class HostController implements IHostController {
 
+    private final Map<String, IHostConfig> configs = new HashMap<>();
+
     private long advertTimer = -1;
 
     private final List<String> maps = new ArrayList<>();
@@ -65,12 +68,12 @@ public class HostController implements IHostController {
         this.categories = new HashMap<>();
         this.usedConfigs = new HashSet<>();
 
+        final IHyriServer server = HyriAPI.get().getServer();
+        final String type = server.getType();
+        final String gameType = server.getGameType();
+
         if (!HyriAPI.get().getConfig().isDevEnvironment()) {
             HyrameLogger.log("Loading all maps for host...");
-
-            final IHyriServer server = HyriAPI.get().getServer();
-            final String type = server.getType();
-            final String gameType = server.getGameType();
 
             for (IHyriWorld map : HyriAPI.get().getWorldManager().getWorlds(type, Objects.requireNonNull(gameType))) {
                 if (!map.isEnabled()) {
@@ -89,6 +92,14 @@ public class HostController implements IHostController {
             }
 
             this.hyrame.getWorldProvider().setCurrentWorld(server.getMap());
+        }
+
+        HyrameLogger.log("Loading host configs...");
+
+        final IHostConfigManager configManager = HyriAPI.get().getHostConfigManager();
+
+        for (String configId : configManager.getPublicConfigs(type, gameType, 0, -1)) {
+            this.configs.put(configId, configManager.getConfig(configId));
         }
 
         this.addCategory(4, new HostMainCategory());
@@ -280,6 +291,18 @@ public class HostController implements IHostController {
 
     public List<String> getMaps() {
         return this.maps;
+    }
+
+    public List<IHostConfig> getConfigs() {
+        return new ArrayList<>(this.configs.values());
+    }
+
+    public void addConfig(IHostConfig config) {
+        this.configs.put(config.getId(), config);
+    }
+
+    public void removeConfig(IHostConfig config) {
+        this.configs.remove(config.getGame());
     }
 
 }

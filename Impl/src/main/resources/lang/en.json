@@ -31,11 +31,11 @@
   "waiting-room.gui.item.name": "&3Statistics &8┃ &7%game%",
   "waiting-room.gui.item.lore": "&7Check all of your statistics in\n&7this game.",
 
-  "team-chooser.message.already-in": "&fYou are &calready &fin this team!",
-  "team-chooser.message.full": "&fThis team is &cfull&f!",
-  "team-chooser.message.join": "&fYou &ajoined &fthe team: %team%&f.",
-  "team-chooser.message.join-random": "&fYou &awill be &fin a &brandom team&f.",
-  "team-chooser.message.already-in-random": "&fYou are &calready &fin &brandom team&f!",
+  "team-chooser.message.already-in": "&7You are &calready &7in this team!",
+  "team-chooser.message.full": "&7This team is &cfull&7!",
+  "team-chooser.message.join": "&7You &ajoined &fthe team: %team%&7.",
+  "team-chooser.message.join-random": "&7You &awill be &7in a &brandom team&7.",
+  "team-chooser.message.already-in-random": "&7You are &calready &7in &brandom team&7!",
   "team-chooser.gui.title": "&8Select a team",
   "team-chooser.gui.random-team": "&7Random team",
 
@@ -205,6 +205,7 @@
   "host.whitelist-list.message": "&3List of whitelisted players:",
   "host.heal.message": "&fAll game players have been &ahealed&f.",
   "host.not-host.message": "&cYou must be the main host to perform this action!",
+  "host.not-enough-players.message": "&cThere are not enough players to start the game!",
 
   "host.config.item.lore": "&8#%id%\n\n&8Information:\n&8 ▪ &7Owner: %owner%\n&8 ▪ &7Created on: &b%date%\n&8 ▪ &7Private: %private%\n&8 ▪ &7Loaded: &b%loadings% time(s)\n\n&8Configuration:\n&8 ▪ &7Players: &b%players%\n&8 ▪ &7Game: &b%game%\n&8 ▪ &7Mode: &b%game_type%\n&8 ▪ &7Teams size: &b%teams_size%",
   "host.config.own-configs.item.name": "&bMy configurations",
@@ -213,8 +214,6 @@
   "host.config.all-configs.item.lore": "&7Show and select configurations\n&7created by other players.",
   "host.config.favorite-configs.item.name": "&bFavorite configurations",
   "host.config.favorite-configs.item.lore": "&7Show your selection of favorite\n&7configurations.",
-  "host.config.compatible-configs.item.name": "&bCompatible configurations",
-  "host.config.compatible-configs.item.lore": "&7Only show the configurations\n&7compatible with the current\n&7host.\n\n&8Status:\n&8▪ %on_color%Enabled\n&8▪ %off_color%Disabled\n\n&3Click to change",
   "host.config.create-item.name": "&bCreate a configuration",
   "host.config.create-item.lore": "&7Create a configuration from the\n&7current settings.\n\n&3Click to create",
   "host.config.reset-item.name": "&cReset",

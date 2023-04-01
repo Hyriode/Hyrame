@@ -8,6 +8,7 @@ import fr.hyriode.hyrame.HyrameLoader;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.anvilgui.AnvilGUI;
 import fr.hyriode.hyrame.host.HostCategory;
+import fr.hyriode.hyrame.impl.host.HostController;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.utils.Symbols;
@@ -41,7 +42,7 @@ public class HostAllConfigsGUI extends HostConfigGUI {
 
                     final IHostConfig config = HyriAPI.get().getHostConfigManager().getConfig(configId);
 
-                    if (config != null) {
+                    if (config != null && !config.isPrivate()) {
                         this.searchedConfig = config;
                     } else {
                         this.owner.sendMessage(HyrameMessage.HOST_CONFIG_SEARCH_INVALID_ID_MESSAGE.asString(this.owner).replace("%id%", "#" + configId));
@@ -79,31 +80,18 @@ public class HostAllConfigsGUI extends HostConfigGUI {
             if (this.searchedConfig != null) {
                 super.addConfigItems(Collections.singletonList(this.searchedConfig));
             } else {
-                final IHostConfigManager configManager = HyriAPI.get().getHostConfigManager();
-                final List<IHostConfig> configs = new ArrayList<>();
-
-                for (String configId : configManager.getConfigs()) {
-                    final IHostConfig config = configManager.getConfig(configId);
-
-                    if (config.isPrivate()) {
-                        continue;
-                    }
-
-                    configs.add(config);
-                }
-
-                super.addConfigItems(configs);
+                super.addConfigItems(((HostController) IHyrame.get().getHostController()).getConfigs());
             }
         };
     }
 
     @Override
     protected void onConfigRightClick(IHostConfig config) {
-        if (IHyriPlayer.get(this.owner.getUniqueId()).getHosts().hasFavoriteConfig(config.getId())) {
+        final IHyriPlayer account = IHyriPlayer.get(this.owner.getUniqueId());
+
+        if (account.getHosts().hasFavoriteConfig(config.getId())) {
             return;
         }
-
-        final IHyriPlayer account = IHyriPlayer.get(this.owner.getUniqueId());
 
         account.getHosts().addFavoriteConfig(config.getId());
         account.update();

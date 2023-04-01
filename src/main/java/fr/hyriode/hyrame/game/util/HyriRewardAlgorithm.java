@@ -20,11 +20,11 @@ public class HyriRewardAlgorithm {
             return 0L;
         }
 
-        return kills * 15L + getPlayedTimeHyris(playedTime) + (victory ? 50 : 0);
+        return kills * 10L + getPlayedTimeHyris(playedTime) + (victory ? 50 : 0);
     }
 
     public static double getPlayedTimeXP(long playedTime) {
-        return (double) (playedTime / 1000) / 10;
+        return (double) (playedTime / 1000) / 5;
     }
 
     public static double getXP(int kills, long playedTime, boolean victory) {
@@ -32,7 +32,7 @@ public class HyriRewardAlgorithm {
             return 0L;
         }
 
-        return kills * 15.0D + getPlayedTimeXP(playedTime) + (victory ? 50 : 0);
+        return kills * 10.0D + getPlayedTimeXP(playedTime) + (victory ? 100 : 0);
     }
 
 }

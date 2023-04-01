@@ -95,7 +95,7 @@ public class HyriGameStartingTimer extends BukkitRunnable {
         if (this.running && (HyriAPI.get().getServer().getAccessibility() != HyggServer.Accessibility.HOST) || force) {
             this.forceStarting = false;
             this.running = false;
-            this.time = -1;
+            this.time = 30;
 
             this.onTimeChanged(-1);
 

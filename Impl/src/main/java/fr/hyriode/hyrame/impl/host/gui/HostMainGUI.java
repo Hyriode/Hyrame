@@ -54,14 +54,19 @@ public class HostMainGUI extends HostGUI {
         final boolean running = timer.isRunning();
 
         this.setItem(49, new ItemBuilder(Material.INK_SACK, 1, running ? 1 : 10)
-                        .withName(running ? HyrameMessage.HOST_CANCEL_START_GAME_NAME.asString(this.owner) : HyrameMessage.HOST_START_GAME_NAME.asString(this.owner))
-                        .withLore(running ? HyrameMessage.HOST_CANCEL_START_GAME_LORE.asList(this.owner) : HyrameMessage.HOST_START_GAME_LORE.asList(this.owner))
-                        .build(),
+                .withName(running ? HyrameMessage.HOST_CANCEL_START_GAME_NAME.asString(this.owner) : HyrameMessage.HOST_START_GAME_NAME.asString(this.owner))
+                .withLore(running ? HyrameMessage.HOST_CANCEL_START_GAME_LORE.asList(this.owner) : HyrameMessage.HOST_START_GAME_LORE.asList(this.owner))
+                .build(),
                 event -> {
                     final HostData hostData = HyriAPI.get().getServer().getHostData();
 
                     if (hostData.getSecondaryHosts().contains(this.owner.getUniqueId())) {
                         this.owner.sendMessage(HyrameMessage.HOST_NOT_HOST_MESSAGE.asString(this.owner));
+                        return;
+                    }
+
+                    if (game.getPlayers().size() <= 1) {
+                        this.owner.sendMessage(HyrameMessage.HOST_NOT_ENOUGH_PLAYERS_MESSAGE.asString(this.owner));
                         return;
                     }
 
