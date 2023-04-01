@@ -55,8 +55,6 @@ public class HostEditConfigGUI extends HyriInventory {
                         this.config.addValue(option.getName(), option.getValue());
                     }
 
-                    controller.addConfig(config);
-
                     this.config.save();
                     this.owner.sendMessage(HyrameMessage.HOST_CONFIG_SAVED_MESSAGE.asString(this.owner).replace("%name%", this.config.getName()));
 
@@ -67,8 +65,6 @@ public class HostEditConfigGUI extends HyriInventory {
                 .withName(HyrameMessage.HOST_CONFIG_DELETE_CONFIG_ITEM_NAME.asString(this.owner))
                 .build(),
                 event -> {
-                    ((HostController) IHyrame.get().getHostController()).removeConfig(this.config);
-
                     this.config.delete();
                     this.owner.playSound(this.owner.getLocation(), Sound.FIZZ, 0.5F, 1.0F);
                     this.owner.sendMessage(HyrameMessage.HOST_CONFIG_DELETED_MESSAGE.asString(this.owner).replace("%name%", this.config.getName()));

@@ -69,7 +69,6 @@ public class HostCreateConfigGUI extends HyriInventory {
                         config.addValue(option.getName(), option.getValue());
                     }
 
-                    controller.addConfig(config);
                     config.save();
 
                     this.owner.sendMessage(HyrameMessage.HOST_CONFIG_SAVED_MESSAGE.asString(this.owner).replace("%name%", this.currentName));

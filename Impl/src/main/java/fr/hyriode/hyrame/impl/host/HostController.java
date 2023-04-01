@@ -97,9 +97,16 @@ public class HostController implements IHostController {
         HyrameLogger.log("Loading host configs...");
 
         final IHostConfigManager configManager = HyriAPI.get().getHostConfigManager();
+        final UUID owner = HyriAPI.get().getServer().getHostData().getOwner();
 
         for (String configId : configManager.getPublicConfigs(type, gameType, 0, -1)) {
-            this.configs.put(configId, configManager.getConfig(configId));
+            final IHostConfig config = configManager.getConfig(configId);
+
+            if (config.getOwner().equals(owner)) {
+                continue;
+            }
+
+            this.configs.put(configId, config);
         }
 
         this.addCategory(4, new HostMainCategory());
@@ -295,14 +302,6 @@ public class HostController implements IHostController {
 
     public List<IHostConfig> getConfigs() {
         return new ArrayList<>(this.configs.values());
-    }
-
-    public void addConfig(IHostConfig config) {
-        this.configs.put(config.getId(), config);
-    }
-
-    public void removeConfig(IHostConfig config) {
-        this.configs.remove(config.getGame());
     }
 
 }
