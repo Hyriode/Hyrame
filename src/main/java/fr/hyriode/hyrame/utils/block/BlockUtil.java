@@ -69,7 +69,7 @@ public class BlockUtil {
                         chunk.e(new BlockPosition(handle.getX(), handle.getY(), handle.getZ())); // It updates tile entities
                     }
 
-                    PacketUtil.sendPacket(new PacketPlayOutMapChunk(chunk, true, 65536));
+                    PacketUtil.sendPacket(new PacketPlayOutMapChunk(chunk, true, 65535));
 
                     chunk.bukkitChunk.unload(true);
                     chunk.bukkitChunk.load();

@@ -75,7 +75,7 @@ class GameHandler implements Listener {
                     event.setCancelled(true);
                 }
             }
-        }, game -> game.getState() != HyriGameState.PLAYING || game.getSpectator(event.getPlayer().getUniqueId()) != null || game.getPlayer(event.getPlayer()).isSpectator());
+        }, game -> game.getState() != HyriGameState.PLAYING || game.getSpectator(event.getPlayer().getUniqueId()) != null || (game.getPlayer(event.getPlayer()) != null && game.getPlayer(event.getPlayer()).isSpectator()));
     }
 
     @EventHandler(priority = EventPriority.LOW)

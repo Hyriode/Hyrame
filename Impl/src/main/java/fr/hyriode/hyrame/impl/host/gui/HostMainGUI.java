@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.impl.host.gui;
 
 import fr.hyriode.api.HyriAPI;
+import fr.hyriode.api.host.HostAdvertisementEvent;
 import fr.hyriode.api.host.HostData;
 import fr.hyriode.api.host.HostType;
 import fr.hyriode.api.server.IHyriServer;
@@ -9,7 +10,6 @@ import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.timer.HyriGameStartingTimer;
 import fr.hyriode.hyrame.host.HostCategory;
 import fr.hyriode.hyrame.host.IHostController;
-import fr.hyriode.hyrame.host.event.HostAdvertisementEvent;
 import fr.hyriode.hyrame.host.gui.HostGUI;
 import fr.hyriode.hyrame.impl.host.gui.config.HostOwnConfigsGUI;
 import fr.hyriode.hyrame.inventory.HyriInventory;
@@ -118,35 +118,35 @@ public class HostMainGUI extends HostGUI {
             this.slot = slot;
 
             this.currentInventory.setItem(this.slot, new ItemBuilder(Material.BEACON)
-                            .withName(HyrameMessage.HOST_ADVERT_NAME.asString(this.player))
-                            .withLore(this.getHostController().getAdvertTimer() == -1 ?
-                                            HyrameMessage.HOST_ADVERT_LORE.asList(this.player) :
-                                            ListReplacer.replace(HyrameMessage.HOST_ADVERT_TIMER_LORE.asList(this.player), "%time%", TimeUtil.formatTime(this.getHostController().getAdvertTimer())).list())
-                            .build(),
-                            event -> {
-                                if (this.getHostController().getAdvertTimer() != -1) {
-                                    return;
-                                }
+                    .withName(HyrameMessage.HOST_ADVERT_NAME.asString(this.player))
+                    .withLore(this.getHostController().getAdvertTimer() == -1 ?
+                                    HyrameMessage.HOST_ADVERT_LORE.asList(this.player) :
+                                    ListReplacer.replace(HyrameMessage.HOST_ADVERT_TIMER_LORE.asList(this.player), "%time%", TimeUtil.formatTime(this.getHostController().getAdvertTimer())).list())
+                    .build(),
+                    event -> {
+                        if (this.getHostController().getAdvertTimer() != -1) {
+                            return;
+                        }
 
-                                final IHyriServer server = HyriAPI.get().getServer();
-                                final HostData hostData = server.getHostData();
+                        final IHyriServer server = HyriAPI.get().getServer();
+                        final HostData hostData = server.getHostData();
 
-                                if (hostData.getType() == HostType.PRIVATE) {
-                                    this.player.sendMessage(HyrameMessage.HOST_ADVERTISEMENT_ERROR_MESSAGE.asString(this.player));
-                                    return;
-                                }
+                        if (hostData.getType() == HostType.PRIVATE) {
+                            this.player.sendMessage(HyrameMessage.HOST_ADVERTISEMENT_ERROR_MESSAGE.asString(this.player));
+                            return;
+                        }
 
-                                if (hostData.getSecondaryHosts().contains(this.player.getUniqueId())) {
-                                    this.player.sendMessage(HyrameMessage.HOST_NOT_HOST_MESSAGE.asString(this.player));
-                                    return;
-                                }
+                        if (hostData.getSecondaryHosts().contains(this.player.getUniqueId())) {
+                            this.player.sendMessage(HyrameMessage.HOST_NOT_HOST_MESSAGE.asString(this.player));
+                            return;
+                        }
 
-                                HyriAPI.get().getNetworkManager().getEventBus().publish(new HostAdvertisementEvent(server.getName()));
+                        HyriAPI.get().getNetworkManager().getEventBus().publish(new HostAdvertisementEvent(server.getName()));
 
-                                this.getHostController().startAdvertTimer();
+                        this.getHostController().startAdvertTimer();
 
-                                this.addItem(this.currentInventory, this.slot);
-                            });
+                        this.addItem(this.currentInventory, this.slot);
+                    });
         }
 
         public void stop() {

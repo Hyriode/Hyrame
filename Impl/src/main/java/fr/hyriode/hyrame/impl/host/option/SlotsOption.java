@@ -20,7 +20,7 @@ import java.util.List;
 public class SlotsOption extends PreciseIntegerOption {
 
     public SlotsOption(HostDisplay display) {
-        super(display, HyriAPI.get().getServer().getSlots(), 1, 200, new int[] {1, 5});
+        super(display, HyriAPI.get().getServer().getSlots(), 1, 50, new int[] {1, 5});
 
         this.onChanged = slots -> {
             final int currentPlayers = HyriAPI.get().getServer().getPlayersPlaying().size();

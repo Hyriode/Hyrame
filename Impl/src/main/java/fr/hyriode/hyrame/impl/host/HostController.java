@@ -270,12 +270,12 @@ public class HostController implements IHostController {
 
     @Override
     public void startAdvertTimer() {
+        this.advertTimer = 60;
+
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (advertTimer == -1) {
-                    advertTimer = 60;
-                } else if (advertTimer == 0) {
+                if (advertTimer == 0) {
                     this.cancel();
 
                     advertTimer = -1;

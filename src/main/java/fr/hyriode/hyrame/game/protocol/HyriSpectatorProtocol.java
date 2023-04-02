@@ -1,6 +1,5 @@
 package fr.hyriode.hyrame.game.protocol;
 
-import com.mojang.authlib.GameProfile;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.hyggdrasil.api.server.HyggServer;
@@ -13,21 +12,16 @@ import fr.hyriode.hyrame.game.util.HyriGameItems;
 import fr.hyriode.hyrame.packet.IPacketContainer;
 import fr.hyriode.hyrame.packet.IPacketHandler;
 import fr.hyriode.hyrame.packet.PacketType;
-import fr.hyriode.hyrame.reflection.ObjectModifier;
 import fr.hyriode.hyrame.reflection.Reflection;
 import fr.hyriode.hyrame.utils.PlayerUtil;
 import fr.hyriode.hyrame.utils.VoidPlayer;
-import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_8_R3.WorldSettings;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 import static fr.hyriode.hyrame.game.event.player.HyriGameSpectatorEvent.Action;
 

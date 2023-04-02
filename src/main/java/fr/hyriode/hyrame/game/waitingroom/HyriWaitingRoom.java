@@ -3,11 +3,8 @@ package fr.hyriode.hyrame.game.waitingroom;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.api.language.HyriLanguageMessage;
-import fr.hyriode.api.leveling.NetworkLeveling;
 import fr.hyriode.api.player.IHyriPlayer;
-import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.hyrame.HyrameLogger;
-import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
@@ -18,24 +15,15 @@ import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.leaderboard.HyriLeaderboardDisplay;
 import fr.hyriode.hyrame.npc.NPC;
 import fr.hyriode.hyrame.npc.NPCManager;
-import fr.hyriode.hyrame.packet.PacketUtil;
-import fr.hyriode.hyrame.reflection.Reflection;
 import fr.hyriode.hyrame.utils.LocationWrapper;
 import fr.hyriode.hyrame.utils.Symbols;
 import fr.hyriode.hyrame.utils.block.BlockUtil;
 import fr.hyriode.hyrame.utils.block.Cuboid;
 import fr.hyriode.hyrame.utils.list.ListReplacer;
 import fr.hyriode.hyrame.world.WorldChangedEvent;
-import net.minecraft.server.v1_8_R3.Chunk;
-import net.minecraft.server.v1_8_R3.ChunkSection;
-import net.minecraft.server.v1_8_R3.IBlockData;
-import net.minecraft.server.v1_8_R3.PacketPlayOutMultiBlockChange;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -123,15 +111,20 @@ public class HyriWaitingRoom {
         }
 
         for (Leaderboard leaderboard : this.leaderboards) {
+            final String leaderboardType = leaderboard.getType();
             final String leaderboardName = leaderboard.getName();
-            final LocationWrapper location = this.config.getLeaderboardsLocation().get(leaderboardName);
+            final Config.Leaderboard config = this.config.getLeaderboards()
+                    .stream()
+                    .filter(data -> data.getType().equals(leaderboardType) && data.getName().equals(leaderboardName))
+                    .findFirst()
+                    .orElse(null);
 
-            if (location == null) {
-                System.err.println("Couldn't find the location of '" + leaderboardName + "' leaderboard!");
-                continue;
+            if (config == null) {
+                System.err.println("Couldn't find the config of '" + leaderboardType + "#" + leaderboardName + "' leaderboard!");
+                return;
             }
 
-            final HyriLeaderboardDisplay display = new HyriLeaderboardDisplay.Builder(this.plugin, HyriAPI.get().getServer().getType(), leaderboardName, location.asBukkit())
+            final HyriLeaderboardDisplay display = new HyriLeaderboardDisplay.Builder(this.plugin, leaderboardType, leaderboardName, config.getLocation().asBukkit())
                     .withHeader(leaderboard.getDisplay())
                     .withUpdateTime(20L * 60L)
                     .withScoreFormatter(leaderboard.getScoreFormatter())
@@ -325,13 +318,19 @@ public class HyriWaitingRoom {
      */
     public static class Leaderboard {
 
+        private final String type;
         private final String name;
         private final Function<Player, String> display;
         private BiFunction<Player, Double, String> scoreFormatter = (account, score) -> String.valueOf(score.intValue());
 
-        public Leaderboard(String name, Function<Player, String> display) {
+        public Leaderboard(String type, String name, Function<Player, String> display) {
+            this.type = type;
             this.name = name;
             this.display = display;
+        }
+
+        public String getType() {
+            return this.type;
         }
 
         public String getName() {
@@ -367,8 +366,8 @@ public class HyriWaitingRoom {
         /** The location of the npc */
         private final LocationWrapper npcLocation;
 
-        /** The different locations of the leaderboards. E.g. kills -> location of kills leaderboard */
-        private final Map<String, LocationWrapper> leaderboards = new HashMap<>();
+        /** The different data of the leaderboards. */
+        private final List<Leaderboard> leaderboards = new ArrayList<>();
 
         public Config(LocationWrapper spawn, LocationWrapper firstPos, LocationWrapper secondPos, LocationWrapper npcLocation) {
             this.spawn = spawn;
@@ -393,12 +392,38 @@ public class HyriWaitingRoom {
             return this.npcLocation;
         }
 
-        public Map<String, LocationWrapper> getLeaderboardsLocation() {
+        public List<Leaderboard> getLeaderboards() {
             return this.leaderboards;
         }
 
-        public void addLeaderboardLocation(String leaderboardName, LocationWrapper location) {
-            this.leaderboards.put(leaderboardName, location);
+        public void addLeaderboard(Leaderboard leaderboard) {
+            this.leaderboards.add(leaderboard);
+        }
+
+        public static class Leaderboard {
+
+            private final String type;
+            private final String name;
+            private final LocationWrapper location;
+
+            public Leaderboard(String type, String name, LocationWrapper location) {
+                this.type = type;
+                this.name = name;
+                this.location = location;
+            }
+
+            public String getType() {
+                return this.type;
+            }
+
+            public String getName() {
+                return this.name;
+            }
+
+            public LocationWrapper getLocation() {
+                return this.location;
+            }
+
         }
 
     }
