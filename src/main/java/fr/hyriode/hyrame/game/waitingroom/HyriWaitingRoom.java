@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.game.waitingroom;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.api.leaderboard.HyriLeaderboardScope;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.game.HyriGame;
@@ -128,6 +129,7 @@ public class HyriWaitingRoom {
                     .withHeader(leaderboard.getDisplay())
                     .withUpdateTime(20L * 60L)
                     .withScoreFormatter(leaderboard.getScoreFormatter())
+                    .withScopes(leaderboard.getScopes())
                     .build();
 
             display.show();
@@ -320,6 +322,9 @@ public class HyriWaitingRoom {
 
         private final String type;
         private final String name;
+
+        private List<HyriLeaderboardScope> scopes = Arrays.asList(HyriLeaderboardScope.values());
+
         private final Function<Player, String> display;
         private BiFunction<Player, Double, String> scoreFormatter = (account, score) -> String.valueOf(score.intValue());
 
@@ -343,6 +348,15 @@ public class HyriWaitingRoom {
 
         public BiFunction<Player, Double, String> getScoreFormatter() {
             return this.scoreFormatter;
+        }
+
+        public List<HyriLeaderboardScope> getScopes() {
+            return this.scopes;
+        }
+
+        public Leaderboard withScopes(HyriLeaderboardScope... scopes) {
+            this.scopes = Arrays.asList(scopes);
+            return this;
         }
 
         public Leaderboard withScoreFormatter(BiFunction<Player, Double, String> scoreFormatter) {
