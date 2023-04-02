@@ -49,6 +49,7 @@ public class SpectatorSettingsItem extends HyriItem<HyramePlugin> {
         }
 
         private void addEffect(int amplifier) {
+            this.owner.setFlySpeed(amplifier + 1.0f);
             this.owner.removePotionEffect(PotionEffectType.SPEED);
             this.owner.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, amplifier, false, false));
         }
