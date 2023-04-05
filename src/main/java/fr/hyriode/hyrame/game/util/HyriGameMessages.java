@@ -1,6 +1,8 @@
 package fr.hyriode.hyrame.game.util;
 
+import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.language.HyriLanguageMessage;
+import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.event.player.HyriGameDeathEvent;
@@ -96,7 +98,7 @@ public class HyriGameMessages {
                 .append("\n")
                 .reset();
 
-        for (int i = 0; i <= (Symbols.HYPHENS_LINE.length() - game.getDisplayName().length()) / 2; i++) {
+        for (int i = 0; i <= (Symbols.HYPHENS_LINE.length() - game.getDisplayName().length()) / 2 - (game.getDisplayName().length() / 2); i++) {
             builder.append("  ");
         }
 
@@ -116,11 +118,18 @@ public class HyriGameMessages {
         return createFramedMessage(game, builder -> builder.reset().append(game.getDescription().getValue(target)));
     }
 
-    public static BaseComponent[] createWinMessage(HyriGame<?> game, Player target, HyriGameTeam winner, List<String> stats, List<String> rewards) {
+    public static String createOfflineWinMessage(HyriGame<?> game, IHyriPlayer target, String rewards) {
+        return HyrameMessage.GAME_OFFLINE_WIN_MESSAGE.asString(target)
+                .replace("%game%", game.getDisplayName())
+                .replace("%rewards%", rewards)
+                .replace("%server%", HyriAPI.get().getServer().getName());
+    }
+
+    public static BaseComponent[] createWinMessage(HyriGame<?> game, Player target, HyriGameTeam winner, List<String> stats, String rewards) {
         return createFramedMessage(game, builder -> {
             final String winnerLine = HyrameMessage.GAME_END_WINNER.asString(target).replace("%winner%", winner.getFormattedDisplayName(target));
 
-            for (int i = 0; i <= (Symbols.HYPHENS_LINE.length() - winnerLine.length()) / 2 + 2; i++) {
+            for (int i = 0; i <= (Symbols.HYPHENS_LINE.length() - winnerLine.length()) / 2 - 3; i++) {
                 builder.append("  ");
             }
 
@@ -130,7 +139,7 @@ public class HyriGameMessages {
             if (stats != null && stats.size() > 0) {
                 builder.append("\n");
 
-                final int space = (Symbols.HYPHENS_LINE.length() - ChatColor.stripColor(stats.get(0)).length()) / 2;
+                final int space = (Symbols.HYPHENS_LINE.length() - ChatColor.stripColor(stats.get(0)).length()) / 2 - 2;
 
                 for (String statistic : stats) {
                     for (int i = 0; i <= space; i++) {
@@ -141,30 +150,14 @@ public class HyriGameMessages {
                 }
             }
 
-            if (rewards != null && rewards.size() > 0) {
+            if (rewards != null) {
                 builder.append("\n");
 
-                final String rewardsLine = HyrameMessage.GAME_END_REWARDS.asString(target);
-                final int space = (Symbols.HYPHENS_LINE.length() - ChatColor.stripColor(rewardsLine).length()) / 2 - 3;
-
-                for (int i = 0; i <= space; i++) {
+                for (int i = 0; i <= (Symbols.HYPHENS_LINE.length() - rewards.length()) / 2 - 3; i++) {
                     builder.append("  ");
                 }
 
-                builder.append(rewardsLine)
-                        .color(ChatColor.GREEN)
-                        .bold(true)
-                        .append("")
-                        .reset()
-                        .append("\n");
-
-                for (String reward : rewards) {
-                    for (int i = 0; i <= space - 2; i++) {
-                        builder.append("  ");
-                    }
-
-                    builder.append("- ").color(ChatColor.WHITE).append(reward).reset().append("\n");
-                }
+                builder.append(rewards);
             }
         });
     }

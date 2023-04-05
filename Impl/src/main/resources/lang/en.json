@@ -16,14 +16,14 @@
   "game.starting.cancelled": "&cCancelled",
   "game.join": "%player% &7joined. %counter_color%(%current_players%/%max_players%)",
   "game.left": "%player% &7left. %counter_color%(%current_players%/%max_players%)",
-  "game.disconnected": "%player% &7disconnected?",
+  "game.disconnected": "%player% &7disconnected.",
   "game.reconnected": "%player% &7reconnected.",
   "game.victory": "&6✦ &lVICTORY &r&6✦",
   "game.defeat": "&cDEFEAT",
-  "game.end.winner": "&6Winner &7 - %winner%",
-  "game.end.rewards": "&aRewards:",
+  "game.end.winner": "&bWinner &7 - %winner%",
   "game.global-message": "&b[Global] ",
   "game.team-message": "&b[Team] ",
+  "game.offline-win.message": "&3&m--------------------------------------------------\n&fSummary of your last game &b&l%game%&f.\n%rewards% &8(%server%)\n&3&m--------------------------------------------------",
 
   "waiting-room.npc.display": "&bStatistics\n&f%game%\n&3Click to see",
 

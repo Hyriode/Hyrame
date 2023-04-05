@@ -36,9 +36,11 @@ public enum HyrameMessage {
     GAME_VICTORY("game.victory"),
     GAME_DEFEAT("game.defeat"),
     GAME_END_WINNER("game.end.winner"),
+    GAME_END_OFFLINE_MESSAGE("game.end.offline-message"),
     GAME_END_REWARDS("game.end.rewards"),
     GAME_GLOBAL_MESSAGE("game.global-message"),
     GAME_TEAM_MESSAGE("game.team-message"),
+    GAME_OFFLINE_WIN_MESSAGE("game.offline-win.message"),
 
     WAITING_ROOM_NPC_DISPLAY("waiting-room.npc.display"),
 
