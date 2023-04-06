@@ -22,6 +22,7 @@ public class PacketContainer implements IPacketContainer {
 
     private ObjectModifier<String> strings;
     private ObjectModifier<Byte> bytes;
+    private ObjectModifier<Boolean> booleans;
     private ObjectModifier<Short> shorts;
     private ObjectModifier<Integer> integers;
     private ObjectModifier<Long> longs;
@@ -70,6 +71,14 @@ public class PacketContainer implements IPacketContainer {
             this.bytes = new ObjectModifier<>(Byte.class, this.packet);
         }
         return this.bytes;
+    }
+
+    @Override
+    public ObjectModifier<Boolean> getBooleans() {
+        if (this.booleans == null) {
+            this.booleans = new ObjectModifier<>(Boolean.class, this.packet);
+        }
+        return this.booleans;
     }
 
     @Override
