@@ -17,6 +17,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -113,6 +114,11 @@ public class PacketInterceptor implements IPacketInterceptor {
         }
 
         return container;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(PacketPlayInFlying.PacketPlayInPosition.class.getName());
+        System.out.println(Arrays.toString(PacketPlayInFlying.PacketPlayInPosition.class.getName().split("\\.")));
     }
 
     private PacketType getPacketTypeFromPacket(Object packet) {

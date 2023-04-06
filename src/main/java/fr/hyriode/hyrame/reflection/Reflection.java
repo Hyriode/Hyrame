@@ -1,10 +1,9 @@
 package fr.hyriode.hyrame.reflection;
 
+import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
+
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -143,6 +142,10 @@ public class Reflection {
     }
 
     public static Field[] getFieldsOf(Class<?> clazz, Class<?> targetClass) {
+        if (clazz == null) {
+            return new Field[0];
+        }
+
         final List<Field> result = new ArrayList<>();
         final Consumer<Field[]> action = fields -> {
             for (Field field : fields) {
@@ -154,7 +157,7 @@ public class Reflection {
             }
         };
 
-        action.accept(clazz.getFields());
+        action.accept(getFieldsOf(clazz.getSuperclass(), targetClass));
         action.accept(clazz.getDeclaredFields());
 
         return result.toArray(new Field[0]);
