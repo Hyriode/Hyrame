@@ -88,6 +88,13 @@ public interface IPacketContainer {
     ObjectModifier<Byte> getBytes();
 
     /**
+     * Get the modifier of boolean fields
+     *
+     * @return A {@link ObjectModifier} of {@link Byte}
+     */
+    ObjectModifier<Boolean> getBooleans();
+
+    /**
      * Get the modifier of short fields
      *
      * @return A {@link ObjectModifier} of {@link Short}
