@@ -19,7 +19,7 @@
   "game.disconnected": "%player% &7disconnected.",
   "game.reconnected": "%player% &7reconnected.",
   "game.victory": "&6✦ &lVICTORY &r&6✦",
-  "game.defeat": "&cDEFEAT",
+  "game.defeat": "&c&lDEFEAT",
   "game.end.winner": "&bWinner &7 - %winner%",
   "game.global-message": "&b[Global] ",
   "game.team-message": "&b[Team] ",

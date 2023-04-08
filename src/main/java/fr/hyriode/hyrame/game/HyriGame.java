@@ -233,6 +233,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGam
                     BroadcastUtil.broadcast(target -> HyrameMessage.GAME_RECONNECTED.asString(target).replace("%player%", name));
                 }
 
+                gamePlayer.resetDisconnectionTime();
+
                 HyriAPI.get().getEventBus().publish(new HyriGameReconnectedEvent(this, gamePlayer));
                 return;
             }
@@ -336,6 +338,10 @@ public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGam
             gamePlayer.getTeam().removePlayer(gamePlayer);
         }
 
+        if (this.state == HyriGameState.PLAYING) {
+            gamePlayer.initDisconnectionTime();
+        }
+
         // Send disconnection message
         if (this.state == HyriGameState.PLAYING && !gamePlayer.isSpectator()) {
             BroadcastUtil.broadcast(target -> HyrameMessage.GAME_DISCONNECTED.asString(target).replace("%player%", gamePlayer.formatNameWithTeam()));
@@ -362,9 +368,9 @@ public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGam
 
         tabListManager.updateTeam(team.getName());
 
-        HyriAPI.get().getEventBus().publish(new HyriGameWinEvent(this, winner));
-
         this.end();
+
+        HyriAPI.get().getEventBus().publish(new HyriGameWinEvent(this, winner));
     }
 
     /**

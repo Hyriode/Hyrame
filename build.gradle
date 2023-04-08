@@ -62,7 +62,7 @@ allprojects {
 archivesBaseName = 'Hyrame'
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    compileOnly fileTree(include: ['*.jar'], dir: 'libs')
     api 'fr.hyriode:hyriapi:1.5.2-SNAPSHOT'
     api 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
     api 'xyz.xenondevs:particle:1.8.1'

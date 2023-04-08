@@ -98,8 +98,8 @@ public class HyriGameMessages {
                 .append("\n")
                 .reset();
 
-        for (int i = 0; i <= (Symbols.HYPHENS_LINE.length() - game.getDisplayName().length()) / 2 - (game.getDisplayName().length() / 2); i++) {
-            builder.append("  ");
+        for (int i = 0; i <= Symbols.HYPHENS_LINE.length() / 2 + game.getDisplayName().length() / 2; i++) {
+            builder.append(" ");
         }
 
         builder.append(game.getDisplayName()).color(ChatColor.AQUA).bold(true).append("\n\n");
@@ -129,8 +129,8 @@ public class HyriGameMessages {
         return createFramedMessage(game, builder -> {
             final String winnerLine = HyrameMessage.GAME_END_WINNER.asString(target).replace("%winner%", winner.getFormattedDisplayName(target));
 
-            for (int i = 0; i <= (Symbols.HYPHENS_LINE.length() - winnerLine.length()) / 2 - 3; i++) {
-                builder.append("  ");
+            for (int i = 0; i <= Symbols.HYPHENS_LINE.length() / 2 - ChatColor.stripColor(winnerLine).length() / 4; i++) {
+                builder.append(" ");
             }
 
             builder.append(winnerLine);
@@ -139,11 +139,11 @@ public class HyriGameMessages {
             if (stats != null && stats.size() > 0) {
                 builder.append("\n");
 
-                final int space = (Symbols.HYPHENS_LINE.length() - ChatColor.stripColor(stats.get(0)).length()) / 2 - 2;
+                final int space = Symbols.HYPHENS_LINE.length() / 2 - ChatColor.stripColor(stats.get(0)).length() / 4;
 
                 for (String statistic : stats) {
                     for (int i = 0; i <= space; i++) {
-                        builder.append("  ");
+                        builder.append(" ");
                     }
 
                     builder.append(statistic).append("\n");
@@ -153,8 +153,8 @@ public class HyriGameMessages {
             if (rewards != null) {
                 builder.append("\n");
 
-                for (int i = 0; i <= (Symbols.HYPHENS_LINE.length() - rewards.length()) / 2 - 3; i++) {
-                    builder.append("  ");
+                for (int i = 0; i <= Symbols.HYPHENS_LINE.length() / 2 - ChatColor.stripColor(rewards).length() / 4; i++) {
+                    builder.append(" ");
                 }
 
                 builder.append(rewards);

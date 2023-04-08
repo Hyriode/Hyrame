@@ -33,6 +33,8 @@ public class HyriGamePlayer extends HyriGameSpectator implements Cast<HyriGamePl
     private boolean dead = false;
     /** The timestamp of the player connection */
     protected long connectionTime = -1;
+    /** The timestamp of the player disconnection */
+    protected long disconnectionTime = -1;
     /** Is player online or no */
     private boolean online = true;
 
@@ -87,10 +89,24 @@ public class HyriGamePlayer extends HyriGameSpectator implements Cast<HyriGamePl
     }
 
     /**
-     * Set the player connection time as the current time
+     * Set the player's connection time as the current time
      */
     void initConnectionTime() {
         this.connectionTime = System.currentTimeMillis();
+    }
+
+    /**
+     * Set the player's disconnection time as the current time
+     */
+    void initDisconnectionTime() {
+        this.disconnectionTime = System.currentTimeMillis();
+    }
+
+    /**
+     * Reset the player's disconnection time
+     */
+    void resetDisconnectionTime() {
+        this.disconnectionTime = -1;
     }
 
     /**
@@ -100,7 +116,7 @@ public class HyriGamePlayer extends HyriGameSpectator implements Cast<HyriGamePl
      */
     public long getPlayTime() {
         if (this.connectionTime != -1) {
-            return System.currentTimeMillis() - this.connectionTime;
+            return (this.disconnectionTime == -1 ? System.currentTimeMillis() : this.disconnectionTime) - this.connectionTime;
         }
         return -1;
     }

@@ -60,7 +60,7 @@ public class RanksHandler {
         if (session.getNickname().has()) {
             final PlayerRank rank = session.getNickname().getRank();
 
-            return ChatColor.translateAlternateColorCodes('&', rank.withSeparator() ? rank.getDefaultPrefix() + IHyriRank.SEPARATOR + player.getRank().getMainColor() : rank.getDefaultPrefix() + player.getRank().getMainColor());
+            return ChatColor.translateAlternateColorCodes('&', rank.withSeparator() ? rank.getDefaultPrefix() + IHyriRank.SEPARATOR + rank.getDefaultColor() : rank.getDefaultPrefix() + rank.getDefaultColor());
         } else if (player.getRank().withSeparator()) {
             return ChatColor.translateAlternateColorCodes('&', player.getPrefix()) + IHyriRank.SEPARATOR + player.getRank().getMainColor();
         } else {

@@ -116,11 +116,6 @@ public class PacketInterceptor implements IPacketInterceptor {
         return container;
     }
 
-    public static void main(String[] args) {
-        System.out.println(PacketPlayInFlying.PacketPlayInPosition.class.getName());
-        System.out.println(Arrays.toString(PacketPlayInFlying.PacketPlayInPosition.class.getName().split("\\.")));
-    }
-
     private PacketType getPacketTypeFromPacket(Object packet) {
         for (PacketType packetType : PacketType.values()) {
             final String[] splitName = packet.getClass().getName().split("\\.");

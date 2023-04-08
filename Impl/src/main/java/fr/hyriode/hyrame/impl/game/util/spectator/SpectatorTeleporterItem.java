@@ -41,6 +41,10 @@ public class SpectatorTeleporterItem extends HyriItem<HyramePlugin> {
 
             int currentSlot = 0;
             for (HyriGamePlayer gamePlayer : players) {
+                if (!gamePlayer.isOnline()) {
+                    continue;
+                }
+
                 final Player player = gamePlayer.getPlayer();
 
                 final ItemStack itemStack = new ItemBuilder(Material.SKULL_ITEM, 1, 3)
