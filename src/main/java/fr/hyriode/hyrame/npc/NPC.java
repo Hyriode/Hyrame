@@ -25,12 +25,12 @@ public class NPC extends EntityPlayer {
     protected NPCInteractCallback interactCallback;
 
     /** NPC equipment */
-    protected final Map<EnumItemSlot, ItemStack> equipment;
+    protected final Map<EnumItemSlot, ItemStack> equipment = new HashMap<>();
     /** NPC Hologram */
     protected Hologram hologram;
 
     /** Players */
-    protected Set<Player> players;
+    protected Set<Player> players = new HashSet<>();
 
     /** Is NPC showing to all players */
     protected boolean showingToAll;
@@ -55,8 +55,6 @@ public class NPC extends EntityPlayer {
         this.plugin = plugin;
         this.trackingPlayer = false;
         this.showingToAll = true;
-        this.players = new HashSet<>();
-        this.equipment = new HashMap<>();
 
         this.setLocation(location);
     }

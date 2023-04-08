@@ -32,8 +32,6 @@ public class ProfileLoader {
     private final String name;
     /** Skin owner */
     private final UUID skinOwnerId;
-    /** The redis key of the profiles */
-    private final String redisKey;
 
     /**
      * Full constructor of {@link ProfileLoader}
@@ -41,50 +39,33 @@ public class ProfileLoader {
      * @param uuid Profile's uuid
      * @param name Profile's name
      * @param skinOwner Skin owner
-     * @param redisKey Profiles redis key
      */
-    public ProfileLoader(UUID uuid, String name, String skinOwner, String redisKey) {
+    public ProfileLoader(UUID uuid, String name, String skinOwner) {
         this.uuid = uuid;
         this.name = name;
         this.skinOwnerId = this.getUUID(skinOwner);
-        this.redisKey = redisKey;
     }
 
     /**
      * Constructor of {@link ProfileLoader}
      *
      * @param skinOwnerId Skin owner id
-     * @param redisKey Profiles redis key
      */
-    public ProfileLoader(UUID skinOwnerId, String redisKey) {
+    public ProfileLoader(UUID skinOwnerId) {
         this.uuid = UUID.randomUUID();
         this.name = this.uuid.toString();
         this.skinOwnerId = skinOwnerId;
-        this.redisKey = redisKey;
     }
 
     /**
      * Constructor of {@link ProfileLoader}
      *
      * @param skinOwner Skin owner
-     * @param redisKey Profiles redis key
      */
-    public ProfileLoader(String skinOwner, String redisKey) {
+    public ProfileLoader(String skinOwner) {
         this.uuid = UUID.randomUUID();
         this.name = this.uuid.toString();
         this.skinOwnerId = this.getUUID(skinOwner);
-        this.redisKey = redisKey;
-    }
-
-    /**
-     * Constructor of {@link ProfileLoader}
-     *
-     * @param uuid Profile's uuid
-     * @param name Profile's name
-     * @param skinOwner Skin owner
-     */
-    public ProfileLoader(UUID uuid, String name, String skinOwner) {
-        this(uuid, name, skinOwner, REDIS_KEY);
     }
 
     public GameProfile loadFromMojang() {
@@ -99,7 +80,7 @@ public class ProfileLoader {
     public GameProfile loadProfile() {
         return HyriAPI.get().getRedisProcessor().get(jedis -> {
             final GameProfile skinProfile = new GameProfile(this.uuid, this.name);
-            final String key = this.redisKey + CACHED_SKINS;
+            final String key = REDIS_KEY + CACHED_SKINS;
             final String json = jedis.get(key + this.skinOwnerId);
 
             GameProfile profile;

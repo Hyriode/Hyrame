@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl.listener.tools;
 
+import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.impl.HyramePlugin;
 import fr.hyriode.hyrame.listener.HyriListener;
 import fr.hyriode.hyrame.npc.NPC;
@@ -12,6 +13,7 @@ import fr.hyriode.hyrame.packet.PacketUtil;
 import fr.hyriode.hyrame.reflection.entity.EntityUseAction;
 import fr.hyriode.hyrame.utils.ThreadUtil;
 import net.minecraft.server.v1_8_R3.Packet;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,7 +38,7 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
                 final Location location = player.getLocation();
                 final int entityId = container.getIntegers().read(0);
 
-                for (NPC npc : NPCManager.getNPCs().keySet()) {
+                for (NPC npc : NPCManager.getNPCs()) {
                     final NPCInteractCallback callback = npc.getInteractCallback();
 
                     if (npc.getId() != entityId || callback == null || location.distance(npc.getLocation()) > 3.0D) {
@@ -70,29 +72,23 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onRespawn(PlayerRespawnEvent event) {
-        final Player player = event.getPlayer();
-
-        this.checkDistance(player, player.getLocation(), event.getRespawnLocation());
-        this.trackPlayer(player);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
 
-        for (NPC npc : NPCManager.getNPCs().keySet()) {
-            NPCManager.sendNPC(player, npc);
-        }
+        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+            for (NPC npc : NPCManager.getNPCs()) {
+                NPCManager.sendNPC(player, npc);
+            }
 
-        this.trackPlayer(player);
+            this.trackPlayer(player);
+        }, 2L);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
 
-        for (NPC npc : NPCManager.getNPCs().keySet()) {
+        for (NPC npc : NPCManager.getNPCs()) {
             NPCManager.removeNPC(player, npc);
 
             npc.removePlayer(player);
@@ -111,7 +107,7 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
             return;
         }
 
-        for (NPC npc : NPCManager.getNPCs().keySet()) {
+        for (NPC npc : NPCManager.getNPCs()) {
             final Location location = npc.getLocation();
             final String world = location.getWorld().getName();
 
@@ -126,7 +122,7 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
     }
 
     private void trackPlayer(Player player) {
-        for (NPC npc : NPCManager.getNPCs().keySet()) {
+        for (NPC npc : NPCManager.getNPCs()) {
             if (!npc.isTrackingPlayer()) {
                 continue;
             }

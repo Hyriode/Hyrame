@@ -51,6 +51,8 @@
   "message.death.player-and-lava": "%player% &7est mort par la lave et %killer%&7.",
   "message.death.fire": "%player% &7est mort brûlé par du feu.",
   "message.death.player-and-fire": "%player% &7a été tué par %killer% &7et du feu.",
+  "message.death.lightning": "%player% &7a été foudroyé.",
+  "message.death.player-and-lightning": "%player% &7a été foudroyé et tué par %killer%&7.",
   "message.death.unknown": "%player% &7est mort.",
 
   "message.join.sending": "Envoi en cours vers %server%...",

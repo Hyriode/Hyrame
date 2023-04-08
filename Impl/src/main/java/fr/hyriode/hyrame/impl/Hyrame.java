@@ -94,7 +94,6 @@ public class Hyrame implements IHyrame {
         HyriEnchant.register();
         HologramHandler.init(plugin, this);
         BossBarManager.init(this.plugin);
-        NPCManager.init(this.plugin, "npcs:");
         new SignGUIManager(this, this.plugin);
 
         HyriAPI.get().getLanguageManager().registerAdapter(HyriGamePlayer.class, (message, gamePlayer) -> message.getValue(gamePlayer.getUniqueId()));

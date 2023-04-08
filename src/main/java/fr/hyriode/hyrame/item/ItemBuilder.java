@@ -125,12 +125,12 @@ public class ItemBuilder {
     }
 
     public ItemBuilder withPlayerHead(String name) {
-        Reflection.setField("profile", this.itemMeta, new ProfileLoader(name, ProfileLoader.REDIS_KEY).loadProfile());
+        Reflection.setField("profile", this.itemMeta, new ProfileLoader(name).loadProfile());
         return this;
     }
 
     public ItemBuilder withPlayerHead(UUID uuid) {
-        Reflection.setField("profile", this.itemMeta, new ProfileLoader(uuid, ProfileLoader.REDIS_KEY).loadProfile());
+        Reflection.setField("profile", this.itemMeta, new ProfileLoader(uuid).loadProfile());
         return this;
     }
 

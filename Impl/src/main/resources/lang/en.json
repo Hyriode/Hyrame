@@ -33,7 +33,7 @@
 
   "team-chooser.message.already-in": "&7You are &calready &7in this team!",
   "team-chooser.message.full": "&7This team is &cfull&7!",
-  "team-chooser.message.join": "&7You &ajoined &fthe team: %team%&7.",
+  "team-chooser.message.join": "&7You &ajoined &7the team: %team%&7.",
   "team-chooser.message.join-random": "&7You &awill be &7in a &brandom team&7.",
   "team-chooser.message.already-in-random": "&7You are &calready &7in &brandom team&7!",
   "team-chooser.gui.title": "&8Select a team",
