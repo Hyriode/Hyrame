@@ -45,7 +45,7 @@ public class HyriGameManager implements IHyriGameManager {
             this.hyrame.getConfiguration().setRanksInTabList(false);
         }
 
-        this.gameHandler = new GameHandler(this.hyrame);
+        this.gameHandler = new GameHandler();
 
         this.currentGame.postRegistration();
 

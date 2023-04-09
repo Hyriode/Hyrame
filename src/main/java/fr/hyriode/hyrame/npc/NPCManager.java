@@ -175,7 +175,7 @@ public class NPCManager {
                 public void run() {
                     PacketUtil.sendPacket(player, new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, npc));
                 }
-            }.runTaskLater(IHyrame.get().getPlugin(), 5 * 20L);
+            }.runTaskLater(IHyrame.get().getPlugin(), 3 * 20L);
         };
 
         if (npc.isShowingToAll()) {

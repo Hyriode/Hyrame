@@ -45,7 +45,7 @@ public class HyriScoreboard {
         this.plugin = plugin;
         this.player = player;
         this.name = name;
-        this.displayName = displayName;
+        this.displayName = displayName.length() > 32 ? displayName.substring(0, 32) : displayName;
         this.lines = new ConcurrentHashMap<>();
         this.show = false;
     }

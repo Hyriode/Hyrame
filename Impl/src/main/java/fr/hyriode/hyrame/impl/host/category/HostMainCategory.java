@@ -2,6 +2,7 @@ package fr.hyriode.hyrame.impl.host.category;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.game.scoreboard.HyriWaitingScoreboard;
+import fr.hyriode.hyrame.host.gui.HostGUI;
 import fr.hyriode.hyrame.host.option.BooleanOption;
 import fr.hyriode.hyrame.host.option.StringOption;
 import fr.hyriode.hyrame.impl.host.gui.HostMainGUI;
@@ -33,6 +34,7 @@ public class HostMainCategory extends HostDefaultCategory {
         this.addOption(20, new StringOption(this.createOptionDisplay("host-name", Material.NAME_TAG), this.getHostData().getName(), 28).onChanged(name -> {
             this.getHostData().setName(name);
 
+            HostGUI.updateAll();
             HyriWaitingScoreboard.updateAll();
 
             HyriAPI.get().getHyggdrasilManager().sendData();

@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.impl.game;
 
+import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
@@ -8,6 +9,7 @@ import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.utils.block.BlockUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -22,6 +24,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -33,38 +36,41 @@ import java.util.function.Predicate;
  */
 class GameHandler implements Listener {
 
-    private final IHyriGameManager gameManager;
+    private final HyriGame<?> game;
 
-    private final Hyrame hyrame;
+    public GameHandler() {
+        this.game = IHyrame.get().getGame();
 
-    public GameHandler(Hyrame hyrame) {
-        this.hyrame = hyrame;
-        this.gameManager = hyrame.getGameManager();
-
-        hyrame.getPlugin().getServer().getPluginManager().registerEvents(this, hyrame.getPlugin());
+        IHyrame.get().getPlugin().getServer().getPluginManager().registerEvents(this, IHyrame.get().getPlugin());
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onClick(InventoryClickEvent event) {
-        this.runActionOnGame(game -> event.setCancelled(true), game -> {
-            final HyriGamePlayer gamePlayer = game.getPlayer((Player) event.getWhoClicked());
+        final Player player = (Player) event.getWhoClicked();
+        final HyriGamePlayer gamePlayer = this.game.getPlayer(player);
 
-            if (gamePlayer == null) {
-                return false;
-            }
-
-            return game.getState() != HyriGameState.PLAYING || gamePlayer.isSpectator();
-        });
+        if (this.game.getState() != HyriGameState.PLAYING ||
+                (gamePlayer != null && gamePlayer.isSpectator()) ||
+                game.getSpectator(player.getUniqueId()) != null) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onItemSpawn(ItemSpawnEvent event) {
-        this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING);
+        if (this.game.getState() != HyriGameState.PLAYING) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onInteract(PlayerInteractEvent event) {
-        this.runActionOnGame(game -> {
+        final Player player = event.getPlayer();
+        final HyriGamePlayer gamePlayer = this.game.getPlayer(player);
+
+        if (this.game.getState() != HyriGameState.PLAYING ||
+                game.getSpectator(player.getUniqueId()) != null ||
+                (gamePlayer != null && gamePlayer.isSpectator())) {
             final Block block = event.getClickedBlock();
             final Action action = event.getAction();
 
@@ -75,86 +81,71 @@ class GameHandler implements Listener {
                     event.setCancelled(true);
                 }
             }
-        }, game -> game.getState() != HyriGameState.PLAYING || game.getSpectator(event.getPlayer().getUniqueId()) != null || (game.getPlayer(event.getPlayer()) != null && game.getPlayer(event.getPlayer()).isSpectator()));
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onDrop(PlayerDropItemEvent event) {
-        this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING || game.getSpectator(event.getPlayer().getUniqueId()) != null || game.getPlayer(event.getPlayer()).isSpectator());
+        final Player player = event.getPlayer();
+        final HyriGamePlayer gamePlayer = this.game.getPlayer(player);
+
+        if (this.game.getState() != HyriGameState.PLAYING ||
+                game.getSpectator(player.getUniqueId()) != null ||
+                (gamePlayer != null && gamePlayer.isSpectator())) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
-            this.runActionOnGame(game -> event.setCancelled(true), game -> {
-                final HyriGamePlayer gamePlayer = game.getPlayer(event.getEntity().getUniqueId());
+            final Player player = (Player) event.getEntity();
+            final HyriGamePlayer gamePlayer = this.game.getPlayer(player);
 
-                if (gamePlayer == null) {
-                    return false;
-                }
-
-                return game.getState() != HyriGameState.PLAYING || gamePlayer.isDead() ||gamePlayer.isSpectator();
-            });
+            if (game.getState() != HyriGameState.PLAYING ||
+                    (gamePlayer != null && (gamePlayer.isDead() || gamePlayer.isSpectator())) ||
+                    this.game.getSpectator(player.getUniqueId()) != null) {
+                event.setCancelled(true);
+            }
         }
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onBlockBreak(BlockBreakEvent event) {
-        this.runActionOnGame(game -> event.setCancelled(true), game -> game.getState() != HyriGameState.PLAYING);
+        if (this.game.getState() != HyriGameState.PLAYING) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void onDamage(EntityDamageByEntityEvent event) {
-        this.runActionOnGame(game -> {
-            if (event.getEntity() instanceof Player) {
-                final Player target = (Player) event.getEntity();
+        final Entity entity = event.getEntity();
+        final HyriGamePlayer gamePlayer = this.game.getPlayer(entity.getUniqueId());
 
-                if (event.getDamager() instanceof Player) {
-                    event.setCancelled(this.cancelDamages((Player) event.getDamager(), target));
-                } else if (event.getDamager() instanceof Projectile) {
-                    final Projectile projectile = (Projectile) event.getDamager();
+        if (gamePlayer != null && game.getState() == HyriGameState.PLAYING) {
+            final Player target = (Player) entity;
+            final Entity damager = event.getDamager();
 
-                    if (projectile.getShooter() instanceof Player) {
-                        event.setCancelled(this.cancelDamages((Player) projectile.getShooter(), target));
-                    }
+            if (damager instanceof Player) {
+                event.setCancelled(this.cancelDamages((Player) damager, target));
+            } else if (damager instanceof Projectile) {
+                final Projectile projectile = (Projectile) damager;
+                final ProjectileSource shooter = projectile.getShooter();
+
+                if (projectile.getShooter() instanceof Player) {
+                    event.setCancelled(this.cancelDamages((Player) shooter, target));
                 }
             }
-        }, game -> {
-            final HyriGamePlayer gamePlayer = game.getPlayer(event.getEntity().getUniqueId());
-
-            if (gamePlayer == null) {
-                return false;
-            }
-
-            return game.getState() == HyriGameState.PLAYING;
-        });
+        }
     }
 
     private boolean cancelDamages(Player player, Player target) {
-        final HyriGame<?> game = this.gameManager.getCurrentGame();
-        final HyriGamePlayer gamePlayer = game.getPlayer(player);
+        final HyriGamePlayer gamePlayer = this.game.getPlayer(player);
 
         if (gamePlayer == null) {
             return true;
         }
-
-        return (game.areInSameTeam(player, target) && !game.getPlayerTeam(player).isFriendlyFire()) || gamePlayer.isSpectator() || gamePlayer.isDead();
-    }
-
-    private void runActionOnGame(Consumer<HyriGame<?>> action) {
-        final HyriGame<?> game = this.hyrame.getGameManager().getCurrentGame();
-
-        if (game != null) {
-            action.accept(game);
-        }
-    }
-
-    private void runActionOnGame(Consumer<HyriGame<?>> action, Predicate<HyriGame<?>> condition) {
-        this.runActionOnGame(game -> {
-            if (condition.test(game)) {
-                action.accept(game);
-            }
-        });
+        return (this.game.areInSameTeam(player, target) && !gamePlayer.getTeam().isFriendlyFire()) || gamePlayer.isSpectator() || gamePlayer.isDead();
     }
 
 }

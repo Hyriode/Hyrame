@@ -2,6 +2,8 @@ package fr.hyriode.hyrame.impl.inventory;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
+import fr.hyriode.hyrame.host.gui.HostGUI;
+import fr.hyriode.hyrame.impl.host.gui.HostMainGUI;
 import fr.hyriode.hyrame.inventory.HyriInventory;
 import fr.hyriode.hyrame.inventory.HyriInventoryEvent;
 import fr.hyriode.hyrame.inventory.IHyriInventoryManager;

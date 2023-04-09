@@ -182,7 +182,7 @@
   "host.option.border-speed.formatter": "&8Current speed:\n&8▪ &b%speed% &8m/s",
   "host.option.border-speed.value-formatter": "%speed% &8m/s",
 
-  "host.prefix": "&3Host &8┃ ",
+  "host.prefix": "&3Host &f┃ ",
   "host.advertisement-error.message": "&cYou can't send an advertisement in this host type!",
   "host.game-error.message": "&cThe game didn't start!",
   "host.himself-error.message": "&cYou can't perform this action on yourself!",
