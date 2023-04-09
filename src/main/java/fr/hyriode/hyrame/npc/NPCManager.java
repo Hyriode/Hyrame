@@ -32,8 +32,8 @@ import java.util.function.Consumer;
 public class NPCManager {
 
     /** Some constants */
-    private static final String NPC_TEAM_NAME = "NPC";
-    private static final String NPC_NAME_PREFIX = "[" + NPC_TEAM_NAME + "] ";
+    private static final String NPC_TEAM_NAME = "zNPC";
+    private static final String NPC_NAME_PREFIX = "[NPC] ";
 
     /** All NPCs */
     private static final List<NPC> NPCS = new ArrayList<>();
@@ -169,6 +169,7 @@ public class NPCManager {
     public static void sendNPC(Player player, NPC npc) {
         final Consumer<Player> sendConsumer = p -> {
             npc.spawnFor(p);
+            npc.getPlayers().forEach(receiver -> System.out.println(npc.getName() + " - " + receiver.getName()));
 
             new BukkitRunnable() {
                 @Override
