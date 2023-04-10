@@ -35,6 +35,7 @@ public class BlockUtil {
         chunk.a(position, blockData);
     }
 
+    @SuppressWarnings("deprecation")
     public static void setBlocksFaster(List<Block> blocks) {
         Bukkit.getScheduler().runTaskAsynchronously(IHyrame.get().getPlugin(), () -> {
             final HashMap<Chunk, List<Block>> chunksBlocks = new HashMap<>();
@@ -69,11 +70,7 @@ public class BlockUtil {
                         chunk.e(new BlockPosition(handle.getX(), handle.getY(), handle.getZ())); // It updates tile entities
                     }
 
-                    PacketUtil.sendPacket(new PacketPlayOutMapChunk(chunk, true, 65535));
-
-                    chunk.bukkitChunk.unload(true);
-                    chunk.bukkitChunk.load();
-                    chunk.initLighting();
+                    IHyrame.WORLD.get().refreshChunk(chunk.locX, chunk.locZ);
                 });
             }
         });
