@@ -34,7 +34,6 @@ public class HostMainCategory extends HostDefaultCategory {
         this.addOption(20, new StringOption(this.createOptionDisplay("host-name", Material.NAME_TAG), this.getHostData().getName(), 28).onChanged(name -> {
             this.getHostData().setName(name);
 
-            HostGUI.updateAll();
             HyriWaitingScoreboard.updateAll();
 
             HyriAPI.get().getHyggdrasilManager().sendData();

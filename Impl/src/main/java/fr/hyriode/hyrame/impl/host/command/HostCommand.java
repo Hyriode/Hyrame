@@ -90,18 +90,22 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
                 return;
             }
 
-            if (target.getUniqueId().equals(player.getUniqueId())) {
+            if (targetId.equals(player.getUniqueId())) {
                 player.sendMessage(HyrameMessage.HOST_HIMSELF_ERROR_MESSAGE.asString(account));
                 return;
             }
 
-            if (target.getHosts().hasBannedPlayer(targetId)) {
+            if (account.getHosts().hasBannedPlayer(targetId)) {
                 player.sendMessage(HyrameMessage.HOST_ALREADY_BANNED_MESSAGE.asString(account).replace("%player%", target.getNameWithRank()));
                 return;
             }
 
             account.getHosts().addBannedPlayer(targetId);
             account.update();
+
+            if (Bukkit.getPlayer(targetId) != null) {
+                HyriAPI.get().getLobbyAPI().sendPlayerToLobby(targetId);
+            }
 
             player.sendMessage(HyrameMessage.HOST_BAN_MESSAGE.asString(account).replace("%player%", target.getNameWithRank()));
         });
@@ -115,12 +119,12 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
             final IHyriPlayer target = output.get(IHyriPlayer.class);
             final UUID targetId = target.getUniqueId();
 
-            if (target.getUniqueId().equals(player.getUniqueId())) {
+            if (targetId.equals(player.getUniqueId())) {
                 player.sendMessage(HyrameMessage.HOST_HIMSELF_ERROR_MESSAGE.asString(account));
                 return;
             }
 
-            if (!target.getHosts().hasBannedPlayer(targetId)) {
+            if (!account.getHosts().hasBannedPlayer(targetId)) {
                 player.sendMessage(HyrameMessage.HOST_NOT_BANNED_MESSAGE.asString(account).replace("%player%", target.getNameWithRank()));
                 return;
             }

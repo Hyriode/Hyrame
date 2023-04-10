@@ -37,8 +37,8 @@ public class HostGUI extends PaginatedInventory {
 
         if (parentGUIProvider != null) {
             this.setItem(49, new ItemBuilder(Material.ARROW)
-                            .withName(HyrameMessage.GO_BACK.asString(this.owner))
-                            .build(),
+                    .withName(HyrameMessage.GO_BACK.asString(this.owner))
+                    .build(),
                     event -> parentGUIProvider.apply(this.owner).open());
         }
 

@@ -182,7 +182,7 @@
   "host.option.border-speed.formatter": "&8Vitesse actuelle:\n&8▪ &b%speed% &8m/s",
   "host.option.border-speed.value-formatter": "%speed% &8m/s",
 
-  "host.prefix": "&3Host &8┃ ",
+  "host.prefix": "&3Host &f┃ ",
   "host.advertisement-error.message": "&cVous ne pouvez pas faire d'annonce sur ce type d'host!",
   "host.game-error.message": "&cLa partie n'a pas encore démarré!",
   "host.himself-error.message": "&cVous ne pouvez pas effectuer cette action sur vous même!",
@@ -197,7 +197,7 @@
   "host.not-op.message": "%player% &cn'est pas &fun &bhôte secondaire&f.",
   "host.already-op.message": "%player% &fest &cdéjà &fun &bhôte secondaire&f!",
   "host.op-list.message": "&3Liste des hôtes secondaires:",
-  "host.whitelisted.message": "%player% &fa été &aajouté &fa la whitelist.",
+  "host.whitelisted.message": "%player% &fa été &aajouté &fà la whitelist.",
   "host.un-whitelisted.message": "%player% &fa été &cretiré &fde la whitelist.",
   "host.not-whitelisted.message": "%player% &cn'est pas &fdans la whitelist.",
   "host.already-whitelisted.message": "%player% &fest &adéjà &fdans la whitelist!",

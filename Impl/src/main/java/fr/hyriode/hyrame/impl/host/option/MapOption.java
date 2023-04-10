@@ -45,8 +45,9 @@ public class MapOption extends HostOption<String> {
                 return;
             }
 
-            worldProvider.setCurrentWorld(map);
+            server.resetConfig();
             server.setMap(map);
+            worldProvider.setCurrentWorld(map);
 
             HyriWaitingScoreboard.updateAll();
         };

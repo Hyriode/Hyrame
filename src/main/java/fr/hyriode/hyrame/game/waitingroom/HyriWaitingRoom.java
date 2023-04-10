@@ -131,7 +131,7 @@ public class HyriWaitingRoom {
 
             if (config == null) {
                 System.err.println("Couldn't find the config of '" + leaderboardType + "#" + leaderboardName + "' leaderboard!");
-                return;
+                continue;
             }
 
             final HyriLeaderboardDisplay display = new HyriLeaderboardDisplay.Builder(this.plugin, leaderboardType, leaderboardName, config.getLocation().asBukkit())
@@ -527,8 +527,19 @@ public class HyriWaitingRoom {
         @HyriEventHandler
         public void onWorldChanged(WorldChangedEvent event) {
             teleportPlayers();
+
+            final boolean initialClearBlocks = clearBlocks;
+
+            clearBlocks = false;
+
             remove();
             setup();
+
+            for (Map.Entry<UUID, NPC> entry : npcs.entrySet()) {
+                NPCManager.sendNPC(Bukkit.getPlayer(entry.getKey()), entry.getValue());
+            }
+
+            clearBlocks = initialClearBlocks;
         }
 
         @EventHandler

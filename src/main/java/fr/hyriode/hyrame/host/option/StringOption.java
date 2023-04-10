@@ -30,13 +30,12 @@ public class StringOption extends HostOption<String> {
 
     @Override
     public void onClick(Player player, InventoryClickEvent event) {
-        new AnvilGUI(HyrameLoader.getHyrame().getPlugin(), player, this.value, null, false, e -> Bukkit.getScheduler().runTaskLater(IHyrame.get().getPlugin(), () -> player.openInventory(event.getInventory()), 1L), null, null, (p, input) -> {
+        new AnvilGUI(HyrameLoader.getHyrame().getPlugin(), player, this.value, null, false, e -> Bukkit.getScheduler().runTaskLater(IHyrame.get().getPlugin(), () -> categoryGUIProvider.apply(player).open(), 1L), null, null, (p, input) -> {
             this.setValue(input);
 
             categoryGUIProvider.apply(player).open();
 
             HostGUI.updateAll();
-
             return null;
         }).open();
     }
