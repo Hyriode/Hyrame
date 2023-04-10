@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Created by AstFaster
@@ -75,17 +76,25 @@ public class HyriWaitingRoom {
     protected final HyriGame<?> game;
     protected final JavaPlugin plugin;
     protected final ItemStack icon;
-    protected final Config config;
+    protected final Supplier<Config> config;
 
-    public HyriWaitingRoom(HyriGame<?> game, ItemStack icon, Config config) {
+    public HyriWaitingRoom(HyriGame<?> game, ItemStack icon, Supplier<Config> config) {
         this.game = game;
         this.plugin = this.game.getPlugin();
         this.icon = icon;
         this.config = config;
     }
 
-    public HyriWaitingRoom(HyriGame<?> game, Material icon, Config config) {
+    public HyriWaitingRoom(HyriGame<?> game, Material icon, Supplier<Config> config) {
         this(game, new ItemStack(icon), config);
+    }
+
+    public HyriWaitingRoom(HyriGame<?> game, ItemStack icon, Config config) {
+        this(game, icon, () -> config);
+    }
+
+    public HyriWaitingRoom(HyriGame<?> game, Material icon, Config config) {
+        this(game, new ItemStack(icon), () -> config);
     }
 
     /**
@@ -114,7 +123,7 @@ public class HyriWaitingRoom {
         for (Leaderboard leaderboard : this.leaderboards) {
             final String leaderboardType = leaderboard.getType();
             final String leaderboardName = leaderboard.getName();
-            final Config.Leaderboard config = this.config.getLeaderboards()
+            final Config.Leaderboard config = this.config.get().getLeaderboards()
                     .stream()
                     .filter(data -> data.getType().equals(leaderboardType) && data.getName().equals(leaderboardName))
                     .findFirst()
@@ -157,7 +166,7 @@ public class HyriWaitingRoom {
         }
 
         if (this.clearBlocks) {
-            final Cuboid cuboid = new Cuboid(this.config.getFirstPos().asBukkit(), this.config.getSecondPos().asBukkit());
+            final Cuboid cuboid = new Cuboid(this.config.get().getFirstPos().asBukkit(), this.config.get().getSecondPos().asBukkit());
 
             BlockUtil.setBlocksFaster(cuboid.getBlocks(), 0, 0); // Replace with air
         }
@@ -165,6 +174,8 @@ public class HyriWaitingRoom {
         HandlerList.unregisterAll(this.handler);
         HyriAPI.get().getEventBus().unregister(this.handler);
 
+        this.npcs.clear();
+        this.leaderboardsDisplays.clear();
         this.setup = false;
     }
 
@@ -173,14 +184,14 @@ public class HyriWaitingRoom {
      */
     public void teleportPlayers() {
         for (HyriGamePlayer gamePlayer : this.game.getPlayers()) {
-            gamePlayer.getPlayer().teleport(this.config.getSpawn().asBukkit());
+            gamePlayer.getPlayer().teleport(this.config.get().getSpawn().asBukkit());
         }
     }
 
     private NPC createNPC(Player player) {
         final IHyriPlayer account = IHyriPlayer.get(player.getUniqueId());
         final List<String> headerLines = ListReplacer.replace(HyrameMessage.WAITING_ROOM_NPC_DISPLAY.asList(player), "%game%", this.game.getDisplayName()).list();
-        final NPC npc = NPCManager.createNPC(this.config.getNPCLocation().asBukkit(), account.getName(), headerLines)
+        final NPC npc = NPCManager.createNPC(this.config.get().getNPCLocation().asBukkit(), account.getName(), headerLines)
                 .addPlayer(player)
                 .setShowingToAll(false)
                 .setTrackingPlayer(true)
@@ -241,7 +252,7 @@ public class HyriWaitingRoom {
      * @return The {@link Config} object
      */
     public Config getConfig() {
-        return this.config;
+        return this.config.get();
     }
 
     /**
@@ -498,7 +509,7 @@ public class HyriWaitingRoom {
             final UUID playerId = gamePlayer.getUniqueId();
             final NPC npc = npcs.getOrDefault(playerId, createNPC(player));
 
-            player.teleport(config.getSpawn().asBukkit());
+            player.teleport(config.get().getSpawn().asBukkit());
 
             NPCManager.sendNPC(player, npc);
         }
@@ -516,25 +527,17 @@ public class HyriWaitingRoom {
         @HyriEventHandler
         public void onWorldChanged(WorldChangedEvent event) {
             teleportPlayers();
-
-            for (Map.Entry<UUID, NPC> entry : npcs.entrySet()) {
-                final Player player = Bukkit.getPlayer(entry.getKey());
-
-                NPCManager.removeNPC(entry.getValue());
-
-                final NPC npc = createNPC(player);
-
-                NPCManager.sendNPC(player, npc);
-            }
+            remove();
+            setup();
         }
 
         @EventHandler
         public void onMove(PlayerMoveEvent event) {
-            final double firstY = config.getFirstPos().getY();
-            final double secondY = config.getSecondPos().getY();
+            final double firstY = config.get().getFirstPos().getY();
+            final double secondY = config.get().getSecondPos().getY();
 
             if (event.getTo().getY() < Math.min(firstY, secondY)) {
-                event.getPlayer().teleport(config.getSpawn().asBukkit());
+                event.getPlayer().teleport(config.get().getSpawn().asBukkit());
             }
         }
 

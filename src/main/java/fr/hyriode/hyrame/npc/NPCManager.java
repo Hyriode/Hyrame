@@ -169,7 +169,6 @@ public class NPCManager {
     public static void sendNPC(Player player, NPC npc) {
         final Consumer<Player> sendConsumer = p -> {
             npc.spawnFor(p);
-            npc.getPlayers().forEach(receiver -> System.out.println(npc.getName() + " - " + receiver.getName()));
 
             new BukkitRunnable() {
                 @Override
