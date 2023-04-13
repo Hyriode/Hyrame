@@ -93,19 +93,19 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
                 }
 
                 gamePlayer.setNotDead();
-                gamePlayer.show();
+
+                HyriAPI.get().getEventBus().publish(new HyriGameRespawnEvent(this.getGame(), gamePlayer));
 
                 player.setAllowFlight(false);
                 player.setFlying(false);
                 player.spigot().setCollidesWithEntities(true);
+                player.setFireTicks(0);
 
                 PlayerUtil.resetPotionEffects(player);
 
-                HyriAPI.get().getEventBus().publish(new HyriGameRespawnEvent(this.getGame(), gamePlayer));
-
-                player.setFireTicks(0);
-
                 realCallback.accept(player);
+
+                gamePlayer.show();
 
                 this.deathTasks.remove(player.getUniqueId()).cancel();
             };

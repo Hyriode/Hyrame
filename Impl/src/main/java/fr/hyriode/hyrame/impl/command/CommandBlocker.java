@@ -46,6 +46,7 @@ public class CommandBlocker implements ICommandBlocker {
         // Minecraft
         this.addBlockedCommands(MINECRAFT_PREFIX, "me", "trigger");
         this.removeCommands(MINECRAFT_PREFIX, "tell");
+        this.removeCommands(MINECRAFT_PREFIX, "ban", "ban-ip", "banlist", "pardon");
 
         if (!HyriAPI.get().getConfig().isDevEnvironment()) {
             this.removeCommands(MINECRAFT_PREFIX, "whitelist");
