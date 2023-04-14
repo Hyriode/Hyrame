@@ -21,7 +21,7 @@ public class CommandListener extends HyriListener<HyramePlugin> {
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event) {
         final Player player = event.getPlayer();
-        final String command = event.getMessage().substring(1);
+        final String command = event.getMessage().substring(1).split(" ")[0];
         final CommandBlocker commandBlocker = (CommandBlocker) IHyrame.get().getCommandManager().getCommandBlocker();
 
         if (this.isBlockedCommand(command) || commandBlocker.getCommandMap().getCommand(command) == null) {
