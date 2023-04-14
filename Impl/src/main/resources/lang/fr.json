@@ -1,5 +1,5 @@
 {
-  "message.command-not-enabled": "&cErreur: Cette commande n'est pas activée sur le serveur !",
+  "message.command-not-enabled": "&cErreur: Cette commande n'existe pas !",
   "message.command-invalid": "&cCommande invalide: ",
   "message.permission-error": "&cErreur: Vous n'avez pas la permission d'effectuer cette action !",
   "message.player-not-found": "&cErreur: Impossible de trouver '&f%player%&c' !",

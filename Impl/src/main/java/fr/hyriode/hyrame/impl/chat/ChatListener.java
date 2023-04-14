@@ -1,14 +1,10 @@
 package fr.hyriode.hyrame.impl.chat;
 
-import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.impl.HyramePlugin;
-import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.listener.HyriListener;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 /**
  * Project: Hyrame
@@ -24,27 +20,6 @@ public class ChatListener extends HyriListener<HyramePlugin> {
     @EventHandler(priority = EventPriority.LOW)
     public void onChat(AsyncPlayerChatEvent event) {
         this.plugin.getHyrame().getChatManager().onEvent(event);
-    }
-
-    @EventHandler
-    public void onCommand(PlayerCommandPreprocessEvent event) {
-        final Player player = event.getPlayer();
-        final String command = event.getMessage().substring(1);
-
-        if (this.isBlockedCommand(command)) {
-            player.sendMessage(HyrameMessage.COMMAND_NOT_ENABLED.asString(player));
-
-            event.setCancelled(true);
-        }
-    }
-
-    private boolean isBlockedCommand(String command) {
-        for (String blockedCommand : this.plugin.getHyrame().getCommandManager().getCommandBlocker().getBlockedCommands()) {
-            if (command.equalsIgnoreCase(blockedCommand)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

@@ -1,5 +1,5 @@
 {
-  "message.command-not-enabled": "&cError: This command is not enabled on the server!",
+  "message.command-not-enabled": "&cError: This command doesn't exist!",
   "message.command-invalid": "&cInvalid command: ",
   "message.permission-error": "&cError: You don't have the permission to perform this action!",
   "message.player-not-found": "&cError: Couldn't find '&f%player%&c'!",

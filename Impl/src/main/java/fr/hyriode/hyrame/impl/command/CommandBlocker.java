@@ -36,8 +36,8 @@ public class CommandBlocker implements ICommandBlocker {
         this.removeCommands();
     }
 
-    private CommandMap getCommandMap() {
-        return (CommandMap) Reflection.invokeField(Bukkit.getServer(), "commandMap");
+    public CommandMap getCommandMap() {
+        return this.commandMap == null ? (CommandMap) Reflection.invokeField(Bukkit.getServer(), "commandMap") : this.commandMap;
     }
 
     private void removeCommands() {

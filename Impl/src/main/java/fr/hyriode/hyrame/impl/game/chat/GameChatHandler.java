@@ -117,7 +117,7 @@ public class GameChatHandler implements IHyriChatHandler {
 
                     messageStart += session.getNameWithRank();
 
-                    return String.format(this.format(), messageStart, message);
+                    return String.format(this.format(), messageStart, event.getMessage());
                 });
             }
         } else {

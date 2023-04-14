@@ -2,21 +2,17 @@ package fr.hyriode.hyrame.impl.join;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.language.HyriLanguageMessage;
-import fr.hyriode.api.party.IHyriParty;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.api.player.IHyriPlayerSession;
 import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.api.server.join.HyriJoinResponse;
 import fr.hyriode.api.server.join.IHyriJoinHandler;
-import fr.hyriode.api.server.join.IHyriJoinManager;
 import fr.hyriode.hyggdrasil.api.server.HyggServer;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
-import fr.hyriode.hyrame.game.HyriGameSpectator;
 import fr.hyriode.hyrame.game.HyriGameState;
 import fr.hyriode.hyrame.game.event.player.HyriGameReconnectEvent;
-import fr.hyriode.hyrame.utils.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -31,7 +27,7 @@ import java.util.function.BiFunction;
  * Created by AstFaster
  * on 20/04/2022 at 19:53
  */
-public class HyriJoinHandler implements IHyriJoinHandler {
+public class JoinHandler implements IHyriJoinHandler {
 
     private static final String RESPONSE_KEY = "message.join.deny";
     private static final BiFunction<IHyriPlayer, String, String> RESPONSE = (player, key) -> HyriLanguageMessage.get(RESPONSE_KEY + "." + key).getValue(player);
@@ -40,7 +36,7 @@ public class HyriJoinHandler implements IHyriJoinHandler {
 
     private final IHyrame hyrame;
 
-    public HyriJoinHandler(IHyrame hyrame) {
+    public JoinHandler(IHyrame hyrame) {
         this.hyrame = hyrame;
     }
 

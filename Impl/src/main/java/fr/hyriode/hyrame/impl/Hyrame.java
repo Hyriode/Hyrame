@@ -18,7 +18,7 @@ import fr.hyriode.hyrame.impl.hologram.HologramHandler;
 import fr.hyriode.hyrame.impl.host.HostController;
 import fr.hyriode.hyrame.impl.inventory.HyriInventoryManager;
 import fr.hyriode.hyrame.impl.item.ItemManager;
-import fr.hyriode.hyrame.impl.join.HyriJoinHandler;
+import fr.hyriode.hyrame.impl.join.JoinHandler;
 import fr.hyriode.hyrame.impl.language.LanguageLoader;
 import fr.hyriode.hyrame.impl.listener.ListenerManager;
 import fr.hyriode.hyrame.impl.packet.PacketInterceptor;
@@ -32,7 +32,6 @@ import fr.hyriode.hyrame.inventory.IHyriInventoryManager;
 import fr.hyriode.hyrame.item.IItemManager;
 import fr.hyriode.hyrame.language.ILanguageLoader;
 import fr.hyriode.hyrame.listener.IListenerManager;
-import fr.hyriode.hyrame.npc.NPCManager;
 import fr.hyriode.hyrame.placeholder.PlaceholderAPI;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.scanner.IHyriScanner;
@@ -97,7 +96,7 @@ public class Hyrame implements IHyrame {
         new SignGUIManager(this, this.plugin);
 
         HyriAPI.get().getLanguageManager().registerAdapter(HyriGamePlayer.class, (message, gamePlayer) -> message.getValue(gamePlayer.getUniqueId()));
-        HyriAPI.get().getJoinManager().registerHandler(10, new HyriJoinHandler(this));
+        HyriAPI.get().getJoinManager().registerHandler(10, new JoinHandler(this));
 
     }
 
