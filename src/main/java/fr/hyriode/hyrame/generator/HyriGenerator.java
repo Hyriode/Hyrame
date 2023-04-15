@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame.generator;
 
+import fr.hyriode.api.player.IHyriPlayerSession;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorCreatedEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorDropEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorRemovedEvent;
@@ -278,6 +279,11 @@ public class HyriGenerator {
         public void onPickup(PlayerPickupItemEvent event) {
             final Item droppedItem = event.getItem();
             final Player player = event.getPlayer();
+
+            if (IHyriPlayerSession.get(player.getUniqueId()).isModerating()) {
+                event.setCancelled(true);
+                return;
+            }
 
             if (ignoredPlayers.contains(player)) {
                 return;
