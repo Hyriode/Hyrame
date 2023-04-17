@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
  */
 public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGame<?>> {
 
-    private static final String SPECTATORS_TEAM = "spectators";
+    private static final String SPECTATORS_TEAM = "zspectators";
 
     /** Minimum of players to start */
     protected final int minPlayers;

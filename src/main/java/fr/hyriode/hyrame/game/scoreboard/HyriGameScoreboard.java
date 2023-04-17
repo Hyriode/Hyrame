@@ -4,6 +4,7 @@ import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.HyriConstants;
 import fr.hyriode.hyggdrasil.api.server.HyggServer;
 import fr.hyriode.hyrame.game.HyriGame;
+import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.placeholder.PlaceholderAPI;
 import fr.hyriode.hyrame.scoreboard.HyriScoreboard;
 import fr.hyriode.hyrame.utils.TimeUtil;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Project: Hyrame
@@ -63,7 +65,7 @@ public class HyriGameScoreboard<G extends HyriGame<?>> extends HyriScoreboard {
      * @param total If <code>true</code> it will add the maximum of players next to the current amount of players
      */
     protected void addPlayersLine(int line, String prefix, boolean total) {
-        this.setLine(line, ChatColor.WHITE + prefix + ChatColor.AQUA + (this.game.getPlayers().size() - this.game.getDeadPlayers().size()) + (total ? ChatColor.AQUA + "/" + HyriAPI.get().getServer().getSlots() : ""));
+        this.setLine(line, ChatColor.WHITE + prefix + ChatColor.AQUA + (this.game.getPlayers().size() - (int) this.game.getPlayers().stream().filter(HyriGamePlayer::isSpectator).count()) + (total ? ChatColor.AQUA + "/" + HyriAPI.get().getServer().getSlots() : ""));
     }
 
     /**
