@@ -77,7 +77,7 @@ class GameHandler implements Listener {
             if (block != null) {
                 final Material type = block.getType();
 
-                if ((action == Action.PHYSICAL && BlockUtil.isPressurePlate(type)) || block.getState() instanceof InventoryHolder) {
+                if ((action == Action.PHYSICAL && BlockUtil.isPressurePlate(type)) || block.getState() instanceof InventoryHolder || block.getType() == Material.TRAP_DOOR) {
                     event.setCancelled(true);
                 }
             }

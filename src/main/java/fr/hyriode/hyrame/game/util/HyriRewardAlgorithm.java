@@ -93,7 +93,7 @@ public class HyriRewardAlgorithm {
             return 0L;
         }
 
-        return kills * 5L + getPlayedTimeHyris(playedTime) + (victory ? 10 : 0);
+        return kills * 7L + getPlayedTimeHyris(playedTime) + (victory ? 10 : 0);
     }
 
     public static double getPlayedTimeXP(long playedTime) {
@@ -105,7 +105,7 @@ public class HyriRewardAlgorithm {
             return 0L;
         }
 
-        return (int) Math.ceil(kills * 3.0D + getPlayedTimeXP(playedTime) + (victory ? 7.0D : 0));
+        return (int) Math.ceil(kills * 5.0 + getPlayedTimeXP(playedTime) + (victory ? 15 : 0));
     }
 
 }
