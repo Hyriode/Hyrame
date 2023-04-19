@@ -44,6 +44,8 @@ public enum HyrameMessage {
 
     WAITING_ROOM_NPC_DISPLAY("waiting-room.npc.display"),
 
+    TEAM_AUTOMATICALLY_ADDED_MESSAGE("team-chooser.message.automatically-added"),
+
     HOST_RESET_NAME("host.reset.name"),
     HOST_RESET_LORE("host.reset.lore"),
     HOST_MULTIPLE_MODIFIERS_LORE("host.multiple-modifiers.item.lore"),

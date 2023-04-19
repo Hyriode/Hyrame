@@ -16,7 +16,7 @@ import fr.hyriode.hyrame.host.HostCategory;
 import fr.hyriode.hyrame.host.IHostController;
 import fr.hyriode.hyrame.host.gui.HostGUI;
 import fr.hyriode.hyrame.host.option.HostOption;
-import fr.hyriode.hyrame.impl.game.gui.TeamChooserGUI;
+import fr.hyriode.hyrame.game.util.gui.TeamChooserGUI;
 import fr.hyriode.hyrame.impl.host.category.HostMainCategory;
 import fr.hyriode.hyrame.impl.host.category.team.HostTeamsCategory;
 import fr.hyriode.hyrame.impl.host.gui.HostMainGUI;
@@ -144,7 +144,7 @@ public class HostController implements IHostController {
 
         HostGUI.updateAll();
         HyriWaitingScoreboard.updateAll();
-        TeamChooserGUI.refresh(this.hyrame);
+        TeamChooserGUI.refresh();
     }
 
     @Override
@@ -196,7 +196,7 @@ public class HostController implements IHostController {
 
         HostGUI.updateAll();
         HyriWaitingScoreboard.updateAll();
-        TeamChooserGUI.refresh(this.hyrame);
+        TeamChooserGUI.refresh();
     }
 
     @Override

@@ -31,6 +31,7 @@
   "waiting-room.gui.item.name": "&3Statistics &8┃ &7%game%",
   "waiting-room.gui.item.lore": "&7Check all of your statistics in\n&7this game.",
 
+  "team-chooser.message.automatically-added": "&7You have been &aadded &7in %team% &7team with %players%&7.",
   "team-chooser.message.already-in": "&7You are &calready &7in this team!",
   "team-chooser.message.full": "&7This team is &cfull&7!",
   "team-chooser.message.join": "&7You &ajoined &7the team: %team%&7.",

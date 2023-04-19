@@ -6,7 +6,7 @@ import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.host.HostDisplay;
 import fr.hyriode.hyrame.host.option.PlayersOption;
-import fr.hyriode.hyrame.impl.game.gui.TeamChooserGUI;
+import fr.hyriode.hyrame.game.util.gui.TeamChooserGUI;
 import fr.hyriode.hyrame.impl.game.util.TeamChooserItem;
 
 /**
@@ -30,7 +30,7 @@ public class TeamsSizeOption extends PlayersOption {
                     this.getHyrame().getItemManager().giveItem(gamePlayer.getPlayer(), 0, TeamChooserItem.class);
                 }
 
-                TeamChooserGUI.refresh(this.getHyrame());
+                TeamChooserGUI.refresh();
             }
         };
     }

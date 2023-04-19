@@ -46,15 +46,19 @@ public class HyriAntiSpawnKillProtocol extends HyriGameProtocol {
         }
     }
 
-    @HyriEventHandler
-    public void onRespawn(HyriGameRespawnEvent event) {
-        final UUID playerId = event.getGamePlayer().getUniqueId();
+    public void manualAntiSpawnKill(Player player) {
+        final UUID playerId = player.getUniqueId();
         final BukkitTask task = Bukkit.getScheduler().runTaskLaterAsynchronously(this.getGame().getPlugin(), () -> this.tasks.remove(playerId), this.options.getTime());
         final BukkitTask old = this.tasks.put(playerId, task);
 
         if (old != null) {
             old.cancel();
         }
+    }
+
+    @HyriEventHandler
+    public void onRespawn(HyriGameRespawnEvent event) {
+        this.manualAntiSpawnKill(event.getGamePlayer().getPlayer());
     }
 
     @HyriEventHandler

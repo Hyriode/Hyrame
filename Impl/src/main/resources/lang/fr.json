@@ -31,6 +31,7 @@
   "waiting-room.gui.item.name": "&3Statistiques &8┃ &7%game%",
   "waiting-room.gui.item.lore": "&7Regarde et suis tes statistiques\n&7dans ce mini-jeu.",
 
+  "team-chooser.message.automatically-added": "&7Vous avez été &aajouté &7dans l'équipe %team% &7avec %players%&7.",
   "team-chooser.message.already-in": "&7Vous faites &cdéjà &7partie de cette équipe!",
   "team-chooser.message.full": "&7Cette équipe est &cpleine&7!",
   "team-chooser.message.join": "&7Tu viens de &arejoindre &7l'équipe: %team%&7.",

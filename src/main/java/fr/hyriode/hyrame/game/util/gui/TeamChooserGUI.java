@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.impl.game.gui;
+package fr.hyriode.hyrame.game.util.gui;
 
 import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.IHyrame;
@@ -6,7 +6,7 @@ import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.protocol.HyriWaitingProtocol;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
-import fr.hyriode.hyrame.impl.game.util.TeamChooserItem;
+import fr.hyriode.hyrame.game.util.HyriGameItems;
 import fr.hyriode.hyrame.inventory.HyriInventory;
 import fr.hyriode.hyrame.item.ItemBuilder;
 import org.bukkit.ChatColor;
@@ -72,12 +72,12 @@ public class TeamChooserGUI extends HyriInventory {
                 }
 
                 if (slot != -1) {
-                    this.hyrame.getItemManager().giveItem(this.owner, slot, TeamChooserItem.class);
+                    HyriGameItems.TEAM_SELECTOR.give(hyrame, gamePlayer.getPlayer(), slot);
                 }
 
                 player.sendMessage(HyriLanguageMessage.get("team-chooser.message.join-random").getValue(player));
 
-                refresh(this.hyrame);
+                refresh();
             } else {
                 player.sendMessage(HyriLanguageMessage.get("team-chooser.message.already-in-random").getValue(player));
             }
@@ -105,10 +105,10 @@ public class TeamChooserGUI extends HyriInventory {
                 player.sendMessage(HyriLanguageMessage.get("team-chooser.message.join").getValue(player).replace("%team%", team.getColor().getChatColor() + team.getDisplayName().getValue(player)));
 
                 if (slot != -1) {
-                    this.hyrame.getItemManager().giveItem(this.owner, slot, TeamChooserItem.class);
+                    HyriGameItems.TEAM_SELECTOR.give(hyrame, gamePlayer.getPlayer(), slot);
                 }
 
-                refresh(this.hyrame);
+                refresh();
             }
         };
     }
@@ -131,7 +131,9 @@ public class TeamChooserGUI extends HyriInventory {
         this.addRandomTeamBarrier();
     }
 
-    public static void refresh(IHyrame hyrame) {
+    public static void refresh() {
+        final IHyrame hyrame = IHyrame.get();
+
         for (TeamChooserGUI gui : hyrame.getInventoryManager().getInventories(TeamChooserGUI.class)) {
             gui.update();
         }
@@ -147,7 +149,7 @@ public class TeamChooserGUI extends HyriInventory {
                 continue;
             }
 
-            hyrame.getItemManager().giveItem(gamePlayer.getPlayer(), slot, TeamChooserItem.class);
+            HyriGameItems.TEAM_SELECTOR.give(hyrame, gamePlayer.getPlayer(), slot);
         }
     }
 

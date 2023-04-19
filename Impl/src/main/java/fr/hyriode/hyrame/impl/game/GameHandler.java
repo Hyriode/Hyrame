@@ -4,8 +4,6 @@ import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.HyriGameState;
-import fr.hyriode.hyrame.game.IHyriGameManager;
-import fr.hyriode.hyrame.impl.Hyrame;
 import fr.hyriode.hyrame.utils.block.BlockUtil;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -25,9 +23,6 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.projectiles.ProjectileSource;
-
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * Project: Hyrame

@@ -8,7 +8,7 @@ import fr.hyriode.hyrame.anvilgui.AnvilGUI;
 import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.host.HostDisplay;
 import fr.hyriode.hyrame.host.option.HostOption;
-import fr.hyriode.hyrame.impl.game.gui.TeamChooserGUI;
+import fr.hyriode.hyrame.game.util.gui.TeamChooserGUI;
 import fr.hyriode.hyrame.language.HyrameMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -49,7 +49,7 @@ public class TeamNameOption extends HostOption<String> {
         new AnvilGUI(HyrameLoader.getHyrame().getPlugin(), player, this.value == null ? this.teamName.getValue(HyriLanguage.FR) : this.value, null, false, e -> Bukkit.getScheduler().runTaskLater(IHyrame.get().getPlugin(), () -> categoryGUIProvider.apply(player).open(), 1L), null, null, (p, input) -> {
             this.setValue(input);
 
-            TeamChooserGUI.refresh(this.getHyrame());
+            TeamChooserGUI.refresh();
 
             categoryGUIProvider.apply(player).open();
 

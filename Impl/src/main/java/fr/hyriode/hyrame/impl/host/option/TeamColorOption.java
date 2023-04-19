@@ -4,7 +4,7 @@ import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.game.team.HyriGameTeamColor;
 import fr.hyriode.hyrame.host.HostDisplay;
 import fr.hyriode.hyrame.host.option.HostOption;
-import fr.hyriode.hyrame.impl.game.gui.TeamChooserGUI;
+import fr.hyriode.hyrame.game.util.gui.TeamChooserGUI;
 import fr.hyriode.hyrame.language.HyrameMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -24,7 +24,7 @@ public class TeamColorOption extends HostOption<HyriGameTeamColor> {
         this.onChanged = color -> {
             team.setColor(color);
 
-            TeamChooserGUI.refresh(this.getHyrame());
+            TeamChooserGUI.refresh();
         };
     }
 

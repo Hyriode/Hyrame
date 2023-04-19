@@ -7,7 +7,7 @@ import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.util.HyriGameItems;
 import fr.hyriode.hyrame.impl.HyramePlugin;
-import fr.hyriode.hyrame.impl.game.gui.TeamChooserGUI;
+import fr.hyriode.hyrame.game.util.gui.TeamChooserGUI;
 import fr.hyriode.hyrame.item.HyriItem;
 import fr.hyriode.hyrame.item.ItemNBT;
 import org.bukkit.ChatColor;

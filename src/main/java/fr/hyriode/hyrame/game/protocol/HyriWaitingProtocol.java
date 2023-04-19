@@ -3,26 +3,34 @@ package fr.hyriode.hyrame.game.protocol;
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.event.HyriEventHandler;
 import fr.hyriode.api.host.HostData;
+import fr.hyriode.api.party.IHyriParty;
 import fr.hyriode.api.player.IHyriPlayerSession;
 import fr.hyriode.api.server.IHyriServer;
 import fr.hyriode.hyggdrasil.api.server.HyggServer;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
+import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.game.event.player.HyriGameJoinEvent;
 import fr.hyriode.hyrame.game.event.player.HyriGameLeaveEvent;
 import fr.hyriode.hyrame.game.scoreboard.HyriWaitingScoreboard;
+import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.game.util.HyriGameItems;
+import fr.hyriode.hyrame.game.util.gui.TeamChooserGUI;
 import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.scoreboard.HyriScoreboard;
 import fr.hyriode.hyrame.scoreboard.IScoreboardManager;
 import fr.hyriode.hyrame.utils.BroadcastUtil;
 import fr.hyriode.hyrame.utils.PlayerUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -118,6 +126,86 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
                 .replace("%counter_color%", (game.canStart() ? ChatColor.GREEN : ChatColor.RED).toString())
                 .replace("%current_players%", String.valueOf(game.getPlayers().size()))
                 .replace("%max_players%", String.valueOf(server.getSlots())));
+
+        // Auto-add player in a team
+        if (game.isUsingTeams() && game.getTeams().get(0).getTeamSize() > 1) {
+            final IHyriParty party = IHyriParty.get(session.getParty());
+
+            if (!session.hasParty() || !party.isLeader(playerId)) {
+                return;
+            }
+
+            Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+                if (!game.getState().isAccessible()) { // Game might have started
+                    return;
+                }
+
+                final HyriGamePlayer leader = game.getPlayer(playerId);
+
+                if (leader == null) { // Player might have disconnected
+                    return;
+                }
+
+                final List<HyriGamePlayer> members = new ArrayList<>();
+
+                members.add(leader);
+
+                // Check if there are other party members in this game
+                for (HyriGamePlayer gamePlayer : game.getPlayers()) {
+                    if (gamePlayer.equals(leader)) {
+                        continue;
+                    }
+
+                    if (party.hasMember(gamePlayer.getUniqueId())) {
+                        members.add(gamePlayer);
+                    }
+                }
+
+                if (members.size() == 1) {
+                    return;
+                }
+
+                // Get the smallest team and try to add the maximum of party members to it
+                final HyriGameTeam smallestTeam = game.getSmallestTeam();
+                final int space = smallestTeam.getTeamSize() - smallestTeam.getPlayers().size();
+
+                if (space >= 2) { // The team must have a gap of 2 players
+                    members.subList(2, space + 1).clear();
+
+                    for (HyriGamePlayer gamePlayer : game.getPlayers()) {
+                        smallestTeam.addPlayer(gamePlayer);
+
+                        this.sendAutomaticAddedMessage(smallestTeam, gamePlayer.getPlayer(), members);
+                    }
+
+                    TeamChooserGUI.refresh();
+                }
+            }, 20L);
+        }
+    }
+
+    private void sendAutomaticAddedMessage(HyriGameTeam team, Player player, List<HyriGamePlayer> members) {
+        final StringBuilder players = new StringBuilder();
+
+        for (int i = 0; i < members.size(); i++) {
+            final HyriGamePlayer member = members.get(i);
+
+            if (member.getUniqueId().equals(player.getUniqueId())) {
+                continue;
+            }
+
+            players.append(ChatColor.AQUA)
+                    .append(member.getPlayer().getName());
+
+            if (i != members.size() - 1) {
+                players.append(ChatColor.GRAY)
+                        .append(", ");
+            }
+        }
+
+        player.sendMessage(HyrameMessage.TEAM_AUTOMATICALLY_ADDED_MESSAGE.asString(player)
+                        .replace("%team%", team.getFormattedDisplayName(player))
+                        .replace("%players%", players.toString()));
     }
 
     @HyriEventHandler

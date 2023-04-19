@@ -8,7 +8,7 @@ import fr.hyriode.hyrame.game.team.HyriGameTeam;
 import fr.hyriode.hyrame.host.HostDisplay;
 import fr.hyriode.hyrame.host.option.HostOption;
 import fr.hyriode.hyrame.host.option.PreciseIntegerOption;
-import fr.hyriode.hyrame.impl.game.gui.TeamChooserGUI;
+import fr.hyriode.hyrame.game.util.gui.TeamChooserGUI;
 import fr.hyriode.hyrame.impl.host.category.team.HostTeamsCategory;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public class SlotsOption extends PreciseIntegerOption {
                 option.setHardValue(teamSize);
             }
 
-            TeamChooserGUI.refresh(hyrame);
+            TeamChooserGUI.refresh();
             HyriWaitingScoreboard.updateAll();
         };
     }
