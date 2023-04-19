@@ -45,11 +45,12 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
     private final IHostController controller;
 
     public HostCommand(HyramePlugin plugin) {
-        super(plugin, new HyriCommandInfo("host")
+        super(plugin, new CommandInfo("host")
                 .withAliases("h")
                 .withDescription("Command used to interact with host system")
-                .withType(HyriCommandType.PLAYER)
-                .withUsage(sender -> HELP.apply((Player) sender), false)
+                .withUsage(new CommandUsage()
+                        .withMessage(HELP)
+                        .withErrorPrefix(false))
                 .withPermission(account -> {
                     final HostData hostData = HyriAPI.get().getServer().getHostData();
 
@@ -61,14 +62,14 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void handle(HyriCommandContext ctx) {
-        final Player player = (Player) ctx.getSender();
+    public void handle(CommandContext ctx) {
+        final Player player = ctx.getSender();
         final IHyriPlayer account = IHyriPlayer.get(player.getUniqueId());
         final HostData hostData = this.controller.getHostData();
         final boolean secondaryHost = hostData.getSecondaryHosts().contains(player.getUniqueId());
         final HyriGame<?> game = this.plugin.getHyrame().getGameManager().getCurrentGame();
 
-        this.handleArgument(ctx, "kick %player_server%", output -> {
+        ctx.registerArgument("kick %player_server%", output -> {
             final Player target = output.get(Player.class);
 
             if (target.getUniqueId().equals(player.getUniqueId())) {
@@ -81,7 +82,7 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
             player.sendMessage(HyrameMessage.HOST_KICK_MESSAGE.asString(account).replace("%player%", IHyriPlayer.get(target.getUniqueId()).getNameWithRank()));
         });
 
-        this.handleArgument(ctx, "ban %player%", output -> {
+        ctx.registerArgument("ban %player%", output -> {
             final IHyriPlayer target = output.get(IHyriPlayer.class);
             final UUID targetId = target.getUniqueId();
 
@@ -110,7 +111,7 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
             player.sendMessage(HyrameMessage.HOST_BAN_MESSAGE.asString(account).replace("%player%", target.getNameWithRank()));
         });
 
-        this.handleArgument(ctx, "unban %player%", output -> {
+        ctx.registerArgument("unban %player%", output -> {
             if (secondaryHost) {
                 player.sendMessage(ChatColor.RED + HyrameMessage.PERMISSION_ERROR.asString(player));
                 return;
@@ -135,7 +136,7 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
             player.sendMessage(HyrameMessage.HOST_UNBAN_MESSAGE.asString(account).replace("%player%", target.getNameWithRank()));
         });
 
-        this.handleArgument(ctx, "banlist", output -> {
+        ctx.registerArgument("banlist", output -> {
             if (secondaryHost) {
                 player.sendMessage(ChatColor.RED + HyrameMessage.PERMISSION_ERROR.asString(player));
                 return;
@@ -155,7 +156,7 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
             player.spigot().sendMessage(builder.create());
         });
 
-        this.handleArgument(ctx, "op %player_server%", output -> {
+        ctx.registerArgument("op %player_server%", output -> {
             if (secondaryHost) {
                 player.sendMessage(ChatColor.RED + HyrameMessage.PERMISSION_ERROR.asString(player));
                 return;
@@ -184,7 +185,7 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
             HyriAPI.get().getHyggdrasilManager().sendData();
         });
 
-        this.handleArgument(ctx, "deop %player%", output -> {
+        ctx.registerArgument("deop %player%", output -> {
             if (secondaryHost) {
                 player.sendMessage(ChatColor.RED + HyrameMessage.PERMISSION_ERROR.asString(player));
                 return;
@@ -213,7 +214,7 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
             }
         });
 
-        this.handleArgument(ctx, "oplist", output -> {
+        ctx.registerArgument("oplist", output -> {
             if (secondaryHost) {
                 player.sendMessage(ChatColor.RED + HyrameMessage.PERMISSION_ERROR.asString(player));
                 return;
@@ -233,7 +234,7 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
             player.spigot().sendMessage(builder.create());
         });
 
-        this.handleArgument(ctx, "wl add %player%", output -> {
+        ctx.registerArgument("wl add %player%", output -> {
             final IHyriPlayer target = output.get(IHyriPlayer.class);
             final UUID targetId = target.getUniqueId();
 
@@ -254,7 +255,7 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
             HyriAPI.get().getHyggdrasilManager().sendData();
         });
 
-        this.handleArgument(ctx, "wl remove %player%", output -> {
+        ctx.registerArgument("wl remove %player%", output -> {
             final IHyriPlayer target = output.get(IHyriPlayer.class);
             final boolean result = hostData.getWhitelistedPlayers().remove(target.getUniqueId());
 
@@ -272,7 +273,7 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
             }
         });
 
-        this.handleArgument(ctx, "wl clear", output -> {
+        ctx.registerArgument("wl clear", output -> {
             hostData.getWhitelistedPlayers().clear();
 
             player.sendMessage(HyrameMessage.HOST_WHITELIST_CLEARED_MESSAGE.asString(account));
@@ -280,7 +281,7 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
             HyriAPI.get().getHyggdrasilManager().sendData();
         });
 
-        this.handleArgument(ctx, "wl list", output -> {
+        ctx.registerArgument("wl list", output -> {
             final ComponentBuilder builder = new ComponentBuilder(Symbols.HYPHENS_LINE).color(ChatColor.DARK_AQUA).strikethrough(true)
                     .append("\n").strikethrough(false);
 
@@ -295,8 +296,8 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
             player.spigot().sendMessage(builder.create());
         });
 
-        this.handleArgument(ctx, "say %sentence%", output -> this.controller.sendHostMessage(player, output.get(String.class)));
-        this.handleArgument(ctx, "give %input% %integer%", output -> {
+        ctx.registerArgument("say %sentence%", output -> this.controller.sendHostMessage(player, output.get(String.class)));
+        ctx.registerArgument("give %input% %integer%", output -> {
             if (game.getState() != HyriGameState.PLAYING) {
                 player.sendMessage(HyrameMessage.HOST_GAME_ERROR_MESSAGE.asString(player));
                 return;
@@ -330,7 +331,7 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
                 gamePlayer.getPlayer().getInventory().addItem(itemStack);
             }
         });
-        this.handleArgument(ctx, "heal", output -> {
+        ctx.registerArgument("heal", output -> {
             if (game.getState() != HyriGameState.PLAYING) {
                 player.sendMessage(HyrameMessage.HOST_GAME_ERROR_MESSAGE.asString(player));
                 return;
@@ -347,8 +348,10 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
 
             player.sendMessage(HyrameMessage.HOST_HEAL_MESSAGE.asString(player));
         });
-        this.handleArgument(ctx, "help", output -> player.spigot().sendMessage(HELP.apply(player)));
-        this.handleArgument(ctx, "", output -> player.spigot().sendMessage(HELP.apply(player)));
+        ctx.registerArgument("help", output -> player.spigot().sendMessage(HELP.apply(player)));
+        ctx.registerArgument("", output -> player.spigot().sendMessage(HELP.apply(player)));
+
+        super.handle(ctx);
     }
 
 }

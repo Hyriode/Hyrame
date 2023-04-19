@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by AstFaster
  * on 23/12/2021 at 09:01
  */
-public class HyriCommandOutput {
+public class CommandOutput {
 
     /** The map of objects stored in the output */
     private final Map<Class<?>, List<Object>> objectsMap = new HashMap<>();

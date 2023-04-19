@@ -20,7 +20,14 @@ public class PrimitiveType<T> {
     /** Double type */
     public static final PrimitiveType<Double> DOUBLE = new PrimitiveType<>(Double::parseDouble);
     /** Boolean type */
-    public static final PrimitiveType<Boolean> BOOLEAN = new PrimitiveType<>(Boolean::parseBoolean);
+    public static final PrimitiveType<Boolean> BOOLEAN = new PrimitiveType<>(input -> {
+        if (input.equalsIgnoreCase("true")) {
+            return true;
+        } else if (input.equalsIgnoreCase("false")) {
+            return true;
+        }
+        throw new IllegalArgumentException();
+    });
 
     /** Action used to parse the type */
     private final Function<String, T> action;
@@ -44,7 +51,7 @@ public class PrimitiveType<T> {
         try {
             this.action.apply(input);
             return true;
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             return false;
         }
     }

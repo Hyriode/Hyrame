@@ -1,20 +1,14 @@
 package fr.hyriode.hyrame.command;
 
-import fr.hyriode.api.language.HyriLanguage;
-import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
@@ -27,7 +21,7 @@ public abstract class HyriCommand<T extends JavaPlugin> {
     /** The plugin provided in the {@link IPluginProvider} */
     protected final T plugin;
     /** The information of the command */
-    protected final HyriCommandInfo info;
+    protected final CommandInfo info;
 
     /**
      * Constructor of {@link HyriCommand}
@@ -35,7 +29,7 @@ public abstract class HyriCommand<T extends JavaPlugin> {
      * @param plugin The plugin
      * @param info The command's information
      */
-    public HyriCommand(T plugin, HyriCommandInfo info) {
+    public HyriCommand(T plugin, CommandInfo info) {
         this.plugin = plugin;
         this.info = info;
     }
@@ -45,108 +39,60 @@ public abstract class HyriCommand<T extends JavaPlugin> {
      *
      * @param ctx Context of the execution
      */
-    public abstract void handle(HyriCommandContext ctx);
+    public void handle(CommandContext ctx) {
+        final Player player = ctx.getSender();
+        final String[] args = ctx.getArgs();
 
-    /**
-     * Handle an argument
-     *
-     * @param ctx Command's execution context
-     * @param expected Expected input
-     * @param usage Usage message if the input is not correct
-     * @param callback Callback to fire after
-     */
-    protected void handleArgument(HyriCommandContext ctx, String expected, Function<CommandSender, BaseComponent[]> usage, Consumer<HyriCommandOutput> callback) {
-        final HyriCommandResult result = ctx.getResult();
+        for (CommandArgument argument : ctx.getArguments()) {
+            ctx.setResult(new CommandResult(CommandResult.Type.SUCCESS));
 
-        if (result == null || (result.getType() == HyriCommandResult.Type.ERROR && !expected.isEmpty())) {
-            final String[] expectedArgs = expected.toLowerCase(Locale.ROOT).split(" ");
-            final String[] args = ctx.getArgs();
-
-            if (args.length == 0 && expectedArgs.length > 0) {
-                this.invalidCommandMessage(ctx, usage);
-                return;
-            }
-
-            final HyriCommandOutput output = new HyriCommandOutput();
-
-            ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.SUCCESS));
-
-            if (args.length < expectedArgs.length) {
-                this.invalidCommandMessage(ctx, usage);
-                return;
-            }
+            final CommandOutput output = new CommandOutput();
+            final String[] expectedArgs = argument.getExpected().toLowerCase(Locale.ROOT).split(" ");
 
             for (int i = 0; i < args.length; i++) {
+                final String arg = args[i];
+
                 if (expectedArgs.length <= i) {
-                    this.invalidCommandMessage(ctx, usage);
-                    return;
+                    ctx.setResult(new CommandResult(CommandResult.Type.ERROR, argument.getUsage().apply(player)));
+                    break;
                 }
 
-                final String arg = args[i];
                 final String expectedArg = expectedArgs[i];
 
                 ctx.setArgumentPosition(i);
 
                 if (!arg.equalsIgnoreCase(expectedArg)) {
-                    final HyriCommandCheck check = HyriCommandCheck.fromSequence(expectedArg);
+                    final CommandCheck check = CommandCheck.fromSequence(expectedArg);
 
                     if (check == null) {
-                        this.invalidCommandMessage(ctx, usage);
-                        return;
+                        ctx.setResult(new CommandResult(CommandResult.Type.ERROR, argument.getUsage().apply(player)));
+                        break;
                     }
 
                     final boolean continueProcess = check.runAction(ctx, output, arg);
-
-                    if (ctx.getResult().getType() == HyriCommandResult.Type.ERROR) {
-                        return;
-                    }
 
                     if (!continueProcess) {
                         break;
                     }
                 }
-
             }
 
-            callback.accept(output);
-        }
-    }
-
-    protected void handleArgument(HyriCommandContext ctx, String expected, Consumer<HyriCommandOutput> callback) {
-        this.handleArgument(ctx, expected, this.info.getUsage(), callback);
-    }
-
-    /**
-     * Used to set the error message as an invalid command in the context
-     *
-     * @param ctx Command context
-     */
-    private void invalidCommandMessage(HyriCommandContext ctx, Function<CommandSender, BaseComponent[]> usage) {
-        final CommandSender sender = ctx.getSender();
-
-        String message = ChatColor.RED + "";
-
-        if (this.info.isInvalidMessage()) {
-            if (sender instanceof Player) {
-                message += HyrameMessage.COMMAND_INVALID.asString((Player) sender);
-            } else {
-                message += HyrameMessage.COMMAND_INVALID.asLang().getValue(HyriLanguage.EN);
+            if (ctx.getResult().getType() == CommandResult.Type.SUCCESS) {
+                argument.getAction().accept(output);
+                return;
             }
         }
 
-        final List<BaseComponent> components = new ArrayList<>(Arrays.asList(TextComponent.fromLegacyText(message + ChatColor.RESET)));
-
-        components.addAll(Arrays.asList(usage.apply(sender)));
-
-        ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, components.toArray(new BaseComponent[0])));
+        // No argument was found
+        player.spigot().sendMessage(ctx.getResult().getMessage());
     }
 
     /**
      * Get the information of the command
      *
-     * @return A {@link HyriCommandInfo} object
+     * @return A {@link CommandInfo} object
      */
-    public HyriCommandInfo getInfo() {
+    public CommandInfo getInfo() {
         return this.info;
     }
 

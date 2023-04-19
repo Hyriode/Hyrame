@@ -8,7 +8,7 @@ import net.md_5.bungee.api.chat.TextComponent;
  * Created by AstFaster
  * on 23/12/2021 at 10:07
  */
-public class HyriCommandResult {
+public class CommandResult {
 
     /** Result's type */
     private final Type type;
@@ -16,32 +16,32 @@ public class HyriCommandResult {
     private final BaseComponent[] message;
 
     /**
-     * Constructor of {@link HyriCommandResult}
+     * Constructor of {@link CommandResult}
      *
      * @param type Result's type
      * @param message Result's message
      */
-    public HyriCommandResult(Type type, BaseComponent[] message) {
+    public CommandResult(Type type, BaseComponent[] message) {
         this.type = type;
         this.message = message;
     }
 
     /**
-     * Constructor of {@link HyriCommandResult}
+     * Constructor of {@link CommandResult}
      *
      * @param type Result's type
      * @param message Result's message
      */
-    public HyriCommandResult(Type type, String message) {
+    public CommandResult(Type type, String message) {
         this(type, TextComponent.fromLegacyText(message));
     }
 
     /**
-     * Constructor of {@link HyriCommandResult}
+     * Constructor of {@link CommandResult}
      *
      * @param type Result's type
      */
-    public HyriCommandResult(Type type) {
+    public CommandResult(Type type) {
         this(type, "");
     }
 

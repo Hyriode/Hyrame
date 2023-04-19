@@ -16,7 +16,7 @@ import java.util.function.Function;
  * Created by AstFaster
  * on 22/12/2021 at 16:43
  */
-public enum HyriCommandCheck {
+public enum CommandCheck {
 
     /** Handle all input, it can be a word, a number, a state etc */
     INPUT("%input%", arg -> arg),
@@ -58,31 +58,31 @@ public enum HyriCommandCheck {
     /** Sequence used to detect if its present in a command */
     private final String sequence;
     /** The action to run when the check is detected. The action returns a boolean which means if the arguments checking process needs to continue or not. */
-    private final TriPredicate<HyriCommandContext, HyriCommandOutput, String> action;
+    private final TriPredicate<CommandContext, CommandOutput, String> action;
 
     /** Constant values list to increase performances */
-    public static final HyriCommandCheck[] VALUES = HyriCommandCheck.values();
+    public static final CommandCheck[] VALUES = CommandCheck.values();
 
     /**
-     * Constructor of {@link HyriCommandCheck}
+     * Constructor of {@link CommandCheck}
      *
      * @param sequence The sequence of the check
      * @param action The action linked to the check
      */
-    HyriCommandCheck(String sequence, TriPredicate<HyriCommandContext, HyriCommandOutput, String> action) {
+    CommandCheck(String sequence, TriPredicate<CommandContext, CommandOutput, String> action) {
         this.sequence = sequence;
         this.action = action;
     }
 
     /**
-     * Alternative constructor of {@link HyriCommandCheck}
+     * Alternative constructor of {@link CommandCheck}
      *
      * @param sequence The sequence of the check
      * @param clazz The class of the object to add in the output
      * @param getter Getter used to get the object to add in the output
      * @param error The error function to apply when the object is null
      */
-    HyriCommandCheck(String sequence, Class<?> clazz, Function<String, ?> getter, BiFunction<HyriCommandContext, String, String> error) {
+    CommandCheck(String sequence, Class<?> clazz, Function<String, ?> getter, BiFunction<CommandContext, String, String> error) {
         this(sequence, (ctx, output, arg) -> {
             final Object object = getter.apply(arg);
 
@@ -92,20 +92,20 @@ public enum HyriCommandCheck {
             }
 
             if (error != null) {
-                ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, error.apply(ctx, arg)));
+                ctx.setResult(new CommandResult(CommandResult.Type.ERROR, error.apply(ctx, arg)));
             }
             return false;
         });
     }
 
     /**
-     * Alternative constructor of {@link HyriCommandCheck}
+     * Alternative constructor of {@link CommandCheck}
      *
      * @param sequence The sequence of the check
      * @param getter Getter used to get the object to add in the output
      * @param error The error function to apply when the object is null
      */
-    HyriCommandCheck(String sequence, Function<String, ?> getter, BiFunction<HyriCommandContext, String, String> error) {
+    CommandCheck(String sequence, Function<String, ?> getter, BiFunction<CommandContext, String, String> error) {
         this(sequence, (ctx, output, arg) -> {
             final Object object = getter.apply(arg);
 
@@ -115,31 +115,31 @@ public enum HyriCommandCheck {
             }
 
             if (error != null) {
-                ctx.setResult(new HyriCommandResult(HyriCommandResult.Type.ERROR, error.apply(ctx, arg)));
+                ctx.setResult(new CommandResult(CommandResult.Type.ERROR, error.apply(ctx, arg)));
             }
             return false;
         });
     }
 
     /**
-     * Alternative constructor of {@link HyriCommandCheck}
+     * Alternative constructor of {@link CommandCheck}
      *
      * @param sequence The sequence of the check
      * @param getter Getter used to get the object to add in the output
      */
-    HyriCommandCheck(String sequence, Function<String, ?> getter) {
+    CommandCheck(String sequence, Function<String, ?> getter) {
         this(sequence, getter, null);
     }
 
     /**
-     * Constructor of {@link HyriCommandCheck}<br>
+     * Constructor of {@link CommandCheck}<br>
      * This constructor is used for primitive type check only
      *
      * @param sequence Check sequence
      * @param type Primitive type of the check
      */
-    HyriCommandCheck(String sequence, PrimitiveType<?> type) {
-        this(sequence, arg -> type.isValid(arg) ? type.parse(arg) : null, (ctx, arg) -> (type == PrimitiveType.BOOLEAN ? HyrameMessage.INVALID_ARGUMENT : HyrameMessage.INVALID_NUMBER).asString((Player) ctx.getSender()).replace("%arg%", arg));
+    CommandCheck(String sequence, PrimitiveType<?> type) {
+        this(sequence, arg -> type.isValid(arg) ? type.parse(arg) : null, (ctx, arg) -> (type == PrimitiveType.BOOLEAN ? HyrameMessage.INVALID_ARGUMENT : HyrameMessage.INVALID_NUMBER).asString(ctx.getSender()).replace("%arg%", arg));
     }
 
     /**
@@ -150,7 +150,7 @@ public enum HyriCommandCheck {
      * @param arg Argument to validate
      * @return <code>true</code> if it's valid
      */
-    public boolean runAction(HyriCommandContext ctx, HyriCommandOutput output, String arg) {
+    public boolean runAction(CommandContext ctx, CommandOutput output, String arg) {
         return this.action.test(ctx, output, arg);
     }
 
@@ -172,10 +172,10 @@ public enum HyriCommandCheck {
      * Get a check from a provided sequence
      *
      * @param sequence Provided sequence
-     * @return {@link HyriCommandCheck} or <code>null</code>
+     * @return {@link CommandCheck} or <code>null</code>
      */
-    public static HyriCommandCheck fromSequence(String sequence) {
-        for (HyriCommandCheck check : VALUES) {
+    public static CommandCheck fromSequence(String sequence) {
+        for (CommandCheck check : VALUES) {
             if (check.toString().equalsIgnoreCase(sequence)) {
                 return check;
             }

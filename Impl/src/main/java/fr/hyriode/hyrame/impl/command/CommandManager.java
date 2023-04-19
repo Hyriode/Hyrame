@@ -102,49 +102,47 @@ public class CommandManager implements ICommandManager {
     }
 
     private Command createCommand(HyriCommand<?> command) {
-        final HyriCommandInfo info = command.getInfo();
-        final HyriCommandType type = info.getType();
+        final CommandInfo info = command.getInfo();
 
         return new Command(info.getName(), info.getDescription(), "", info.getAliases()) {
             @Override
             public boolean execute(CommandSender sender, String label, String[] args) {
-                if (type.getCheck().apply(sender)) {
-                    final Predicate<IHyriPlayer> permission = info.getPermission();
+                if (!(sender instanceof Player)) {
+                    return false;
+                }
 
-                    if (permission != null) {
-                        if (sender instanceof Player) {
-                            final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(((Player) sender).getUniqueId());
+                final Player player = (Player) sender;
+                final Predicate<IHyriPlayer> permission = info.getPermission();
 
-                            if (!permission.test(account)) {
-                                sender.sendMessage(HyrameMessage.PERMISSION_ERROR.asString(account));
-                                return true;
-                            }
-                        }
+                if (permission != null) {
+                    final IHyriPlayer account = IHyriPlayer.get(player.getUniqueId());
+
+                    if (!permission.test(account)) {
+                        sender.sendMessage(HyrameMessage.PERMISSION_ERROR.asString(account));
+                        return true;
                     }
+                }
 
-                    final HyriCommandContext ctx = new HyriCommandContext(sender, label, args, info);
+                final CommandContext ctx = new CommandContext(player, label, args, info);
 
-                    if (info.isAsynchronous()) {
-                        ThreadUtil.ASYNC_EXECUTOR.execute(() -> executeCommand(ctx, command));
-                    } else {
-                        executeCommand(ctx, command);
-                    }
+                if (info.isAsynchronous()) {
+                    ThreadUtil.ASYNC_EXECUTOR.execute(() -> executeCommand(ctx, command));
                 } else {
-                    sender.sendMessage(ChatColor.RED + "You need to be " + type.getDisplay() + " to execute this command!");
+                    executeCommand(ctx, command);
                 }
                 return true;
             }
         };
     }
 
-    private void executeCommand(HyriCommandContext ctx, HyriCommand<?> command) {
+    private void executeCommand(CommandContext ctx, HyriCommand<?> command) {
         command.handle(ctx);
 
         final CommandSender sender = ctx.getSender();
-        final HyriCommandResult result = ctx.getResult();
+        final CommandResult result = ctx.getResult();
 
         if (result != null) {
-            if (result.getType() == HyriCommandResult.Type.ERROR) {
+            if (result.getType() == CommandResult.Type.ERROR) {
                 if (sender instanceof Player) {
                     ((Player) sender).spigot().sendMessage(result.getMessage());
                 } else {
