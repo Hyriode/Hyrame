@@ -146,7 +146,7 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
                     return;
                 }
 
-                final List<HyriGamePlayer> members = new ArrayList<>();
+                List<HyriGamePlayer> members = new ArrayList<>();
 
                 members.add(leader);
 
@@ -170,7 +170,7 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
                 final int space = smallestTeam.getTeamSize() - smallestTeam.getPlayers().size();
 
                 if (space >= 2) { // The team must have a gap of 2 players
-                    members.subList(2, space + 1).clear();
+                    members = members.subList(0, Math.min(members.size(), space));
 
                     for (HyriGamePlayer gamePlayer : game.getPlayers()) {
                         smallestTeam.addPlayer(gamePlayer);

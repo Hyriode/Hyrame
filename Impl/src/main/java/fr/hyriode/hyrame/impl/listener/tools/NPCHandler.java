@@ -119,6 +119,8 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
 
             if (from.distanceSquared(location) > 2500 && to.distanceSquared(location) < 2500) {
                 NPCManager.sendNPC(player, npc);
+            } else if (from.distanceSquared(location) < 2500 && to.distanceSquared(location) > 2500){
+                NPCManager.removeNPC(player, npc);
             }
         }
     }
