@@ -1,6 +1,5 @@
 package fr.hyriode.hyrame.impl.command;
 
-import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.player.IHyriPlayer;
 import fr.hyriode.hyrame.HyrameLogger;
 import fr.hyriode.hyrame.command.*;
@@ -9,7 +8,6 @@ import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.reflection.Reflection;
 import fr.hyriode.hyrame.utils.ThreadUtil;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -126,30 +124,13 @@ public class CommandManager implements ICommandManager {
                 final CommandContext ctx = new CommandContext(player, label, args, info);
 
                 if (info.isAsynchronous()) {
-                    ThreadUtil.ASYNC_EXECUTOR.execute(() -> executeCommand(ctx, command));
+                    ThreadUtil.ASYNC_EXECUTOR.execute(() -> command.handle(ctx));
                 } else {
-                    executeCommand(ctx, command);
+                    command.handle(ctx);
                 }
                 return true;
             }
         };
-    }
-
-    private void executeCommand(CommandContext ctx, HyriCommand<?> command) {
-        command.handle(ctx);
-
-        final CommandSender sender = ctx.getSender();
-        final CommandResult result = ctx.getResult();
-
-        if (result != null) {
-            if (result.getType() == CommandResult.Type.ERROR) {
-                if (sender instanceof Player) {
-                    ((Player) sender).spigot().sendMessage(result.getMessage());
-                } else {
-                    sender.sendMessage(BaseComponent.toLegacyText(result.getMessage()));
-                }
-            }
-        }
     }
 
     @Override

@@ -1,15 +1,19 @@
 package fr.hyriode.hyrame.command;
 
+import fr.hyriode.hyrame.language.HyrameMessage;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.minecraft.server.v1_8_R3.BiomeForest;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 /**
  * Project: Hyrame
@@ -44,32 +48,37 @@ public abstract class HyriCommand<T extends JavaPlugin> {
         final String[] args = ctx.getArgs();
 
         for (CommandArgument argument : ctx.getArguments()) {
+            ctx.setArgumentPosition(0);
             ctx.setResult(new CommandResult(CommandResult.Type.SUCCESS));
 
             final CommandOutput output = new CommandOutput();
             final String[] expectedArgs = argument.getExpected().toLowerCase(Locale.ROOT).split(" ");
 
-            for (int i = 0; i < args.length; i++) {
-                final String arg = args[i];
+            for (int i = 0; i < expectedArgs.length; i++) {
+                final String expectedArg = expectedArgs[i];
 
-                if (expectedArgs.length <= i) {
-                    ctx.setResult(new CommandResult(CommandResult.Type.ERROR, argument.getUsage().apply(player)));
+                if (args.length <= i) {
+                    ctx.setResult(new CommandResult(CommandResult.Type.ERROR, argument.getUsage()));
                     break;
                 }
 
-                final String expectedArg = expectedArgs[i];
+                final String arg = args[i];
 
                 ctx.setArgumentPosition(i);
 
-                if (!arg.equalsIgnoreCase(expectedArg)) {
+                if (!expectedArg.equalsIgnoreCase(arg)) { // It might be a check
                     final CommandCheck check = CommandCheck.fromSequence(expectedArg);
 
                     if (check == null) {
-                        ctx.setResult(new CommandResult(CommandResult.Type.ERROR, argument.getUsage().apply(player)));
+                        ctx.setResult(new CommandResult(CommandResult.Type.ERROR, argument.getUsage()));
                         break;
                     }
 
                     final boolean continueProcess = check.runAction(ctx, output, arg);
+
+                    if (ctx.getResult().getType() == CommandResult.Type.ERROR) {
+                        break;
+                    }
 
                     if (!continueProcess) {
                         break;
@@ -84,7 +93,18 @@ public abstract class HyriCommand<T extends JavaPlugin> {
         }
 
         // No argument was found
-        player.spigot().sendMessage(ctx.getResult().getMessage());
+        final CommandUsage usage = ctx.getResult().getUsage();
+
+        String message = "";
+        if (usage.isErrorPrefix()) {
+            message += HyrameMessage.COMMAND_INVALID.asString(player);
+        }
+
+        final List<BaseComponent> components = new ArrayList<>(Arrays.asList(TextComponent.fromLegacyText(message + ChatColor.RESET)));
+
+        components.addAll(Arrays.asList(usage.getMessage().apply(player)));
+
+        player.spigot().sendMessage(components.toArray(new BaseComponent[0]));
     }
 
     /**

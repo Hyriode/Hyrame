@@ -54,7 +54,7 @@ public class CommandContext {
      * @param usage The usage of the command
      * @param action The action to trigger
      */
-    public void registerArgument(String expected, Function<Player, BaseComponent[]> usage, Consumer<CommandOutput> action) {
+    public void registerArgument(String expected, CommandUsage usage, Consumer<CommandOutput> action) {
         final CommandArgument argument = new CommandArgument(expected, usage, action);
 
         this.arguments.add(argument);
@@ -64,10 +64,33 @@ public class CommandContext {
      * Register a command argument
      *
      * @param expected The expected input for the argument
+     * @param usage The usage of the command
+     * @param action The action to trigger
+     */
+    public void registerArgument(String expected, Function<Player, BaseComponent[]> usage, Consumer<CommandOutput> action) {
+        this.registerArgument(expected, new CommandUsage().withMessage(usage), action);
+    }
+
+    /**
+     * Register a command argument
+     *
+     * @param expected The expected input for the argument
+     * @param usage The usage of the command
+     * @param action The action to trigger
+     */
+    public void registerArgument(String expected, String usage, Consumer<CommandOutput> action) {
+        this.registerArgument(expected, new CommandUsage().withStringMessage(player -> usage), action);
+    }
+
+
+    /**
+     * Register a command argument
+     *
+     * @param expected The expected input for the argument
      * @param action The action to trigger
      */
     public void registerArgument(String expected, Consumer<CommandOutput> action) {
-        this.registerArgument(expected, this.commandInfo.getUsage().getMessage(), action);
+        this.registerArgument(expected, this.commandInfo.getUsage(), action);
     }
 
     /**

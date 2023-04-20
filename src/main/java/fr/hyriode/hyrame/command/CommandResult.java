@@ -13,54 +13,27 @@ public class CommandResult {
     /** Result's type */
     private final Type type;
     /** Result's message */
-    private final BaseComponent[] message;
+    private final CommandUsage usage;
 
-    /**
-     * Constructor of {@link CommandResult}
-     *
-     * @param type Result's type
-     * @param message Result's message
-     */
-    public CommandResult(Type type, BaseComponent[] message) {
+    public CommandResult(Type type, CommandUsage usage) {
         this.type = type;
-        this.message = message;
+        this.usage = usage;
     }
 
-    /**
-     * Constructor of {@link CommandResult}
-     *
-     * @param type Result's type
-     * @param message Result's message
-     */
-    public CommandResult(Type type, String message) {
-        this(type, TextComponent.fromLegacyText(message));
+    public CommandResult(Type type, String usage) {
+        this(type, new CommandUsage().withStringMessage(player -> usage));
     }
 
-    /**
-     * Constructor of {@link CommandResult}
-     *
-     * @param type Result's type
-     */
     public CommandResult(Type type) {
         this(type, "");
     }
 
-    /**
-     * Get result's type
-     *
-     * @return {@link Type}
-     */
     public Type getType() {
         return this.type;
     }
 
-    /**
-     * Get result's message
-     *
-     * @return A message
-     */
-    public BaseComponent[] getMessage() {
-        return this.message;
+    public CommandUsage getUsage() {
+        return this.usage;
     }
 
     /**

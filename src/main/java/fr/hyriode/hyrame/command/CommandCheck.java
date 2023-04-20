@@ -39,7 +39,7 @@ public enum CommandCheck {
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(arg);
 
         return account != null && HyriAPI.get().getPlayerManager().isOnline(account.getUniqueId()) ? account : null;
-    }, (ctx, arg) -> HyrameMessage.PLAYER_NOT_FOUND.asString((Player) ctx.getSender()).replace("%player%", arg)),
+    }, (ctx, arg) -> HyrameMessage.PLAYER_NOT_FOUND.asString(ctx.getSender()).replace("%player%", arg)),
     /** Handle a player name as an input, but it will check from players on current server */
     PLAYER_ON_SERVER("%player_server%", Player.class, Bukkit::getPlayerExact, (ctx, arg) -> HyrameMessage.PLAYER_NOT_FOUND.asString((Player) ctx.getSender()).replace("%player%", arg)),
     /** Handle a short number */
@@ -92,7 +92,9 @@ public enum CommandCheck {
             }
 
             if (error != null) {
-                ctx.setResult(new CommandResult(CommandResult.Type.ERROR, error.apply(ctx, arg)));
+                ctx.setResult(new CommandResult(CommandResult.Type.ERROR, new CommandUsage()
+                        .withStringMessage(player -> error.apply(ctx, arg))
+                        .withErrorPrefix(false)));
             }
             return false;
         });
@@ -115,7 +117,9 @@ public enum CommandCheck {
             }
 
             if (error != null) {
-                ctx.setResult(new CommandResult(CommandResult.Type.ERROR, error.apply(ctx, arg)));
+                ctx.setResult(new CommandResult(CommandResult.Type.ERROR, new CommandUsage()
+                        .withStringMessage(player -> error.apply(ctx, arg))
+                        .withErrorPrefix(false)));
             }
             return false;
         });
