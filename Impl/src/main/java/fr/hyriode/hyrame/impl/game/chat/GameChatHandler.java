@@ -21,6 +21,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Project: Hyrame
@@ -92,7 +93,7 @@ public class GameChatHandler implements IHyriChatHandler {
                 }
             } else {
                 if (game.getState() == HyriGameState.ENDED && message.equalsIgnoreCase("gg") && !this.saidGG.contains(uuid) && account.getRank().isSuperior(PlayerRank.VIP_PLUS)) {
-                    account.getHyris().add(5)
+                    account.getHyris().add(ThreadLocalRandom.current().nextInt(8, 20))
                             .withMessage(true)
                             .withReason("Fairplay")
                             .withMultiplier(false)
