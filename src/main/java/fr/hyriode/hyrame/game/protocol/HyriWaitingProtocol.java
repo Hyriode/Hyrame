@@ -172,8 +172,13 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
                 if (space >= 2) { // The team must have a gap of 2 players
                     members = members.subList(0, Math.min(members.size(), space));
 
-                    for (HyriGamePlayer gamePlayer : game.getPlayers()) {
+                    for (HyriGamePlayer gamePlayer : members) {
+                        gamePlayer.removeFromTeam();
                         smallestTeam.addPlayer(gamePlayer);
+
+                        if (game.isUsingGameTabList()) {
+                            game.getTabListManager().updatePlayer(gamePlayer);
+                        }
 
                         this.sendAutomaticAddedMessage(smallestTeam, gamePlayer.getPlayer(), members);
                     }
