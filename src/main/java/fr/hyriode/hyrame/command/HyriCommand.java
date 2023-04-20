@@ -47,15 +47,27 @@ public abstract class HyriCommand<T extends JavaPlugin> {
         final Player player = ctx.getSender();
         final String[] args = ctx.getArgs();
 
+        CommandUsage usage = null;
+        int bestIndex = 0;
         for (CommandArgument argument : ctx.getArguments()) {
             ctx.setArgumentPosition(0);
             ctx.setResult(new CommandResult(CommandResult.Type.SUCCESS));
 
             final CommandOutput output = new CommandOutput();
-            final String[] expectedArgs = argument.getExpected().toLowerCase(Locale.ROOT).split(" ");
+            final String[] expectedArgs =  argument.getExpected().toLowerCase(Locale.ROOT).split(" ");
+
+            if (argument.getExpected().isEmpty() && args.length == 0) {
+                argument.getAction().accept(output);
+                return;
+            }
 
             for (int i = 0; i < expectedArgs.length; i++) {
                 final String expectedArg = expectedArgs[i];
+
+                if (i > bestIndex) {
+                    usage = argument.getUsage();
+                    bestIndex = i;
+                }
 
                 if (args.length <= i) {
                     ctx.setResult(new CommandResult(CommandResult.Type.ERROR, argument.getUsage()));
@@ -76,7 +88,10 @@ public abstract class HyriCommand<T extends JavaPlugin> {
 
                     final boolean continueProcess = check.runAction(ctx, output, arg);
 
-                    if (ctx.getResult().getType() == CommandResult.Type.ERROR) {
+                    if (ctx.getResult().getType() == CommandResult.Type.CHECK_ERROR) { // An error occurred in checks
+                        if (bestIndex == i) {
+                            usage = ctx.getResult().getUsage();
+                        }
                         break;
                     }
 
@@ -92,9 +107,13 @@ public abstract class HyriCommand<T extends JavaPlugin> {
             }
         }
 
-        // No argument was found
-        final CommandUsage usage = ctx.getResult().getUsage();
+        ctx.setResult(new CommandResult(CommandResult.Type.ERROR, usage == null ? this.info.getUsage() : usage));
 
+        // No argument was found
+        this.commandError(player, ctx.getResult().getUsage());
+    }
+
+    private void commandError(Player player, CommandUsage usage) {
         String message = "";
         if (usage.isErrorPrefix()) {
             message += HyrameMessage.COMMAND_INVALID.asString(player);

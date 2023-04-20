@@ -43,7 +43,9 @@ public class CommandResult {
         /** The command was successfully executed */
         SUCCESS,
         /** An error occurred */
-        ERROR
+        ERROR,
+        /** An error occurred in a check */
+        CHECK_ERROR,
     }
 
 }
