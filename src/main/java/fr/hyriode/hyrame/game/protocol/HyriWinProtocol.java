@@ -53,11 +53,11 @@ public class HyriWinProtocol extends HyriGameProtocol implements Listener {
         for (HyriGameSpectator player : players) {
             final Player target = player.getPlayer();
 
+            PlayerUtil.resetPotionEffects(target);
+
             if (!player.isSpectator()) {
                 player.setSpectator(true);
             }
-
-            PlayerUtil.resetPotionEffects(target);
 
             Bukkit.getScheduler().runTaskLater(this.game.getPlugin(), player::show, 1L);
         }
