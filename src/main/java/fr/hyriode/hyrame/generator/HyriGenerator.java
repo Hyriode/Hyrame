@@ -1,6 +1,8 @@
 package fr.hyriode.hyrame.generator;
 
 import fr.hyriode.api.player.IHyriPlayerSession;
+import fr.hyriode.hyrame.IHyrame;
+import fr.hyriode.hyrame.game.HyriGame;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorCreatedEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorDropEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorRemovedEvent;
@@ -276,6 +278,7 @@ public class HyriGenerator {
 
         @EventHandler
         public void onPickup(PlayerPickupItemEvent event) {
+            final HyriGame<?> game = IHyrame.get().getGame();
             final Item droppedItem = event.getItem();
             final ItemStack itemStack = droppedItem.getItemStack();
             final Player player = event.getPlayer();
@@ -283,6 +286,16 @@ public class HyriGenerator {
 
             if (nbt.hasTag(ITEMS_TAG)) {
                 if (IHyriPlayerSession.get(player.getUniqueId()).isModerating()) {
+                    event.setCancelled(true);
+                    return;
+                }
+
+                if (game.getSpectator(player.getUniqueId()) != null) {
+                    event.setCancelled(true);
+                    return;
+                }
+
+                if (game.getPlayer(player.getUniqueId()).isSpectator()) {
                     event.setCancelled(true);
                     return;
                 }
