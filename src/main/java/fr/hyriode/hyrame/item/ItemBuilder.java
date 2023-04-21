@@ -137,7 +137,7 @@ public class ItemBuilder {
     public ItemBuilder withHeadTexture(String texture) {
         try {
             final SkullMeta skullMeta = (SkullMeta) this.itemMeta;
-            final GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+            final GameProfile profile = new GameProfile(UUID.randomUUID(), "");
 
             profile.getProperties().put("textures", new Property("textures", texture));
 

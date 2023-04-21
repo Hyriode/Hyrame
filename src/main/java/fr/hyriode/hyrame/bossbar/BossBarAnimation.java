@@ -150,8 +150,8 @@ public abstract class BossBarAnimation {
         @Override
         public void onTick() {
             if (this.currentTime == this.options.getTime()) {
-                this.options.whenComplete().accept(this.bossBar);
                 this.bossBar.disableAnimation();
+                this.options.whenComplete().accept(this.bossBar);
                 return;
             }
 

@@ -6,6 +6,7 @@ import fr.hyriode.hyrame.generator.event.HyriGeneratorDropEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorRemovedEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorUpgradedEvent;
 import fr.hyriode.hyrame.hologram.Hologram;
+import fr.hyriode.hyrame.item.ItemNBT;
 import fr.hyriode.hyrame.utils.LocationUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,7 +23,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  */
 public class HyriGenerator {
 
-    private static final String ITEMS_TAG = "HyriGeneratorItem";
+    private static final String ITEMS_TAG = "GeneratorItem";
 
     protected final JavaPlugin plugin;
     protected final Location location;
@@ -127,7 +127,7 @@ public class HyriGenerator {
                     final Item item = (Item) entity;
                     final ItemStack itemStack = item.getItemStack();
 
-                    if (item.hasMetadata(this.getTag())) {
+                    if (new ItemNBT(itemStack).hasTag(ITEMS_TAG)) {
                         itemsCount += itemStack.getAmount();
                     }
 
@@ -168,16 +168,15 @@ public class HyriGenerator {
     }
 
     private void dropItem() {
-        final Item item = LocationUtil.dropItem(this.location, this.item.clone());
+        final ItemNBT nbt = new ItemNBT(this.item.clone());
+
+        nbt.setString(ITEMS_TAG, UUID.randomUUID().toString().split("-")[0]);
+
+        final ItemStack itemStack = nbt.build();
+        final Item item = LocationUtil.dropItem(this.location, itemStack);
 
         item.setVelocity(new Vector(0.0D, 0.0D, 0.0D));
-        item.setMetadata(this.getTag(), new FixedMetadataValue(this.plugin, true));
     }
-
-    private String getTag() {
-        return ITEMS_TAG + ":" + this.item.getType().name();
-    }
-
     private void createHologram(Player player) {
         if (!this.ignoredPlayers.contains(player)) {
             if (this.header != null) {
@@ -278,24 +277,31 @@ public class HyriGenerator {
         @EventHandler
         public void onPickup(PlayerPickupItemEvent event) {
             final Item droppedItem = event.getItem();
+            final ItemStack itemStack = droppedItem.getItemStack();
             final Player player = event.getPlayer();
+            final ItemNBT nbt = new ItemNBT(itemStack);
 
-            if (IHyriPlayerSession.get(player.getUniqueId()).isModerating()) {
-                event.setCancelled(true);
-                return;
-            }
+            if (nbt.hasTag(ITEMS_TAG)) {
+                if (IHyriPlayerSession.get(player.getUniqueId()).isModerating()) {
+                    event.setCancelled(true);
+                    return;
+                }
 
-            if (ignoredPlayers.contains(player)) {
-                return;
-            }
+                if (ignoredPlayers.contains(player)) {
+                    return;
+                }
 
-            if (droppedItem.hasMetadata(getTag())) {
                 if (tier.isSplitting()) {
                     if (splitItem()) {
                         droppedItem.remove();
                         event.setCancelled(true);
+                        return;
                     }
                 }
+
+                nbt.removeTag(ITEMS_TAG);
+
+                droppedItem.setItemStack(nbt.build());
             }
         }
 

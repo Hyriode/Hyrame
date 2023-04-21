@@ -33,14 +33,14 @@ public class BossBar {
         final Location witherLocation = this.getWitherLocation();
 
         this.wither = new EntityWither(((CraftWorld) player.getWorld()).getHandle());
-
         this.wither.setCustomName(this.text);
+        this.wither.setCustomNameVisible(true);
         this.wither.setHealth(this.progress * this.wither.getMaxHealth());
         this.wither.setInvisible(true);
         this.wither.setLocation(witherLocation.getX(), witherLocation.getY(), witherLocation.getZ(), witherLocation.getYaw(), witherLocation.getPitch());
         this.wither.r(880); // Best value to hide the Wither from player
 
-        PacketUtil.sendPacket(player, new PacketPlayOutSpawnEntityLiving(wither));
+        PacketUtil.sendPacket(player, new PacketPlayOutSpawnEntityLiving(this.wither));
     }
 
     protected void destroy() {
@@ -95,6 +95,8 @@ public class BossBar {
 
     public void setText(String text, boolean update) {
         this.text = text;
+        this.wither.setCustomName(text);
+        this.wither.setCustomNameVisible(true);
 
         if (update) {
             this.sendMetadata();

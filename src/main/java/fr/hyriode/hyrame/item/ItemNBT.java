@@ -121,7 +121,6 @@ public class ItemNBT {
 
     public ItemNBT removeTag(String tag) {
         this.nbtTagCompound.remove(tag);
-
         return this;
     }
 
