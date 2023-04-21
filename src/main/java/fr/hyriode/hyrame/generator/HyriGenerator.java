@@ -129,7 +129,7 @@ public class HyriGenerator {
                     final Item item = (Item) entity;
                     final ItemStack itemStack = item.getItemStack();
 
-                    if (new ItemNBT(itemStack).hasTag(ITEMS_TAG)) {
+                    if (new ItemNBT(itemStack).hasTag(ITEMS_TAG + this.item.getType().name())) {
                         itemsCount += itemStack.getAmount();
                     }
 
@@ -172,7 +172,7 @@ public class HyriGenerator {
     private void dropItem() {
         final ItemNBT nbt = new ItemNBT(this.item.clone());
 
-        nbt.setString(ITEMS_TAG, UUID.randomUUID().toString().split("-")[0]);
+        nbt.setString(ITEMS_TAG + this.item.getType().name(), UUID.randomUUID().toString().split("-")[0]);
 
         final ItemStack itemStack = nbt.build();
         final Item item = LocationUtil.dropItem(this.location, itemStack);
@@ -284,7 +284,7 @@ public class HyriGenerator {
             final Player player = event.getPlayer();
             final ItemNBT nbt = new ItemNBT(itemStack);
 
-            if (nbt.hasTag(ITEMS_TAG)) {
+            if (nbt.hasTag(ITEMS_TAG + item.getType().name())) {
                 if (IHyriPlayerSession.get(player.getUniqueId()).isModerating()) {
                     event.setCancelled(true);
                     return;
@@ -312,7 +312,7 @@ public class HyriGenerator {
                     }
                 }
 
-                nbt.removeTag(ITEMS_TAG);
+                nbt.removeTag(ITEMS_TAG + item.getType().name());
 
                 droppedItem.setItemStack(nbt.build());
             }
