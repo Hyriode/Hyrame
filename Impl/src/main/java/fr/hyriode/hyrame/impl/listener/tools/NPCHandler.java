@@ -83,7 +83,7 @@ public class NPCHandler extends HyriListener<HyramePlugin> {
             }
 
             this.trackPlayer(player);
-        }, 2L);
+        }, 5L);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
