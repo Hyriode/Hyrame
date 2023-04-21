@@ -155,7 +155,17 @@ public class HyriGenerator {
     }
 
     private boolean splitItem() {
-        final List<Entity> players = this.location.getWorld().getNearbyEntities(this.location, 2.0D, 2.0D, 2.0D).stream().filter(entity -> entity.getType() == EntityType.PLAYER).filter(entity -> !this.ignoredPlayers.contains((Player) entity)).collect(Collectors.toList());
+        final List<Entity> players = this.location.getWorld().getNearbyEntities(this.location, 2.0D, 2.0D, 2.0D).stream()
+                .filter(entity -> entity.getType() == EntityType.PLAYER)
+                .filter(entity -> !this.ignoredPlayers.contains((Player) entity))
+                .filter(entity -> {
+                    final IHyriPlayerSession session = IHyriPlayerSession.get(entity.getUniqueId());
+
+                    this.ignoredPlayers.add((Player) entity);
+
+                    return session.isModerating();
+                })
+                .collect(Collectors.toList());
 
         if (players.size() > 1) {
             for (Entity entity : players) {
@@ -285,7 +295,12 @@ public class HyriGenerator {
             final ItemNBT nbt = new ItemNBT(itemStack);
 
             if (nbt.hasTag(ITEMS_TAG + item.getType().name())) {
+                if (ignoredPlayers.contains(player)) {
+                    return;
+                }
+
                 if (IHyriPlayerSession.get(player.getUniqueId()).isModerating()) {
+                    ignoredPlayers.add(player);
                     event.setCancelled(true);
                     return;
                 }
@@ -297,10 +312,6 @@ public class HyriGenerator {
 
                 if (game.getPlayer(player.getUniqueId()).isSpectator()) {
                     event.setCancelled(true);
-                    return;
-                }
-
-                if (ignoredPlayers.contains(player)) {
                     return;
                 }
 
