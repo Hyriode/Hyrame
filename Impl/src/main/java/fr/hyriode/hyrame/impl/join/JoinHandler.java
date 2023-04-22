@@ -117,10 +117,8 @@ public class JoinHandler implements IHyriJoinHandler {
             final HyriGameState state = game.getState();
 
             if (state.isAccessible() || game.getPlayer(player) != null) {
-                System.out.println("Handle login");
                 game.handleLogin(player);
             } else if (state == HyriGameState.PLAYING) {
-                System.out.println("Handle spectator login");
                 game.handleSpectatorLogin(player);
             }
             return;

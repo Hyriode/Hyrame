@@ -246,7 +246,12 @@ public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGam
 
             // Register a fake team owned by the player
             if (!this.usingTeams) {
-                final HyriGameTeam team = new HyriGameTeam(player.getName(), null, null, 1);
+                final HyriGameTeam team = new HyriGameTeam(player.getName(), null, null, 1) {
+                    @Override
+                    public String getFormattedDisplayName(Player target) {
+                        return this.getPlayer(playerId).formatNameWithTeam();
+                    }
+                };
 
                 this.registerTeam(team);
 
