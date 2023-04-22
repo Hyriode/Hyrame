@@ -211,13 +211,15 @@ public class HyriDeathProtocol extends HyriGameProtocol implements Listener {
         if (lastHitters != null) {
             final Player bestLastHitter = lastHitters.get(0).asPlayer();
 
-            for (HyriLastHitterProtocol.LastHitter lastHitter : lastHitters) {
-                if (!lastHitter.getUniqueId().equals(bestLastHitter.getUniqueId()) && lastHitter.isLast()) {
-                    this.playDeathSound(lastHitter.asPlayer());
+            if (bestLastHitter != null) {
+                for (HyriLastHitterProtocol.LastHitter lastHitter : lastHitters) {
+                    if (!lastHitter.getUniqueId().equals(bestLastHitter.getUniqueId()) && lastHitter.isLast()) {
+                        this.playDeathSound(lastHitter.asPlayer());
+                    }
                 }
-            }
 
-            this.playDeathSound(bestLastHitter);
+                this.playDeathSound(bestLastHitter);
+            }
         }
 
         final HyriGameDeathEvent event = gamePlayer.setDead(reason, lastHitters);
