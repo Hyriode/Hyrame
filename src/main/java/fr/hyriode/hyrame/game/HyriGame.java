@@ -334,7 +334,7 @@ public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGam
         // Player can reconnect
         if (this.isReconnectionAllowed() && this.state == HyriGameState.PLAYING) {
             HyriAPI.get().getServerManager().getReconnectionHandler().set(uuid, server.getName(), this.reconnectionTime);
-        } else if (this.state != HyriGameState.PLAYING && gamePlayer.hasTeam()){ // Game is not playing, so we need to remove him from his team
+        } else if (this.state != HyriGameState.PLAYING && gamePlayer.hasTeam()) { // Game is not playing, so we need to remove him from his team
             gamePlayer.getTeam().removePlayer(gamePlayer);
         }
 

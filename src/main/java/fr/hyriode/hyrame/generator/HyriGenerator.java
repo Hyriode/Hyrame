@@ -163,7 +163,7 @@ public class HyriGenerator {
 
                     this.ignoredPlayers.add((Player) entity);
 
-                    return session.isModerating();
+                    return !session.isModerating();
                 })
                 .collect(Collectors.toList());
 
