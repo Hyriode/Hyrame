@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by AstFaster
@@ -15,7 +16,7 @@ import java.util.UUID;
 public class BossBarManager {
 
     /** The {@linkplain Map map} with all {@linkplain BossBar boss bars} linked to players */
-    private static final Map<UUID, BossBar> BARS = new HashMap<>();
+    private static final Map<UUID, BossBar> BARS = new ConcurrentHashMap<>();
 
     /** The static instance of a {@link JavaPlugin} */
     private static JavaPlugin plugin;

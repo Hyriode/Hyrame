@@ -535,6 +535,12 @@ public class HyriWaitingRoom {
             remove();
             setup();
 
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                for (HyriLeaderboardDisplay display : leaderboardsDisplays) {
+                    display.handleLogin(player);
+                }
+            }
+
             for (Map.Entry<UUID, NPC> entry : npcs.entrySet()) {
                 NPCManager.sendNPC(Bukkit.getPlayer(entry.getKey()), entry.getValue());
             }
