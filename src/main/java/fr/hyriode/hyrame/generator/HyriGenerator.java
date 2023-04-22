@@ -161,7 +161,9 @@ public class HyriGenerator {
                 .filter(entity -> {
                     final IHyriPlayerSession session = IHyriPlayerSession.get(entity.getUniqueId());
 
-                    this.ignoredPlayers.add((Player) entity);
+                    if (session.isModerating()) {
+                        this.ignoredPlayers.add((Player) entity);
+                    }
 
                     return !session.isModerating();
                 })
