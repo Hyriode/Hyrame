@@ -128,6 +128,10 @@ public class JoinHandler implements IHyriJoinHandler {
 
         if (session.isVanished()) {
             for (Player target : Bukkit.getOnlinePlayers()) {
+                if (target == player) {
+                    continue;
+                }
+
                 final IHyriPlayer targetAccount = IHyriPlayer.get(target.getUniqueId());
 
                 if (!targetAccount.getRank().isStaff()) {

@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.packet;
 
 import net.minecraft.server.v1_8_R3.Packet;
+import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -20,7 +21,13 @@ public class PacketUtil {
      */
     public static void sendPacket(Player player, Packet<?> packet) {
         if (player instanceof CraftPlayer) {
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+            final PlayerConnection playerConnection = ((CraftPlayer) player).getHandle().playerConnection;
+
+            if (playerConnection == null) {
+                return;
+            }
+
+            playerConnection.sendPacket(packet);
         }
     }
 
