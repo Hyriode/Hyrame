@@ -2,7 +2,6 @@ package fr.hyriode.hyrame.scoreboard;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.hyrame.packet.PacketUtil;
-import fr.hyriode.hyrame.reflection.Reflection;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,7 +19,7 @@ import java.util.function.Consumer;
 public class HyriScoreboard {
 
     /** Scoreboard's lines */
-    protected final Map<Integer, HyriScoreboardLine> lines;
+    protected final Map<Integer, HyriScoreboardLine> lines = new ConcurrentHashMap<>();
 
     /** Is showing */
     protected boolean show;
@@ -46,8 +45,27 @@ public class HyriScoreboard {
         this.player = player;
         this.name = name;
         this.displayName = displayName.length() > 32 ? displayName.substring(0, 32) : displayName;
-        this.lines = new ConcurrentHashMap<>();
         this.show = false;
+    }
+
+    public void onTick() {
+        int updatedLines = 0;
+
+        for (HyriScoreboardLine line : this.lines.values()) {
+            final HyriScoreboardLine.Update update = line.getUpdate();
+
+            if (update == null){
+                continue;
+            }
+
+            if (update.onTick(line)) {
+                updatedLines++;
+            }
+        }
+
+        if (updatedLines > 0) {
+            this.updateLines();
+        }
     }
 
     /**
@@ -75,30 +93,11 @@ public class HyriScoreboard {
      *
      * @param line Line's number
      * @param value Line's value
-     * @param scoreboardLineConsumer Consumer to call on update
+     * @param lineConsumer Consumer to call on update
      * @param ticks Ticks before updating
      */
-    public void setLine(int line, String value, Consumer<HyriScoreboardLine> scoreboardLineConsumer, int ticks) {
-        final HyriScoreboardLine oldLine = this.lines.get(line);
-
-        if (oldLine != null) {
-            final HyriScoreboardLine.Update oldLineUpdate = oldLine.getUpdate();
-
-            if (oldLineUpdate != null) {
-                oldLineUpdate.getRunnable().cancel();
-            }
-        }
-
-        final BukkitRunnable runnable = new BukkitRunnable() {
-            @Override
-            public void run() {
-                scoreboardLineConsumer.accept(lines.get(line));
-
-                updateLines();
-            }
-        };
-
-        this.lines.put(line, new HyriScoreboardLine(value, new HyriScoreboardLine.Update(runnable, ticks)));
+    public void setLine(int line, String value, Consumer<HyriScoreboardLine> lineConsumer, int ticks) {
+        this.lines.put(line, new HyriScoreboardLine(value, new HyriScoreboardLine.Update(lineConsumer, ticks)));
     }
 
     /**
@@ -130,14 +129,6 @@ public class HyriScoreboard {
             this.sendLines();
             this.display();
 
-            for (HyriScoreboardLine line : this.lines.values()) {
-                final HyriScoreboardLine.Update update = line.getUpdate();
-
-                if (update != null) {
-                    update.getRunnable().runTaskTimer(this.plugin, 0, update.getTicks());
-                }
-            }
-
             this.show = true;
 
             HyriAPI.get().getEventBus().publish(new HyriScoreboardEvent(this, this.player, HyriScoreboardEvent.Action.SHOW));
@@ -149,14 +140,6 @@ public class HyriScoreboard {
      */
     public void hide() {
         if (this.show) {
-            for (HyriScoreboardLine line : this.lines.values()) {
-                final HyriScoreboardLine.Update update = line.getUpdate();
-
-                if (update != null) {
-                    update.getRunnable().cancel();
-                }
-            }
-
             this.destroy();
 
             this.show = false;
@@ -209,34 +192,15 @@ public class HyriScoreboard {
     }
 
     private Packet<?> getObjectivePacket(int mode, String name) {
-        final PacketPlayOutScoreboardObjective packet = new PacketPlayOutScoreboardObjective();
-
-        Reflection.setField("a", packet, name);
-        Reflection.setField("b", packet, this.displayName);
-        Reflection.setField("c", packet, IScoreboardCriteria.EnumScoreboardHealthDisplay.INTEGER);
-        Reflection.setField("d", packet, mode);
-
-        return packet;
+        return new PacketPlayOutScoreboardObjective(name, this.displayName, IScoreboardCriteria.EnumScoreboardHealthDisplay.INTEGER, mode);
     }
 
     private Packet<?> getObjectiveDisplayPacket() {
-        final PacketPlayOutScoreboardDisplayObjective packet = new PacketPlayOutScoreboardDisplayObjective();
-
-        Reflection.setField("a", packet, 1);
-        Reflection.setField("b", packet, this.name);
-
-        return packet;
+        return new PacketPlayOutScoreboardDisplayObjective(1, this.name);
     }
 
-    protected Packet<?> getScorePacket(String scoreName, int scoreValue, Object action) {
-        final PacketPlayOutScoreboardScore packet = new PacketPlayOutScoreboardScore();
-
-        Reflection.setField("a", packet, scoreName);
-        Reflection.setField("b", packet, this.name);
-        Reflection.setField("c", packet, scoreValue);
-        Reflection.setField("d", packet, action);
-
-        return packet;
+    protected Packet<?> getScorePacket(String scoreName, int scoreValue, PacketPlayOutScoreboardScore.EnumScoreboardAction action) {
+        return new PacketPlayOutScoreboardScore(scoreName, this.name, scoreValue, action);
     }
 
     private String getOldName() {
@@ -247,7 +211,6 @@ public class HyriScoreboard {
         } else {
             this.name += "1";
         }
-
         return old;
     }
 

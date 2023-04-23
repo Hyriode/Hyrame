@@ -1,6 +1,6 @@
 package fr.hyriode.hyrame.scoreboard;
 
-import org.bukkit.scheduler.BukkitRunnable;
+import java.util.function.Consumer;
 
 /**
  * Project: Hyrame
@@ -64,30 +64,15 @@ public class HyriScoreboardLine {
 
     public static class Update {
 
-        /** Update runnable */
-        private final BukkitRunnable runnable;
+        private int tickIndex = 0;
 
+        private final Consumer<HyriScoreboardLine> lineConsumer;
         /** Number of ticks to wait before updating */
         private final int ticks;
 
-        /**
-         * Constructor of {@link Update}
-         *
-         * @param runnable Update runnable
-         * @param ticks Ticks to wait
-         */
-        public Update(BukkitRunnable runnable, int ticks) {
-            this.runnable = runnable;
+        public Update(Consumer<HyriScoreboardLine> lineConsumer, int ticks) {
+            this.lineConsumer = lineConsumer;
             this.ticks = ticks;
-        }
-
-        /**
-         * Get update runnable
-         *
-         * @return - A runnable
-         */
-        public BukkitRunnable getRunnable() {
-            return this.runnable;
         }
 
         /**
@@ -99,6 +84,16 @@ public class HyriScoreboardLine {
             return this.ticks;
         }
 
+        public boolean onTick(HyriScoreboardLine line) {
+            this.tickIndex++;
+
+            if (this.ticks == this.tickIndex) {
+                this.lineConsumer.accept(line);
+                this.tickIndex = 0;
+                return true;
+            }
+            return false;
+        }
     }
 
 }

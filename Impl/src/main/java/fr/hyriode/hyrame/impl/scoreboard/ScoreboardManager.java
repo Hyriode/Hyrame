@@ -7,6 +7,7 @@ import fr.hyriode.hyrame.scoreboard.HyriScoreboard;
 import fr.hyriode.hyrame.scoreboard.HyriScoreboardEvent;
 import fr.hyriode.hyrame.scoreboard.IScoreboardManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,7 +29,15 @@ public class ScoreboardManager implements IScoreboardManager, Listener {
         this.playersScoreboards = new ConcurrentHashMap<>();
 
         HyriAPI.get().getEventBus().register(this);
-        hyrame.getPlugin().getServer().getPluginManager().registerEvents(this, hyrame.getPlugin());
+
+        final Server server = hyrame.getPlugin().getServer();
+
+        server.getPluginManager().registerEvents(this, hyrame.getPlugin());
+        server.getScheduler().runTaskTimer(hyrame.getPlugin(), () -> {
+            for (HyriScoreboard scoreboard : this.playersScoreboards.values()) {
+                scoreboard.onTick();
+            }
+        }, 1L, 1L);
     }
 
     @EventHandler
