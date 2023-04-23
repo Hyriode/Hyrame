@@ -1,6 +1,7 @@
 package fr.hyriode.hyrame.utils;
 
 import fr.hyriode.hyrame.IHyrame;
+import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.conversations.Conversation;
@@ -19,6 +20,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
+import org.github.paperspigot.Title;
 
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -213,6 +215,76 @@ public class VoidPlayer implements Player {
 
     @Override
     public void sendMap(MapView mapView) {
+
+    }
+
+    @Override
+    public void sendMessage(BaseComponent baseComponent) {
+
+    }
+
+    @Override
+    public void sendMessage(BaseComponent... baseComponents) {
+
+    }
+
+    @Override
+    public void setPlayerListHeaderFooter(BaseComponent[] baseComponents, BaseComponent[] baseComponents1) {
+
+    }
+
+    @Override
+    public void setPlayerListHeaderFooter(BaseComponent baseComponent, BaseComponent baseComponent1) {
+
+    }
+
+    @Override
+    public void setTitleTimes(int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void setSubtitle(BaseComponent[] baseComponents) {
+
+    }
+
+    @Override
+    public void setSubtitle(BaseComponent baseComponent) {
+
+    }
+
+    @Override
+    public void showTitle(BaseComponent[] baseComponents) {
+
+    }
+
+    @Override
+    public void showTitle(BaseComponent baseComponent) {
+
+    }
+
+    @Override
+    public void showTitle(BaseComponent[] baseComponents, BaseComponent[] baseComponents1, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void showTitle(BaseComponent baseComponent, BaseComponent baseComponent1, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void sendTitle(Title title) {
+
+    }
+
+    @Override
+    public void updateTitle(Title title) {
+
+    }
+
+    @Override
+    public void hideTitle() {
 
     }
 
@@ -1022,7 +1094,17 @@ public class VoidPlayer implements Player {
     }
 
     @Override
+    public int _INVALID_getLastDamage() {
+        return 0;
+    }
+
+    @Override
     public void setLastDamage(double v) {
+
+    }
+
+    @Override
+    public void _INVALID_setLastDamage(int i) {
 
     }
 
@@ -1122,7 +1204,17 @@ public class VoidPlayer implements Player {
     }
 
     @Override
+    public void _INVALID_damage(int i) {
+
+    }
+
+    @Override
     public void damage(double v, Entity entity) {
+
+    }
+
+    @Override
+    public void _INVALID_damage(int i, Entity entity) {
 
     }
 
@@ -1132,7 +1224,17 @@ public class VoidPlayer implements Player {
     }
 
     @Override
+    public int _INVALID_getHealth() {
+        return 0;
+    }
+
+    @Override
     public void setHealth(double v) {
+
+    }
+
+    @Override
+    public void _INVALID_setHealth(int i) {
 
     }
 
@@ -1142,7 +1244,17 @@ public class VoidPlayer implements Player {
     }
 
     @Override
+    public int _INVALID_getMaxHealth() {
+        return 0;
+    }
+
+    @Override
     public void setMaxHealth(double v) {
+
+    }
+
+    @Override
+    public void _INVALID_setMaxHealth(int i) {
 
     }
 
