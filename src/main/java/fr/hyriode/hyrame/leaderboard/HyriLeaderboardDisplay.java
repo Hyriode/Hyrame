@@ -17,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -36,7 +37,7 @@ public class HyriLeaderboardDisplay {
 
     private BukkitTask updateTask;
 
-    private final Map<UUID, Hologram> holograms;
+    private final Map<UUID, Hologram> holograms = new ConcurrentHashMap<>();
 
     private boolean showing;
 
@@ -63,7 +64,6 @@ public class HyriLeaderboardDisplay {
         this.updateTime = updateTime;
         this.location = location;
         this.scopes = scopes;
-        this.holograms = new HashMap<>();
         this.currentScopes = new HashMap<>();
         this.leaderboard = HyriAPI.get().getLeaderboardProvider().getLeaderboard(leaderboardType, leaderboardName);
     }
