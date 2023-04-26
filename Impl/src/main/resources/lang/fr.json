@@ -23,7 +23,7 @@
   "game.end.winner": "&bVainqueur&7 - %winner%",
   "game.global-message": "&b[Global] ",
   "game.team-message": "&b[Equipe] ",
-  "game.offline-win.message": "&3&m--------------------------------------------------\n&fRésumé de votre de votre précédente partie &b&l%game%&f.\n%rewards% &8(%server%)\n&3&m--------------------------------------------------",
+  "game.offline-win.message": "&3&m--------------------------------------------------\n&fRésumé de votre précédente partie &b&l%game%&f.\n%rewards% &8(%server%)\n&3&m--------------------------------------------------",
 
   "waiting-room.npc.display": "&bStatistiques\n&f%game%\n&3Cliquer pour voir",
 

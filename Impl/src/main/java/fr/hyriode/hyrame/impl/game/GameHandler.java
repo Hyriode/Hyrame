@@ -66,20 +66,8 @@ class GameHandler implements Listener {
         if (this.game.getState() != HyriGameState.PLAYING ||
                 game.getSpectator(player.getUniqueId()) != null ||
                 (gamePlayer != null && gamePlayer.isSpectator())) {
-            final Block block = event.getClickedBlock();
-            final Action action = event.getAction();
 
-            if (block != null) {
-                final Material type = block.getType();
-
-                if ((action == Action.PHYSICAL && BlockUtil.isPressurePlate(type)) ||
-                        block.getState() instanceof InventoryHolder ||
-                        type == Material.TRAP_DOOR ||
-                        type == Material.STONE_BUTTON ||
-                        type == Material.WOOD_BUTTON) {
-                    event.setCancelled(true);
-                }
-            }
+            event.setCancelled(true);
         }
     }
 

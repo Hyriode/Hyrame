@@ -113,15 +113,23 @@ public class JoinHandler implements IHyriJoinHandler {
 
         this.expectedPlayers.remove(playerId);
 
-        if (game != null && !session.isModerating()) {
-            final HyriGameState state = game.getState();
+        if (game != null) {
+            if (!session.isModerating()) {
+                final HyriGameState state = game.getState();
 
-            if (state.isAccessible() || game.getPlayer(player) != null) {
-                game.handleLogin(player);
-            } else if (state == HyriGameState.PLAYING) {
-                game.handleSpectatorLogin(player);
+                if (state.isAccessible() || game.getPlayer(player) != null) {
+                    game.handleLogin(player);
+                } else if (state == HyriGameState.PLAYING) {
+                    game.handleSpectatorLogin(player);
+                }
+                return;
+            } else { // Player might have joined the game before and rejoined as a moderator
+                final HyriGamePlayer gamePlayer = game.getPlayer(player);
+
+                if (gamePlayer != null) {
+                    game.getPlayers().remove(gamePlayer);
+                }
             }
-            return;
         }
 
         final IHyriPlayer account = IHyriPlayer.get(playerId);
