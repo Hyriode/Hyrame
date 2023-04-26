@@ -27,8 +27,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -555,6 +557,18 @@ public class HyriWaitingRoom {
 
             if (event.getTo().getY() < Math.min(firstY, secondY)) {
                 event.getPlayer().teleport(config.get().getSpawn().asBukkit());
+            }
+        }
+
+        @EventHandler
+        public void onInteract(PlayerInteractEvent event) {
+            final Player player = event.getPlayer();
+            final HyriGamePlayer gamePlayer = game.getPlayer(player);
+
+            if (game.getSpectator(player.getUniqueId()) != null ||
+                    (gamePlayer != null && gamePlayer.isSpectator())) {
+
+                event.setCancelled(true);
             }
         }
 

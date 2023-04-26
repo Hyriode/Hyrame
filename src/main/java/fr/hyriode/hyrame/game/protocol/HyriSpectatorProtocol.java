@@ -78,7 +78,7 @@ public class HyriSpectatorProtocol extends HyriGameProtocol implements Listener 
     }
 
     @HyriEventHandler
-    public void onPlayerJoin(HyriGameReconnectedEvent event) {
+    public void onReconnected(HyriGameReconnectedEvent event) {
         for (HyriGamePlayer gamePlayer : this.hyrame.getGameManager().getCurrentGame().getPlayers()) {
             if (gamePlayer.isSpectator()) {
                 gamePlayer.setSpectator(true);
