@@ -204,7 +204,7 @@ public class TabListManager implements ITabListManager {
             ranksHandler.onLogin(event.getPlayer());
         }
 
-        @EventHandler(priority = EventPriority.LOWEST)
+        @EventHandler(priority = EventPriority.MONITOR)
         public void onQuit(PlayerQuitEvent event) {
             final Player player = event.getPlayer();
 
