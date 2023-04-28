@@ -107,7 +107,7 @@ public class HyriWorldGenerator {
 
                     if (percentage > this.lastPercentage && percentage % 10 == 0) {
                         this.lastPercentage = percentage;
-
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "save-all");
                         HyrameLogger.log("Loading chunks | " + percentage + "%");
                     }
 
