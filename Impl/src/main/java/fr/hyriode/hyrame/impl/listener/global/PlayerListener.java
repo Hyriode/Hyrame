@@ -27,7 +27,7 @@ public class PlayerListener extends HyriListener<HyramePlugin> {
         final Player player = event.getPlayer();
 
         ProfileLoader.savePlayerProfile(player);
-        PlayerHeadAPI.savePlayerHead(player);
+//        PlayerHeadAPI.savePlayerHead(player);
 
         this.plugin.getHyrame().getPacketInterceptor().injectChannel(player);
     }
