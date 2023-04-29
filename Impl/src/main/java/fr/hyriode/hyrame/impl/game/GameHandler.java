@@ -21,6 +21,7 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.projectiles.ProjectileSource;
 
@@ -123,6 +124,11 @@ class GameHandler implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onChunkUnload(ChunkUnloadEvent event) {
+        event.setCancelled(true);
     }
 
     private boolean cancelDamages(Player player, Player target) {
