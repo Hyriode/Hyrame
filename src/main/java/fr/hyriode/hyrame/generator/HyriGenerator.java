@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.generator;
 import fr.hyriode.api.player.IHyriPlayerSession;
 import fr.hyriode.hyrame.IHyrame;
 import fr.hyriode.hyrame.game.HyriGame;
+import fr.hyriode.hyrame.game.HyriGamePlayer;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorCreatedEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorDropEvent;
 import fr.hyriode.hyrame.generator.event.HyriGeneratorRemovedEvent;
@@ -159,13 +160,13 @@ public class HyriGenerator {
                 .filter(entity -> entity.getType() == EntityType.PLAYER)
                 .filter(entity -> !this.ignoredPlayers.contains((Player) entity))
                 .filter(entity -> {
-                    final IHyriPlayerSession session = IHyriPlayerSession.get(entity.getUniqueId());
+                    final Player player = (Player) entity;
+                    final HyriGamePlayer gamePlayer = IHyrame.get().getGame().getPlayer(player);
 
-                    if (session.isModerating()) {
-                        this.ignoredPlayers.add((Player) entity);
+                    if (gamePlayer != null) {
+                        return !gamePlayer.isSpectator() || !gamePlayer.isDead();
                     }
-
-                    return !session.isModerating();
+                    return false;
                 })
                 .collect(Collectors.toList());
 
