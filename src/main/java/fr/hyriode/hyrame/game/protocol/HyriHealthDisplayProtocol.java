@@ -3,6 +3,7 @@ package fr.hyriode.hyrame.game.protocol;
 import fr.hyriode.hyrame.IHyrame;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -32,6 +33,10 @@ public class HyriHealthDisplayProtocol extends HyriGameProtocol {
 
             headObjective.setDisplayName(ChatColor.RED + "❤");
             headObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                headObjective.getScore(player.getName()).setScore(20);
+            }
         }
 
         if (this.options.isTabList()) {
@@ -39,6 +44,10 @@ public class HyriHealthDisplayProtocol extends HyriGameProtocol {
 
             tabObjective.setDisplayName(ChatColor.RED + "❤");
             tabObjective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                tabObjective.getScore(player.getName()).setScore(20);
+            }
         }
     }
 
