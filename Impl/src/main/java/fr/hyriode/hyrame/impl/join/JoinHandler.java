@@ -82,6 +82,8 @@ public class JoinHandler implements IHyriJoinHandler {
 
         this.expectedPlayers.add(player);
 
+        Bukkit.getScheduler().runTaskLater(IHyrame.get().getPlugin(), () -> this.expectedPlayers.remove(player), 3 * 20L);
+
         return HyriJoinResponse.ALLOW;
     }
 
