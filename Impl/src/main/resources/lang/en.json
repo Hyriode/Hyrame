@@ -56,7 +56,7 @@
   "message.death.player-and-lightning": "%player% &7was struck by lightning and %killer%&7.",
   "message.death.unknown": "%player% &7died.",
 
-  "message.join.sending": "Sending you to %server%...",
+  "message.join.sending": "&aSending you to %server%...",
   "message.join.deny": "Couldn't sent you to %server%! %reason%",
   "message.join.deny.full": "Server is full",
   "message.join.deny.state": "Game is playing",

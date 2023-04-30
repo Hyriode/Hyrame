@@ -48,7 +48,7 @@ public class HyriLastHitterProtocol extends HyriGameProtocol {
         this.lastHitters = null;
     }
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(EntityDamageByEntityEvent event) {
         if (event.isCancelled()) {
             return;

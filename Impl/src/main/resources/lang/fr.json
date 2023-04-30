@@ -56,7 +56,7 @@
   "message.death.player-and-lightning": "%player% &7a été foudroyé et tué par %killer%&7.",
   "message.death.unknown": "%player% &7est mort.",
 
-  "message.join.sending": "Envoi en cours vers %server%...",
+  "message.join.sending": "&aEnvoi en cours vers %server%...",
   "message.join.deny": "Impossible de vous envoyer vers %server%! %reason%",
   "message.join.deny.full": "Serveur plein",
   "message.join.deny.state": "Partie en cours",
