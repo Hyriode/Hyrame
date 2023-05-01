@@ -136,7 +136,9 @@ public class ItemBuilder {
             profile = new ProfileLoader(name).loadProfile();
         }
 
-        return this.withHeadTexture(new ArrayList<>(profile.getProperties().get("textures")).get(0).getValue());
+        final List<Property> properties = new ArrayList<>(profile.getProperties().get("textures"));
+
+        return this.withHeadTexture(properties.size() > 0 ? properties.get(0).getValue() : null);
     }
 
     public ItemBuilder withPlayerHead(UUID uuid) {
@@ -149,7 +151,9 @@ public class ItemBuilder {
             profile = new ProfileLoader(uuid).loadProfile();
         }
 
-        return this.withHeadTexture(new ArrayList<>(profile.getProperties().get("textures")).get(0).getValue());
+        final List<Property> properties = new ArrayList<>(profile.getProperties().get("textures"));
+
+        return this.withHeadTexture(properties.size() > 0 ? properties.get(0).getValue() : null);
     }
 
     public ItemBuilder withHeadTexture(String texture) {
@@ -157,7 +161,9 @@ public class ItemBuilder {
             final SkullMeta skullMeta = (SkullMeta) this.itemMeta;
             final GameProfile profile = new GameProfile(UUID.randomUUID(), "");
 
-            profile.getProperties().put("textures", new Property("textures", texture));
+            if (texture != null) {
+                profile.getProperties().put("textures", new Property("textures", texture));
+            }
 
             final Field profileField = skullMeta.getClass().getDeclaredField("profile");
 
