@@ -125,13 +125,11 @@ public class ItemBuilder {
     }
 
     public ItemBuilder withPlayerHead(String name) {
-        Reflection.setField("profile", this.itemMeta, new ProfileLoader(name).loadProfile());
-        return this;
+        return this.withPlayerHead(new ArrayList<>(new ProfileLoader(name).loadProfile().getProperties().get("textures")).get(0).getValue());
     }
 
     public ItemBuilder withPlayerHead(UUID uuid) {
-        Reflection.setField("profile", this.itemMeta, new ProfileLoader(uuid).loadProfile());
-        return this;
+        return this.withPlayerHead(new ArrayList<>(new ProfileLoader(uuid).loadProfile().getProperties().get("textures")).get(0).getValue());
     }
 
     public ItemBuilder withHeadTexture(String texture) {
