@@ -6,8 +6,10 @@ import fr.hyriode.api.language.HyriLanguageMessage;
 import fr.hyriode.hyrame.enchantment.HyriEnchant;
 import fr.hyriode.hyrame.reflection.Reflection;
 import fr.hyriode.hyrame.utils.player.ProfileLoader;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -125,11 +127,29 @@ public class ItemBuilder {
     }
 
     public ItemBuilder withPlayerHead(String name) {
-        return this.withPlayerHead(new ArrayList<>(new ProfileLoader(name).loadProfile().getProperties().get("textures")).get(0).getValue());
+        final Player player = Bukkit.getPlayer(name);
+
+        GameProfile profile;
+        if (player != null) {
+            profile = ((CraftPlayer) player).getProfile();
+        } else {
+            profile = new ProfileLoader(name).loadProfile();
+        }
+
+        return this.withHeadTexture(new ArrayList<>(profile.getProperties().get("textures")).get(0).getValue());
     }
 
     public ItemBuilder withPlayerHead(UUID uuid) {
-        return this.withPlayerHead(new ArrayList<>(new ProfileLoader(uuid).loadProfile().getProperties().get("textures")).get(0).getValue());
+        final Player player = Bukkit.getPlayer(uuid);
+
+        GameProfile profile;
+        if (player != null) {
+            profile = ((CraftPlayer) player).getProfile();
+        } else {
+            profile = new ProfileLoader(uuid).loadProfile();
+        }
+
+        return this.withHeadTexture(new ArrayList<>(profile.getProperties().get("textures")).get(0).getValue());
     }
 
     public ItemBuilder withHeadTexture(String texture) {

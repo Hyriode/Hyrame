@@ -23,6 +23,8 @@ import java.util.UUID;
  */
 public class ProfileLoader {
 
+    private static final Gson GSON = new Gson();
+
     public static final String REDIS_KEY = "game-profiles:";
     private static final String CACHED_SKINS = "cached-skins:";
 
@@ -96,7 +98,7 @@ public class ProfileLoader {
                 final JsonArray parse = new JsonParser().parse(json).getAsJsonArray();
 
                 for (JsonElement element : parse) {
-                    final Property property = new Gson().fromJson(element.toString(), Property.class);
+                    final Property property = GSON.fromJson(element.toString(), Property.class);
 
                     skinProfile.getProperties().put(property.getName(), property);
                 }
@@ -119,7 +121,7 @@ public class ProfileLoader {
             final JsonArray jsonArray = new JsonArray();
 
             for (Property property : profile.getProperties().values()) {
-                jsonArray.add(new Gson().toJsonTree(property));
+                jsonArray.add(GSON.toJsonTree(property));
             }
 
             jedis.set(REDIS_KEY + CACHED_SKINS + profile.getId(), jsonArray.toString());
