@@ -3,7 +3,7 @@ package fr.hyriode.hyrame.impl.chat;
 import fr.hyriode.hyrame.chat.IHyriChatHandler;
 import fr.hyriode.hyrame.chat.IChatManager;
 import fr.hyriode.hyrame.impl.Hyrame;
-import fr.hyriode.hyrame.impl.game.chat.GameChatHandler;
+import fr.hyriode.hyrame.impl.game.GameChatHandler;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.ArrayList;

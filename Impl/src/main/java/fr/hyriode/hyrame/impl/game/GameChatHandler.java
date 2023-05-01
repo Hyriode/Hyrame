@@ -1,4 +1,4 @@
-package fr.hyriode.hyrame.impl.game.chat;
+package fr.hyriode.hyrame.impl.game;
 
 import fr.hyriode.api.HyriAPI;
 import fr.hyriode.api.chat.channel.HyriChatChannel;
@@ -87,7 +87,11 @@ public class GameChatHandler implements IHyriChatHandler {
                 } else if (gamePlayer.getTeam().getTeamSize() == 1) {
                     BroadcastUtil.broadcast(target -> String.format(this.format(), color + "[" + team.getDisplayName().getValue(target) + color + "] " + session.getNameWithRank(), message));
                 } else if (message.startsWith("!")) {
-                    BroadcastUtil.broadcast(target -> String.format(this.format(), HyrameMessage.GAME_GLOBAL_MESSAGE.asString(target) + color + "[" + team.getDisplayName().getValue(target) + color + "] " + session.getNameWithRank(), message.substring(1)));
+                    final String globalMessage = message.substring(1);
+
+                    if (!globalMessage.isEmpty()) {
+                        BroadcastUtil.broadcast(target -> String.format(this.format(), HyrameMessage.GAME_GLOBAL_MESSAGE.asString(target) + color + "[" + team.getDisplayName().getValue(target) + color + "] " + session.getNameWithRank(), globalMessage));
+                    }
                 } else {
                     team.sendMessage(target -> String.format(this.format(), HyrameMessage.GAME_TEAM_MESSAGE.asString(target) + session.getNameWithRank(), message));
                 }

@@ -97,7 +97,6 @@ public class Hyrame implements IHyrame {
 
         HyriAPI.get().getLanguageManager().registerAdapter(HyriGamePlayer.class, (message, gamePlayer) -> message.getValue(gamePlayer.getUniqueId()));
         HyriAPI.get().getJoinManager().registerHandler(10, new JoinHandler(this));
-
     }
 
     void disable() {
