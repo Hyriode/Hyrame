@@ -318,11 +318,14 @@ public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGam
         final UUID uuid = player.getUniqueId();
         final P gamePlayer = this.getPlayer(uuid);
         final IHyriServer server = HyriAPI.get().getServer();
-        final IHyriPlayerSession session = gamePlayer.getSession();
 
-        if (session != null) {
-            session.setPlaying(false);
-            session.update();
+        if (this.state == HyriGameState.PLAYING) {
+            final IHyriPlayerSession session = gamePlayer.getSession();
+
+            if (session != null) {
+                session.setPlaying(false);
+                session.update();
+            }
         }
 
         server.removePlayerPlaying(uuid);
@@ -387,8 +390,23 @@ public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGam
 
         this.timer.cancel();
 
+        HyriAPI.get().getScheduler().runAsync(() -> {
+            for (HyriGamePlayer gamePlayer : this.players) {
+                if (!gamePlayer.isOnline()) {
+                    continue;
+                }
+
+                final IHyriPlayerSession session = IHyriPlayerSession.get(gamePlayer.getUniqueId());
+
+                if (session != null) {
+                    session.setPlaying(false);
+                    session.update();
+                }
+            }
+        });
+
         if (HyriAPI.get().getServer().getAccessibility() != HyggServer.Accessibility.HOST) {
-            Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> {
                 for (HyriGamePlayer gamePlayer : this.players) {
                     if (!gamePlayer.isOnline()) {
                         continue;
@@ -400,18 +418,14 @@ public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGam
                         HyriAPI.get().getQueueManager().addPlayerInQueue(gamePlayer.getUniqueId(), this.info.getName(), this.type.getName(), null);
                     }
                 }
-            }, 20 * 15);
+            }, 15 * 20);
         }
 
-        Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                HyriAPI.get().getLobbyAPI().sendPlayerToLobby(player.getUniqueId());
-            }
-        }, 20 * 30);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(this.plugin, () -> HyriAPI.get().getLobbyAPI().evacuateToLobby(HyriAPI.get().getServer().getName()), 25 * 20);
 
         HyriAPI.get().getServer().setState(HyggServer.State.SHUTDOWN);
 
-        Bukkit.getScheduler().runTaskLater(this.plugin, () -> HyriAPI.get().getServerManager().removeServer(HyriAPI.get().getServer().getName(), () -> HyrameLogger.log("Hyggdrasil is stopping the server...")), 20 * 40);
+        Bukkit.getScheduler().runTaskLater(this.plugin, () -> HyriAPI.get().getServerManager().removeServer(HyriAPI.get().getServer().getName(), () -> HyrameLogger.log("Hyggdrasil is stopping the server...")), 30 * 20);
     }
 
     /**
