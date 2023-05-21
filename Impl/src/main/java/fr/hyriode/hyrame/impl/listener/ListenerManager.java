@@ -6,6 +6,7 @@ import fr.hyriode.hyrame.listener.HyriListener;
 import fr.hyriode.hyrame.listener.IListenerManager;
 import fr.hyriode.hyrame.plugin.IPluginProvider;
 import fr.hyriode.hyrame.reflection.Reflection;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
@@ -18,13 +19,12 @@ import java.util.*;
  */
 public class ListenerManager implements IListenerManager {
 
-    private final Map<Class<?>, HyriListener<?>> listeners;
+    private final Map<Class<?>, HyriListener<?>> listeners = new HashMap<>();
 
     private final Hyrame hyrame;
 
     public ListenerManager(Hyrame hyrame) {
         this.hyrame = hyrame;
-        this.listeners = new HashMap<>();
     }
 
     @Override
@@ -43,28 +43,20 @@ public class ListenerManager implements IListenerManager {
 
     @Override
     public void registerListeners(IPluginProvider pluginProvider, String packageName) {
-        final String formattedPluginProviderName = Hyrame.formatPluginProviderName(pluginProvider);
+        HyrameLogger.providerLog(pluginProvider, "Searching for listeners in '" + packageName + "' package");
 
-        HyrameLogger.log("Searching for listeners in '" + packageName + "' package" + formattedPluginProviderName);
-
-        final Set<Class<?>> classes = this.hyrame.getScanner().scan(pluginProvider.getClass().getClassLoader(), packageName);
+        final Set<Class<?>> classes = this.hyrame.getScanner().scan(pluginProvider.getClass().getClassLoader(), packageName, HyriListener.class);
 
         try {
             for (Class<?> clazz : classes) {
-                if (Reflection.inheritOf(clazz, HyriListener.class)) {
-                    final Class<?> pluginClass = pluginProvider.getPlugin().getClass();
+                final HyriListener<?> listener = (HyriListener<?>) clazz.getConstructor(pluginProvider.getPlugin().getClass()).newInstance(pluginProvider.getPlugin());
+                final JavaPlugin plugin = this.hyrame.getPlugin();
 
-                    if (Reflection.hasConstructorWithParameters(clazz, pluginClass)) {
-                        final HyriListener<?> listener = (HyriListener<?>) clazz.getConstructor(pluginClass).newInstance(pluginProvider.getPlugin());
-                        final JavaPlugin plugin = this.hyrame.getPlugin();
+                plugin.getServer().getPluginManager().registerEvents(listener, plugin);
 
-                        plugin.getServer().getPluginManager().registerEvents(listener, plugin);
+                this.listeners.put(listener.getClass(), listener);
 
-                        this.listeners.put(listener.getClass(), listener);
-
-                        HyrameLogger.log("Registered '" + clazz.getName() + "' listener" + formattedPluginProviderName);
-                    }
-                }
+                HyrameLogger.providerLog(pluginProvider, "Registered '" + clazz.getName() + "' listener");
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();

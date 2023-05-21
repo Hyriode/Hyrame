@@ -77,6 +77,11 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
                 return;
             }
 
+            if (game.getPlayer(player) == null) {
+                player.sendMessage(HyrameMessage.PLAYER_NOT_FOUND_SERVER.asString(ctx.getSender()).replace("%player%", target.getName()));
+                return;
+            }
+
             HyriAPI.get().getLobbyAPI().sendPlayerToLobby(target.getUniqueId());
 
             player.sendMessage(HyrameMessage.HOST_KICK_MESSAGE.asString(account).replace("%player%", IHyriPlayer.get(target.getUniqueId()).getNameWithRank()));

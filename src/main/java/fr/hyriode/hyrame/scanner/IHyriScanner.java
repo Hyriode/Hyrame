@@ -10,12 +10,13 @@ import java.util.Set;
 public interface IHyriScanner {
 
     /**
-     * Get all {@link Class} in a provided package
+     * Get all {@link Class} matching a given type in a provided package
      *
-     * @param classLoader - {@link ClassLoader} to use
-     * @param packageName - Package to scan
-     * @return - All classes found
+     * @param classLoader The {@link ClassLoader} to use
+     * @param packageName The package to scan
+     * @param type The type of classes to find
+     * @return All the classes found
      */
-    Set<Class<?>> scan(ClassLoader classLoader, String packageName);
+   Set<Class<?>> scan(ClassLoader classLoader, String packageName, Class<?> type);
 
 }

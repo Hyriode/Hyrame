@@ -43,6 +43,16 @@ allprojects {
         }
 
         maven {
+            name = 'HyriSpigot_maven'
+            url = 'https://maven.pkg.github.com/Hyriode/HyriSpigot/'
+
+            credentials {
+                username System.getenv('GITHUB_USERNAME')
+                password System.getenv('GITHUB_TOKEN')
+            }
+        }
+
+        maven {
             name = 'spigotmc-repo'
             url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
         }
@@ -50,6 +60,11 @@ allprojects {
         maven {
             name = 'sonatype'
             url = 'https://oss.sonatype.org/content/groups/public/'
+        }
+
+        maven {
+            name 'elmakers-maven'
+            url 'https://maven.elmakers.com/repository/'
         }
     }
 
@@ -62,9 +77,10 @@ allprojects {
 archivesBaseName = 'Hyrame'
 
 dependencies {
-    compileOnly fileTree(include: ['*.jar'], dir: 'libs')
+    compileOnly 'fr.hyriode:spigot-impl:1.8.8-SNAPSHOT'
+
     api 'fr.hyriode:hyriapi:1.5.2-SNAPSHOT'
-    api 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+    api 'fr.hyriode:spigot-api:1.8.8-SNAPSHOT'
     api 'xyz.xenondevs:particle:1.8.1'
 }
 
@@ -90,6 +106,8 @@ publishing {
                 username System.getenv('GITHUB_USERNAME')
                 password System.getenv('GITHUB_TOKEN')
             }
+
+
             name = "Hyrame_maven"
             url = "https://maven.pkg.github.com/Hyriode/Hyrame"
         }

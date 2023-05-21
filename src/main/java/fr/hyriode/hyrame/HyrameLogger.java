@@ -1,5 +1,6 @@
 package fr.hyriode.hyrame;
 
+import fr.hyriode.hyrame.plugin.IPluginProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -39,6 +40,16 @@ public class HyrameLogger {
      */
     public static void log(String message) {
         log(Level.INFO, message);
+    }
+
+    /**
+     * Log a message as Hyrame
+     *
+     * @param provider The provider that logs the message
+     * @param message The message to log
+     */
+    public static void providerLog(IPluginProvider provider, String message) {
+        log(Level.INFO, message + ChatColor.DARK_PURPLE + " | " + provider.getClass().getSimpleName());
     }
 
 }

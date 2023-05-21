@@ -2,7 +2,9 @@
   "message.command-not-enabled": "&cError: This command doesn't exist!",
   "message.command-invalid": "&cInvalid command: ",
   "message.permission-error": "&cError: You don't have the permission to perform this action!",
-  "message.player-not-found": "&cError: Couldn't find '&f%player%&c'!",
+  "message.player-not-found-full": "&cError: Couldn't find '&f%player%&c'!",
+  "message.player-not-found-server": "&cError: Couldn't find '&f%player%&c' on your server!",
+  "message.player-not-found-online": "&cError: '&f%player%&c' is offline or never connected !",
   "message.invalid-argument": "&cError: Invalid argument '&f%arg%&c'!",
   "message.invalid-number": "&cError: Invalid number '&f%arg%&c'!",
 

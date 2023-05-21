@@ -27,13 +27,12 @@ public class ItemManager implements IItemManager {
 
     public static final String ITEM_NBT_KEY = "HyriItem";
 
-    private final Map<String, HyriItem<?>> items;
+    private final Map<String, HyriItem<?>> items = new HashMap<>();
 
     private final Hyrame hyrame;
 
     public ItemManager(Hyrame hyrame) {
         this.hyrame = hyrame;
-        this.items = new HashMap<>();
     }
 
     @Override
@@ -53,17 +52,16 @@ public class ItemManager implements IItemManager {
     @SuppressWarnings("unchecked")
     @Override
     public void registerItems(IPluginProvider pluginProvider, String packageName) {
-        final String formattedPluginProviderName = Hyrame.formatPluginProviderName(pluginProvider);
-        final Set<Class<?>> classes = this.hyrame.getScanner().scan(pluginProvider.getClass().getClassLoader(), packageName);
+        final Set<Class<?>> classes = this.hyrame.getScanner().scan(pluginProvider.getClass().getClassLoader(), packageName, HyriItem.class);
 
-        HyrameLogger.log("Searching for items in '" + packageName + "' package" + formattedPluginProviderName);
+        HyrameLogger.providerLog(pluginProvider, "Searching for items in '" + packageName + "' package");
 
         if (classes == null) {
             return;
         }
 
         for (Class<?> clazz : classes) {
-            if (Reflection.inheritOf(clazz, HyriItem.class)) {
+            if (Reflection.hasConstructorWithParameters(clazz, pluginProvider.getPlugin().getClass())) {
                 this.registerItem(pluginProvider, (Class<? extends HyriItem<?>>) clazz);
             }
         }
@@ -71,21 +69,13 @@ public class ItemManager implements IItemManager {
 
     @Override
     public void registerItem(IPluginProvider pluginProvider, Class<? extends HyriItem<?>> itemClass) {
-        final String formattedPluginProviderName = Hyrame.formatPluginProviderName(pluginProvider);
-
         try {
-            if (Reflection.inheritOf(itemClass, HyriItem.class)) {
-                final Class<?> pluginClass = pluginProvider.getPlugin().getClass();
+            final HyriItem<?> item = itemClass.getConstructor(pluginProvider.getPlugin().getClass()).newInstance(pluginProvider.getPlugin());
+            final String itemId = pluginProvider.getId() + ":" + item.getName();
 
-                if (Reflection.hasConstructorWithParameters(itemClass, pluginClass)) {
-                    final HyriItem<?> item = itemClass.getConstructor(pluginClass).newInstance(pluginProvider.getPlugin());
-                    final String itemId = pluginProvider.getId() + ":" + item.getName();
+            this.items.put(itemId, item);
 
-                    this.items.put(itemId, item);
-
-                    HyrameLogger.log("Registered '" + itemId + "' item" + formattedPluginProviderName);
-                }
-            }
+            HyrameLogger.providerLog(pluginProvider, "Registered '" + itemId + "' item");
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }

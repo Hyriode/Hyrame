@@ -126,10 +126,6 @@ public class Hyrame implements IHyrame {
         return this.pluginProviders.contains(pluginProvider);
     }
 
-    public static String formatPluginProviderName(IPluginProvider pluginProvider) {
-        return " | " + ChatColor.DARK_PURPLE + pluginProvider.getClass().getSimpleName();
-    }
-
     @Override
     public HyramePlugin getPlugin() {
         return this.plugin;

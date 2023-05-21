@@ -23,11 +23,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ScoreboardManager implements IScoreboardManager, Listener {
 
-    private final Map<UUID, HyriScoreboard> playersScoreboards;
+    private final Map<UUID, HyriScoreboard> playersScoreboards = new ConcurrentHashMap<>();
 
     public ScoreboardManager(IHyrame hyrame) {
-        this.playersScoreboards = new ConcurrentHashMap<>();
-
         HyriAPI.get().getEventBus().register(this);
 
         final Server server = hyrame.getPlugin().getServer();

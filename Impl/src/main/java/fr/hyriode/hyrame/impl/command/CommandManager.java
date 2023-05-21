@@ -16,6 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -27,7 +28,7 @@ import java.util.logging.Level;
  */
 public class CommandManager implements ICommandManager {
 
-    private final Map<Class<?>, HyriCommand<?>> commands;
+    private final Map<Class<?>, HyriCommand<?>> commands = new HashMap<>();
 
     private final CommandMap commandMap;
     private final ICommandBlocker commandBlocker;
@@ -37,7 +38,6 @@ public class CommandManager implements ICommandManager {
     public CommandManager(Hyrame hyrame) {
         this.hyrame = hyrame;
         this.commandMap = (CommandMap) Reflection.invokeField(Bukkit.getServer(), "commandMap");
-        this.commands = new HashMap<>();
         this.commandBlocker = new CommandBlocker();
     }
 
@@ -57,31 +57,22 @@ public class CommandManager implements ICommandManager {
 
     @Override
     public void registerCommands(IPluginProvider pluginProvider, String packageName) {
-        final String formattedPluginProviderName = Hyrame.formatPluginProviderName(pluginProvider);
+        HyrameLogger.providerLog(pluginProvider, "Searching for commands in '" + packageName + "' package");
 
-        HyrameLogger.log("Searching for commands in '" + packageName + "' package" + formattedPluginProviderName);
-
-        final Set<Class<?>> classes = this.hyrame.getScanner().scan(pluginProvider.getClass().getClassLoader(), packageName);
+        final Set<Class<?>> classes = this.hyrame.getScanner().scan(pluginProvider.getClass().getClassLoader(), packageName, HyriCommand.class);
 
         try {
             for (Class<?> clazz : classes) {
-                if (Reflection.inheritOf(clazz, HyriCommand.class)) {
-                    final Class<?> pluginClass = pluginProvider.getPlugin().getClass();
+                final HyriCommand<?> command = (HyriCommand<?>) clazz.getConstructor(pluginProvider.getPlugin().getClass()).newInstance(pluginProvider.getPlugin());
+                final String name = command.getInfo().getName();
 
-                    if (Reflection.hasConstructorWithParameters(clazz, pluginClass)) {
-                        final HyriCommand<?> command = (HyriCommand<?>) clazz.getConstructor(pluginClass).newInstance(pluginProvider.getPlugin());
-                        final String name = command.getInfo().getName();
+                if (name != null && !name.isEmpty()) {
+                    this.commandMap.register(COMMANDS_PREFIX, this.createCommand(command));
+                    this.commands.put(command.getClass(), command);
 
-                        if (name != null && !name.isEmpty()) {
-                            this.commandMap.register(COMMANDS_PREFIX, this.createCommand(command));
-
-                            this.commands.put(command.getClass(), command);
-
-                            HyrameLogger.log("Registered '" + clazz.getName() + "' command with name '" + name + "'" + formattedPluginProviderName);
-                        } else {
-                            HyrameLogger.log(Level.WARNING, ChatColor.RED + "'" + clazz.getName() + "' command has an empty name! Cannot register it!");
-                        }
-                    }
+                    HyrameLogger.providerLog(pluginProvider, "Registered '" + clazz.getName() + "' command with name '" + name + "'");
+                } else {
+                    HyrameLogger.log(Level.WARNING, ChatColor.RED + "'" + clazz.getName() + "' command has an empty name! Cannot register it!");
                 }
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

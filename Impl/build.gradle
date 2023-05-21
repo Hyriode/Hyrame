@@ -16,13 +16,14 @@ shadowJar {
 }
 
 dependencies {
-    compileOnly fileTree(include: ['*.jar'], dir: '../libs')
+    compileOnly 'fr.hyriode:spigot-impl:1.8.8-SNAPSHOT'
 
     implementation project.parent
     shadow (project.parent) {
         exclude module: 'hyriapi'
         exclude module: 'spigot-api'
     }
+    shadow 'org.reflections:reflections:0.10.2'
 }
 
 processResources {

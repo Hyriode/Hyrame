@@ -33,15 +33,15 @@ public enum CommandCheck {
         return false;
     }),
     /** Handle a player name as an input, but it will check from players accounts */
-    PLAYER("%player%", IHyriPlayer.class, arg -> HyriAPI.get().getPlayerManager().getPlayer(arg), (ctx, arg) -> HyrameMessage.PLAYER_NOT_FOUND.asString(ctx.getSender()).replace("%player%", arg)),
+    PLAYER("%player%", IHyriPlayer.class, arg -> HyriAPI.get().getPlayerManager().getPlayer(arg), (ctx, arg) -> HyrameMessage.PLAYER_NOT_FOUND_FULL.asString(ctx.getSender()).replace("%player%", arg)),
     /** Handle a player name as an input, but it will check from players accounts */
     PLAYER_ONLINE("%player_online%", IHyriPlayer.class, arg -> {
         final IHyriPlayer account = HyriAPI.get().getPlayerManager().getPlayer(arg);
 
         return account != null && HyriAPI.get().getPlayerManager().isOnline(account.getUniqueId()) ? account : null;
-    }, (ctx, arg) -> HyrameMessage.PLAYER_NOT_FOUND.asString(ctx.getSender()).replace("%player%", arg)),
+    }, (ctx, arg) -> HyrameMessage.PLAYER_NOT_FOUND_ONLINE.asString(ctx.getSender()).replace("%player%", arg)),
     /** Handle a player name as an input, but it will check from players on current server */
-    PLAYER_ON_SERVER("%player_server%", Player.class, Bukkit::getPlayerExact, (ctx, arg) -> HyrameMessage.PLAYER_NOT_FOUND.asString(ctx.getSender()).replace("%player%", arg)),
+    PLAYER_ON_SERVER("%player_server%", Player.class, Bukkit::getPlayerExact, (ctx, arg) -> HyrameMessage.PLAYER_NOT_FOUND_SERVER.asString(ctx.getSender()).replace("%player%", arg)),
     /** Handle a short number */
     SHORT("%short%", PrimitiveType.SHORT),
     /** Handle an integer number */

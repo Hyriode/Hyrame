@@ -17,7 +17,9 @@ public enum HyrameMessage {
     COMMAND_NOT_ENABLED("message.command-not-enabled"),
     COMMAND_INVALID("message.command-invalid"),
     PERMISSION_ERROR("message.permission-error"),
-    PLAYER_NOT_FOUND("message.player-not-found"),
+    PLAYER_NOT_FOUND_FULL("message.player-not-found-full"),
+    PLAYER_NOT_FOUND_ONLINE("message.player-not-found-online"),
+    PLAYER_NOT_FOUND_SERVER("message.player-not-found-server"),
     INVALID_ARGUMENT("message.invalid-argument"),
     INVALID_NUMBER("message.invalid-number"),
 

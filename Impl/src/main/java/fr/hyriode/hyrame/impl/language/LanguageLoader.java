@@ -26,7 +26,6 @@ public class LanguageLoader implements ILanguageLoader {
 
     @Override
     public Collection<HyriLanguageMessage> loadLanguages(IPluginProvider pluginProvider) {
-        final String formattedPluginProviderName = Hyrame.formatPluginProviderName(pluginProvider);
         final File langFolder = new File(pluginProvider.getPlugin().getDataFolder(), "lang");
 
         if (!langFolder.exists() && !langFolder.mkdirs()) {
@@ -40,7 +39,7 @@ public class LanguageLoader implements ILanguageLoader {
                 final InputStream inputStream = pluginProvider.getClass().getResourceAsStream(path);
 
                 if (inputStream == null) {
-                    HyrameLogger.log(Level.INFO, "Cannot get resource from " + fileName + "!" + formattedPluginProviderName);
+                    HyrameLogger.providerLog(pluginProvider, "Cannot get resource from " + fileName + "!");
                     return null;
                 }
 
