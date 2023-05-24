@@ -109,6 +109,10 @@ public abstract class HostConfigGUI extends PaginatedInventory {
                     final IHostController controller = HyrameLoader.getHyrame().getHostController();
                     final IHostConfig currentConfig = controller.getCurrentConfig();
 
+                    if (!this.isCompatible(config)) {
+                        return;
+                    }
+
                     if (currentConfig == null || !currentConfig.getId().equals(config.getId())) {
                         controller.applyConfig(config);
 
