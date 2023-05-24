@@ -183,7 +183,9 @@ public class HostCommand extends HyriCommand<HyramePlugin> {
 
             hostData.addSecondaryHost(targetId);
 
-            this.plugin.getHyrame().getItemManager().giveItem(target, 7, HostSettingsItem.class);
+            if (this.plugin.getHyrame().getGame().getState().isAccessible()) {
+                this.plugin.getHyrame().getItemManager().giveItem(target, 7, HostSettingsItem.class);
+            }
 
             player.sendMessage(HyrameMessage.HOST_OP_MESSAGE.asString(account).replace("%player%", targetAccount.getNameWithRank()));
 
