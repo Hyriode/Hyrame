@@ -187,6 +187,7 @@ public class HyriWaitingProtocol extends HyriGameProtocol implements Listener {
                 }
             }, 20L);
         }
+
     }
 
     private void sendAutomaticAddedMessage(HyriGameTeam team, Player player, List<HyriGamePlayer> members) {

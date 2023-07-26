@@ -268,9 +268,8 @@ public abstract class HyriGame<P extends HyriGamePlayer> implements Cast<HyriGam
             }
 
             HyriAPI.get().getServer().addPlayerPlaying(playerId);
-
-            // Finally, trigger events
             HyriAPI.get().getServerManager().getReconnectionHandler().remove(playerId);
+            // Finally, trigger events
             HyriAPI.get().getEventBus().publish(new HyriGameJoinEvent(this, gamePlayer));
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             player.sendMessage(ChatColor.RED + "An error occurred while joining game! Sending you back to lobby...");

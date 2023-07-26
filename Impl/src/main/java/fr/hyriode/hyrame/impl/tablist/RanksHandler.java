@@ -50,6 +50,7 @@ public class RanksHandler {
             this.tabListManager.registerTeam(team);
             this.tabListManager.addPlayerInTeam(player, team.getName());
         }
+
     }
 
     public void onLogout(Player player) {
