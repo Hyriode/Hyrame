@@ -37,7 +37,7 @@ public class SpectatorTeleporterItem extends HyriItem<HyramePlugin> {
         public Gui(IHyrame hyrame, Player owner) {
             super(owner, HyriInventory.name(owner, "gui.spectator.teleporter.title"), dynamicSize((int) hyrame.getGameManager().getCurrentGame().getPlayers().stream().filter(player -> !player.isDead() || !player.isSpectator()).count()));
 
-            final List<HyriGamePlayer> players = hyrame.getGameManager().getCurrentGame().getPlayers().stream().filter(player -> !player.isDead() && !player.isSpectator()).collect(Collectors.toList());
+            final List<HyriGamePlayer> players = hyrame.getGameManager().getCurrentGame().getPlayers().stream().filter(player -> player.getUniqueId() == owner.getUniqueId()).filter(player -> !player.isDead() && !player.isSpectator()).collect(Collectors.toList());
 
             int currentSlot = 0;
             for (HyriGamePlayer gamePlayer : players) {
